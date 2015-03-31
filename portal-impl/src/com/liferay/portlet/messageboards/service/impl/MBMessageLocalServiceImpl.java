@@ -37,6 +37,7 @@ import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -71,10 +72,10 @@ import com.liferay.portlet.asset.model.AssetLinkConstants;
 import com.liferay.portlet.blogs.model.BlogsEntry;
 import com.liferay.portlet.blogs.util.LinkbackProducerUtil;
 import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
+import com.liferay.portlet.messageboards.DiscussionMaxCommentsException;
 import com.liferay.portlet.messageboards.MBGroupServiceSettings;
 import com.liferay.portlet.messageboards.MessageBodyException;
 import com.liferay.portlet.messageboards.MessageSubjectException;
-import com.liferay.portlet.messageboards.NoSuchDiscussionException;
 import com.liferay.portlet.messageboards.NoSuchThreadException;
 import com.liferay.portlet.messageboards.RequiredMessageException;
 import com.liferay.portlet.messageboards.model.MBCategory;
@@ -167,6 +168,8 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 		throws PortalException {
 
 		// Message
+
+		validateDiscussionMaxComments(className, classPK);
 
 		long categoryId = MBCategoryConstants.DISCUSSION_CATEGORY_ID;
 
@@ -532,32 +535,36 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 	public void deleteDiscussionMessages(String className, long classPK)
 		throws PortalException {
 
-		try {
-			long classNameId = classNameLocalService.getClassNameId(className);
+		long classNameId = classNameLocalService.getClassNameId(className);
 
-			MBDiscussion discussion = mbDiscussionPersistence.findByC_C(
-				classNameId, classPK);
+		MBDiscussion discussion = mbDiscussionPersistence.fetchByC_C(
+			classNameId, classPK);
 
-			List<MBMessage> messages = mbMessagePersistence.findByT_P(
-				discussion.getThreadId(),
-				MBMessageConstants.DEFAULT_PARENT_MESSAGE_ID, 0, 1);
-
-			if (!messages.isEmpty()) {
-				MBMessage message = messages.get(0);
-
-				deleteDiscussionSocialActivities(
-					BlogsEntry.class.getName(), message);
-
-				mbThreadLocalService.deleteThread(message.getThreadId());
+		if (discussion == null) {
+			if (_log.isInfoEnabled()) {
+				_log.info(
+					"Unable to delete discussion message for class name " +
+						className + " and class PK " + classPK +
+							" because it does not exist");
 			}
 
-			mbDiscussionPersistence.remove(discussion);
+			return;
 		}
-		catch (NoSuchDiscussionException nsde) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(nsde.getMessage());
-			}
+
+		List<MBMessage> messages = mbMessagePersistence.findByT_P(
+			discussion.getThreadId(),
+			MBMessageConstants.DEFAULT_PARENT_MESSAGE_ID, 0, 1);
+
+		if (!messages.isEmpty()) {
+			MBMessage message = messages.get(0);
+
+			deleteDiscussionSocialActivities(
+				BlogsEntry.class.getName(), message);
+
+			mbThreadLocalService.deleteThread(message.getThreadId());
 		}
+
+		mbDiscussionPersistence.remove(discussion);
 	}
 
 	@Indexable(type = IndexableType.DELETE)
@@ -808,6 +815,20 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 
 		PortletFileRepositoryUtil.deletePortletFileEntries(
 			message.getGroupId(), folderId);
+	}
+
+	@Override
+	public void emptyMessageAttachments(long messageId) throws PortalException {
+		MBMessage message = getMessage(messageId);
+
+		long folderId = message.getAttachmentsFolderId();
+
+		if (folderId == DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
+			return;
+		}
+
+		PortletFileRepositoryUtil.deletePortletFileEntries(
+			message.getGroupId(), folderId, WorkflowConstants.STATUS_IN_TRASH);
 	}
 
 	@Override
@@ -1981,8 +2002,7 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 	}
 
 	protected void notifyDiscussionSubscribers(
-			long contextUserId, MBMessage message,
-			ServiceContext serviceContext)
+			long userId, MBMessage message, ServiceContext serviceContext)
 		throws PortalException {
 
 		if (!PrefsPropsUtil.getBoolean(
@@ -2028,7 +2048,7 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 		subscriptionSender.setContextAttributes(
 			"[$COMMENTS_USER_ADDRESS$]", userAddress, "[$COMMENTS_USER_NAME$]",
 			userName, "[$CONTENT_URL$]", contentURL);
-		subscriptionSender.setContextUserId(contextUserId);
+		subscriptionSender.setCurrentUserId(userId);
 		subscriptionSender.setEntryTitle(message.getBody());
 		subscriptionSender.setEntryURL(contentURL);
 		subscriptionSender.setFrom(fromAddress, fromName);
@@ -2055,7 +2075,6 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 		subscriptionSender.setServiceContext(serviceContext);
 		subscriptionSender.setSubject(subject);
 		subscriptionSender.setUniqueMailId(false);
-		subscriptionSender.setUserId(message.getUserId());
 
 		String className = (String)serviceContext.getAttribute("className");
 		long classPK = ParamUtil.getLong(serviceContext, "classPK");
@@ -2066,7 +2085,7 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 	}
 
 	protected void notifySubscribers(
-			long contextUserId, MBMessage message, String messageURL,
+			long userId, MBMessage message, String messageURL,
 			ServiceContext serviceContext)
 		throws PortalException {
 
@@ -2076,8 +2095,7 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 
 		if (message.isDiscussion()) {
 			try {
-				notifyDiscussionSubscribers(
-					contextUserId, message, serviceContext);
+				notifyDiscussionSubscribers(userId, message, serviceContext);
 			}
 			catch (Exception e) {
 				_log.error(e, e);
@@ -2223,14 +2241,22 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 			"[$MESSAGE_SUBJECT$]", entryTitle, "[$MESSAGE_URL$]", messageURL,
 			"[$MESSAGE_USER_ADDRESS$]", emailAddress, "[$MESSAGE_USER_NAME$]",
 			fullName);
+		subscriptionSenderPrototype.setCurrentUserId(userId);
 		subscriptionSenderPrototype.setEntryTitle(entryTitle);
 		subscriptionSenderPrototype.setEntryURL(messageURL);
 		subscriptionSenderPrototype.setFrom(fromAddress, fromName);
 		subscriptionSenderPrototype.setHtmlFormat(htmlFormat);
 		subscriptionSenderPrototype.setInReplyTo(inReplyTo);
-		subscriptionSenderPrototype.setLocalizedBodyMap(bodyLocalizedValuesMap);
-		subscriptionSenderPrototype.setLocalizedSubjectMap(
-			subjectLocalizedValuesMap);
+
+		if (bodyLocalizedValuesMap != null) {
+			subscriptionSenderPrototype.setLocalizedBodyMap(
+				LocalizationUtil.getMap(bodyLocalizedValuesMap));
+		}
+
+		if (subjectLocalizedValuesMap != null) {
+			subscriptionSenderPrototype.setLocalizedSubjectMap(
+				LocalizationUtil.getMap(subjectLocalizedValuesMap));
+		}
 
 		Date modifiedDate = message.getModifiedDate();
 
@@ -2253,13 +2279,11 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 		subscriptionSenderPrototype.setScopeGroupId(message.getGroupId());
 		subscriptionSenderPrototype.setServiceContext(serviceContext);
 		subscriptionSenderPrototype.setUniqueMailId(false);
-		subscriptionSenderPrototype.setUserId(message.getUserId());
 
 		SubscriptionSender subscriptionSender =
 			(SubscriptionSender)SerializableUtil.clone(
 				subscriptionSenderPrototype);
 
-		subscriptionSender.setContextUserId(contextUserId);
 		subscriptionSender.addPersistedSubscribers(
 			MBCategory.class.getName(), message.getGroupId());
 
@@ -2473,6 +2497,21 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 
 		if (Validator.isNull(subject) && Validator.isNull(body)) {
 			throw new MessageSubjectException();
+		}
+	}
+
+	protected void validateDiscussionMaxComments(String className, long classPK)
+		throws PortalException {
+
+		if (PropsValues.DISCUSSION_MAX_COMMENTS <= 0) {
+			return;
+		}
+
+		int count = getDiscussionMessagesCount(
+			className, classPK, WorkflowConstants.STATUS_APPROVED);
+
+		if (count >= PropsValues.DISCUSSION_MAX_COMMENTS) {
+			throw new DiscussionMaxCommentsException();
 		}
 	}
 

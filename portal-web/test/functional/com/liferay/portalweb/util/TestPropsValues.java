@@ -73,6 +73,18 @@ public class TestPropsValues
 	public static final String IGNORE_ERRORS_DELIMITER = TestPropsUtil.get(
 		"ignore.errors.delimiter");
 
+	public static final String LCS_EMAIL_ADDRESS_1 = TestPropsUtil.get(
+		"lcs.email.address.1");
+
+	public static final String LCS_EMAIL_ADDRESS_2 = TestPropsUtil.get(
+		"lcs.email.address.2");
+
+	public static final String LCS_EMAIL_PASSWORD_1 = TestPropsUtil.get(
+		"lcs.email.password.1");
+
+	public static final String LCS_EMAIL_PASSWORD_2 = TestPropsUtil.get(
+		"lcs.email.password.2");
+
 	public static final String LIFERAY_PORTAL_BRANCH = TestPropsUtil.get(
 		"liferay.portal.branch");
 
@@ -81,12 +93,6 @@ public class TestPropsValues
 
 	public static final boolean MOBILE_DEVICE_ENABLED = GetterUtil.getBoolean(
 		TestPropsUtil.get("mobile.device.enabled"));
-
-	public static final String MOBILE_DEVICE_RESOLUTION = TestPropsUtil.get(
-		"mobile.device.resolution");
-
-	public static final String MOBILE_DEVICE_USER_AGENT = TestPropsUtil.get(
-		"mobile.device.user.agent");
 
 	public static final String OUTPUT_DIR_NAME = TestPropsUtil.get(
 		"output.dir");

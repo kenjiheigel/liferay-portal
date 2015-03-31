@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapDictionary;
+import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ReflectionUtil;
@@ -58,7 +59,6 @@ import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -79,6 +79,7 @@ import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.osgi.framework.startlevel.BundleStartLevel;
 import org.osgi.framework.startlevel.FrameworkStartLevel;
+import org.osgi.framework.wiring.BundleRevision;
 
 import org.springframework.beans.factory.BeanIsAbstractException;
 import org.springframework.context.ApplicationContext;
@@ -86,6 +87,7 @@ import org.springframework.context.ApplicationContext;
 /**
  * @author Raymond Augé
  * @author Miguel Pastor
+ * @author Kamesh Sampath
  */
 public class ModuleFrameworkImpl implements ModuleFramework {
 
@@ -325,7 +327,9 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 		ServiceTrackerMapFactoryUtil.setServiceTrackerMapFactory(
 			new ServiceTrackerMapFactoryImpl(_framework.getBundleContext()));
 
-		_setupInitialBundles();
+		_setUpPrerequisiteFrameworkServices(_framework.getBundleContext());
+
+		_setUpInitialBundles();
 	}
 
 	@Override
@@ -584,28 +588,24 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 		return String.valueOf(level);
 	}
 
-	private Set<Class<?>> _getInterfaces(Object bean) {
-		Set<Class<?>> interfaces = new HashSet<>();
+	private Dictionary<String, Object> _getProperties(
+		Object bean, String beanName) {
 
-		Class<?> beanClass = bean.getClass();
+		HashMapDictionary<String, Object> properties =
+			new HashMapDictionary<>();
 
-		interfaces.add(beanClass);
+		Map<String, Object> osgiBeanProperties =
+			OSGiBeanProperties.Convert.fromObject(bean);
 
-		for (Class<?> interfaceClass : beanClass.getInterfaces()) {
-			interfaces.add(interfaceClass);
+		if (osgiBeanProperties != null) {
+			properties.putAll(osgiBeanProperties);
 		}
 
-		while ((beanClass = beanClass.getSuperclass()) != null) {
-			interfaces.add(beanClass);
+		properties.put(ServicePropsKeys.BEAN_ID, beanName);
+		properties.put(ServicePropsKeys.ORIGINAL_BEAN, Boolean.TRUE);
+		properties.put(ServicePropsKeys.VENDOR, ReleaseInfo.getVendor());
 
-			for (Class<?> interfaceClass : beanClass.getInterfaces()) {
-				if (!interfaces.contains(interfaceClass)) {
-					interfaces.add(interfaceClass);
-				}
-			}
-		}
-
-		return interfaces;
+		return properties;
 	}
 
 	private String _getSystemPackagesExtra() {
@@ -757,11 +757,9 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 	}
 
 	private boolean _isFragmentBundle(Bundle bundle) {
-		Dictionary<String, String> headers = bundle.getHeaders();
+		BundleRevision bundleRevision = bundle.adapt(BundleRevision.class);
 
-		String fragmentHost = headers.get(Constants.FRAGMENT_HOST);
-
-		if (fragmentHost == null) {
+		if ((bundleRevision.getTypes() & BundleRevision.TYPE_FRAGMENT) == 0) {
 			return false;
 		}
 
@@ -775,7 +773,7 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 			if (ignoredClass.equals(interfaceClassName) ||
 				(ignoredClass.endsWith(StringPool.STAR) &&
 				 interfaceClassName.startsWith(
-					ignoredClass.substring(0, ignoredClass.length() - 1)))) {
+					 ignoredClass.substring(0, ignoredClass.length() - 1)))) {
 
 				return true;
 			}
@@ -810,7 +808,7 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 	private void _registerService(
 		BundleContext bundleContext, String beanName, Object bean) {
 
-		Set<Class<?>> interfaces = _getInterfaces(bean);
+		Set<Class<?>> interfaces = OSGiBeanProperties.Service.interfaces(bean);
 
 		if (interfaces.isEmpty()) {
 			return;
@@ -830,45 +828,34 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 			return;
 		}
 
-		HashMapDictionary<String, Object> properties =
-			new HashMapDictionary<>();
-
-		Map<String, Object> osgiBeanProperties =
-			OSGiBeanProperties.Convert.fromObject(bean);
-
-		if (osgiBeanProperties != null) {
-			properties.putAll(osgiBeanProperties);
-		}
-
-		properties.put(ServicePropsKeys.BEAN_ID, beanName);
-		properties.put(ServicePropsKeys.ORIGINAL_BEAN, Boolean.TRUE);
-		properties.put(ServicePropsKeys.VENDOR, ReleaseInfo.getVendor());
-
 		bundleContext.registerService(
-			names.toArray(new String[names.size()]), bean, properties);
+			names.toArray(new String[names.size()]), bean,
+			_getProperties(bean, beanName));
 	}
 
 	private void _registerServletContext(ServletContext servletContext) {
 		BundleContext bundleContext = _framework.getBundleContext();
 
-		Dictionary<String, Object> properties = new HashMapDictionary<>();
-
-		properties.put(
-			ServicePropsKeys.BEAN_ID, ServletContext.class.getName());
-		properties.put(ServicePropsKeys.ORIGINAL_BEAN, Boolean.TRUE);
-		properties.put(ServicePropsKeys.VENDOR, ReleaseInfo.getVendor());
-
 		bundleContext.registerService(
 			new String[] {ServletContext.class.getName()}, servletContext,
-			properties);
+			_getProperties(servletContext, "liferayServletContext"));
 	}
 
-	private void _setupInitialBundles() throws Exception {
+	private void _setUpInitialBundles() throws Exception {
 		for (String initialBundle :
 				PropsValues.MODULE_FRAMEWORK_INITIAL_BUNDLES) {
 
 			_installInitialBundle(initialBundle);
 		}
+	}
+
+	private void _setUpPrerequisiteFrameworkServices(
+		BundleContext bundleContext) {
+
+		Props props = PropsUtil.getProps();
+
+		bundleContext.registerService(
+			Props.class, props, _getProperties(props, Props.class.getName()));
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

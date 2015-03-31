@@ -21,6 +21,7 @@ import com.liferay.poshi.runner.util.FileUtil;
 import com.liferay.poshi.runner.util.GetterUtil;
 import com.liferay.poshi.runner.util.HtmlUtil;
 import com.liferay.poshi.runner.util.LocaleUtil;
+import com.liferay.poshi.runner.util.OSDetector;
 import com.liferay.poshi.runner.util.PropsValues;
 import com.liferay.poshi.runner.util.RuntimeVariables;
 import com.liferay.poshi.runner.util.StringPool;
@@ -462,6 +463,19 @@ public class LiferaySeleniumHelper {
 		}
 	}
 
+	public static void assertPartialConfirmation(
+			LiferaySelenium liferaySelenium, String pattern)
+		throws Exception {
+
+		String confirmation = liferaySelenium.getConfirmation();
+
+		if (!confirmation.contains(pattern)) {
+			throw new Exception(
+				"\"" + confirmation + "\" does not contain \"" + pattern +
+					"\"");
+		}
+	}
+
 	public static void assertPartialText(
 			LiferaySelenium liferaySelenium, String locator, String pattern)
 		throws Exception {
@@ -749,7 +763,7 @@ public class LiferaySeleniumHelper {
 				return true;
 			}
 
-			if (line.matches(".*[TrueZIP InputStream Reader].*")) {
+			if (line.matches(".*\\[TrueZIP InputStream Reader\\].*")) {
 				return true;
 			}
 		}
@@ -769,7 +783,7 @@ public class LiferaySeleniumHelper {
 		if (line.contains(
 				"Exception sending context destroyed event to listener " +
 					"instance of class com.liferay.portal.spring.context." +
-					"PortalContextLoaderListener")) {
+						"PortalContextLoaderListener")) {
 
 			return true;
 		}
@@ -1319,21 +1333,67 @@ public class LiferaySeleniumHelper {
 			LiferaySelenium liferaySelenium, String image, String value)
 		throws Exception {
 
-		throw new UnsupportedOperationException();
+		sikuliClick(liferaySelenium, image);
+
+		Keyboard keyboard = new DesktopKeyboard();
+
+		keyboard.keyDown(Key.CTRL);
+
+		keyboard.type("a");
+
+		keyboard.keyUp(Key.CTRL);
+
+		sikuliType(
+			liferaySelenium, image,
+			getPortalRootDirName() + liferaySelenium.getDependenciesDirName() +
+				value);
+
+		keyboard.type(Key.ENTER);
 	}
 
 	public static void sikuliUploadTCatFile(
 			LiferaySelenium liferaySelenium, String image, String value)
 		throws Exception {
 
-		throw new UnsupportedOperationException();
+		String tCatAdminFileName =
+			PropsValues.TCAT_ADMIN_REPOSITORY + "/" + value;
+
+		if (OSDetector.isWindows()) {
+			tCatAdminFileName = tCatAdminFileName.replace("/", "\\");
+		}
+
+		sikuliType(liferaySelenium, image, tCatAdminFileName);
+
+		Keyboard keyboard = new DesktopKeyboard();
+
+		keyboard.type(Key.ENTER);
 	}
 
 	public static void sikuliUploadTempFile(
 			LiferaySelenium liferaySelenium, String image, String value)
 		throws Exception {
 
-		throw new UnsupportedOperationException();
+		sikuliClick(liferaySelenium, image);
+
+		Keyboard keyboard = new DesktopKeyboard();
+
+		keyboard.keyDown(Key.CTRL);
+
+		keyboard.type("a");
+
+		keyboard.keyUp(Key.CTRL);
+
+		String slash = "/";
+
+		if (OSDetector.isWindows()) {
+			slash = "\\";
+		}
+
+		sikuliType(
+			liferaySelenium, image,
+			liferaySelenium.getOutputDirName() + slash + value);
+
+		keyboard.type(Key.ENTER);
 	}
 
 	public static void typeAceEditor(

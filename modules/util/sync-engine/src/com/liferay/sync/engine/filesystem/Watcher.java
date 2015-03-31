@@ -230,6 +230,8 @@ public abstract class Watcher implements Runnable {
 				sanitizedFilePathName = FileUtil.getNextFilePathName(
 					sanitizedFilePathName);
 
+				FileUtil.checkFilePath(filePath);
+
 				FileUtil.moveFile(
 					filePath, java.nio.file.Paths.get(sanitizedFilePathName));
 
@@ -314,6 +316,8 @@ public abstract class Watcher implements Runnable {
 	protected void processWatchEvent(String eventType, Path filePath)
 		throws IOException {
 
+		_watcherEventsLogger.trace("{}: {}", eventType, filePath);
+
 		if (!OSDetector.isLinux() &&
 			filePath.startsWith(_baseFilePath.resolve(".data"))) {
 
@@ -389,6 +393,9 @@ public abstract class Watcher implements Runnable {
 
 	private static final Logger _logger = LoggerFactory.getLogger(
 		Watcher.class);
+
+	private static final Logger _watcherEventsLogger = LoggerFactory.getLogger(
+		"WATCHER_EVENTS_LOGGER");
 
 	private final Path _baseFilePath;
 	private final ConcurrentNavigableMap<Long, String> _createdFilePathNames =
