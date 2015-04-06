@@ -2439,6 +2439,8 @@ public interface PropsKeys {
 
 	public static final String SPRING_HIBERNATE_SESSION_FACTORY_PRELOAD_CLASSLOADER_CLASSES = "spring.hibernate.session.factory.preload.classloader.classes";
 
+	public static final String SPRING_INFRASTRUCTURE_CONFIGS = "spring.infrastructure.configs";
+
 	public static final String SPRING_PORTLET_CONFIGS = "spring.portlet.configs";
 
 	public static final String SPRITE_FILE_NAME = "sprite.file.name";

@@ -20,7 +20,9 @@ import java.text.SimpleDateFormat;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Michael Hashimoto
@@ -31,22 +33,52 @@ public class LoggerElement {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
 			"yyyyMMddHHmmssSSS");
 
-		_id = simpleDateFormat.format(new Date());
+		long time = System.currentTimeMillis();
+
+		while (true) {
+			String id = simpleDateFormat.format(new Date(time++));
+
+			if (!_usedIds.contains(id)) {
+				_usedIds.add(id);
+
+				_id = id;
+
+				break;
+			}
+		}
 	}
 
 	public LoggerElement(String id) {
 		_id = id;
 
-		_writtenToLogger = true;
+		if (_isWrittenToLogger()) {
+			String className = LoggerUtil.getClassName(this);
+
+			if (Validator.isNotNull(className)) {
+				_className = className;
+			}
+
+			String name = LoggerUtil.getName(this);
+
+			if (Validator.isNotNull(name)) {
+				_name = name;
+			}
+
+			String text = LoggerUtil.getText(this);
+
+			if (Validator.isNotNull(text)) {
+				_text = text;
+			}
+		}
 	}
 
 	public void addChildLoggerElement(LoggerElement childLoggerElement) {
 		_childLoggerElements.add(childLoggerElement);
 
-		if (_writtenToLogger) {
+		if (_isWrittenToLogger()) {
 			LoggerUtil.addChildLoggerElement(this, childLoggerElement);
 
-			childLoggerElement.setWrittenToLogger(true);
+			childLoggerElement.writeChildLoggerElements();
 		}
 	}
 
@@ -69,7 +101,7 @@ public class LoggerElement {
 	public void setClassName(String className) {
 		_className = className;
 
-		if (_writtenToLogger) {
+		if (_isWrittenToLogger()) {
 			LoggerUtil.setClassName(this);
 		}
 	}
@@ -77,25 +109,25 @@ public class LoggerElement {
 	public void setID(String id) {
 		_id = id;
 
-		if (_writtenToLogger) {
+		if (_isWrittenToLogger()) {
 			LoggerUtil.setID(this);
 		}
 	}
 
 	public void setName(String name) {
 		_name = name;
+
+		if (_isWrittenToLogger()) {
+			LoggerUtil.setName(this);
+		}
 	}
 
 	public void setText(String text) {
 		_text = text;
 
-		if (_writtenToLogger) {
+		if (_isWrittenToLogger()) {
 			LoggerUtil.setText(this);
 		}
-	}
-
-	public void setWrittenToLogger(boolean writtenToLogger) {
-		_writtenToLogger = writtenToLogger;
 	}
 
 	@Override
@@ -142,11 +174,30 @@ public class LoggerElement {
 		return sb.toString();
 	}
 
+	public void writeChildLoggerElements() {
+		if (_isWrittenToLogger()) {
+			for (LoggerElement childLoggerElement : _childLoggerElements) {
+				LoggerUtil.addChildLoggerElement(this, childLoggerElement);
+
+				childLoggerElement.writeChildLoggerElements();
+			}
+		}
+	}
+
+	private boolean _isWrittenToLogger() {
+		if (LoggerUtil.isWrittenToLogger(this)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private static final Set<String> _usedIds = new HashSet<>();
+
 	private final List<LoggerElement> _childLoggerElements = new ArrayList<>();
 	private String _className = "";
 	private String _id;
 	private String _name = "div";
 	private String _text = "";
-	private boolean _writtenToLogger = false;
 
 }

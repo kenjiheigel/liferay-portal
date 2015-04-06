@@ -15,6 +15,7 @@
 package com.liferay.gradle.plugins.util;
 
 /**
+ * @author Brian Wing Shun Chan
  * @author Andrea Di Giorgi
  */
 public class Validator {

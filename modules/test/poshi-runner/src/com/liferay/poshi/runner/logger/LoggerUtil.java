@@ -74,12 +74,80 @@ public final class LoggerUtil {
 		_javascriptExecutor.executeScript(sb.toString());
 	}
 
+	public static String getClassName(LoggerElement loggerElement) {
+		if (!isLoggerStarted()) {
+			return null;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("var node = document.getElementById('");
+		sb.append(loggerElement.getID());
+		sb.append("');");
+
+		sb.append("return node.getAttribute('class');");
+
+		return (String)_javascriptExecutor.executeScript(sb.toString());
+	}
+
+	public static String getName(LoggerElement loggerElement) {
+		if (!isLoggerStarted()) {
+			return null;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("var node = document.getElementById('");
+		sb.append(loggerElement.getID());
+		sb.append("');");
+
+		sb.append("return node.nodeName;");
+
+		return (String)_javascriptExecutor.executeScript(sb.toString());
+	}
+
+	public static String getText(LoggerElement loggerElement) {
+		if (!isLoggerStarted()) {
+			return null;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("var node = document.getElementById('");
+		sb.append(loggerElement.getID());
+		sb.append("');");
+
+		sb.append("return node.innerHTML;");
+
+		return (String)_javascriptExecutor.executeScript(sb.toString());
+	}
+
 	public static boolean isLoggerStarted() {
 		if (_webDriver != null) {
 			return true;
 		}
 
 		return false;
+	}
+
+	public static boolean isWrittenToLogger(LoggerElement loggerElement) {
+		if (!isLoggerStarted()) {
+			return false;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("var node = document.getElementById('");
+		sb.append(loggerElement.getID());
+		sb.append("');");
+
+		sb.append("if (node == null) {");
+		sb.append("return false;");
+		sb.append("}");
+
+		sb.append("return true;");
+
+		return (boolean)_javascriptExecutor.executeScript(sb.toString());
 	}
 
 	public static void setClassName(LoggerElement loggerElement) {
@@ -115,6 +183,36 @@ public final class LoggerUtil {
 		sb.append("node.setAttribute('id', '");
 		sb.append(StringEscapeUtils.escapeEcmaScript(loggerElement.getID()));
 		sb.append("');");
+
+		_javascriptExecutor.executeScript(sb.toString());
+	}
+
+	public static void setName(LoggerElement loggerElement) {
+		if (!isLoggerStarted()) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("var oldNode = document.getElementById('");
+		sb.append(loggerElement.getID());
+		sb.append("');");
+
+		sb.append("var newNode = document.createElement('");
+		sb.append(StringEscapeUtils.escapeEcmaScript(loggerElement.getName()));
+		sb.append("');");
+
+		sb.append("newNode.innerHTML = oldNode.innerHTML;");
+		sb.append(
+			"newNode.setAttribute('class', oldNode.getAttribute('class'));");
+		sb.append("newNode.setAttribute('id', oldNode.getAttribute('id'));");
+
+		sb.append(
+			"oldNode.parentNode.insertBefore(newNode, oldNode.nextSibling);");
+
+		sb.append("var parentNode = oldNode.parentNode;");
+
+		sb.append("parentNode.removeChild(oldNode);");
 
 		_javascriptExecutor.executeScript(sb.toString());
 	}

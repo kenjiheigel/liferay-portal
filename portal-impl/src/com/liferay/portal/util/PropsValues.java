@@ -88,6 +88,8 @@ public class PropsValues {
 
 	public static final String[] APPLICATION_STARTUP_EVENTS = PropsUtil.getArray(PropsKeys.APPLICATION_STARTUP_EVENTS);
 
+	public static final boolean ASSET_BROWSER_SEARCH_WITH_DATABASE = GetterUtil.getBoolean(PropsUtil.get(PropsKeys.ASSET_BROWSER_SEARCH_WITH_DATABASE));
+
 	public static final String[] ASSET_CATEGORIES_PROPERTIES_DEFAULT = PropsUtil.getArray(PropsKeys.ASSET_CATEGORIES_PROPERTIES_DEFAULT);
 
 	public static final boolean ASSET_CATEGORIES_SEARCH_HIERARCHICAL = GetterUtil.getBoolean(PropsUtil.get(PropsKeys.ASSET_CATEGORIES_SEARCH_HIERARCHICAL));
@@ -99,8 +101,6 @@ public class PropsValues {
 	public static final String ASSET_ENTRY_VALIDATOR = PropsUtil.get(PropsKeys.ASSET_ENTRY_VALIDATOR);
 
 	public static final int ASSET_FILTER_SEARCH_LIMIT = GetterUtil.getInteger(PropsUtil.get(PropsKeys.ASSET_FILTER_SEARCH_LIMIT));
-
-	public static final boolean ASSET_BROWSER_SEARCH_WITH_DATABASE = GetterUtil.getBoolean(PropsUtil.get(PropsKeys.ASSET_BROWSER_SEARCH_WITH_DATABASE));
 
 	public static final boolean ASSET_TAG_SUGGESTIONS_ENABLED = GetterUtil.getBoolean(PropsUtil.get(PropsKeys.ASSET_TAG_SUGGESTIONS_ENABLED));
 
@@ -1685,6 +1685,8 @@ public class PropsValues {
 	public static boolean SPRING_HIBERNATE_SESSION_DELEGATED = GetterUtil.getBoolean(PropsUtil.get(PropsKeys.SPRING_HIBERNATE_SESSION_DELEGATED));
 
 	public static final String[] SPRING_HIBERNATE_SESSION_FACTORY_PRELOAD_CLASSLOADER_CLASSES = PropsUtil.getArray(PropsKeys.SPRING_HIBERNATE_SESSION_FACTORY_PRELOAD_CLASSLOADER_CLASSES);
+
+	public static final String[] SPRING_INFRASTRUCTURE_CONFIGS = PropsUtil.getArray(PropsKeys.SPRING_INFRASTRUCTURE_CONFIGS);
 
 	public static final String[] SPRING_PORTLET_CONFIGS = PropsUtil.getArray(PropsKeys.SPRING_PORTLET_CONFIGS);
 
