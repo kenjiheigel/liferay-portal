@@ -88,10 +88,8 @@ import org.gradle.api.artifacts.ResolvedArtifact;
 import org.gradle.api.artifacts.ResolvedConfiguration;
 import org.gradle.api.artifacts.ResolvedModuleVersion;
 import org.gradle.api.artifacts.dsl.ArtifactHandler;
-import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import org.gradle.api.artifacts.maven.Conf2ScopeMapping;
 import org.gradle.api.artifacts.maven.Conf2ScopeMappingContainer;
-import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.execution.TaskExecutionGraph;
 import org.gradle.api.file.CopySpec;
 import org.gradle.api.file.DuplicatesStrategy;
@@ -110,6 +108,7 @@ import org.gradle.api.plugins.MavenPluginConvention;
 import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.Copy;
+import org.gradle.api.tasks.Delete;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetOutput;
 import org.gradle.api.tasks.StopExecutionException;
@@ -172,7 +171,6 @@ public class LiferayJavaPlugin implements Plugin<Project> {
 		configureConfigurations(project);
 		configureDependencies(project);
 		configureProperties(project);
-		configureRepositories(project);
 		configureSourceSets(project);
 
 		addConfigurations(project);
@@ -204,6 +202,20 @@ public class LiferayJavaPlugin implements Plugin<Project> {
 				}
 
 			});
+	}
+
+	protected File addCleanDeployedFile(Project project, File sourceFile) {
+		Delete delete = (Delete)GradleUtil.getTask(
+			project, BasePlugin.CLEAN_TASK_NAME);
+
+		Copy copy = (Copy)GradleUtil.getTask(project, DEPLOY_TASK_NAME);
+
+		File deployedFile = new File(
+			copy.getDestinationDir(), getDeployedFileName(project, sourceFile));
+
+		delete.delete(deployedFile);
+
+		return deployedFile;
 	}
 
 	protected Configuration addConfigurationPortalWeb(final Project project) {
@@ -301,11 +313,6 @@ public class LiferayJavaPlugin implements Plugin<Project> {
 		copy.setDescription("Assembles the project and deploys it to Liferay.");
 
 		GradleUtil.setProperty(copy, AUTO_CLEAN_PROPERTY_NAME, false);
-
-		Jar jar = (Jar)GradleUtil.getTask(
-			copy.getProject(), JavaPlugin.JAR_TASK_NAME);
-
-		copy.from(jar);
 
 		return copy;
 	}
@@ -1038,22 +1045,6 @@ public class LiferayJavaPlugin implements Plugin<Project> {
 		configureTestResultsDir(project);
 	}
 
-	protected void configureRepositories(Project project) {
-		RepositoryHandler repositoryHandler = project.getRepositories();
-
-		repositoryHandler.maven(
-			new Action<MavenArtifactRepository>() {
-
-				@Override
-				public void execute(
-					MavenArtifactRepository mavenArtifactRepository) {
-
-					mavenArtifactRepository.setUrl(_REPOSITORY_URL);
-				}
-
-			});
-	}
-
 	protected void configureSourceSet(
 		Project project, String name, File classesDir, File srcDir) {
 
@@ -1474,6 +1465,18 @@ public class LiferayJavaPlugin implements Plugin<Project> {
 		Copy copy = (Copy)GradleUtil.getTask(project, DEPLOY_TASK_NAME);
 
 		configureTaskDeployInto(copy, liferayExtension);
+
+		configureTaskDeployFrom(copy);
+	}
+
+	protected void configureTaskDeployFrom(Copy copy) {
+		Project project = copy.getProject();
+
+		Jar jar = (Jar)GradleUtil.getTask(project, JavaPlugin.JAR_TASK_NAME);
+
+		copy.from(jar);
+
+		addCleanDeployedFile(project, jar.getArchivePath());
 	}
 
 	protected void configureTaskDeployInto(
@@ -1910,6 +1913,10 @@ public class LiferayJavaPlugin implements Plugin<Project> {
 			liferayExtension.getVersionPrefix() + "." + project.getVersion());
 	}
 
+	protected String getDeployedFileName(Project project, File sourceFile) {
+		return sourceFile.getName();
+	}
+
 	protected File getJavaDir(Project project) {
 		SourceSet sourceSet = GradleUtil.getSourceSet(
 			project, SourceSet.MAIN_SOURCE_SET_NAME);
@@ -2098,11 +2105,8 @@ public class LiferayJavaPlugin implements Plugin<Project> {
 		"org.powermock:powermock-module-junit4:1.6.1",
 		"org.powermock:powermock-module-junit4-common:1.6.1",
 		"org.powermock:powermock-reflect:1.6.1",
-		"org.springframework:spring-test:3.0.7.RELEASE"
+		"org.springframework:spring-test:3.2.10.RELEASE"
 	};
-
-	private static final String _REPOSITORY_URL =
-		"http://cdn.repository.liferay.com/nexus/content/groups/public";
 
 	private static final String _SKIP_MANAGED_APP_SERVER_FILE_NAME =
 		"skip.managed.app.server";

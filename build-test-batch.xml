@@ -53,19 +53,9 @@
 		<sequential>
 			<database-test-action database.type="@{database.type}">
 				<action>
-					<if>
-						<equals arg1="@{database.type}" arg2="db2" />
-						<then>
-							<exec dir="/opt/ibm/db2/V10.5/bin" executable="${database.service.executable}" failonerror="true">
-								<arg line="${database.service.cmd.stop}" />
-							</exec>
-						</then>
-						<else>
-							<exec executable="${database.service.executable}" failonerror="true">
-								<arg line="${database.service.cmd.stop}" />
-							</exec>
-						</else>
-					</if>
+					<exec executable="${database.service.executable}">
+						<arg line="${database.service.cmd.stop}" />
+					</exec>
 				</action>
 			</database-test-action>
 
@@ -77,19 +67,9 @@
 
 					<set-portal-impl-system-ext-properties />
 
-					<if>
-						<equals arg1="@{database.type}" arg2="db2" />
-						<then>
-							<exec dir="/opt/ibm/db2/V10.5/bin" executable="${database.service.executable}" failonerror="true">
-								<arg line="${database.service.cmd.start}" />
-							</exec>
-						</then>
-						<else>
-							<exec executable="${database.service.executable}" failonerror="true">
-								<arg line="${database.service.cmd.start}" />
-							</exec>
-						</else>
-					</if>
+					<exec executable="${database.service.executable}" failonerror="true">
+						<arg line="${database.service.cmd.start}" />
+					</exec>
 
 					<antcall target="copy-optional-jars" inheritall="false" >
 						<param name="database.type" value="@{database.type}" />
@@ -107,19 +87,9 @@
 
 					<test-action />
 
-					<if>
-						<equals arg1="@{database.type}" arg2="db2" />
-						<then>
-							<exec dir="/opt/ibm/db2/V10.5/bin" executable="${database.service.executable}" failonerror="true">
-								<arg line="${database.service.cmd.stop}" />
-							</exec>
-						</then>
-						<else>
-							<exec executable="${database.service.executable}" failonerror="true">
-								<arg line="${database.service.cmd.stop}" />
-							</exec>
-						</else>
-					</if>
+					<exec executable="${database.service.executable}" failonerror="true">
+						<arg line="${database.service.cmd.stop}" />
+					</exec>
 				</action>
 			</database-test-action>
 		</sequential>
@@ -145,6 +115,17 @@
 			<antcall target="prepare-test-build">
 				<param name="test.class.groups.size" value="${test.batch.size}" />
 			</antcall>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="print-test-class-group">
+		<attribute name="test.class.group.index" />
+		<sequential>
+			<property file="${project.dir}/test.class.file.names.properties" />
+
+			<propertycopy from="TEST_CLASS_GROUP_@{test.class.group.index}" name="test.class.group" />
+
+			<echo>TEST_CLASS_GROUP_@{test.class.group.index}=${test.class.group}</echo>
 		</sequential>
 	</macrodef>
 
@@ -206,6 +187,8 @@
 				<test-action>
 					<database-test-run-test database.type="@{database.type}">
 						<test-action>
+							<print-test-class-group test.class.group.index="@{test.class.group.index}" />
+
 							<ant dir="portal-impl" target="test-class-group" inheritAll="false">
 								<property name="database.type" value="@{database.type}" />
 								<property name="test.class.group.index" value="@{test.class.group.index}" />
@@ -225,6 +208,8 @@
 				<test-action>
 					<database-test-run-test database.type="@{database.type}">
 						<test-action>
+							<print-test-class-group test.class.group.index="@{test.class.group.index}" />
+
 							<antcall target="prepare-portal-ext-properties" inheritAll="false">
 								<param name="database.type" value="@{database.type}" />
 							</antcall>

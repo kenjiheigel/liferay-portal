@@ -40,7 +40,6 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CharPool;
-import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -58,7 +57,6 @@ import com.liferay.portal.kernel.util.TreeModelTasksAdapter;
 import com.liferay.portal.kernel.util.TreePathUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowHandler;
 import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 import com.liferay.portal.model.Account;
@@ -3629,19 +3627,17 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 			PortletDataHandlerKeys.PORTLET_DATA_CONTROL_DEFAULT,
 			new String[] {Boolean.TRUE.toString()});
 
-		Map<String, Serializable> settingsMap =
-			ExportImportConfigurationSettingsMapFactory.buildImportSettingsMap(
-				defaultUser.getUserId(), group.getGroupId(), false, null,
-				parameterMap, Constants.IMPORT, defaultUser.getLocale(),
-				defaultUser.getTimeZone(), larFile.getName());
+		Map<String, Serializable> importLayoutSettingsMap =
+			ExportImportConfigurationSettingsMapFactory.
+				buildImportLayoutSettingsMap(
+					defaultUser, group.getGroupId(), false, null, parameterMap);
 
 		ExportImportConfiguration exportImportConfiguration =
-			exportImportConfigurationLocalService.addExportImportConfiguration(
-				defaultUser.getUserId(), group.getGroupId(), StringPool.BLANK,
-				StringPool.BLANK,
-				ExportImportConfigurationConstants.TYPE_IMPORT_LAYOUT,
-				settingsMap, WorkflowConstants.STATUS_DRAFT,
-				new ServiceContext());
+			exportImportConfigurationLocalService.
+				addDraftExportImportConfiguration(
+					defaultUser.getUserId(),
+					ExportImportConfigurationConstants.TYPE_IMPORT_LAYOUT,
+					importLayoutSettingsMap);
 
 		exportImportLocalService.importLayouts(
 			exportImportConfiguration, larFile);
