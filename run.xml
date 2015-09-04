@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+
+<project name="portal-test-run" basedir="." default="run" xmlns:antelope="antlib:ise.antelope.tasks">
+	<property name="app.server.type" value="tomcat" />
+	<import file="build-test.xml" />
+
+	<taskdef classname="com.oopsconsultancy.xmltask.ant.XmlTask" classpath="lib/development/xmltask.jar" name="xmltask" />
+
+	<target name="java">
+	<script classpathref="project.classpath" language="beanshell">
+		<![CDATA[
+			import java.io.File;
+
+			String string1 = "/opt/github/liferay-portal/master/";
+			String string2 ="../../liferay-portal-ee";
+
+			File file1 = new File(string1 + string2);
+
+			System.out.println(file1.getCanonicalPath());
+		]]>
+	</script>
+	</target>
+
+	<target name="bundle" depends="revert-test-properties">
+		<fail unless="test.class" message="Please set the property ${test.class}." />
+
+		<if>
+			<equals arg1="${bs}" arg2="true" />
+			<then>
+				<ant dir="portal-web" target="build-selenium" />
+			</then>
+		</if>
+
+		<ant antfile="build-test-${app.server.type}.xml" target="run-selenium-${app.server.type}" />
+	</target>
+
+	<target name="run" depends="revert-test-properties,prepare-selenium">
+		<fail unless="test.class" message="Please set the property ${test.class}." />
+
+		<if>
+			<equals arg1="${bs}" arg2="true" />
+			<then>
+				<ant dir="portal-web" target="build-selenium" />
+			</then>
+		</if>
+
+		<ant dir="portal-web" target="build-selenium-test-case" />
+
+		<antcall target="run-cmd" inheritAll="false" />
+	</target>
+
+	<target name="run-cmd" depends="revert-test-properties">
+		<fail unless="test.class" message="Please set the property ${test.class}." />
+
+		<antcall target="prepare-portal-properties" />
+
+		<antcall target="prepare-portal-ext-properties" />
+
+		<antcall target="copy-sikuli-temp-files" />
+
+		<if>
+			<equals arg1="${mobile.device.enabled}" arg2="true" />
+			<then>
+<!-- 				<start-android-device /> -->
+
+				<start-appium />
+			</then>
+		</if>
+
+		<antcall target="prepare-selenium" />
+
+		<antcall target="start-selenium" />
+
+		<antcall target="run-selenium-test" />
+
+		<antcall target="stop-selenium" />
+
+		<if>
+			<equals arg1="${mobile.device.enabled}" arg2="true" />
+			<then>
+				<stop-android-device />
+
+				<stop-appium />
+			</then>
+		</if>
+	</target>
+
+	<target name="prepare-mobile-test">
+		<start-android-device />
+	</target>
+
+	<target name="stop-mobile-test">
+		<stop-android-device />
+
+		<stop-appium />
+	</target>
+
+	<target name="tomcat">
+		<antcall target="bundle">
+			<param name="app.server.type" value="tomcat" />
+		</antcall>
+	</target>
+
+	<target name="glassfish">
+		<antcall target="bundle">
+			<param name="app.server.type" value="glassfish" />
+		</antcall>
+	</target>
+
+	<target name="jboss">
+		<antcall target="bundle">
+			<param name="app.server.type" value="jboss" />
+		</antcall>
+	</target>
+
+	<target name="jboss-eap-6.0">
+		<antcall target="bundle">
+			<param name="app.server.type" value="jboss-eap-6.0" />
+		</antcall>
+	</target>
+
+	<target name="jboss-eap-6.1">
+		<antcall target="bundle">
+			<param name="app.server.type" value="jboss-eap-6.0" />
+		</antcall>
+	</target>
+
+	<target name="smoke">
+		<delete dir="portal-web\test-classes" />
+
+		<antcall target="compile-test" inheritAll="false" />
+	</target>
+</project>
