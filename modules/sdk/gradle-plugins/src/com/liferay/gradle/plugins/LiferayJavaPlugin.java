@@ -32,6 +32,7 @@ import com.liferay.gradle.plugins.patcher.PatchTask;
 import com.liferay.gradle.plugins.service.builder.BuildServiceTask;
 import com.liferay.gradle.plugins.service.builder.ServiceBuilderPlugin;
 import com.liferay.gradle.plugins.source.formatter.SourceFormatterPlugin;
+import com.liferay.gradle.plugins.soy.SoyPlugin;
 import com.liferay.gradle.plugins.tasks.AppServerTask;
 import com.liferay.gradle.plugins.tasks.DirectDeployTask;
 import com.liferay.gradle.plugins.tasks.InitGradleTask;
@@ -291,6 +292,10 @@ public class LiferayJavaPlugin implements Plugin<Project> {
 		Copy copy = GradleUtil.addTask(project, DEPLOY_TASK_NAME, Copy.class);
 
 		copy.setDescription("Assembles the project and deploys it to Liferay.");
+
+		Jar jar = (Jar)GradleUtil.getTask(project, JavaPlugin.JAR_TASK_NAME);
+
+		copy.from(jar);
 
 		GradleUtil.setProperty(copy, AUTO_CLEAN_PROPERTY_NAME, false);
 
@@ -883,6 +888,7 @@ public class LiferayJavaPlugin implements Plugin<Project> {
 		GradleUtil.applyPlugin(project, LangBuilderPlugin.class);
 		GradleUtil.applyPlugin(project, ServiceBuilderPlugin.class);
 		GradleUtil.applyPlugin(project, SourceFormatterPlugin.class);
+		GradleUtil.applyPlugin(project, SoyPlugin.class);
 		GradleUtil.applyPlugin(project, TLDFormatterPlugin.class);
 		GradleUtil.applyPlugin(project, UpgradeTableBuilderPlugin.class);
 		GradleUtil.applyPlugin(project, WSDDBuilderPlugin.class);
@@ -900,10 +906,20 @@ public class LiferayJavaPlugin implements Plugin<Project> {
 
 		artifactHandler.add(Dependency.ARCHIVES_CONFIGURATION, jarSourcesTask);
 
-		Task zipJavadocTask = GradleUtil.getTask(
-			project, ZIP_JAVADOC_TASK_NAME);
+		Map<String, Object> args = new HashMap<>();
 
-		artifactHandler.add(Dependency.ARCHIVES_CONFIGURATION, zipJavadocTask);
+		args.put("dir", project.getProjectDir());
+		args.put("include", "**/*.java");
+
+		FileTree javaFileTree = project.fileTree(args);
+
+		if (!javaFileTree.isEmpty()) {
+			Task zipJavadocTask = GradleUtil.getTask(
+				project, ZIP_JAVADOC_TASK_NAME);
+
+			artifactHandler.add(
+				Dependency.ARCHIVES_CONFIGURATION, zipJavadocTask);
+		}
 	}
 
 	protected void configureConf2ScopeMappings(Project project) {
@@ -1485,13 +1501,6 @@ public class LiferayJavaPlugin implements Plugin<Project> {
 
 			cleanTask.dependsOn(taskName);
 		}
-
-		Configuration compileConfiguration = GradleUtil.getConfiguration(
-			project, JavaPlugin.COMPILE_CONFIGURATION_NAME);
-
-		cleanTask.dependsOn(
-			compileConfiguration.getTaskDependencyFromProjectDependency(
-				true, BasePlugin.CLEAN_TASK_NAME));
 	}
 
 	protected void configureTaskConfigJSModules(Project project) {
@@ -1500,19 +1509,26 @@ public class LiferayJavaPlugin implements Plugin<Project> {
 				project,
 				JSModuleConfigGeneratorPlugin.CONFIG_JS_MODULES_TASK_NAME);
 
+		configureTaskConfigJSModulesConfigVariable(configJSModulesTask);
 		configureTaskConfigJSModulesDependsOn(configJSModulesTask);
 		configureTaskConfigJSModulesIgnorePath(configJSModulesTask);
 		configureTaskConfigJSModulesIncludes(configJSModulesTask);
+		configureTaskConfigJSModulesModuleExtension(configJSModulesTask);
 		configureTaskConfigJSModulesModuleFormat(configJSModulesTask);
+		configureTaskConfigJSModulesMustRunAfter(configJSModulesTask);
 		configureTaskConfigJSModulesSourceDir(configJSModulesTask);
+	}
+
+	protected void configureTaskConfigJSModulesConfigVariable(
+		ConfigJSModulesTask configJSModulesTask) {
+
+		configJSModulesTask.setConfigVariable("");
 	}
 
 	protected void configureTaskConfigJSModulesDependsOn(
 		ConfigJSModulesTask configJSModulesTask) {
 
-		configJSModulesTask.dependsOn(
-			JavaPlugin.PROCESS_RESOURCES_TASK_NAME,
-			JSTranspilerPlugin.TRANSPILE_JS_TASK_NAME);
+		configJSModulesTask.dependsOn(JavaPlugin.PROCESS_RESOURCES_TASK_NAME);
 	}
 
 	protected void configureTaskConfigJSModulesIgnorePath(
@@ -1527,10 +1543,23 @@ public class LiferayJavaPlugin implements Plugin<Project> {
 		configJSModulesTask.setIncludes(Collections.singleton("**/*.es.js"));
 	}
 
+	protected void configureTaskConfigJSModulesModuleExtension(
+		ConfigJSModulesTask configJSModulesTask) {
+
+		configJSModulesTask.setModuleExtension("");
+	}
+
 	protected void configureTaskConfigJSModulesModuleFormat(
 		ConfigJSModulesTask configJSModulesTask) {
 
 		configJSModulesTask.setModuleFormat("/_/g,-");
+	}
+
+	protected void configureTaskConfigJSModulesMustRunAfter(
+		ConfigJSModulesTask configJSModulesTask) {
+
+		configJSModulesTask.mustRunAfter(
+			JSTranspilerPlugin.TRANSPILE_JS_TASK_NAME);
 	}
 
 	protected void configureTaskConfigJSModulesSourceDir(
@@ -1573,8 +1602,6 @@ public class LiferayJavaPlugin implements Plugin<Project> {
 		Project project = copy.getProject();
 
 		Jar jar = (Jar)GradleUtil.getTask(project, JavaPlugin.JAR_TASK_NAME);
-
-		copy.from(jar);
 
 		addCleanDeployedFile(project, jar.getArchivePath());
 	}

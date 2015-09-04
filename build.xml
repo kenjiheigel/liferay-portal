@@ -94,7 +94,6 @@
 				<setup-sdk />
 
 				<gradle-execute dir="${project.dir}/modules" task="clean">
-					<arg value="--parallel" />
 					<arg value="-Dportal.build=true" />
 				</gradle-execute>
 			</sequential>
@@ -893,6 +892,23 @@ print AdminControl.invoke(appManager, 'startApplication', 'liferay-portal')
 				</exec>
 			</then>
 		</if>
+
+		<if>
+			<equals arg1="${app.server.type}" arg2="wildfly" />
+			<then>
+				<if>
+					<not>
+						<available file="${app.server.lib.global.dir}/module.xml" />
+					</not>
+					<then>
+						<copy
+							file="tools/servers/wildfly/modules/module.xml"
+							tofile="${app.server.lib.global.dir}/module.xml"
+						/>
+					</then>
+				</if>
+			</then>
+		</if>
 	</target>
 
 	<target name="update-gradle-cache">
@@ -923,11 +939,7 @@ print AdminControl.invoke(appManager, 'startApplication', 'liferay-portal')
 			<arg value="-Dmaven.local.ignore=true" />
 		</gradle-execute>
 
-		<gradle-execute forcedcacheenabled="false" task="runPoshi">
-			<arg value="--build-file=portal-web/build-test.gradle" />
-			<arg value="--dry-run" />
-			<arg value="-Dmaven.local.ignore=true" />
-		</gradle-execute>
+		<ant dir="portal-web" target="update-gradle-cache" inheritAll="false" />
 	</target>
 
 	<target name="update-plugins-to-svn-revision">

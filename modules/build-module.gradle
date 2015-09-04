@@ -40,6 +40,10 @@ afterEvaluate {
 	if (project.hasProperty("snapshot") && !project.version.endsWith("-SNAPSHOT")) {
 		project.version = project.version + "-SNAPSHOT"
 	}
+
+	javadoc {
+		classpath = sourceSets.main.output + sourceSets.main.compileClasspath
+	}
 }
 
 buildCSS {
@@ -51,6 +55,24 @@ buildCSS {
 buildLang {
 	translateClientId = project.properties["microsoft.translator.client.id"]
 	translateClientSecret = project.properties["microsoft.translator.client.secret"]
+}
+
+buildService {
+	doFirst {
+		if (project.name.endsWith("-service")) {
+			String requiredApiDirName = "../${project.name[0 .. -9]}-api/src"
+
+			if (apiDirName != requiredApiDirName) {
+				throw new GradleException("Please configure the 'buildService' task.")
+			}
+		}
+	}
+}
+
+buildSoy {
+	ext {
+		autoClean = false
+	}
 }
 
 configure([test, testIntegration]) {
@@ -109,7 +131,7 @@ dependencies {
 
 	portal files(appServerClassesPortalDir)
 	portal fileTree(dir: appServerLibPortalDir, include: "*.jar")
-	portal fileTree(dir: liferay.appServerLibGlobalDir, include: "*.jar")
+	portal fileTree(dir: liferay.appServerLibGlobalDir, exclude: "mail.jar", include: "*.jar")
 	portal group: "com.liferay", name: "net.sf.jargs", version: "1.0"
 	portal group: "com.thoughtworks.qdox", name: "qdox", version: "1.12.1"
 	portal group: "javax.activation", name: "activation", version: "1.1"
@@ -127,7 +149,7 @@ dependencies {
 	portalEclipse group: "log4j", name: "log4j", version: "1.2.17"
 
 	portalTest fileTree(dir: new File(moduleFrameworkBaseDir, "test"), include: "portal-test*.jar")
-	serviceBuilder group: "com.liferay", name: "com.liferay.portal.tools.service.builder", version: "default"
+	serviceBuilder fileTree(dir: rootProject.file("../tools/sdk/tmp/portal-tools"), include: "*.jar")
 	sourceFormatter group: "com.liferay", name: "com.liferay.source.formatter", version: "default"
 	tldFormatter group: "com.liferay", name: "com.liferay.tld.formatter", version: "default"
 	upgradeTableBuilder group: "com.liferay", name: "com.liferay.portal.tools.upgrade.table.builder", version: "default"
