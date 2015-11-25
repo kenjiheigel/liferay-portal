@@ -159,7 +159,7 @@ renderResponse.setTitle(((category == null) ? LanguageUtil.get(request, "add-new
 <aui:script use="liferay-auto-fields">
 	var autoFields = new Liferay.AutoFields(
 		{
-			contentBox: 'fieldset#<portlet:namespace />categoryPropertiesId',
+			contentBox: '#<portlet:namespace />categoryPropertiesId',
 			fieldIndexes: '<portlet:namespace />categoryPropertiesIndexes',
 			namespace: '<portlet:namespace />'
 		}
