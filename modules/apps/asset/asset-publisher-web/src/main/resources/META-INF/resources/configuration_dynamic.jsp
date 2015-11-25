@@ -344,7 +344,7 @@ String selectStyle = (String)request.getAttribute("configuration.jsp-selectStyle
 				<aui:script use="liferay-auto-fields">
 					var autoFields = new Liferay.AutoFields(
 						{
-							contentBox: '#<portlet:namespace />queryRules > fieldset',
+							contentBox: '#<portlet:namespace />queryRules > .fieldset',
 							fieldIndexes: '<portlet:namespace />queryLogicIndexes',
 							namespace: '<portlet:namespace />',
 							url: '<liferay-portlet:renderURL portletName="<%= AssetPublisherPortletKeys.ASSET_PUBLISHER %>" windowState="<%= LiferayWindowState.EXCLUSIVE.toString() %>"><portlet:param name="mvcPath" value="/edit_query_rule.jsp" /><portlet:param name="categorizableGroupIds" value="<%= StringUtil.merge(assetPublisherDisplayContext.getReferencedModelsGroupIds()) %>" /></liferay-portlet:renderURL>'
