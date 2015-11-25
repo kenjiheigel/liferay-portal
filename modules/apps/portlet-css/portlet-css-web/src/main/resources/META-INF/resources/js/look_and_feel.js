@@ -29,7 +29,7 @@ AUI.add(
 
 		var ERROR = 'error';
 
-		var FIELDSET = 'fieldset';
+		var FIELDSET = '.fieldset';
 
 		var FIRST_CHILD = 'firstChild';
 

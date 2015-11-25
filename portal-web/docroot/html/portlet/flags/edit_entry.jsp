@@ -25,7 +25,7 @@ long reportedUserId = ParamUtil.getLong(request, "reportedUserId");
 %>
 
 <style type="text/css">
-	.portlet-flags .form fieldset {
+	.portlet-flags .form .fieldset {
 		border-width: 0;
 		padding: 0;
 		width: 100%;

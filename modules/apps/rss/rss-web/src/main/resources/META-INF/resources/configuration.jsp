@@ -152,7 +152,7 @@
 <aui:script use="aui-base,liferay-auto-fields">
 	new Liferay.AutoFields(
 		{
-			contentBox: 'fieldset.subscriptions',
+			contentBox: '.fieldset.subscriptions',
 			fieldIndexes: '<portlet:namespace />subscriptionIndexes',
 			namespace: '<portlet:namespace />',
 			sortable: true,

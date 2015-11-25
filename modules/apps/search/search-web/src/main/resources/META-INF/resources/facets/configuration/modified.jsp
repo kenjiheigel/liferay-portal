@@ -53,7 +53,7 @@ JSONArray rangesJSONArray = dataJSONObject.getJSONArray("ranges");
 <aui:script use="liferay-auto-fields">
 	var autoFields = new Liferay.AutoFields(
 		{
-			contentBox: 'fieldset#<portlet:namespace />rangesId',
+			contentBox: '#<portlet:namespace />rangesId',
 			fieldIndexes: '<portlet:namespace /><%= searchFacet.getClassName() %>rangesIndexes',
 			namespace: '<portlet:namespace />'
 		}
