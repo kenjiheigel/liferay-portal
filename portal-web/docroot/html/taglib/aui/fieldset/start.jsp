@@ -30,7 +30,7 @@
 			<c:when test="<%= collapsible %>">
 				<div class="fieldset-legend legend panel-heading" id="<%= labelId %>">
 					<div class="panel-title">
-						<a aria-controls="collapseOne" aria-expanded="<%= !collapsed %>" class="<%= !collapsed ? "collapsed" : StringPool.BLANK %>" data-toggle="collapse" href="#<%= panelId %>" role="button">
+						<a aria-expanded="<%= !collapsed %>" class="<%= !collapsed ? "collapsed" : StringPool.BLANK %>" data-toggle="collapse" href="#<%= panelId %>" role="button">
 							<%= header %>
 						</a>
 					</div>
