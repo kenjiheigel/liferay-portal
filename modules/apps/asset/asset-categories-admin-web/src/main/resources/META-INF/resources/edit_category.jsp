@@ -165,7 +165,7 @@ renderResponse.setTitle(((category == null) ? LanguageUtil.get(request, "add-new
 		}
 	).render();
 
-	var categoryPropertiesTrigger = A.one('fieldset#<portlet:namespace />categoryPropertiesId');
+	var categoryPropertiesTrigger = A.one('#<portlet:namespace />categoryPropertiesId');
 
 	if (categoryPropertiesTrigger) {
 		categoryPropertiesTrigger.setData('autoFieldsInstance', autoFields);
