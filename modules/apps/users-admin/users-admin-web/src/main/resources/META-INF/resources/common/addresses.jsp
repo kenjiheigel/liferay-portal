@@ -130,7 +130,7 @@ else {
 		function() {
 			var addresses = new Liferay.AutoFields(
 				{
-					contentBox: '#<portlet:namespace />addresses > fieldset',
+					contentBox: '#<portlet:namespace />addresses > .fieldset',
 					fieldIndexes: '<portlet:namespace />addressesIndexes',
 					namespace: '<portlet:namespace />',
 					on: {

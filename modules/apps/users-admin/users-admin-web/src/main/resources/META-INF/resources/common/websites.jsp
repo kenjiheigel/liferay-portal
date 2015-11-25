@@ -107,7 +107,7 @@ else {
 		function() {
 			new Liferay.AutoFields(
 				{
-					contentBox: '#<portlet:namespace />websites > fieldset',
+					contentBox: '#<portlet:namespace />websites > .fieldset',
 					fieldIndexes: '<portlet:namespace />websitesIndexes',
 					namespace: '<portlet:namespace />'
 				}

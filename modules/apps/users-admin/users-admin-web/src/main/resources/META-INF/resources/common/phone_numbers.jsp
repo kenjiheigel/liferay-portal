@@ -111,7 +111,7 @@ else {
 		function() {
 			new Liferay.AutoFields(
 				{
-					contentBox: '#<portlet:namespace />phoneNumbers > fieldset',
+					contentBox: '#<portlet:namespace />phoneNumbers > .fieldset',
 					fieldIndexes: '<portlet:namespace />phonesIndexes',
 					namespace: '<portlet:namespace />'
 				}

@@ -75,7 +75,7 @@ if (displayActivityCounterNameCount == 0) {
 		<aui:script use="liferay-auto-fields">
 			var autoFields = new Liferay.AutoFields(
 				{
-					contentBox: '#<portlet:namespace />displayActivityCounterNames > fieldset',
+					contentBox: '#<portlet:namespace />displayActivityCounterNames > .fieldset',
 					namespace: '<portlet:namespace />',
 					url: '<liferay-portlet:renderURL portletName="<%= SocialUserStatisticsPortletKeys.SOCIAL_USER_STATISTICS %>" windowState="<%= LiferayWindowState.EXCLUSIVE.toString() %>"><liferay-portlet:param name="mvcPath" value="/add_activity_counter.jsp" /><liferay-portlet:param name="index" value="<%= String.valueOf(displayActivityCounterNameCount) %>" /><liferay-portlet:param name="portletResource" value="<%= portletName %>" /></liferay-portlet:renderURL>'
 				}
