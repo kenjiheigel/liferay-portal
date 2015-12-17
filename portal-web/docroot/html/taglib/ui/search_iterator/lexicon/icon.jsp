@@ -129,7 +129,9 @@ for (int i = 0; i < resultRowSplitterEntries.size(); i++) {
 
 <%
 }
+%>
 
+<%
 String rowHtmlTag = "li";
 %>
 
