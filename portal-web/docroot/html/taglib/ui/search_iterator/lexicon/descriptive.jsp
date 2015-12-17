@@ -18,126 +18,100 @@
 
 <%@ include file="/html/taglib/ui/search_iterator/lexicon/top.jspf" %>
 
-<%
-List<ResultRowSplitterEntry> resultRowSplitterEntries = new ArrayList<ResultRowSplitterEntry>();
-
-if (resultRowSplitter != null) {
-	resultRowSplitterEntries = resultRowSplitter.split(searchContainer.getResultRows());
-}
-else {
-	resultRowSplitterEntries.add(new ResultRowSplitterEntry(StringPool.BLANK, resultRows));
-}
-
-for (ResultRowSplitterEntry resultRowSplitterEntry : resultRowSplitterEntries) {
-	List<com.liferay.portal.kernel.dao.search.ResultRow> curResultRows = resultRowSplitterEntry.getResultRows();
-%>
-
-	<c:if test="<%= Validator.isNotNull(resultRowSplitterEntry.getTitle()) %>">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<liferay-ui:message key="<%= resultRowSplitterEntry.getTitle() %>" />
-			</div>
-		</div>
+<ul class="tabular-list-group">
+	<c:if test="<%= (headerNames != null) && Validator.isNotNull(headerNames.get(0)) %>">
+		<li class="list-group-heading"><liferay-ui:message key="<%= headerNames.get(0) %>" /></li>
 	</c:if>
 
-	<ul class="tabular-list-group">
-		<c:if test="<%= (headerNames != null) && Validator.isNotNull(headerNames.get(0)) %>">
-			<li class="list-group-heading"><liferay-ui:message key="<%= headerNames.get(0) %>" /></li>
-		</c:if>
+	<%
+	boolean allRowsIsChecked = true;
 
-		<%
-		boolean allRowsIsChecked = true;
+	for (int i = 0; i < resultRows.size(); i++) {
+		com.liferay.portal.kernel.dao.search.ResultRow row = (com.liferay.portal.kernel.dao.search.ResultRow)resultRows.get(i);
 
-		for (int i = 0; i < curResultRows.size(); i++) {
-			com.liferay.portal.kernel.dao.search.ResultRow row = (com.liferay.portal.kernel.dao.search.ResultRow)curResultRows.get(i);
+		primaryKeysJSONArray.put(row.getPrimaryKey());
 
-			primaryKeysJSONArray.put(row.getPrimaryKey());
+		request.setAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW, row);
 
-			request.setAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW, row);
+		List entries = row.getEntries();
 
-			List entries = row.getEntries();
+		boolean rowIsChecked = false;
+		boolean rowIsDisabled = false;
 
-			boolean rowIsChecked = false;
-			boolean rowIsDisabled = false;
+		if (rowChecker != null) {
+			rowIsChecked = rowChecker.isChecked(row.getObject());
+			rowIsDisabled = rowChecker.isDisabled(row.getObject());
 
-			if (rowChecker != null) {
-				rowIsChecked = rowChecker.isChecked(row.getObject());
-				rowIsDisabled = rowChecker.isDisabled(row.getObject());
-
-				if (!rowIsChecked) {
-					allRowsIsChecked = false;
-				}
-
-				String rowSelector = rowChecker.getRowSelector();
-
-				if (Validator.isNull(rowSelector)) {
-					Map<String, Object> rowData = row.getData();
-
-					if (rowData == null) {
-						rowData = new HashMap<String, Object>();
-					}
-
-					rowData.put("selectable", !rowIsDisabled);
-
-					row.setData(rowData);
-				}
+			if (!rowIsChecked) {
+				allRowsIsChecked = false;
 			}
 
-			request.setAttribute("liferay-ui:search-container-row:rowId", id.concat(StringPool.UNDERLINE.concat(row.getRowId())));
+			String rowSelector = rowChecker.getRowSelector();
 
-			Map<String, Object> data = row.getData();
+			if (Validator.isNull(rowSelector)) {
+				Map<String, Object> rowData = row.getData();
 
-			if (data == null) {
-				data = new HashMap<String, Object>();
-			}
-		%>
-
-			<li class="list-group-item <%= GetterUtil.getString(row.getClassName()) %> <%= row.getCssClass() %> <%= rowIsChecked ? "active" : StringPool.BLANK %> <%= Validator.isNotNull(row.getState()) ? "list-group-item-" + row.getState() : StringPool.BLANK %>" data-qa-id="row" <%= AUIUtil.buildData(data) %>>
-				<c:if test="<%= rowChecker != null %>">
-					<div class="checkbox hidden-sm hidden-x list-group-item-field">
-						<label>
-							<%= rowChecker.getRowCheckBox(request, rowIsChecked, rowChecker.isDisabled(row.getObject()), row.getPrimaryKey()) %>
-						</label>
-					</div>
-				</c:if>
-
-				<%
-				for (int j = 0; j < entries.size(); j++) {
-					com.liferay.portal.kernel.dao.search.SearchEntry entry = (com.liferay.portal.kernel.dao.search.SearchEntry)entries.get(j);
-
-					entry.setIndex(j);
-
-					request.setAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW_ENTRY, entry);
-				%>
-
-					<div class="<%= entry.getCssClass() %> <%= entry.getColspan() > 1 ? "list-group-item-content" : "list-group-item-field" %>">
-
-						<%
-						entry.print(pageContext.getOut(), request, response);
-						%>
-
-					</div>
-
-				<%
+				if (rowData == null) {
+					rowData = new HashMap<String, Object>();
 				}
-				%>
 
-			</li>
+				rowData.put("selectable", !rowIsDisabled);
 
-		<%
-			request.removeAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
-			request.removeAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW_ENTRY);
-
-			request.removeAttribute("liferay-ui:search-container-row:rowId");
+				row.setData(rowData);
+			}
 		}
-		%>
 
-		<li class="lfr-template list-group-item"></li>
-	</ul>
+		request.setAttribute("liferay-ui:search-container-row:rowId", id.concat(StringPool.UNDERLINE.concat(row.getRowId())));
 
-<%
-}
-%>
+		Map<String, Object> data = row.getData();
+
+		if (data == null) {
+			data = new HashMap<String, Object>();
+		}
+	%>
+
+		<li class="list-group-item <%= GetterUtil.getString(row.getClassName()) %> <%= row.getCssClass() %> <%= rowIsChecked ? "active" : StringPool.BLANK %> <%= Validator.isNotNull(row.getState()) ? "list-group-item-" + row.getState() : StringPool.BLANK %>" data-qa-id="row" <%= AUIUtil.buildData(data) %>>
+			<c:if test="<%= rowChecker != null %>">
+				<div class="checkbox hidden-sm hidden-x list-group-item-field">
+					<label>
+						<%= rowChecker.getRowCheckBox(request, rowIsChecked, rowChecker.isDisabled(row.getObject()), row.getPrimaryKey()) %>
+					</label>
+				</div>
+			</c:if>
+
+			<%
+			for (int j = 0; j < entries.size(); j++) {
+				com.liferay.portal.kernel.dao.search.SearchEntry entry = (com.liferay.portal.kernel.dao.search.SearchEntry)entries.get(j);
+
+				entry.setIndex(j);
+
+				request.setAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW_ENTRY, entry);
+			%>
+
+				<div class="<%= entry.getCssClass() %> <%= entry.getColspan() > 1 ? "list-group-item-content" : "list-group-item-field" %>">
+
+					<%
+					entry.print(pageContext.getOut(), request, response);
+					%>
+
+				</div>
+
+			<%
+			}
+			%>
+
+		</li>
+
+	<%
+		request.removeAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
+		request.removeAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW_ENTRY);
+
+		request.removeAttribute("liferay-ui:search-container-row:rowId");
+	}
+	%>
+
+	<li class="lfr-template list-group-item"></li>
+</ul>
 
 <%
 String rowHtmlTag = "li";
