@@ -17,7 +17,6 @@ package com.liferay.bookmarks.web.dao.search;
 import com.liferay.bookmarks.model.BookmarksFolder;
 import com.liferay.portal.kernel.dao.search.ResultRow;
 import com.liferay.portal.kernel.dao.search.ResultRowSplitter;
-import com.liferay.portal.kernel.dao.search.ResultRowSplitterEntry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +27,8 @@ import java.util.List;
 public class BookmarksResultRowSplitter implements ResultRowSplitter {
 
 	@Override
-	public List<ResultRowSplitterEntry> split(List<ResultRow> resultRows) {
-		List<ResultRowSplitterEntry> resultRowSplitterEntries =
-			new ArrayList<>();
+	public List<List<ResultRow>> split(List<ResultRow> resultRows) {
+		List<List<ResultRow>> resultRowsList = new ArrayList<>();
 
 		List<ResultRow> entryResultRows = new ArrayList<>();
 		List<ResultRow> folderResultRows = new ArrayList<>();
@@ -47,16 +45,14 @@ public class BookmarksResultRowSplitter implements ResultRowSplitter {
 		}
 
 		if (!folderResultRows.isEmpty()) {
-			resultRowSplitterEntries.add(
-				new ResultRowSplitterEntry("folders", folderResultRows));
+			resultRowsList.add(folderResultRows);
 		}
 
 		if (!entryResultRows.isEmpty()) {
-			resultRowSplitterEntries.add(
-				new ResultRowSplitterEntry("bookmarks", entryResultRows));
+			resultRowsList.add(entryResultRows);
 		}
 
-		return resultRowSplitterEntries;
+		return resultRowsList;
 	}
 
 }

@@ -16,7 +16,6 @@ package com.liferay.item.selector.taglib.dao.search;
 
 import com.liferay.portal.kernel.dao.search.ResultRow;
 import com.liferay.portal.kernel.dao.search.ResultRowSplitter;
-import com.liferay.portal.kernel.dao.search.ResultRowSplitterEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
 
 import java.util.ArrayList;
@@ -28,9 +27,8 @@ import java.util.List;
 public class RepositoryEntryResultRowSplitter implements ResultRowSplitter {
 
 	@Override
-	public List<ResultRowSplitterEntry> split(List<ResultRow> resultRows) {
-		List<ResultRowSplitterEntry> resultRowSplitterEntries =
-			new ArrayList<>();
+	public List<List<ResultRow>> split(List<ResultRow> resultRows) {
+		List<List<ResultRow>> resultRowsList = new ArrayList<>();
 
 		List<ResultRow> fileEntryResultRows = new ArrayList<>();
 		List<ResultRow> folderResultRows = new ArrayList<>();
@@ -47,16 +45,14 @@ public class RepositoryEntryResultRowSplitter implements ResultRowSplitter {
 		}
 
 		if (!folderResultRows.isEmpty()) {
-			resultRowSplitterEntries.add(
-				new ResultRowSplitterEntry("folders", folderResultRows));
+			resultRowsList.add(folderResultRows);
 		}
 
 		if (!fileEntryResultRows.isEmpty()) {
-			resultRowSplitterEntries.add(
-				new ResultRowSplitterEntry("documents", fileEntryResultRows));
+			resultRowsList.add(fileEntryResultRows);
 		}
 
-		return resultRowSplitterEntries;
+		return resultRowsList;
 	}
 
 }
