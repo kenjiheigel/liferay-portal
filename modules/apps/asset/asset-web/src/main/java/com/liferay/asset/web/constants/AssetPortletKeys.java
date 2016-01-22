@@ -1,4 +1,3 @@
-<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -12,17 +11,15 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
---%>
 
-<%@ include file="/html/taglib/init.jsp" %>
+package com.liferay.asset.web.constants;
 
-<%
-String key = (String)request.getAttribute("liferay-ui:error:key");
-String message = (String)request.getAttribute("liferay-ui:error:message");
-%>
+/**
+ * @author Jürgen Kappler
+ */
+public class AssetPortletKeys {
 
-<c:if test="<%= (key != null) && Validator.isNull(message) %>">
-	<c:if test="<%= SessionErrors.contains(portletRequest, key) %>">
-		<div class="alert alert-danger">
-	</c:if>
-</c:if>
+	public static final String ASSET =
+		"com_liferay_asset_web_portlet_AssetPortlet";
+
+}
