@@ -474,6 +474,9 @@ counter.jdbc.prefix=jdbc.counter.]]></echo>
 		<sequential>
 			<fail message="Please set the property ${test.class}." unless="test.class" />
 
+			<echo>get-poshi-test-name test.class = ${test.class}</echo>
+			<echo>get-poshi-test-name poshi.test.name = ${poshi.test.name}</echo>
+
 			<var name="poshi.test.name" unset="true" />
 
 			<if>
@@ -490,6 +493,9 @@ counter.jdbc.prefix=jdbc.counter.]]></echo>
 					<var name="poshi.test.name" value="${poshi.class.name}" />
 				</else>
 			</if>
+
+			<echo>get-poshi-test-name test.class = ${test.class}</echo>
+			<echo>get-poshi-test-name poshi.test.name = ${poshi.test.name}</echo>
 		</sequential>
 	</macrodef>
 
@@ -521,9 +527,9 @@ counter.jdbc.prefix=jdbc.counter.]]></echo>
 				</filterchain>
 			</loadproperties>
 
-			<echo>test.class = ${test.class}</echo>
+			<echo>get-test-class test.class = ${test.class}</echo>
 			<propertycopy from="RUN_TEST_CASE_METHOD_GROUP_${test.class}" name="test.class" override="true" />
-			<echo>test.class = ${test.class}</echo>
+			<echo>get-test-class test.class = ${test.class}</echo>
 		</sequential>
 	</macrodef>
 
@@ -4942,6 +4948,8 @@ module.framework.properties.osgi.console=11312</echo>
 	</target>
 
 	<target name="prepare-poshi-runner-properties">
+		<echo>test.class = ${test.class}</echo>
+
 		<echo append="true" file="${test.ext.properties.file}">
 			component.names=${component.names}
 			ignore.errors.file.name=${project.dir.unix}/portal-web/test-ignorable-error-lines.xml
@@ -5022,6 +5030,9 @@ module.framework.properties.osgi.console=11312</echo>
 			<then>
 				<get-poshi-test-name />
 
+				<echo>test.class = ${test.class}</echo>
+				<echo>poshi.test.name = ${poshi.test.name}</echo>
+
 				<echo append="true" file="${test.ext.properties.file}">
 					test.name=${poshi.test.name}
 				</echo>
@@ -5071,6 +5082,8 @@ module.framework.properties.osgi.console=11312</echo>
 	</target>
 
 	<target name="prepare-selenium">
+		<echo>prepare-selenium test.class = ${test.class}</echo>
+
 		<if>
 			<matches pattern="[0-9]+_[0-9]+" string="${test.class}" />
 			<then>
@@ -5078,14 +5091,20 @@ module.framework.properties.osgi.console=11312</echo>
 			</then>
 		</if>
 
+		<echo>prepare-selenium test.class = ${test.class}</echo>
+
 		<delete file="${test.ext.properties.file}" />
 
 		<get-testcase-property property.name="browser.type" />
 
+		<echo>prepare-selenium test.class = ${test.class}</echo>
+
 		<if>
 			<equals arg1="${test.poshi.runner.enabled}" arg2="true" />
 			<then>
-				<antcall target="prepare-poshi-runner-properties" />
+				<antcall target="prepare-poshi-runner-properties">
+					<param name="test.class" value="${test.class}" />
+				</antcall>
 			</then>
 		</if>
 
