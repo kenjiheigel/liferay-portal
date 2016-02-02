@@ -79,8 +79,8 @@ String treeId = (String)request.getAttribute("liferay-layout:layouts-tree:treeId
 		{
 			after: {
 				'*:expandedChange': function() {
-					if (Liferay.Surface) {
-						Liferay.Surface.clearCache();
+					if (Liferay.SPA) {
+						Liferay.SPA.app.clearScreensCache();
 					}
 				}
 			},
