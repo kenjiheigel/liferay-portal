@@ -167,6 +167,8 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 				'form:registered',
 				function(event) {
 					if (event.formName === '<portlet:namespace />editForm') {
+						initHandler.detach();
+
 						var fieldTypes = <%= ddlFormAdminDisplayContext.getDDMFormFieldTypesJSONArray() %>;
 
 						var fieldModules = _.map(
@@ -207,8 +209,6 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 
 			var clearPortletHandlers = function(event) {
 				if (event.portletId === '<%= portletDisplay.getRootPortletId() %>') {
-					initHandler.detach();
-
 					Liferay.namespace('DDL').destroySettings();
 
 					Liferay.detach('destroyPortlet', clearPortletHandlers);
