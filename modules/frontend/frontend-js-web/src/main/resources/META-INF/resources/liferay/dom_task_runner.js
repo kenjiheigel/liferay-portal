@@ -28,6 +28,8 @@
 			var tasksLength = scheduledTasks.length;
 			var taskStatesLength = taskStates.length;
 
+			node = AUI().one(node);
+
 			for (var i = 0; i < tasksLength; i++) {
 				var task = scheduledTasks[i];
 
