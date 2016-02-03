@@ -64,10 +64,14 @@ class LiferayApp extends App {
 
 		if (!this.isLinkSameOrigin_(link.hostname)) {
 			console.log('Offsite link clicked');
+
+			globals.capturedFormElement = null;
 			return;
 		}
 		if (!this.isSameBasePath_(path)) {
 			console.log('Link clicked outside app\'s base path');
+
+			globals.capturedFormElement = null;
 			return;
 		}
 		if (!this.findRoute(path)) {
