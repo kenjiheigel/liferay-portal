@@ -1,6 +1,6 @@
 'use strict';
 
-import Uri from './Uri.es'
+import Uri from 'metal-uri/src/Uri'
 
 class Utils {
 	static getBasePath() {
