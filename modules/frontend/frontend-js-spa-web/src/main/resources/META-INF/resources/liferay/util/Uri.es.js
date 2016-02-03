@@ -16,7 +16,7 @@ class Uri {
 	 * protocol  user information   hostname  port            search    hash
 	 *                            └──────┬───────┘
 	 *                                  host
-	 *                                  
+	 *
 	 * @param {*=} opt_uri Optional string URI to parse
 	 * @constructor
 	 */
