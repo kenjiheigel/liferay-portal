@@ -13,7 +13,7 @@ import Utils from './util/Utils.es';
 let app = new App();
 
 app.setBasePath(Utils.getBasePath());
-app.setFormSelector('form.senna-enabled');
+app.setFormSelector('form:not([data-navigation]):not([target="_blank"])');
 app.setLinkSelector('a:not(.portlet-icon-back):not([data-navigation]):not([data-resource-href]):not([target="_blank"])');
 
 Utils.getSurfaceIds().forEach(
