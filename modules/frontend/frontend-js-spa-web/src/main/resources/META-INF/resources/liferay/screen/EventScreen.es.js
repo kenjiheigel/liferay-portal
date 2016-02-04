@@ -2,7 +2,6 @@
 
 import dom from 'metal/src/dom/dom'
 import HtmlScreen from 'senna/src/screen/HtmlScreen'
-import Uri from 'metal-uri/src/Uri'
 import Utils from '../util/Utils.es'
 
 class EventScreen extends HtmlScreen {

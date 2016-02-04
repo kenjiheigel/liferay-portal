@@ -18,41 +18,6 @@ class LiferayApp extends App {
 		return dom.match(form, this.getFormSelector());
 	}
 
-	maybeNavigateToLinkElement_(link, event) {
-		var path = link.pathname + link.search + link.hash;
-
-		if (!this.isLinkSameOrigin_(link.hostname)) {
-			console.log('Offsite link clicked');
-
-			globals.capturedFormElement = null;
-			return;
-		}
-		if (!this.isSameBasePath_(path)) {
-			console.log('Link clicked outside app\'s base path');
-
-			globals.capturedFormElement = null;
-			return;
-		}
-		if (!this.findRoute(path)) {
-			console.log('No route for ' + path);
-
-			globals.capturedFormElement = null;
-			return;
-		}
-
-		var navigateFailed = false;
-		try {
-			this.navigate(path);
-		} catch (err) {
-			// Do not prevent link navigation in case some synchronous error occurs
-			navigateFailed = true;
-		}
-
-		if (!navigateFailed) {
-			event.preventDefault();
-		}
-	}
-
 	onBeforeNavigate(event) {
 		event.path = Utils.makePortletURLIsolated(event.path);
 

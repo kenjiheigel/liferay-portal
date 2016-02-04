@@ -29,16 +29,12 @@ class LiferaySurface extends Surface {
 
 			for (var i = 0; i < newResources.length; i++) {
 				newResourceKeys.push(newResources[i].dataset.outputkey);
-
-				console.log('new resources', newResources[i]);
 			}
 
 			Liferay.Data.sharedResources = Liferay.Data.sharedResources.concat([...new Set(newResourceKeys)]);
 
 			Liferay.DOMTaskRunner.runTasks(content);
 		}
-
-		console.log('addContent');
 
 		return super.addContent(screenId, content);
 	}
