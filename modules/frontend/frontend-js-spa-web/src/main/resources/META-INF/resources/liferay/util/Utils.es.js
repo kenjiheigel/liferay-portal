@@ -22,6 +22,8 @@ class Utils {
 	}
 
 	static getPatternFriendlyURL(url) {
+		var uri = new Uri(url);
+
 		if (!themeDisplay.isControlPanel()) {
 			var friendlyURLMaximized = url.indexOf('/maximized') > -1;
 
@@ -32,6 +34,9 @@ class Utils {
 			if (!themeDisplay.isStateMaximized() && friendlyURLMaximized) {
 				return null;
 			}
+		}
+		else if (!uri.getParameterValue('p_p_id')) {
+			return null;
 		}
 
 		return /\/-\//;
