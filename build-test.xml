@@ -588,7 +588,13 @@ counter.jdbc.prefix=jdbc.counter.]]></echo>
 					int x = testClass.indexOf("#");
 
 					if (x != -1) {
-						String testMethodName = testClass.substring(x + 1);
+						int y = testClass.length();
+
+						if (testClass.contains(",")) {
+							y = testClass.indexOf(",");
+						}
+
+						String testMethodName = testClass.substring(x + 1, y);
 
 						if (!testMethodName.startsWith("test")) {
 							testMethodName = "test" + testMethodName;
@@ -701,6 +707,13 @@ counter.jdbc.prefix=jdbc.counter.]]></echo>
 					<property file="${project.dir}/test.generated.properties" />
 
 					<var name="property.name" value="@{property.name}" />
+
+					<if>
+						<matches pattern="[0-9]+_[0-9]+" string="${test.class}" />
+						<then>
+							<get-test-class />
+						</then>
+					</if>
 
 					<get-test-method-name />
 					<get-test-simple-class-name />
