@@ -1,7 +1,8 @@
 'use strict';
 
 import App from 'senna/src/app/App';
-import dom from 'metal/src/dom/dom'
+import dom from 'metal-dom/src/dom'
+import Uri from 'metal-uri/src/Uri'
 import globals from 'senna/src/globals/globals'
 import Utils from '../util/Utils.es';
 
@@ -9,20 +10,27 @@ class LiferayApp extends App {
 	constructor() {
 		super();
 
+		this.blacklist = {};
+
+		this.setFormSelector('form:not([target="_blank"])');
+		this.setLinkSelector('a:not([data-resource-href]):not([target="_blank"])');
+
 		this.on('beforeNavigate', this.onBeforeNavigate);
 		this.on('endNavigate', this.onEndNavigate);
 		this.on('startNavigate', this.onStartNavigate);
+
+		this.addSurfaces(document.body.id);
+
+		dom.append(document.body, '<div class="lfr-surface-loading-bar"></div>');
+	}
+
+	getSelectorBlacklist() {
+		return Object.keys(this.blacklist).map(
+			(portletId) => ':not([id^="' + Utils.getPortletBoundaryId(portletId) + '"] *)'
+		).join('');
 	}
 
 	onBeforeNavigate(event) {
-		event.path = Utils.makePortletURLIsolated(event.path);
-
-		let form = globals.capturedFormElement;
-
-		if (form) {
-			Utils.makeFormRedirectIsolated(form);
-		}
-
 		Liferay.fire(
 			'surfaceBeforeNavigate',
 			{
@@ -33,8 +41,6 @@ class LiferayApp extends App {
 	}
 
 	onEndNavigate(event) {
-		Liferay.DOMTaskRunner.reset();
-
 		Liferay.fire(
 			'surfaceEndNavigate',
 			{
@@ -59,43 +65,12 @@ class LiferayApp extends App {
 		dom.addClasses(document.body, 'lfr-surface-loading');
 	}
 
-	maybeNavigateToLinkElement_(link, event) {
-		var path = link.pathname + link.search + link.hash;
+	setBlacklist(blacklist) {
+		this.blacklist = blacklist;
 
-		if (!this.isLinkSameOrigin_(link.hostname)) {
-			console.log('Offsite link clicked');
+		// let selectorBlacklist = this.getSelectorBlacklist();
 
-			globals.capturedFormElement = null;
-			return;
-		}
-		if (!this.isSameBasePath_(path)) {
-			console.log('Link clicked outside app\'s base path');
-
-			globals.capturedFormElement = null;
-			return;
-		}
-		if (!this.findRoute(path)) {
-			console.log('No route for ' + path);
-
-			globals.capturedFormElement = null;
-			return;
-		}
-
-		var navigateFailed = false;
-		try {
-			this.navigate(path);
-		} catch (err) {
-			// Do not prevent link navigation in case some synchronous error occurs
-			navigateFailed = true;
-		}
-
-		if (!navigateFailed) {
-			event.preventDefault();
-		}
-	}
-
-	isFormAjaxable(form) {
-		return dom.match(form, this.getFormSelector());
+		// this.setLinkSelector(this.getLinkSelector() + selectorBlacklist);
 	}
 }
 

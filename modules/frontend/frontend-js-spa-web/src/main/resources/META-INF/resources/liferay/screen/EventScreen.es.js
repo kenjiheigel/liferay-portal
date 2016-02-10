@@ -1,16 +1,16 @@
 'use strict';
 
-import dom from 'metal/src/dom/dom'
+import dom from 'metal-dom/src/dom'
 import HtmlScreen from 'senna/src/screen/HtmlScreen'
-import Uri from '../util/Uri.es'
-import Utils from '../util/Utils.es'
+import globalEval from 'metal-dom/src/globalEval';
+import { CancellablePromise } from 'metal-promise/src/promise/Promise';
+import Utils from '../util/Utils.es';
 
 class EventScreen extends HtmlScreen {
 	constructor() {
 		super();
 
 		this.cacheable = false;
-		this.dataChannel = {};
 		this.timeout = Liferay.PropsValues.JAVASCRIPT_SINGLE_PAGE_APPLICATION_TIMEOUT;
 	}
 
@@ -48,59 +48,40 @@ class EventScreen extends HtmlScreen {
 				screen: this
 			}
 		);
-
-		this.dataChannel = {};
 	}
 
 	flip(surfaces) {
-		var instance = this;
+		document.documentElement.className = this.virtualDocument.className;
+		document.body.className = this.virtualDocument.querySelector('body').className;
 
-		return super.flip(surfaces).then(
-			function(data) {
+		return super.flip(surfaces)
+			.then(() => {
 				Liferay.fire(
 					'surfaceScreenFlip',
 					{
 						app: Liferay.SPA.app,
-						screen: instance
+						screen: this
 					}
-				);
-
-				return data;
-			}
-		);
-	}
-
-	getApp() {
-		return this.app;
+				)
+			});
 	}
 
 	load(path) {
-		var instance = this;
-
-		return super.load(path).then(
-			function(content) {
-				var frag = dom.buildFragment(content);
-
-				var dataChannel = frag.querySelector('script[type="text/surface-data-channel"]');
-
-				if (dataChannel) {
-					dataChannel.remove();
-
-					instance.dataChannel = JSON.parse(dataChannel.textContent);
-				}
-
+		return super.load(path)
+			.then((content) => {
 				Liferay.fire(
 					'surfaceScreenLoad',
 					{
 						app: Liferay.SPA.app,
 						content: content,
-						screen: instance
+						screen: this
 					}
 				);
 
+				Utils.resetAllPortlets();
+
 				return content;
-			}
-		);
+			});
 	}
 }
 
