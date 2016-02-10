@@ -12,7 +12,7 @@
 	<@liferay_util["include"] page=top_head_include />
 </head>
 
-<body class="${css_class}">
+<body class="${css_class}" id="body">
 
 <@liferay_ui["quick-access"] contentId="#main-content" />
 

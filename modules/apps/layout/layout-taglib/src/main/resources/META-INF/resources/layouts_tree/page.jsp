@@ -77,13 +77,6 @@ String treeId = (String)request.getAttribute("liferay-layout:layouts-tree:treeId
 
 	new TreeViewType(
 		{
-			after: {
-				'*:expandedChange': function() {
-					if (Liferay.SPA) {
-						Liferay.SPA.app.clearScreensCache();
-					}
-				}
-			},
 			boundingBox: '#<portlet:namespace /><%= HtmlUtil.escape(treeId) %>Output',
 			incomplete: <%= incomplete %>,
 

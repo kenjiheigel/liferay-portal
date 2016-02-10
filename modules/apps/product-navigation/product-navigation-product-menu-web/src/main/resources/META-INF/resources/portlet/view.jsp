@@ -49,6 +49,13 @@ String productMenuState = SessionClicks.get(request, ProductNavigationProductMen
 
 	sidenavToggle.sideNavigation();
 
+	Liferay.once(
+		'surfaceScreenLoad',
+		function() {
+			sidenavToggle.data('lexicon.sidenav').destroy();
+		}
+	);
+
 	var sidenavSlider = $('#sidenavSliderId');
 
 	sidenavSlider.on(

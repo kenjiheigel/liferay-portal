@@ -46,7 +46,7 @@ Locale userLocale = user.getLocale();
 		<%= LanguageUtil.format(userLocale, "set-x-as-your-preferred-language", locale.getDisplayName(userLocale)) %>
 	</aui:a>
 
-	<aui:script use="aui-base,liferay-store">
+	<aui:script data-senna-track="temporary" use="aui-base,liferay-store">
 		var ignoreUserLocaleOptionsNode = A.one('#ignoreUserLocaleOptions');
 
 		ignoreUserLocaleOptionsNode.on(
