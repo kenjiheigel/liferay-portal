@@ -24,10 +24,14 @@ define("frontend-js-metal-web@1.0.0/metal-dom/src/globalEvalStyles", ['exports',
 			_classCallCheck(this, globalEvalStyles);
 		}
 
-		globalEvalStyles.run = function run(text) {
+		globalEvalStyles.run = function run(text, opt_appendFn) {
 			var style = document.createElement('style');
 			style.innerHTML = text;
-			document.head.appendChild(style);
+			if (opt_appendFn) {
+				opt_appendFn(style);
+			} else {
+				document.head.appendChild(style);
+			}
 			return style;
 		};
 
