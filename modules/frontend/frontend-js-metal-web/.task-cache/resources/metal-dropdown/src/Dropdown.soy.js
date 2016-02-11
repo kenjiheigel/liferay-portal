@@ -1,4 +1,4 @@
-define("frontend-js-metal-web@1.0.0/metal-dropdown/src/Dropdown.soy", ['exports', 'metal-component/src/all/component', 'metal-soy/src/index'], function (exports, _component, _index) {
+define("frontend-js-metal-web@1.0.0/metal-dropdown/src/Dropdown.soy", ['exports', 'metal-component/src/all/component', 'metal-soy/src/soy'], function (exports, _component, _soy) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -43,7 +43,7 @@ define("frontend-js-metal-web@1.0.0/metal-dropdown/src/Dropdown.soy", ['exports'
     if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
   }
 
-  var Templates = _index.SoyTemplates.get();
+  var Templates = _soy.SoyTemplates.get();
   // This file was automatically generated from Dropdown.soy.
   // Please don't edit this file by hand.
 
@@ -100,8 +100,8 @@ define("frontend-js-metal-web@1.0.0/metal-dropdown/src/Dropdown.soy", ['exports'
 
   Dropdown.prototype.registerMetalComponent && Dropdown.prototype.registerMetalComponent(Dropdown, 'Dropdown')
 
-  Dropdown.RENDERER = _index.SoyRenderer;
-  _index.SoyAop.registerTemplates('Dropdown');
+  Dropdown.RENDERER = _soy.SoyRenderer;
+  _soy.SoyAop.registerTemplates('Dropdown');
   exports.default = Dropdown;
 });
 //# sourceMappingURL=Dropdown.soy.js.map

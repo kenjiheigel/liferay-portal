@@ -1,4 +1,4 @@
-define("frontend-js-metal-web@1.0.0/metal-popover/src/Popover.soy", ['exports', 'metal-component/src/all/component', 'metal-soy/src/index'], function (exports, _component, _index) {
+define("frontend-js-metal-web@1.0.0/metal-popover/src/Popover.soy", ['exports', 'metal-component/src/all/component', 'metal-soy/src/soy'], function (exports, _component, _soy) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -43,7 +43,7 @@ define("frontend-js-metal-web@1.0.0/metal-popover/src/Popover.soy", ['exports', 
     if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
   }
 
-  var Templates = _index.SoyTemplates.get();
+  var Templates = _soy.SoyTemplates.get();
   // This file was automatically generated from Popover.soy.
   // Please don't edit this file by hand.
 
@@ -119,8 +119,8 @@ define("frontend-js-metal-web@1.0.0/metal-popover/src/Popover.soy", ['exports', 
 
   Popover.prototype.registerMetalComponent && Popover.prototype.registerMetalComponent(Popover, 'Popover')
 
-  Popover.RENDERER = _index.SoyRenderer;
-  _index.SoyAop.registerTemplates('Popover');
+  Popover.RENDERER = _soy.SoyRenderer;
+  _soy.SoyAop.registerTemplates('Popover');
   exports.default = Popover;
 });
 //# sourceMappingURL=Popover.soy.js.map

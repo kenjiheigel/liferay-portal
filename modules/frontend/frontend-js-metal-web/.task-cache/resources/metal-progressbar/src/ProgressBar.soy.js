@@ -1,4 +1,4 @@
-define("frontend-js-metal-web@1.0.0/metal-progressbar/src/ProgressBar.soy", ['exports', 'metal-component/src/all/component', 'metal-soy/src/index'], function (exports, _component, _index) {
+define("frontend-js-metal-web@1.0.0/metal-progressbar/src/ProgressBar.soy", ['exports', 'metal-component/src/all/component', 'metal-soy/src/soy'], function (exports, _component, _soy) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -43,7 +43,7 @@ define("frontend-js-metal-web@1.0.0/metal-progressbar/src/ProgressBar.soy", ['ex
     if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
   }
 
-  var Templates = _index.SoyTemplates.get();
+  var Templates = _soy.SoyTemplates.get();
   // This file was automatically generated from ProgressBar.soy.
   // Please don't edit this file by hand.
 
@@ -85,8 +85,8 @@ define("frontend-js-metal-web@1.0.0/metal-progressbar/src/ProgressBar.soy", ['ex
 
   ProgressBar.prototype.registerMetalComponent && ProgressBar.prototype.registerMetalComponent(ProgressBar, 'ProgressBar')
 
-  ProgressBar.RENDERER = _index.SoyRenderer;
-  _index.SoyAop.registerTemplates('ProgressBar');
+  ProgressBar.RENDERER = _soy.SoyRenderer;
+  _soy.SoyAop.registerTemplates('ProgressBar');
   exports.default = ProgressBar;
 });
 //# sourceMappingURL=ProgressBar.soy.js.map

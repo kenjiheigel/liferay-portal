@@ -1,4 +1,4 @@
-define("frontend-js-metal-web@1.0.0/metal-list/src/ListItem.soy", ['exports', 'metal-component/src/all/component', 'metal-soy/src/index'], function (exports, _component, _index) {
+define("frontend-js-metal-web@1.0.0/metal-list/src/ListItem.soy", ['exports', 'metal-component/src/all/component', 'metal-soy/src/soy'], function (exports, _component, _soy) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -43,7 +43,7 @@ define("frontend-js-metal-web@1.0.0/metal-list/src/ListItem.soy", ['exports', 'm
     if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
   }
 
-  var Templates = _index.SoyTemplates.get();
+  var Templates = _soy.SoyTemplates.get();
   // This file was automatically generated from ListItem.soy.
   // Please don't edit this file by hand.
 
@@ -122,8 +122,8 @@ define("frontend-js-metal-web@1.0.0/metal-list/src/ListItem.soy", ['exports', 'm
 
   ListItem.prototype.registerMetalComponent && ListItem.prototype.registerMetalComponent(ListItem, 'ListItem')
 
-  ListItem.RENDERER = _index.SoyRenderer;
-  _index.SoyAop.registerTemplates('ListItem');
+  ListItem.RENDERER = _soy.SoyRenderer;
+  _soy.SoyAop.registerTemplates('ListItem');
   exports.default = ListItem;
 });
 //# sourceMappingURL=ListItem.soy.js.map

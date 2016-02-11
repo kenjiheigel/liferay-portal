@@ -1,4 +1,4 @@
-define("frontend-js-metal-web@1.0.0/metal-alert/src/Alert.soy", ['exports', 'metal-component/src/all/component', 'metal-soy/src/index'], function (exports, _component, _index) {
+define("frontend-js-metal-web@1.0.0/metal-alert/src/Alert.soy", ['exports', 'metal-component/src/all/component', 'metal-soy/src/soy'], function (exports, _component, _soy) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -43,7 +43,7 @@ define("frontend-js-metal-web@1.0.0/metal-alert/src/Alert.soy", ['exports', 'met
     if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
   }
 
-  var Templates = _index.SoyTemplates.get();
+  var Templates = _soy.SoyTemplates.get();
   // This file was automatically generated from Alert.soy.
   // Please don't edit this file by hand.
 
@@ -115,8 +115,8 @@ define("frontend-js-metal-web@1.0.0/metal-alert/src/Alert.soy", ['exports', 'met
 
   Alert.prototype.registerMetalComponent && Alert.prototype.registerMetalComponent(Alert, 'Alert')
 
-  Alert.RENDERER = _index.SoyRenderer;
-  _index.SoyAop.registerTemplates('Alert');
+  Alert.RENDERER = _soy.SoyRenderer;
+  _soy.SoyAop.registerTemplates('Alert');
   exports.default = Alert;
 });
 //# sourceMappingURL=Alert.soy.js.map
