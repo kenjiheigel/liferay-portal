@@ -58,13 +58,13 @@ if (!themeDisplay.isSignedIn() && layout.isPublicLayout()) {
 
 <%-- Portal CSS --%>
 
-<link data-senna-track="temporary" class="lfr-css-file" href="<%= HtmlUtil.escapeAttribute(PortalUtil.getStaticResourceURL(request, themeDisplay.getPathThemeCss() + "/aui.css")) %>" rel="stylesheet" type="text/css" />
+<link data-senna-track="temporary" class="lfr-css-file" href="<%= HtmlUtil.escapeAttribute(PortalUtil.getStaticResourceURL(request, themeDisplay.getPathThemeCss() + "/aui.css")) %>" id="auiPortalCSS" rel="stylesheet" type="text/css" />
 
 <%
 long cssLastModifiedTime = PortalWebResourcesUtil.getLastModified(PortalWebResourceConstants.RESOURCE_TYPE_CSS);
 %>
 
-<link data-senna-track="temporary" href="<%= HtmlUtil.escapeAttribute(PortalUtil.getStaticResourceURL(request, themeDisplay.getCDNDynamicResourcesHost() + PortalWebResourcesUtil.getContextPath(PortalWebResourceConstants.RESOURCE_TYPE_CSS) + "/main.css", cssLastModifiedTime)) %>" rel="stylesheet" type="text/css" />
+<link data-senna-track="temporary" href="<%= HtmlUtil.escapeAttribute(PortalUtil.getStaticResourceURL(request, themeDisplay.getCDNDynamicResourcesHost() + PortalWebResourcesUtil.getContextPath(PortalWebResourceConstants.RESOURCE_TYPE_CSS) + "/main.css", cssLastModifiedTime)) %>" id="mainPortalCSS" rel="stylesheet" type="text/css" />
 
 <%
 List<Portlet> portlets = null;
@@ -154,7 +154,7 @@ StringBundler pageTopSB = OutputTag.getData(request, WebKeys.PAGE_TOP);
 
 <%-- Theme CSS --%>
 
-<link data-senna-track="temporary" class="lfr-css-file" href="<%= HtmlUtil.escapeAttribute(PortalUtil.getStaticResourceURL(request, themeDisplay.getPathThemeCss() + "/main.css")) %>" rel="stylesheet" type="text/css" />
+<link data-senna-track="temporary" class="lfr-css-file" href="<%= HtmlUtil.escapeAttribute(PortalUtil.getStaticResourceURL(request, themeDisplay.getPathThemeCss() + "/main.css")) %>" id="themeCSS" rel="stylesheet" type="text/css" />
 
 <%-- User Inputted Layout CSS --%>
 
