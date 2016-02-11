@@ -75,7 +75,7 @@ String treeId = (String)request.getAttribute("liferay-layout:layouts-tree:treeId
 		TreeViewType = Liferay.LayoutsTreeDD;
 	</c:if>
 
-	new TreeViewType(
+	var treeview = new TreeViewType(
 		{
 			boundingBox: '#<portlet:namespace /><%= HtmlUtil.escape(treeId) %>Output',
 			incomplete: <%= incomplete %>,
@@ -128,6 +128,13 @@ String treeId = (String)request.getAttribute("liferay-layout:layouts-tree:treeId
 			urls: <%= portletURLsJSONArray.toString() %>
 		}
 	).render();
+
+	Liferay.once(
+		'surfaceScreenLoad',
+		function() {
+			treeview.destroy();
+		}
+	);
 </aui:script>
 
 <div class="lfr-tree" data-treeid="<%= HtmlUtil.escapeAttribute(treeId) %>" id="<portlet:namespace /><%= HtmlUtil.escape(treeId) %>Output"></div>

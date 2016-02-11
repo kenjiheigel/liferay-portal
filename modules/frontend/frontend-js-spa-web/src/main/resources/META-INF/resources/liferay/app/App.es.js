@@ -13,7 +13,7 @@ class LiferayApp extends App {
 		this.blacklist = {};
 
 		this.setFormSelector('form:not([target="_blank"])');
-		this.setLinkSelector('a:not([target="_blank"]):not([data-resource-href])');
+		this.setLinkSelector('a:not([target="_blank"]):not([data-resource-href]):not([data-senna-off])');
 
 		this.on('beforeNavigate', this.onBeforeNavigate);
 		this.on('endNavigate', this.onEndNavigate);
