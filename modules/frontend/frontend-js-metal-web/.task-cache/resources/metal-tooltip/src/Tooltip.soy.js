@@ -1,4 +1,4 @@
-define("frontend-js-metal-web@1.0.0/metal-tooltip/src/Tooltip.soy", ['exports', 'metal-component/src/all/component', 'metal-soy/src/index'], function (exports, _component, _index) {
+define("frontend-js-metal-web@1.0.0/metal-tooltip/src/Tooltip.soy", ['exports', 'metal-component/src/all/component', 'metal-soy/src/soy'], function (exports, _component, _soy) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -43,7 +43,7 @@ define("frontend-js-metal-web@1.0.0/metal-tooltip/src/Tooltip.soy", ['exports', 
     if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
   }
 
-  var Templates = _index.SoyTemplates.get();
+  var Templates = _soy.SoyTemplates.get();
   // This file was automatically generated from Tooltip.soy.
   // Please don't edit this file by hand.
 
@@ -104,8 +104,8 @@ define("frontend-js-metal-web@1.0.0/metal-tooltip/src/Tooltip.soy", ['exports', 
 
   Tooltip.prototype.registerMetalComponent && Tooltip.prototype.registerMetalComponent(Tooltip, 'Tooltip')
 
-  Tooltip.RENDERER = _index.SoyRenderer;
-  _index.SoyAop.registerTemplates('Tooltip');
+  Tooltip.RENDERER = _soy.SoyRenderer;
+  _soy.SoyAop.registerTemplates('Tooltip');
   exports.default = Tooltip;
 });
 //# sourceMappingURL=Tooltip.soy.js.map
