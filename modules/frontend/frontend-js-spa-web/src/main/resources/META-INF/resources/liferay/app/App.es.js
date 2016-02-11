@@ -13,7 +13,7 @@ class LiferayApp extends App {
 		this.blacklist = {};
 
 		this.setFormSelector('form:not([target="_blank"])');
-		this.setLinkSelector('a:not([data-resource-href]):not([target="_blank"])');
+		this.setLinkSelector('a:not([target="_blank"]):not([data-resource-href])');
 
 		this.on('beforeNavigate', this.onBeforeNavigate);
 		this.on('endNavigate', this.onEndNavigate);
@@ -24,12 +24,6 @@ class LiferayApp extends App {
 		dom.append(document.body, '<div class="lfr-surface-loading-bar"></div>');
 	}
 
-	getSelectorBlacklist() {
-		return Object.keys(this.blacklist).map(
-			(portletId) => ':not([id^="' + Utils.getPortletBoundaryId(portletId) + '"] *)'
-		).join('');
-	}
-
 	onBeforeNavigate(event) {
 		Liferay.fire(
 			'surfaceBeforeNavigate',
@@ -38,6 +32,32 @@ class LiferayApp extends App {
 				path: event.path
 			}
 		);
+	}
+
+	onDocClickDelegate_(event) {
+		var inBlacklist = false;
+
+		Object.keys(this.blacklist).map(
+			(portletId) => {
+				var boundaryId = Utils.getPortletBoundaryId(portletId);
+				var portlets = document.querySelectorAll('[id^="' + boundaryId +  '"]');
+
+				Array.prototype.slice.call(portlets).forEach(
+					(portlet) => {
+						if (dom.contains(portlet, event.delegateTarget)) {
+							inBlacklist = true;
+							return;
+						}
+					}
+				);
+			}
+		);
+
+		if (inBlacklist) {
+			return;
+		}
+
+		super.onDocClickDelegate_(event);
 	}
 
 	onEndNavigate(event) {
@@ -67,10 +87,6 @@ class LiferayApp extends App {
 
 	setBlacklist(blacklist) {
 		this.blacklist = blacklist;
-
-		// let selectorBlacklist = this.getSelectorBlacklist();
-
-		// this.setLinkSelector(this.getLinkSelector() + selectorBlacklist);
 	}
 }
 
