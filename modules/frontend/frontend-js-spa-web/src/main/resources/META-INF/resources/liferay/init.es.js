@@ -39,12 +39,8 @@ app.addRoutes(
 Liferay.on(
 	'surfaceEndNavigate',
 	function(event) {
-		if (!event.error) {
-			var config = Liferay.Data.layoutConfig;
-
-			if (Liferay.Layout && config) {
-				Liferay.Layout.init(config);
-			}
+		if (!event.error && Liferay.Layout && Liferay.Data.layoutConfig) {
+			Liferay.Layout.init();
 		}
 	}
 );
@@ -68,8 +64,7 @@ Liferay.Util.submitForm = function(form) {
 }
 
 Liferay.SPA = {
-	app: app,
-	blacklist: {}
+	app: app
 };
 
 export default Liferay.SPA;
