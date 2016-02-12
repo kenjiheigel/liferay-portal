@@ -450,7 +450,7 @@ portletURL.setParameter("portletResource", portletResource);
 				<portlet:param name="portletResource" value="<%= portletResource %>" />
 			</liferay-portlet:resourceURL>
 
-			new Liferay.ExportImport(
+			var exportImport = new Liferay.ExportImport(
 				{
 					commentsNode: '#<%= PortletDataHandlerKeys.COMMENTS %>Checkbox',
 					deletionsNode: '#<%= PortletDataHandlerKeys.DELETIONS %>Checkbox',
@@ -478,6 +478,10 @@ portletURL.setParameter("portletResource", portletResource);
 					submitForm(form, form.attr('action'), false);
 				}
 			);
+
+			Liferay.once('destroyPortlet', function() {
+				exportImport.destroy();
+			});
 		</aui:script>
 	</c:when>
 
