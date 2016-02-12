@@ -40,13 +40,11 @@ Liferay.on(
 	'surfaceEndNavigate',
 	function(event) {
 		if (!event.error) {
-			Liferay.once('initLayout', function() {
-				if (Liferay.Layout) {
-					Liferay.Layout.init();
-				}
-			});
+			var config = Liferay.Data.layoutConfig;
 
-			Liferay.fire('initLayout');
+			if (Liferay.Layout && config) {
+				Liferay.Layout.init(config);
+			}
 		}
 	}
 );
