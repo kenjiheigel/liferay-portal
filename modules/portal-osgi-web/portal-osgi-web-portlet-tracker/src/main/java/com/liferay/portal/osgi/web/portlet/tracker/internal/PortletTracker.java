@@ -305,6 +305,12 @@ public class PortletTracker
 
 			portletModel.setDisplayName(displayName);
 
+			boolean singlePageApplication = GetterUtil.getBoolean(
+				serviceReference.getProperty(
+					"com.liferay.portlet.single-page-application"), true);
+
+			portletModel.setSinglePageApplication(singlePageApplication);
+
 			Class<?> portletClazz = portlet.getClass();
 
 			portletModel.setPortletClass(portletClazz.getName());

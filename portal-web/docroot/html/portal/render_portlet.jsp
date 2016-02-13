@@ -1093,11 +1093,6 @@ else {
 	);
 </aui:script>
 
-<c:if test="<%= renderPortletBoundary %>">
-		</div>
-	</div>
-</c:if>
-
 <%
 if (themeDisplay.isStatePopUp()) {
 	String refreshPortletId = null;
@@ -1246,6 +1241,11 @@ SessionErrors.clear(renderRequestImpl);
 
 renderRequestImpl.cleanUp();
 %>
+
+<c:if test="<%= renderPortletBoundary %>">
+		</div>
+	</div>
+</c:if>
 
 <%!
 private static Log _log = LogFactoryUtil.getLog("portal_web.docroot.html.portal.render_portlet_jsp");
