@@ -1,2 +1,22 @@
 apply plugin: "com.liferay.defaults.plugin"
 apply plugin: "com.liferay.plugin"
+
+configurations {
+	compile {
+		if (!project.path.startsWith(":sdk:") &&
+			!project.path.startsWith(":test:") &&
+			!project.path.startsWith(":third-party:") &&
+			!project.path.startsWith(":util:")) {
+
+			transitive = false
+		}
+	}
+}
+
+List<String> taskNames = gradle.startParameter.taskNames
+
+if (!("eclipse" in taskNames) && !("idea" in taskNames)) {
+	configurations.provided.dependencies.withType(ProjectDependency) {
+		configurations.default.exclude module: it.name
+	}
+}
