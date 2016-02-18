@@ -20,7 +20,7 @@
 String productMenuState = SessionClicks.get(request, ProductNavigationProductMenuWebKeys.PRODUCT_NAVIGATION_PRODUCT_MENU_STATE, "closed");
 %>
 
-<div id="productMenuSidebar">
+<div class="lfr-product-menu-sidebar" id="productMenuSidebar">
 	<h4 class="sidebar-header">
 		<a href="<%= themeDisplay.getURLPortal() %>">
 			<span class="company-details">
@@ -48,6 +48,17 @@ String productMenuState = SessionClicks.get(request, ProductNavigationProductMen
 	var sidenavToggle = $('#sidenavToggleId');
 
 	sidenavToggle.sideNavigation();
+
+	Liferay.once(
+		'screenLoad',
+		function() {
+			var sideNavigation = sidenavToggle.data('lexicon.sidenav');
+
+			if (sideNavigation) {
+				sideNavigation.destroy();
+			}
+		}
+	);
 
 	var sidenavSlider = $('#sidenavSliderId');
 
