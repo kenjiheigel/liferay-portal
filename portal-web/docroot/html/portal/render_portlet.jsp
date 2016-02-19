@@ -221,7 +221,13 @@ if (group.isLayoutPrototype()) {
 	showExportImportIcon = false;
 }
 
-if ((group.isStaged() || group.isStagedRemotely()) && !group.hasLocalOrRemoteStagingGroup()) {
+Group checkingStagingGroup = group;
+
+if (checkingStagingGroup.isControlPanel()) {
+	checkingStagingGroup = GroupLocalServiceUtil.fetchGroup(themeDisplay.getSiteGroupId());
+}
+
+if ((checkingStagingGroup.isStaged() || checkingStagingGroup.isStagedRemotely()) && !checkingStagingGroup.hasLocalOrRemoteStagingGroup()) {
 	showStagingIcon = true;
 }
 
@@ -934,15 +940,12 @@ Boolean renderPortletBoundary = GetterUtil.getBoolean(request.getAttribute(WebKe
 		cssClasses += StringPool.SPACE + portletResourcePortlet.getCssClassWrapper();
 	}
 
-	String defaultScreenCssClasses = StringPool.BLANK;
-
 	if ((portletVisibility != null) && !layout.isTypeControlPanel()) {
-		defaultScreenCssClasses += " lfr-configurator-visibility";
+		cssClasses += " lfr-configurator-visibility";
 	}
 	%>
 
 	<div class="<%= cssClasses %>" id="p_p_id<%= HtmlUtil.escapeAttribute(renderResponseImpl.getNamespace()) %>" <%= freeformStyles %>>
-		<div class="<%= defaultScreenCssClasses %>" id="p_p_id<%= HtmlUtil.escapeAttribute(renderResponseImpl.getNamespace()) %>-defaultScreen">
 </c:if>
 
 <c:choose>
@@ -1094,7 +1097,6 @@ else {
 </aui:script>
 
 <c:if test="<%= renderPortletBoundary %>">
-		</div>
 	</div>
 </c:if>
 
