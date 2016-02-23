@@ -335,6 +335,15 @@ public class JournalConverterImpl implements JournalConverter {
 		return repetitions;
 	}
 
+	protected String decodeURL(String url) {
+		try {
+			return HttpUtil.decodeURL(url);
+		}
+		catch (IllegalArgumentException iae) {
+			return url;
+		}
+	}
+
 	protected Element fetchMetadataEntry(
 		Element parentElement, String attributeName, String attributeValue) {
 
@@ -633,8 +642,6 @@ public class JournalConverterImpl implements JournalConverter {
 					dynamicElementElement.addElement("dynamic-element");
 
 				childDynamicElementElement.addAttribute("name", childFieldName);
-				childDynamicElementElement.addAttribute(
-					"index", String.valueOf(i));
 
 				String instanceId = getFieldInstanceId(
 					ddmFields, fieldName, (count + i));
@@ -676,8 +683,6 @@ public class JournalConverterImpl implements JournalConverter {
 		dynamicElementElement.addAttribute("index-type", indexType);
 
 		int count = ddmFieldsCounter.get(fieldName);
-
-		dynamicElementElement.addAttribute("index", String.valueOf(count));
 
 		String instanceId = getFieldInstanceId(ddmFields, fieldName, count);
 
@@ -950,14 +955,13 @@ public class JournalConverterImpl implements JournalConverter {
 			if ((parentType != null) && parentType.equals("select")) {
 				metadataElement.addAttribute("locale", defaultLanguageId);
 
-				addMetadataEntry(
-					metadataElement, "label", HttpUtil.decodeURL(name));
+				addMetadataEntry(metadataElement, "label", decodeURL(name));
 
 				removeAttribute(element, "index-type");
 
 				element.addAttribute("name", "option" + StringUtil.randomId());
 				element.addAttribute("type", "option");
-				element.addAttribute("value", HttpUtil.decodeURL(type));
+				element.addAttribute("value", decodeURL(type));
 
 				return;
 			}

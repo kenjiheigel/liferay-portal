@@ -24,6 +24,7 @@ import com.liferay.journal.upgrade.v0_0_2.UpgradeClassNames;
 import com.liferay.journal.upgrade.v0_0_3.UpgradeJournalArticleType;
 import com.liferay.journal.upgrade.v1_0_0.UpgradeCompanyId;
 import com.liferay.journal.upgrade.v1_0_0.UpgradeJournal;
+import com.liferay.journal.upgrade.v1_0_0.UpgradeJournalArticleImage;
 import com.liferay.journal.upgrade.v1_0_0.UpgradeJournalArticles;
 import com.liferay.journal.upgrade.v1_0_0.UpgradeJournalDisplayPreferences;
 import com.liferay.journal.upgrade.v1_0_0.UpgradeLastPublishDate;
@@ -34,7 +35,6 @@ import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.db.DBProcessContext;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
@@ -97,7 +97,8 @@ public class JournalServiceUpgrade implements UpgradeStepRegistrator {
 					}
 				}
 
-			});
+			},
+			new UpgradeJournalArticleImage());
 	}
 
 	protected void deleteTempImages() throws Exception {
@@ -173,11 +174,6 @@ public class JournalServiceUpgrade implements UpgradeStepRegistrator {
 		LayoutLocalService layoutLocalService) {
 
 		_layoutLocalService = layoutLocalService;
-	}
-
-	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED, unbind = "-")
-	protected void setModuleServiceLifecycle(
-		ModuleServiceLifecycle moduleServiceLifecycle) {
 	}
 
 	@Reference(unbind = "-")
