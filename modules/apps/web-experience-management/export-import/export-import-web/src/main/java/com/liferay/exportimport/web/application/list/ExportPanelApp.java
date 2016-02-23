@@ -17,7 +17,7 @@ package com.liferay.exportimport.web.application.list;
 import com.liferay.application.list.BasePanelApp;
 import com.liferay.application.list.PanelApp;
 import com.liferay.application.list.constants.PanelCategoryKeys;
-import com.liferay.exportimport.web.constants.ExportImportPortletKeys;
+import com.liferay.exportimport.constants.ExportImportPortletKeys;
 import com.liferay.portal.kernel.model.Portlet;
 
 import org.osgi.service.component.annotations.Component;
@@ -29,7 +29,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"panel.category.key=" + PanelCategoryKeys.SITE_ADMINISTRATION_PUBLISHING_TOOLS,
+		"panel.category.key=" + PanelCategoryKeys.SITE_ADMINISTRATION_PUBLISHING,
 		"service.ranking:Integer=300"
 	},
 	service = PanelApp.class
