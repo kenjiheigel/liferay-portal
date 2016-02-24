@@ -267,6 +267,8 @@ AUI.add(
 												instance.fire('load', event);
 
 												popupReady = true;
+
+												instance.node.addClass('lfr-iframe-ready');
 											}
 										)
 									);
