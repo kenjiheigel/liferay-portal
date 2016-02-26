@@ -86,14 +86,6 @@ define("frontend-js-spa-web@1.0.0/senna/src/app/App", ['exports', 'metal/src/met
 			_this.activePath = null;
 
 			/**
-    * Allows prevent navigate from dom prevented event.
-    * @type {boolean}
-    * @default true
-    * @protected
-    */
-			_this.allowPreventNavigate = true;
-
-			/**
     * Holds link base path.
     * @type {!string}
     * @default ''
@@ -238,8 +230,7 @@ define("frontend-js-spa-web@1.0.0/senna/src/app/App", ['exports', 'metal/src/met
 			_this.appEventHandlers_.add(_dom2.default.on(_globals2.default.window, 'scroll', _this.onScroll_.bind(_this)), _dom2.default.on(_globals2.default.window, 'load', _this.onLoad_.bind(_this)), _dom2.default.on(_globals2.default.window, 'popstate', _this.onPopstate_.bind(_this)));
 
 			_this.on('startNavigate', _this.onStartNavigate_);
-			_this.on('beforeNavigate', _this.onBeforeNavigate_);
-			_this.on('beforeNavigate', _this.onBeforeNavigateDefault_, true);
+			_this.on('beforeNavigate', _this.onBeforeNavigate_, true);
 
 			_this.setLinkSelector(_this.linkSelector);
 			_this.setFormSelector(_this.formSelector);
@@ -440,10 +431,6 @@ define("frontend-js-spa-web@1.0.0/senna/src/app/App", ['exports', 'metal/src/met
 			return null;
 		};
 
-		App.prototype.getAllowPreventNavigate = function getAllowPreventNavigate() {
-			return this.allowPreventNavigate;
-		};
-
 		App.prototype.getBasePath = function getBasePath() {
 			return this.basePath;
 		};
@@ -524,12 +511,12 @@ define("frontend-js-spa-web@1.0.0/senna/src/app/App", ['exports', 'metal/src/met
 				return;
 			}
 
-			if (this.allowPreventNavigate && event.defaultPrevented) {
+			_globals2.default.capturedFormElement = event.capturedFormElement;
+
+			if (event.defaultPrevented) {
 				console.log('Navigate prevented');
 				return;
 			}
-
-			_globals2.default.capturedFormElement = event.capturedFormElement;
 
 			var navigateFailed = false;
 			try {
@@ -580,21 +567,14 @@ define("frontend-js-spa-web@1.0.0/senna/src/app/App", ['exports', 'metal/src/met
 		};
 
 		App.prototype.onBeforeNavigate_ = function onBeforeNavigate_(event) {
-			if (_globals2.default.capturedFormElement) {
-				event.form = _globals2.default.capturedFormElement;
-			}
-		};
-
-		App.prototype.onBeforeNavigateDefault_ = function onBeforeNavigateDefault_(event) {
 			if (this.pendingNavigate) {
-				if (this.pendingNavigate.path === event.path) {
+				if (this.screens[event.path] === this.screens[this.pendingNavigate.path]) {
 					console.log('Waiting...');
 					return;
 				}
 			}
 
 			this.emit('startNavigate', {
-				form: event.form,
 				path: event.path,
 				replaceHistory: event.replaceHistory
 			});
@@ -680,24 +660,26 @@ define("frontend-js-spa-web@1.0.0/senna/src/app/App", ['exports', 'metal/src/met
 			this.captureScrollPositionFromScrollEvent = false;
 			_dom2.default.addClasses(_globals2.default.document.documentElement, this.loadingCssClass);
 
-			var endNavigatePayload = {
-				form: event.form,
-				path: event.path
-			};
+			var path = event.path;
+			var endNavigatePayload = {};
 
-			this.pendingNavigate = this.doNavigate_(event.path, event.replaceHistory).catch(function (reason) {
-				endNavigatePayload.error = reason;
-				throw reason;
+			if (_globals2.default.capturedFormElement) {
+				event.form = _globals2.default.capturedFormElement;
+				endNavigatePayload.form = _globals2.default.capturedFormElement;
+			}
+
+			this.pendingNavigate = this.doNavigate_(path, event.replaceHistory).catch(function (err) {
+				endNavigatePayload.error = err;
+				throw err;
 			}).thenAlways(function () {
-				if (!_this7.pendingNavigate) {
-					_dom2.default.removeClasses(_globals2.default.document.documentElement, _this7.loadingCssClass);
-					_this7.maybeRestoreNativeScrollRestoration();
-					_this7.captureScrollPositionFromScrollEvent = true;
-				}
+				endNavigatePayload.path = path;
+				_dom2.default.removeClasses(_globals2.default.document.documentElement, _this7.loadingCssClass);
+				_this7.maybeRestoreNativeScrollRestoration();
+				_this7.captureScrollPositionFromScrollEvent = true;
 				_this7.emit('endNavigate', endNavigatePayload);
 			});
 
-			this.pendingNavigate.path = event.path;
+			this.pendingNavigate.path = path;
 		};
 
 		App.prototype.prefetch = function prefetch(path) {
@@ -762,13 +744,11 @@ define("frontend-js-spa-web@1.0.0/senna/src/app/App", ['exports', 'metal/src/met
 			var _this9 = this;
 
 			var screen = this.screens[path];
-			if (screen) {
-				Object.keys(this.surfaces).forEach(function (surfaceId) {
-					return _this9.surfaces[surfaceId].remove(screen.getId());
-				});
-				screen.dispose();
-				delete this.screens[path];
-			}
+			Object.keys(this.surfaces).forEach(function (surfaceId) {
+				return _this9.surfaces[surfaceId].remove(screen.getId());
+			});
+			screen.dispose();
+			delete this.screens[path];
 		};
 
 		App.prototype.saveHistoryCurrentPageScrollPosition_ = function saveHistoryCurrentPageScrollPosition_() {
@@ -778,10 +758,6 @@ define("frontend-js-spa-web@1.0.0/senna/src/app/App", ['exports', 'metal/src/met
 				state.scrollLeft = _globals2.default.window.pageXOffset;
 				_globals2.default.window.history.replaceState(state, null, null);
 			}
-		};
-
-		App.prototype.setAllowPreventNavigate = function setAllowPreventNavigate(allowPreventNavigate) {
-			this.allowPreventNavigate = allowPreventNavigate;
 		};
 
 		App.prototype.setBasePath = function setBasePath(basePath) {
