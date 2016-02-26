@@ -53,6 +53,8 @@ class EventScreen extends HtmlScreen {
 	flip(surfaces) {
 		document.body.className = this.virtualDocument.querySelector('body').className;
 
+		dom.addClasses(document.body, 'lfr-surface-loading');
+
 		return CancellablePromise.resolve(Utils.resetAllPortlets())
 			.then(super.flip(surfaces))
 			.then(() => {
