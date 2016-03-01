@@ -66,12 +66,6 @@ class EventScreen extends HtmlScreen {
 			});
 	}
 
-	isValidResponseStatusCode(statusCode) {
-		var validStatusCodes = Liferay.SPA.app.getValidStatusCodes();
-
-		return super.isValidResponseStatusCode(statusCode) || (validStatusCodes.indexOf(statusCode) > -1);
-	}
-
 	load(path) {
 		return super.load(path)
 			.then((content) => {
