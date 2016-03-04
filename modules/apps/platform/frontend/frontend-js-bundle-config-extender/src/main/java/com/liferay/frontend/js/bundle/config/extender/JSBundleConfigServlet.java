@@ -14,7 +14,6 @@
 
 package com.liferay.frontend.js.bundle.config.extender;
 
-import com.liferay.frontend.js.bundle.config.extender.JSBundleConfigTracker.JSConfig;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.StreamUtil;
 
@@ -28,7 +27,6 @@ import java.util.Collection;
 import java.util.Map;
 
 import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -81,19 +79,14 @@ public class JSBundleConfigServlet extends HttpServlet {
 
 		PrintWriter printWriter = new PrintWriter(servletOutputStream, true);
 
-		Collection<JSConfig> jsConfigs = _jsBundleConfigTracker.getJSConfigs();
+		Collection<URL> jsConfigURLs = _jsBundleConfigTracker.getJSConfigURLs();
 
-		if (!jsConfigs.isEmpty()) {
+		if (!jsConfigURLs.isEmpty()) {
 			printWriter.println("(function() {");
 
-			for (JSConfig jsConfig : jsConfigs) {
-				URL url = jsConfig.getUrl();
-
-				try (InputStream inputStream = url.openStream()) {
+			for (URL jsConfigURL : jsConfigURLs) {
+				try (InputStream inputStream = jsConfigURL.openStream()) {
 					servletOutputStream.println("try {");
-
-					ServletContext servletContext =
-						jsConfig.getServletContext();
 
 					StreamUtil.transfer(
 						inputStream, servletOutputStream, false);

@@ -26,7 +26,6 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import javax.servlet.ServletContext;
 
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
@@ -53,10 +52,8 @@ public class JSBundleConfigTracker
 			_serviceTracker.close();
 		}
 
-		_bundleContext = componentContext.getBundleContext();
-
 		_serviceTracker = ServiceTrackerFactory.open(
-			_bundleContext,
+			componentContext.getBundleContext(),
 			"(&(objectClass=" + ServletContext.class.getName() +
 				")(osgi.web.contextpath=*))",
 			this);
@@ -76,11 +73,7 @@ public class JSBundleConfigTracker
 			URL url = bundle.getEntry(jsConfig);
 
 			if (url != null) {
-				ServletContext servletContext = _bundleContext.getService(
-					serviceReference);
-
-				_jsConfigs.put(
-					serviceReference, new JSConfig(servletContext, url));
+				_jsConfigURLs.put(serviceReference, url);
 
 				return serviceReference;
 			}
@@ -89,8 +82,8 @@ public class JSBundleConfigTracker
 		return null;
 	}
 
-	public Collection<JSConfig> getJSConfigs() {
-		return _jsConfigs.values();
+	public Collection<URL> getJSConfigURLs() {
+		return _jsConfigURLs.values();
 	}
 
 	public long getTrackingCount() {
@@ -112,31 +105,7 @@ public class JSBundleConfigTracker
 		ServiceReference<ServletContext> serviceReference,
 		ServiceReference<ServletContext> trackedServiceReference) {
 
-		JSConfig jsConfig = _jsConfigs.remove(serviceReference);
-
-		if (jsConfig != null) {
-			_bundleContext.ungetService(serviceReference);
-		}
-	}
-
-	public static class JSConfig {
-
-		public ServletContext getServletContext() {
-			return _servletContext;
-		}
-
-		public URL getUrl() {
-			return _url;
-		}
-
-		private JSConfig(ServletContext servletContext, URL url) {
-			_servletContext = servletContext;
-			_url = url;
-		}
-
-		private final ServletContext _servletContext;
-		private final URL _url;
-
+		_jsConfigURLs.remove(serviceReference);
 	}
 
 	@Deactivate
@@ -146,9 +115,8 @@ public class JSBundleConfigTracker
 		_serviceTracker = null;
 	}
 
-	private BundleContext _bundleContext;
-	private final Map<ServiceReference<ServletContext>, JSConfig> _jsConfigs =
-		new ConcurrentSkipListMap<>();
+	private final Map<ServiceReference<ServletContext>, URL>
+		_jsConfigURLs = new ConcurrentSkipListMap<>();
 	private ServiceTracker<ServletContext, ServiceReference<ServletContext>>
 		_serviceTracker;
 
