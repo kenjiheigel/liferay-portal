@@ -89,7 +89,7 @@ AUI.add(
 								{
 									cssClass: 'close',
 									discardDefaultButtonCssClasses: true,
-									labelHTML: Liferay.Util.getLexiconIconTpl('times'),
+									labelHTML: '<svg class="lexicon-icon"><use xlink:href="/o/frontend-theme-admin-web/admin/images/lexicon/icons.svg#times" /></svg>',
 									on: {
 										click: A.bind(this._onFieldTypesModalCloseClick, this)
 									}
