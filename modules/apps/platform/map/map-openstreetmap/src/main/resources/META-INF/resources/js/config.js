@@ -1,9 +1,11 @@
 ;(function() {
+	var PATH_FRONTEND_MAP_OPEN_STREET_MAP_WEB = Liferay.ThemeDisplay.getPathContext() + '/o/map-openstreetmap';
+
 	AUI().applyConfig(
 		{
 			groups: {
 				mapopenstreet: {
-					base: MODULE_PATH + '/js/',
+					base: PATH_FRONTEND_MAP_OPEN_STREET_MAP_WEB + '/js/',
 					combine: Liferay.AUI.getCombine(),
 					modules: {
 						'liferay-map-openstreetmap': {
@@ -15,7 +17,7 @@
 							]
 						}
 					},
-					root: MODULE_PATH + '/js/'
+					root: PATH_FRONTEND_MAP_OPEN_STREET_MAP_WEB + '/js/'
 				}
 			}
 		}

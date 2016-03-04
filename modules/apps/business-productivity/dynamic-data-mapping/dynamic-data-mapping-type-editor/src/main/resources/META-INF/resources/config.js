@@ -1,9 +1,11 @@
 ;(function() {
+	var PATH_DDM_TYPE_EDITOR = Liferay.ThemeDisplay.getPathContext() + '/o/dynamic-data-mapping-type-editor';
+
 	AUI().applyConfig(
 		{
 			groups: {
 				'field-editor': {
-					base: MODULE_PATH + '/',
+					base: PATH_DDM_TYPE_EDITOR + '/',
 					combine: Liferay.AUI.getCombine(),
 					filter: Liferay.AUI.getFilterConfig(),
 					modules: {
@@ -25,7 +27,7 @@
 							]
 						}
 					},
-					root: MODULE_PATH + '/'
+					root: PATH_DDM_TYPE_EDITOR + '/'
 				}
 			}
 		}

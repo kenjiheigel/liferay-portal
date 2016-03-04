@@ -1,9 +1,11 @@
 ;(function() {
+	var PATH_BOOKMARKS_WEB = Liferay.ThemeDisplay.getPathContext() + '/o/bookmarks-web';
+
 	AUI().applyConfig(
 		{
 			groups: {
 				bookmarks: {
-					base: MODULE_PATH + '/bookmarks/js/',
+					base: PATH_BOOKMARKS_WEB + '/bookmarks/js/',
 					combine: Liferay.AUI.getCombine(),
 					modules: {
 						'liferay-bookmarks': {
@@ -13,7 +15,7 @@
 							]
 						}
 					},
-					root: MODULE_PATH + '/bookmarks/js/'
+					root: PATH_BOOKMARKS_WEB + '/bookmarks/js/'
 				}
 			}
 		}

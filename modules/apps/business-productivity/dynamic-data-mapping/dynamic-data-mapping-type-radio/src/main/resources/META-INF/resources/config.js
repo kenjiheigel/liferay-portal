@@ -1,9 +1,11 @@
 ;(function() {
+	var PATH_DDM_TYPE_RADIO = Liferay.ThemeDisplay.getPathContext() + '/o/dynamic-data-mapping-type-radio';
+
 	AUI().applyConfig(
 		{
 			groups: {
 				'field-radio': {
-					base: MODULE_PATH + '/',
+					base: PATH_DDM_TYPE_RADIO + '/',
 					combine: Liferay.AUI.getCombine(),
 					modules: {
 						'liferay-ddm-form-field-radio': {
@@ -25,7 +27,7 @@
 							]
 						}
 					},
-					root: MODULE_PATH + '/'
+					root: PATH_DDM_TYPE_RADIO + '/'
 				}
 			}
 		}

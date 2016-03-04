@@ -1,9 +1,11 @@
 ;(function() {
+	var PATH_LAYOUT_TAGLIB = Liferay.ThemeDisplay.getPathContext() + '/o/layout-taglib';
+
 	AUI().applyConfig(
 		{
 			groups: {
 				'layout-taglib': {
-					base: MODULE_PATH + '/',
+					base: PATH_LAYOUT_TAGLIB + '/',
 					combine: Liferay.AUI.getCombine(),
 					modules: {
 						'liferay-layouts-tree': {
@@ -53,7 +55,7 @@
 							]
 						}
 					},
-					root: MODULE_PATH + '/'
+					root: PATH_LAYOUT_TAGLIB + '/'
 				}
 			}
 		}

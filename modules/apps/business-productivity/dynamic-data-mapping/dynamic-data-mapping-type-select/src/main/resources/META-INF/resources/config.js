@@ -1,11 +1,13 @@
 ;(function() {
 	var LiferayAUI = Liferay.AUI;
 
+	var PATH_DDM_TYPE_SELECT = Liferay.ThemeDisplay.getPathContext() + '/o/dynamic-data-mapping-type-select';
+
 	AUI().applyConfig(
 		{
 			groups: {
 				'field-select': {
-					base: MODULE_PATH + '/',
+					base: PATH_DDM_TYPE_SELECT + '/',
 					filter: LiferayAUI.getFilterConfig(),
 					combine: Liferay.AUI.getCombine(),
 					modules: {
@@ -28,7 +30,7 @@
 							]
 						}
 					},
-					root: MODULE_PATH + '/'
+					root: PATH_DDM_TYPE_SELECT + '/'
 				}
 			}
 		}

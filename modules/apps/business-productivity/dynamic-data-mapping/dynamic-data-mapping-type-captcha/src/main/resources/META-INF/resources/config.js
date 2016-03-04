@@ -1,9 +1,11 @@
 ;(function() {
+	var PATH_DDM_TYPE_CAPTCHA = Liferay.ThemeDisplay.getPathContext() + '/o/dynamic-data-mapping-type-captcha';
+
 	AUI().applyConfig(
 		{
 			groups: {
 				'field-captcha': {
-					base: MODULE_PATH + '/',
+					base: PATH_DDM_TYPE_CAPTCHA + '/',
 					combine: Liferay.AUI.getCombine(),
 					modules: {
 						'liferay-ddm-form-field-captcha': {
@@ -16,7 +18,7 @@
 							]
 						}
 					},
-					root: MODULE_PATH + '/'
+					root: PATH_DDM_TYPE_CAPTCHA + '/'
 				}
 			}
 		}

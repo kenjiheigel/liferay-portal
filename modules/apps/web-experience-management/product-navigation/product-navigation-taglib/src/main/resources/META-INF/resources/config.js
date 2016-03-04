@@ -1,9 +1,11 @@
 ;(function() {
+	var PATH_CONTROL_MENU_WEB = Liferay.ThemeDisplay.getPathContext() + '/o/product-navigation-taglib/';
+
 	AUI().applyConfig(
 		{
 			groups: {
 				controlmenu: {
-					base: MODULE_PATH,
+					base: PATH_CONTROL_MENU_WEB,
 					combine: Liferay.AUI.getCombine(),
 					modules: {
 						'liferay-product-navigation-control-menu': {
@@ -87,7 +89,7 @@
 							]
 						}
 					},
-					root: MODULE_PATH
+					root: PATH_CONTROL_MENU_WEB
 				}
 			}
 		}

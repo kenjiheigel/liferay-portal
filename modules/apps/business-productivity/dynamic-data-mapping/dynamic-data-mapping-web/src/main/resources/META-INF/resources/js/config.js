@@ -1,11 +1,13 @@
 ;(function() {
 	var LiferayAUI = Liferay.AUI;
 
+	var PATH_DDM_WEB = Liferay.ThemeDisplay.getPathContext() + '/o/dynamic-data-mapping-web';
+
 	AUI().applyConfig(
 		{
 			groups: {
 				ddm: {
-					base: MODULE_PATH + '/js/',
+					base: PATH_DDM_WEB + '/js/',
 					combine: Liferay.AUI.getCombine(),
 					filter: LiferayAUI.getFilterConfig(),
 					modules: {
@@ -36,7 +38,7 @@
 							]
 						}
 					},
-					root: MODULE_PATH + '/js/'
+					root: PATH_DDM_WEB + '/js/'
 				}
 			}
 		}

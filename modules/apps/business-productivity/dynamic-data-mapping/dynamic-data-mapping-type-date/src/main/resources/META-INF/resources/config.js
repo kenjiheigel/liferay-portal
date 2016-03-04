@@ -1,9 +1,11 @@
 ;(function() {
+	var PATH_DDM_TYPE_DATE = Liferay.ThemeDisplay.getPathContext() + '/o/dynamic-data-mapping-type-date';
+
 	AUI().applyConfig(
 		{
 			groups: {
 				'field-date': {
-					base: MODULE_PATH + '/',
+					base: PATH_DDM_TYPE_DATE + '/',
 					combine: Liferay.AUI.getCombine(),
 					modules: {
 						'liferay-ddm-form-field-date': {
@@ -26,7 +28,7 @@
 							]
 						}
 					},
-					root: MODULE_PATH + '/'
+					root: PATH_DDM_TYPE_DATE + '/'
 				}
 			}
 		}

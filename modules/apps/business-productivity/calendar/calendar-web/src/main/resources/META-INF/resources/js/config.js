@@ -1,9 +1,11 @@
 ;(function() {
+	var PATH_CALENDAR_WEB = Liferay.ThemeDisplay.getPathContext() + '/o/calendar-web';
+
 	AUI().applyConfig(
 		{
 			groups: {
 				components: {
-					base: MODULE_PATH + '/',
+					base: PATH_CALENDAR_WEB + '/',
 					combine: Liferay.AUI.getCombine(),
 					modules: {
 						'liferay-calendar-recurrence-converter': {
@@ -18,7 +20,7 @@
 							]
 						}
 					},
-					root: MODULE_PATH + '/'
+					root: PATH_CALENDAR_WEB + '/'
 				}
 			}
 		}

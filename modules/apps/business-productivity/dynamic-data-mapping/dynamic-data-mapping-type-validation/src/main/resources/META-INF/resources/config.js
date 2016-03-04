@@ -1,11 +1,13 @@
 ;(function() {
 	var LiferayAUI = Liferay.AUI;
 
+	var PATH_DDM_TYPE_VALIDATION = Liferay.ThemeDisplay.getPathContext() + '/o/dynamic-data-mapping-type-validation';
+
 	AUI().applyConfig(
 		{
 			groups: {
 				'field-validation': {
-					base: MODULE_PATH + '/',
+					base: PATH_DDM_TYPE_VALIDATION + '/',
 					filter: LiferayAUI.getFilterConfig(),
 					combine: Liferay.AUI.getCombine(),
 					modules: {
@@ -28,7 +30,7 @@
 							]
 						}
 					},
-					root: MODULE_PATH + '/'
+					root: PATH_DDM_TYPE_VALIDATION + '/'
 				}
 			}
 		}
