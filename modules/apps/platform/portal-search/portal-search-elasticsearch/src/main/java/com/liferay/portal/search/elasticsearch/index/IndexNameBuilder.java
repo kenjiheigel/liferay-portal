@@ -12,18 +12,13 @@
  * details.
  */
 
-package com.liferay.flags.web.constants;
+package com.liferay.portal.search.elasticsearch.index;
 
 /**
- * @author Adolfo Pérez
- * @author Peter Fellwock
+ * @author Michael C. Han
  */
-public class PageFlagsPortletKeys {
+public interface IndexNameBuilder {
 
-	public static final String FLAGS =
-		"com_liferay_flags_web_portlet_FlagsPortlet";
-
-	public static final String PAGE_FLAGS =
-		"com_liferay_flags_web_portlet_PageFlagsPortlet";
+	public String getIndexName(long companyId);
 
 }
