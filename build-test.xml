@@ -5135,20 +5135,23 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 			<isset property="test.portal.instance" />
 			<then>
 				<if>
-					<contains string="${poshi.test.name}" substring="," />
+					<contains string="${test.class}" substring="," />
 					<then>
 						<propertyregex
-							input="${poshi.test.name}"
+							input="${test.class}"
 							override="false"
 							property="test.name.skip.portal.instance"
 							regexp="(.*?),.*"
 							replace="\1"
 						/>
+
+						<echo append="true" file="${test.ext.properties.file}">
+							test.name.skip.portal.instance=${test.name.skip.portal.instance}
+						</echo>
 					</then>
 				</if>
 
 				<echo append="true" file="${test.ext.properties.file}">
-					test.name.skip.portal.instance=${test.name.skip.portal.instance}
 					test.portal.instance=${test.portal.instance}
 				</echo>
 			</then>
@@ -6037,6 +6040,17 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 			<then>
 				<echo append="true" file="${test.ext.properties.file}">
 					test.assert.warning.exceptions=${test.assert.warning.exceptions}
+				</echo>
+			</then>
+		</if>
+
+		<get-testcase-property property.name="test.name.skip.portal.instance" />
+
+		<if>
+			<isset property="test.name.skip.portal.instance" />
+			<then>
+				<echo append="true" file="${test.ext.properties.file}">
+					test.name.skip.portal.instance=${test.name.skip.portal.instance}
 				</echo>
 			</then>
 		</if>
