@@ -57,6 +57,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import nebula.plugin.extraconfigurations.OptionalBasePlugin;
@@ -78,6 +79,8 @@ import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.DependencySet;
 import org.gradle.api.artifacts.ModuleDependency;
 import org.gradle.api.artifacts.PublishArtifactSet;
+import org.gradle.api.artifacts.ResolvedConfiguration;
+import org.gradle.api.artifacts.ResolvedDependency;
 import org.gradle.api.artifacts.dsl.ArtifactHandler;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import org.gradle.api.artifacts.maven.Conf2ScopeMapping;
@@ -473,51 +476,16 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 						_getGitCommitCommand(
 							project, "artifact properties", true));
 
-					// Convert module to project dependencies
-
-					File projectDir = project.getProjectDir();
-
-					File projectGroupDir = projectDir.getParentFile();
-
-					BasePluginConvention basePluginConvention =
-						GradleUtil.getConvention(
-							project, BasePluginConvention.class);
-
-					String archivesBaseName =
-						basePluginConvention.getArchivesBaseName();
-
-					commands.add(
-						String.format(
-							_MODULE_TO_PROJECT_DEPENDENCIES_COMMAND,
-							FileUtil.getAbsolutePath(projectGroupDir),
-							escapeBRE(project.getGroup()),
-							escapeBRE(archivesBaseName), project.getPath()));
-
-					// Convert project to module dependencies
-
-					commands.add(
-						String.format(
-							_PROJECT_TO_MODULE_DEPENDENCIES_COMMAND,
-							FileUtil.getAbsolutePath(rootDir),
-							FileUtil.getAbsolutePath(projectGroupDir),
-							escapeBRE(project.getPath()), project.getGroup(),
-							archivesBaseName,
-							String.valueOf(project.getVersion())));
-
 					// Commit other changed files
 
 					commands.add(
 						_getGitCommitCommand(project, "apply", true, false));
 
 					System.out.println();
-					System.out.println('#');
-					System.out.println(
-						"# " + FileUtil.getAbsolutePath(projectDir));
-					System.out.println('#');
-					System.out.println();
 
 					for (String command : commands) {
-						System.out.println(command);
+						System.out.print(" && ");
+						System.out.print(command);
 					}
 
 					if (GradleUtil.getProperty(project, "first", false)) {
@@ -732,6 +700,37 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 
 			});
 
+		final File gitRepoDir = getRootDir(project, ".gitrepo");
+
+		if (gitRepoDir != null) {
+			replaceRegexTask.pre(
+				new Closure<String>(null) {
+
+					@SuppressWarnings("unused")
+					public String doCall(String content, File file) {
+						String fileName = file.getName();
+
+						if (!fileName.equals("build.gradle")) {
+							return content;
+						}
+
+						if (FileUtil.isChild(file, gitRepoDir)) {
+							return content.replaceAll(
+								getModuleDependencyRegex(project),
+								Matcher.quoteReplacement(
+									getProjectDependency(project)));
+						}
+						else {
+							return content.replaceAll(
+								Pattern.quote(getProjectDependency(project)),
+								Matcher.quoteReplacement(
+									getModuleDependency(project)));
+						}
+					}
+
+				});
+		}
+
 		replaceRegexTask.setDescription(
 			"Updates the project version in external files.");
 		replaceRegexTask.setIgnoreUnmatched(true);
@@ -895,6 +894,37 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 			bundleDefaultInstructions);
 	}
 
+	protected void configureBundleInstructions(Project project) {
+		Map<String, String> bundleInstructions = getBundleInstructions(project);
+
+		String includeResource = bundleInstructions.get(
+			Constants.INCLUDERESOURCE);
+
+		if (Validator.isNull(includeResource) ||
+			!includeResource.contains("-*.")) {
+
+			return;
+		}
+
+		Configuration configuration = GradleUtil.getConfiguration(
+			project, JavaPlugin.COMPILE_CONFIGURATION_NAME);
+
+		ResolvedConfiguration resolvedConfiguration =
+			configuration.getResolvedConfiguration();
+
+		for (ResolvedDependency resolvedDependency :
+				resolvedConfiguration.getFirstLevelModuleDependencies()) {
+
+			String name = resolvedDependency.getModuleName();
+			String version = resolvedDependency.getModuleVersion();
+
+			includeResource = includeResource.replace(
+				name + "-*.", name + "-" + version + ".");
+		}
+
+		bundleInstructions.put(Constants.INCLUDERESOURCE, includeResource);
+	}
+
 	protected void configureConfiguration(Configuration configuration) {
 		DependencySet dependencySet = configuration.getDependencies();
 
@@ -946,7 +976,8 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 	protected void configureDefaults(
 		final Project project, LiferayPlugin liferayPlugin) {
 
-		final File portalRootDir = getPortalRootDir(project);
+		final File portalRootDir = getRootDir(
+			project.getRootProject(), "portal-impl");
 		final boolean publishing = isPublishing(project);
 		boolean testProject = isTestProject(project);
 
@@ -1040,7 +1071,6 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 				public void execute(Project project) {
 					configureArtifacts(
 						project, jarJavadocTask, jarSourcesTask, jarTLDDocTask);
-					configureProjectBndProperties(project);
 					configureProjectVersion(project);
 					configureTaskUpdateFileVersions(
 						updateFileVersionsTask, portalRootDir);
@@ -1051,6 +1081,11 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 
 					configureTaskUploadArchives(
 						project, recordArtifactTask, updateFileVersionsTask);
+
+					if (hasPlugin(project, BundlePlugin.class)) {
+						configureBundleInstructions(project);
+						configureProjectBndProperties(project);
+					}
 				}
 
 			});
@@ -1500,13 +1535,7 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 
 		Project project = updateFileVersionsTask.getProject();
 
-		BasePluginConvention basePluginConvention = GradleUtil.getConvention(
-			project, BasePluginConvention.class);
-
-		String archivesBaseName = basePluginConvention.getArchivesBaseName();
-
-		String regex =
-			"\"" + Pattern.quote(archivesBaseName) + "\", version: \"(\\d.+)\"";
+		String regex = getModuleDependencyRegex(project);
 
 		Map<String, Object> args = new HashMap<>();
 
@@ -1652,20 +1681,60 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 		return project.file("lib");
 	}
 
+	protected String getModuleDependency(Project project) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("group: \"");
+		sb.append(project.getGroup());
+		sb.append("\", name: \"");
+
+		BasePluginConvention basePluginConvention = GradleUtil.getConvention(
+			project, BasePluginConvention.class);
+
+		sb.append(basePluginConvention.getArchivesBaseName());
+
+		sb.append("\", version: \"");
+		sb.append(project.getVersion());
+		sb.append('"');
+
+		return sb.toString();
+	}
+
+	protected String getModuleDependencyRegex(Project project) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("group: \"");
+		sb.append(project.getGroup());
+		sb.append("\", name: \"");
+
+		BasePluginConvention basePluginConvention = GradleUtil.getConvention(
+			project, BasePluginConvention.class);
+
+		sb.append(basePluginConvention.getArchivesBaseName());
+
+		sb.append("\", version: \"");
+
+		return Pattern.quote(sb.toString()) + "(\\d.+)\"";
+	}
+
 	@Override
 	protected Class<LiferayPlugin> getPluginClass() {
 		return LiferayPlugin.class;
 	}
 
-	protected File getPortalRootDir(Project project) {
-		File dir = project.getRootDir();
+	protected String getProjectDependency(Project project) {
+		return "project(\"" + project.getPath() + "\")";
+	}
+
+	protected File getRootDir(Project project, String markerFileName) {
+		File dir = project.getProjectDir();
 
 		dir = dir.getParentFile();
 
 		while (true) {
-			File portalImplDir = new File(dir, "portal-impl");
+			File markerFile = new File(dir, markerFileName);
 
-			if (portalImplDir.exists()) {
+			if (markerFile.exists()) {
 				return dir;
 			}
 
@@ -1714,16 +1783,6 @@ public class LiferayDefaultsPlugin extends BaseDefaultsPlugin<LiferayPlugin> {
 
 	private static final boolean _MAVEN_LOCAL_IGNORE = Boolean.getBoolean(
 		"maven.local.ignore");
-
-	private static final String _MODULE_TO_PROJECT_DEPENDENCIES_COMMAND =
-		"find %s -name 'build.gradle' -type f -exec sed -i " +
-			"'s/group: \"%s\", name: \"%s\", version: \".*\"/" +
-				"project(\"%s\")/' {} \\;";
-
-	private static final String _PROJECT_TO_MODULE_DEPENDENCIES_COMMAND =
-		"find %s -name 'build.gradle' -not -path '%s/*' -type f -exec sed -i " +
-			"'s/project(\"%s\")/" +
-				"group: \"%s\", name: \"%s\", version: \"%s\"/' {} \\;";
 
 	private static final String _REPOSITORY_URL = System.getProperty(
 		"repository.url", DEFAULT_REPOSITORY_URL);
