@@ -1036,6 +1036,15 @@ public class Validator {
 	}
 
 	/**
+	 * @deprecated As of 6.2.0, replaced by {@link
+	 *             ArrayUtil#isNotEmpty(Object[])}
+	 */
+	@Deprecated
+	public static boolean isNotNull(Object[] array) {
+		return ArrayUtil.isNotEmpty(array);
+	}
+
+	/**
 	 * Returns <code>true</code> if the string is not <code>null</code>, meaning
 	 * it is not a <code>null</code> reference, an empty string, whitespace, or
 	 * the string "<code>null</code>", with or without leading or trailing
@@ -1088,6 +1097,14 @@ public class Validator {
 		else {
 			return false;
 		}
+	}
+
+	/**
+	 * @deprecated As of 6.2.0, replaced by {@link ArrayUtil#isEmpty(Object[])}
+	 */
+	@Deprecated
+	public static boolean isNull(Object[] array) {
+		return ArrayUtil.isEmpty(array);
 	}
 
 	/**
