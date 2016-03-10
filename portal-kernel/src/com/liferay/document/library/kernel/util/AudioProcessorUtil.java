@@ -130,4 +130,11 @@ public class AudioProcessorUtil {
 		audioProcessor.trigger(sourceFileVersion, destinationFileVersion);
 	}
 
+	/**
+	 * @deprecated As of 6.2.0
+	 */
+	@Deprecated
+	public void setAudioProcessor(AudioProcessor audioProcessor) {
+	}
+
 }
