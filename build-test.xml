@@ -567,7 +567,6 @@ counter.jdbc.prefix=jdbc.counter.]]></echo>
 			<var name="test.batch.run.type" unset="true" />
 			<var name="test.portal.instance" unset="true" />
 
-			<property name="test.batch.name" value="functional-tomcat8-mysql55-jdk7" />
 			<property name="test.batch.run.type" value="sequential" />
 			<property name="test.portal.instance" value="true" />
 
@@ -5141,20 +5140,23 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 			<isset property="test.portal.instance" />
 			<then>
 				<if>
-					<contains string="${poshi.test.name}" substring="," />
+					<contains string="${test.class}" substring="," />
 					<then>
 						<propertyregex
-							input="${poshi.test.name}"
+							input="${test.class}"
 							override="false"
 							property="test.name.skip.portal.instance"
 							regexp="(.*?),.*"
 							replace="\1"
 						/>
+
+						<echo append="true" file="${test.ext.properties.file}">
+							test.name.skip.portal.instance=${test.name.skip.portal.instance}
+						</echo>
 					</then>
 				</if>
 
 				<echo append="true" file="${test.ext.properties.file}">
-					test.name.skip.portal.instance=${test.name.skip.portal.instance}
 					test.portal.instance=${test.portal.instance}
 				</echo>
 			</then>
@@ -6054,6 +6056,17 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 			</then>
 		</if>
 
+		<get-testcase-property property.name="test.name.skip.portal.instance" />
+
+		<if>
+			<isset property="test.name.skip.portal.instance" />
+			<then>
+				<echo append="true" file="${test.ext.properties.file}">
+					test.name.skip.portal.instance=${test.name.skip.portal.instance}
+				</echo>
+			</then>
+		</if>
+
 		<get-testcase-property property.name="timeout.explicit.wait" />
 
 		<if>
@@ -6935,6 +6948,12 @@ if (ppstate.equals("normal")) {
 	</target>
 
 	<target name="run-poshi-runner">
+		<loadfile property="echo.test" srcFile="portal-web/test/test-portal-web-ext.properties" />
+
+		<echo></echo>
+		<echo>${echo.test}</echo>
+		<echo></echo>
+
 		<poshi-execute task="runPoshi" />
 	</target>
 
