@@ -58,6 +58,20 @@ AUI.add(
 					portletNamespace: {
 					},
 
+					strings: {
+						value: {
+							addColumn: Liferay.Language.get('add-column'),
+							addField: Liferay.Language.get('add-field'),
+							cancelRemoveRow: Liferay.Language.get('cancel'),
+							confirmRemoveRow: Liferay.Language.get('yes-delete'),
+							formTitle: Liferay.Language.get('build-your-form'),
+							modalHeader: Liferay.Language.get('remove-confirmation'),
+							pasteHere: Liferay.Language.get('paste-here'),
+							removeRowModal: Liferay.Language.get('you-will-also-delete-fields-with-this-row-are-you-sure-you-want-delete-it')
+						},
+						writeOnce: true
+					},
+
 					visitor: {
 						getter: '_getVisitor',
 						valueFn: '_valueVisitor'
@@ -84,7 +98,7 @@ AUI.add(
 
 						instance._eventHandlers = [
 							boundingBox.delegate('click', instance._onClickPaginationItem, '.pagination li a'),
-							instance.after('form-builder-field-list:fieldsChange', instance._afterFieldListChange, instance),
+							instance.after('liferay-ddl-form-builder-field-list:fieldsChange', instance._afterFieldListChange, instance),
 							instance.after('render', instance._afterFormBuilderRender, instance),
 							instance.after(instance._afterRemoveField, instance, 'removeField'),
 							settingsModal.after('hide', A.bind(instance._afterFieldSettingsModalHide, instance)),
@@ -233,6 +247,8 @@ AUI.add(
 						var field = event.field;
 
 						instance.appendChild(field);
+
+						instance._syncRequiredFieldsWarning();
 
 						var row = instance.getFieldRow(field);
 

@@ -17,11 +17,8 @@ package com.liferay.dynamic.data.lists.web.upgrade.v1_0_0;
 import com.liferay.dynamic.data.lists.constants.DDLPortletKeys;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.PortletPreferences;
-import com.liferay.portal.kernel.model.ResourcePermission;
 import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
-import com.liferay.portal.kernel.util.StringUtil;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -105,58 +102,6 @@ public class UpgradeDDLFormPortletId
 				_log.warn(e, e);
 			}
 		}
-	}
-
-	@Override
-	protected void updatePortletPreference(
-			long portletPreferencesId, String portletId)
-		throws Exception {
-
-		PortletPreferences portletPreferences =
-			_portletPreferencesLocalService.getPortletPreferences(
-				portletPreferencesId);
-
-		String preferences = StringUtil.replace(
-			portletPreferences.getPreferences(), "</portlet-preferences>",
-			"<preference><name>formView</name><value>true</value>" +
-				"</preference></portlet-preferences>");
-
-		try (PreparedStatement ps = connection.prepareStatement(
-				"update PortletPreferences set portletId = ?, preferences = " +
-					"? where portletPreferencesId = " + portletPreferencesId)) {
-
-			ps.setString(1, portletId);
-			ps.setString(2, preferences);
-
-			ps.executeUpdate();
-		}
-	}
-
-	@Override
-	protected void updateResourcePermission(
-			long resourcePermissionId, String name, String primKey)
-		throws Exception {
-
-		ResourcePermission resourcePermission =
-			_resourcePermissionLocalService.getResourcePermission(
-				resourcePermissionId);
-
-		if (hasResourcePermission(
-				resourcePermission.getCompanyId(), name,
-				resourcePermission.getScope(), primKey,
-				resourcePermission.getRoleId())) {
-
-			// Resource permission may have already been added by the DDL
-			// Display portlet, in this case it's safe to remove
-			// 1_WAR_ddlformportlet resource permission
-
-			_resourcePermissionLocalService.deleteResourcePermission(
-				resourcePermission.getResourcePermissionId());
-
-			return;
-		}
-
-		super.updateResourcePermission(resourcePermissionId, name, primKey);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
