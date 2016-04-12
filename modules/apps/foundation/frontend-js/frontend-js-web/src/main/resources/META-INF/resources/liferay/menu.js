@@ -75,7 +75,7 @@ AUI.add(
 
 		var SELECTOR_SEARCH_CONTAINER = '.lfr-menu-list-search-container';
 
-		var TPL_MENU = '<div class="open" />';
+		var TPL_MENU = '<div class="bleh" />';
 
 		var Menu = function() {
 			var instance = this;
@@ -329,7 +329,7 @@ AUI.add(
 
 					align.points = instance._getAlignPoints(cssClass);
 
-					menu.addClass('lfr-icon-menu-open');
+					menu.addClass('lfr-icon-menu-bleh');
 
 					if (Util.isPhone() || Util.isTablet()) {
 						overlay.hide();
