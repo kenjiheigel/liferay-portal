@@ -226,7 +226,7 @@
 	</command>
 
 	<command name="ActivateStaging" priority="5">
-		<property name="portal.acceptance" value="true" />
+		<property name="portal.acceptance" value="kenji" />
 
 		<execute macro="Navigator#openSiteURL">
 			<var name="siteName" value="Site Name" />
@@ -239,6 +239,22 @@
 		<execute macro="Staging#activateStagingCP">
 			<var name="siteName" value="Site Name" />
 		</execute>
+
+		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+
+		<if>
+			<equals arg1="${testPortalInstance}" arg2="true" />
+			<then>
+				<execute macro="PortalInstances#tearDownCP" />
+			</then>
+			<else>
+				<execute macro="Site#tearDownCP" />
+
+				<execute macro="Organization#tearDownCP" />
+
+				<execute macro="User#tearDownCP" />
+			</else>
+		</if>
 	</command>
 
 	<command name="ActivateStagingSiteWithPublicAndPrivatePage" priority="5">
