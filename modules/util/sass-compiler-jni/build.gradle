@@ -40,22 +40,8 @@ make -j5""")
 }
 
 buildLibSass_Linux_x64 {
-doFirst {
-		File libSassDir = new File(temporaryDir, "libsass-${project.libSassVersion}")
-
-		libSassDir.mkdirs()
-
-		File buildShFile = new File(libSassDir, "build.sh")
-
-		buildShFile.write("""\
-LIBSASS_VERSION=\"${project.libSassVersion}\"
-autoreconf --force --install
-./configure --disable-tests --enable-shared
-make CXX=g++-4.6 CC=gcc-4.4 -j5""")
-	}
-	inputDirName = "src/.libs"
 	inputFileName = "libsass.so"
-	makeExecutable = "./build.sh"
+	makeExecutable = "make CXX=g++-4.6 CC=gcc-4.4 STATIC_LIBGCC=1 STATIC_LIBSTDCPP=1 shared"
 	outputFileName = "libliferaysass.so"
 	resourcesDirName = "linux_x64"
 }
