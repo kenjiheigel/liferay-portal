@@ -1,15 +1,13 @@
-define("frontend-js-spa-web@1.0.6/liferay/screen/EventScreen.es", ['exports', 'metal-dom/src/dom', 'senna/src/screen/HtmlScreen', 'metal-dom/src/globalEval', 'metal-promise/src/promise/Promise', '../util/Utils.es'], function (exports, _dom, _HtmlScreen2, _globalEval, _Promise, _Utils) {
+define("frontend-js-spa-web@1.0.6/liferay/screen/EventScreen.es", ['exports', 'senna/src/screen/HtmlScreen', 'senna/src/globals/globals', 'metal-promise/src/promise/Promise', '../util/Utils.es'], function (exports, _HtmlScreen2, _globals, _Promise, _Utils) {
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
 
-	var _dom2 = _interopRequireDefault(_dom);
-
 	var _HtmlScreen3 = _interopRequireDefault(_HtmlScreen2);
 
-	var _globalEval2 = _interopRequireDefault(_globalEval);
+	var _globals2 = _interopRequireDefault(_globals);
 
 	var _Utils2 = _interopRequireDefault(_Utils);
 
@@ -86,6 +84,18 @@ define("frontend-js-spa-web@1.0.6/liferay/screen/EventScreen.es", ['exports', 'm
 			this.cacheLastModified = new Date().getTime();
 		};
 
+		EventScreen.prototype.checkRedirectPath = function checkRedirectPath(redirectPath) {
+			var app = Liferay.SPA.app;
+
+			if (!app.findRoute(redirectPath)) {
+				if (_globals2.default.capturedFormElement) {
+					_globals2.default.capturedFormElement.submit();
+				} else {
+					window.location.href = redirectPath;
+				}
+			}
+		};
+
 		EventScreen.prototype.deactivate = function deactivate() {
 			_HtmlScreen.prototype.deactivate.call(this);
 
@@ -129,6 +139,10 @@ define("frontend-js-spa-web@1.0.6/liferay/screen/EventScreen.es", ['exports', 'm
 			var _this3 = this;
 
 			return _HtmlScreen.prototype.load.call(this, path).then(function (content) {
+				var redirectPath = _this3.beforeUpdateHistoryPath(path);
+
+				_this3.checkRedirectPath(redirectPath);
+
 				Liferay.fire('screenLoad', {
 					app: Liferay.SPA.app,
 					content: content,
