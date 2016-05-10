@@ -1,8 +1,7 @@
 'use strict';
 
-import dom from 'metal-dom/src/dom';
 import HtmlScreen from 'senna/src/screen/HtmlScreen';
-import globalEval from 'metal-dom/src/globalEval';
+import globals from 'senna/src/globals/globals';
 import { CancellablePromise } from 'metal-promise/src/promise/Promise';
 import Utils from '../util/Utils.es';
 
@@ -42,6 +41,19 @@ class EventScreen extends HtmlScreen {
 		super.addCache(content);
 
 		this.cacheLastModified = (new Date()).getTime();
+	}
+
+	checkRedirectPath(redirectPath) {
+		var app = Liferay.SPA.app;
+
+		if (!app.findRoute(redirectPath)) {
+			if (globals.capturedFormElement) {
+				globals.capturedFormElement.submit();
+			}
+			else {
+				window.location.href = redirectPath;
+			}
+		}
 	}
 
 	deactivate() {
@@ -96,6 +108,10 @@ class EventScreen extends HtmlScreen {
 	load(path) {
 		return super.load(path)
 			.then((content) => {
+				var redirectPath = this.beforeUpdateHistoryPath(path);
+
+				this.checkRedirectPath(redirectPath);
+
 				Liferay.fire(
 					'screenLoad',
 					{
