@@ -1,9 +1,7 @@
 'use strict';
 
-import dom from 'metal-dom/src/dom';
 import HtmlScreen from 'senna/src/screen/HtmlScreen';
-import globalEval from 'metal-dom/src/globalEval';
-import { CancellablePromise } from 'metal-promise/src/promise/Promise';
+import {CancellablePromise} from 'metal-promise/src/promise/Promise';
 import Utils from '../util/Utils.es';
 
 class EventScreen extends HtmlScreen {
@@ -72,15 +70,17 @@ class EventScreen extends HtmlScreen {
 		return CancellablePromise.resolve(Utils.resetAllPortlets())
 			.then(CancellablePromise.resolve(this.beforeScreenFlip()))
 			.then(super.flip(surfaces))
-			.then(() => {
-				Liferay.fire(
-					'screenFlip',
-					{
-						app: Liferay.SPA.app,
-						screen: this
-					}
-				);
-			});
+			.then(
+				() => {
+					Liferay.fire(
+						'screenFlip',
+						{
+							app: Liferay.SPA.app,
+							screen: this
+						}
+					);
+				}
+			);
 	}
 
 	getCacheLastModified() {
@@ -95,18 +95,20 @@ class EventScreen extends HtmlScreen {
 
 	load(path) {
 		return super.load(path)
-			.then((content) => {
-				Liferay.fire(
-					'screenLoad',
-					{
-						app: Liferay.SPA.app,
-						content: content,
-						screen: this
-					}
-				);
+			.then(
+				(content) => {
+					Liferay.fire(
+						'screenLoad',
+						{
+							app: Liferay.SPA.app,
+							content: content,
+							screen: this
+						}
+					);
 
-				return content;
-			});
+					return content;
+				}
+			);
 	}
 }
 
