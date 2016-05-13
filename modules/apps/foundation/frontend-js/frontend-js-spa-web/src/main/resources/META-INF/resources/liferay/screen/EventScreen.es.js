@@ -1,7 +1,8 @@
 'use strict';
 
 import HtmlScreen from 'senna/src/screen/HtmlScreen';
-import { CancellablePromise } from 'metal-promise/src/promise/Promise';
+import globals from 'senna/src/globals/globals';
+import {CancellablePromise} from 'metal-promise/src/promise/Promise';
 import Utils from '../util/Utils.es';
 
 class EventScreen extends HtmlScreen {
@@ -42,6 +43,14 @@ class EventScreen extends HtmlScreen {
 		this.cacheLastModified = (new Date()).getTime();
 	}
 
+	checkRedirectPath(redirectPath) {
+		var app = Liferay.SPA.app;
+
+		if (!globals.capturedFormElement && !app.findRoute(redirectPath)) {
+			window.location.href = redirectPath;
+		}
+	}
+
 	deactivate() {
 		super.deactivate();
 
@@ -64,13 +73,22 @@ class EventScreen extends HtmlScreen {
 		);
 	}
 
+	copyBodyAttributes() {
+		var virtualBody = this.virtualDocument.querySelector('body');
+
+		document.body.className = virtualBody.className;
+		document.body.onload = virtualBody.onload;
+	}
+
 	flip(surfaces) {
-		document.body.className = this.virtualDocument.querySelector('body').className;
+		this.copyBodyAttributes();
 
 		return CancellablePromise.resolve(Utils.resetAllPortlets())
 			.then(CancellablePromise.resolve(this.beforeScreenFlip()))
 			.then(super.flip(surfaces))
 			.then(() => {
+				this.runBodyOnLoad();
+
 				Liferay.fire(
 					'screenFlip',
 					{
@@ -104,6 +122,10 @@ class EventScreen extends HtmlScreen {
 	load(path) {
 		return super.load(path)
 			.then((content) => {
+				var redirectPath = this.beforeUpdateHistoryPath(path);
+
+				this.checkRedirectPath(redirectPath);
+
 				Liferay.fire(
 					'screenLoad',
 					{
@@ -115,6 +137,14 @@ class EventScreen extends HtmlScreen {
 
 				return content;
 			});
+	}
+
+	runBodyOnLoad() {
+		var onLoad = document.body.onload;
+
+		if (onLoad) {
+			onLoad();
+		}
 	}
 }
 
