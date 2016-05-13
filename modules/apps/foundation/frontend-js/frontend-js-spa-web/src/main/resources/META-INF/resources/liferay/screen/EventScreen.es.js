@@ -72,13 +72,22 @@ class EventScreen extends HtmlScreen {
 		);
 	}
 
+	copyBodyAttributes() {
+		var virtualBody = this.virtualDocument.querySelector('body');
+
+		document.body.className = virtualBody.className;
+		document.body.onload = virtualBody.onload;
+	}
+
 	flip(surfaces) {
-		document.body.className = this.virtualDocument.querySelector('body').className;
+		this.copyBodyAttributes();
 
 		return CancellablePromise.resolve(Utils.resetAllPortlets())
 			.then(CancellablePromise.resolve(this.beforeScreenFlip()))
 			.then(super.flip(surfaces))
 			.then(() => {
+				this.runBodyOnLoad();
+
 				Liferay.fire(
 					'screenFlip',
 					{
@@ -127,6 +136,14 @@ class EventScreen extends HtmlScreen {
 
 				return content;
 			});
+	}
+
+	runBodyOnLoad() {
+		var onLoad = document.body.onload;
+
+		if (onLoad) {
+			onLoad();
+		}
 	}
 }
 
