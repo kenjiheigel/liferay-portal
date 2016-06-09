@@ -138,7 +138,7 @@ public class LPKGIndexValidator {
 				Collections.sort(actualKeys);
 
 				_log.info(
-					"Failed integrity check because expected keys: " +
+					"Running validation because expected keys: " +
 						expectedKeys + " do not match actual keys: " +
 							actualKeys);
 			}
@@ -157,7 +157,7 @@ public class LPKGIndexValidator {
 				if (!Objects.equals(expectedChecksum, actualChecksum)) {
 					if (_log.isInfoEnabled()) {
 						_log.info(
-							"Failed integrity check because of mismatched " +
+							"Running validation because of mismatched " +
 								"checksum for " + integrityKey);
 					}
 
@@ -301,6 +301,11 @@ public class LPKGIndexValidator {
 				localProcessExecutor.execute(
 					_processConfig,
 					new TargetPlatformIndexerProcessCallable(
+						Arrays.asList(
+							new File(
+								PropsValues.LIFERAY_LIB_PORTAL_DIR,
+								"util-taglib.jar")),
+						PropsValues.MODULE_FRAMEWORK_STOP_WAIT_TIMEOUT,
 						PropsValues.MODULE_FRAMEWORK_BASE_DIR + "/static",
 						PropsValues.MODULE_FRAMEWORK_MODULES_DIR,
 						PropsValues.MODULE_FRAMEWORK_PORTAL_DIR));
