@@ -118,6 +118,27 @@ public class AdminPortlet extends BaseKBPortlet {
 			themeDisplay.getScopeGroupId(), resourcePrimKeys);
 	}
 
+	public void deleteKBArticlesAndFolders(
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws PortalException {
+
+		long[] deleteKBArticleResourcePrimKeys = ParamUtil.getLongValues(
+			actionRequest, "rowIdsKBArticle");
+
+		for (long deleteKBArticleResourcePrimKey :
+				deleteKBArticleResourcePrimKeys) {
+
+			kbArticleService.deleteKBArticle(deleteKBArticleResourcePrimKey);
+		}
+
+		long[] deleteKBFolderIds = ParamUtil.getLongValues(
+			actionRequest, "rowIdsKBFolder");
+
+		for (long deleteKBFolderId : deleteKBFolderIds) {
+			kbFolderService.deleteKBFolder(deleteKBFolderId);
+		}
+	}
+
 	public void deleteKBFolder(
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws PortalException {
@@ -208,9 +229,9 @@ public class AdminPortlet extends BaseKBPortlet {
 		throws IOException, PortletException {
 
 		try {
-			int status = WorkflowConstants.STATUS_ANY;
-
-			renderRequest.setAttribute(KBWebKeys.KNOWLEDGE_BASE_STATUS, status);
+			renderRequest.setAttribute(
+				KBWebKeys.DL_MIME_TYPE_DISPLAY_CONTEXT,
+				dlMimeTypeDisplayContext);
 
 			KBArticle kbArticle = null;
 
@@ -221,6 +242,7 @@ public class AdminPortlet extends BaseKBPortlet {
 				renderRequest, "resourceClassNameId", kbArticleClassNameId);
 			long resourcePrimKey = ParamUtil.getLong(
 				renderRequest, "resourcePrimKey");
+			int status = WorkflowConstants.STATUS_ANY;
 
 			if ((resourcePrimKey > 0) &&
 				(resourceClassNameId == kbArticleClassNameId)) {
@@ -243,6 +265,8 @@ public class AdminPortlet extends BaseKBPortlet {
 
 			renderRequest.setAttribute(
 				KBWebKeys.KNOWLEDGE_BASE_KB_TEMPLATE, kbTemplate);
+
+			renderRequest.setAttribute(KBWebKeys.KNOWLEDGE_BASE_STATUS, status);
 		}
 		catch (Exception e) {
 			if (e instanceof NoSuchArticleException ||

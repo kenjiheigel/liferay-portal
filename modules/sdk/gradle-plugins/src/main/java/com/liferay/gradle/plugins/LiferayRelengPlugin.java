@@ -118,7 +118,7 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 
 			});
 
-		GradleUtil.withPlugin(
+		/*GradleUtil.withPlugin(
 			project, LiferayOSGiPlugin.class,
 			new Action<LiferayOSGiPlugin>() {
 
@@ -131,7 +131,7 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 					}
 				}
 
-			});
+			});*/
 	}
 
 	protected PrintArtifactPublishCommandsTask
@@ -476,6 +476,12 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 
 	protected void configureTaskEnabledIfStale(
 		Task task, final WritePropertiesTask recordArtifactTask) {
+
+		String force = GradleUtil.getTaskPrefixedProperty(task, "force");
+
+		if (Boolean.parseBoolean(force)) {
+			return;
+		}
 
 		task.onlyIf(
 			new Spec<Task>() {

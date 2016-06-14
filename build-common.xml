@@ -261,6 +261,35 @@
 		<contains casesensitive="false" string="${os.name}" substring="Windows" />
 	</condition>
 
+	<exec executable="git" outputproperty="liferay.releng.branch">
+		<arg value="rev-parse" />
+		<arg value="--abbrev-ref" />
+		<arg value="HEAD" />
+	</exec>
+
+	<condition property="liferay.releng.ee">
+		<or>
+			<istrue value="${ee.override}" />
+			<matches pattern="ee-.+" string="${liferay.releng.branch}" />
+		</or>
+	</condition>
+
+	<condition else="Liferay" property="liferay.releng.app.title.prefix" value="Liferay CE">
+		<not>
+			<istrue value="${liferay.releng.ee}" />
+		</not>
+	</condition>
+
+	<condition else="false" property="liferay.releng.public">
+		<not>
+			<istrue value="${liferay.releng.ee}" />
+		</not>
+	</condition>
+
+	<condition else="false" property="liferay.releng.supported">
+		<istrue value="${liferay.releng.ee}" />
+	</condition>
+
 	<property name="definitions.dir" value="${project.dir}/definitions" />
 
 	<xmlcatalog id="dtd.catalog">
@@ -897,6 +926,8 @@ Please set the environment variable ANT_OPTS to the recommended value of
 
 			<prepare-portal-artifact-pom snapshot.version.suffix="${snapshot.version.suffix}" />
 
+			<delete dir="${user.home}/.m2/repository/com/liferay/portal/com.liferay.${processed.artifact.name}" />
+
 			<artifact:install file="${artifact.name}.@{packaging}">
 				<attach-files />
 				<pom file="pom.xml" />
@@ -945,6 +976,7 @@ Please set the environment variable ANT_OPTS to the recommended value of
 				<sysproperty file="woven-classes" key="junit.aspectj.dump" />
 				<sysproperty key="junit.code.coverage" value="${junit.code.coverage}" />
 				<sysproperty if:true="${jvm.debug}" key="jvm.debug" value="true" />
+				<sysproperty key="liferay.lib.portal.dir" value="${app.server.tomcat.lib.portal.dir}" />
 				<sysproperty key="whip.agent" value="${whip.agent}" />
 				<sysproperty file="test-coverage/@{test.type}/whip.dat" key="whip.datafile" />
 				<sysproperty key="whip.instrument.dump" value="${whip.instrument.dump}" />
@@ -1468,33 +1500,6 @@ rerun your task.
 				<istrue value="${jsp.precompile}" />
 			</condition>
 
-			<exec executable="git" outputproperty="liferay.releng.branch">
-				<arg value="rev-parse" />
-				<arg value="--abbrev-ref" />
-				<arg value="HEAD" />
-			</exec>
-
-			<condition property="liferay.releng.ee">
-				<or>
-					<istrue value="${ee.override}" />
-					<matches pattern="ee-.+" string="${liferay.releng.branch}" />
-				</or>
-			</condition>
-
-			<condition else="Liferay" property="liferay.releng.app.title.prefix" value="Liferay CE">
-				<istrue value="${liferay.releng.ee}" />
-			</condition>
-
-			<condition else="false" property="liferay.releng.public">
-				<not>
-					<istrue value="${liferay.releng.ee}" />
-				</not>
-			</condition>
-
-			<condition else="false" property="liferay.releng.supported">
-				<istrue value="${liferay.releng.ee}" />
-			</condition>
-
 			<echoproperties destfile="${gradle.properties.file}" >
 				<propertyset>
 					<propertyref name="app.server.type" />
@@ -1543,6 +1548,9 @@ rerun your task.
 				<entry key="database.jdbc.oracle.driver" value="${jdbc.oracle.driver}" />
 				<entry key="database.oracle.version" value="${database.oracle.version}" />
 				<entry key="systemProp.build.performance.logger.enabled" value="${build.performance.logger.enabled}" />
+				<entry key="systemProp.repository.private.password" value="${build.repository.private.password}" />
+				<entry key="systemProp.repository.private.url" value="${build.repository.private.url}" />
+				<entry key="systemProp.repository.private.username" value="${build.repository.private.username}" />
 			</propertyfile>
 
 			<replaceregexp file="${gradle.properties.file}" flags="g" match="\\([\:\=\!\\])" replace="\1" />
@@ -1587,6 +1595,9 @@ rerun your task.
 			</echoproperties>
 
 			<propertyfile file="${sdk.properties.file}">
+				<entry key="ivy.repository.liferay.private.password" value="${build.repository.private.password}" />
+				<entry key="ivy.repository.liferay.private.url" value="${build.repository.private.url}" />
+				<entry key="ivy.repository.liferay.private.username" value="${build.repository.private.username}" />
 				<entry key="lp.portal.project.dir" value="${project.dir}" />
 				<entry key="module.framework.base.dir" value="${liferay.home}/osgi" />
 			</propertyfile>
