@@ -1,0 +1,79 @@
+<definition>
+	<command name="_editCP">
+		<execute function="Type" locator1="TextInput#NAME" value1="${siteTeamName}" />
+
+		<execute function="Type" locator1="TextArea#DESCRIPTION" value1="${siteTeamDescription}" />
+	</command>
+
+	<command name="addCP">
+		<execute macro="LexiconEntry#gotoAdd" />
+
+		<execute macro="SiteTeam#_editCP">
+			<var name="siteTeamDescription" value="${siteTeamDescription}" />
+			<var name="siteTeamName" value="${siteTeamName}" />
+		</execute>
+
+		<execute macro="PortletEntry#save" />
+	</command>
+
+	<command name="deleteAllCP">
+		<execute function="Check#checkAll" locator1="Checkbox#SELECT_ALL" />
+
+		<execute function="ClickNoError" locator1="Icon#DELETE" />
+
+		<execute macro="Alert#viewSuccessMessage" />
+
+		<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
+
+		<execute function="AssertElementPresent" locator1="Message#EMPTY_INFO" />
+
+		<execute function="AssertTextEquals#assertPartialText" locator1="Message#EMPTY_INFO" value1="There are no site teams." />
+	</command>
+
+	<command name="deleteCP">
+		<for list="${siteTeamNameList}" param="siteTeamName">
+			<var name="key_rowEntry" value="${siteTeamName}" />
+
+			<execute function="Click#clickAt" locator1="ContentRow#ENTRY_CONTENT_ENTRY_CHECKBOX" />
+
+			<execute function="ClickNoError" locator1="Icon#DELETE" />
+
+			<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
+
+			<execute macro="Alert#viewSuccessMessage" />
+
+			<execute function="AssertElementNotPresent" locator1="ContentRow#ENTRY_CONTENT_ENTRY_NAME_LINK" />
+		</for>
+	</command>
+
+	<command name="editCP">
+		<execute macro="LexiconEntry#gotoEntryMenuItem">
+			<var name="menuItem" value="Edit" />
+			<var name="rowEntry" value="${siteTeamName}" />
+		</execute>
+
+		<execute macro="SiteTeam#_editCP">
+			<var name="siteTeamDescription" value="${siteTeamDescriptionEdit}" />
+			<var name="siteTeamName" value="${siteTeamNameEdit}" />
+		</execute>
+
+		<execute macro="PortletEntry#save" />
+	</command>
+
+	<command name="teardownCP">
+		<execute macro="Navigator#openURL" />
+
+		<execute macro="ProductMenu#gotoSitesMembers">
+			<var name="portlet" value="Site Teams" />
+		</execute>
+
+		<execute macro="SiteTeam#deleteAllCP" />
+	</command>
+
+	<command name="viewCP">
+		<var name="key_rowEntry" value="${siteTeamName}" />
+
+		<execute function="AssertElementPresent" locator1="ContentRow#ENTRY_CONTENT_ENTRY_NAME_LINK" />
+		<execute function="AssertTextEquals" locator1="ContentRow#ENTRY_CONTENT_ENTRY_NAME_LINK" value1="${siteTeamName}" />
+	</command>
+</definition>
