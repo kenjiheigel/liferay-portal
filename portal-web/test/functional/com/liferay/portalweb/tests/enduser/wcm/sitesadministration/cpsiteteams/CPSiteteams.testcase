@@ -1,0 +1,112 @@
+<definition component-name="portal-wcm">
+	<property name="testray.main.component.name" value="Site Administration" />
+
+	<set-up>
+		<execute macro="TestCase#setUpPortalInstance" />
+
+		<execute macro="User#firstLoginPG" />
+	</set-up>
+
+	<tear-down>
+		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+
+		<if>
+			<equals arg1="${testPortalInstance}" arg2="true" />
+			<then>
+				<execute macro="PortalInstances#tearDownCP" />
+			</then>
+			<else>
+				<execute macro="User#tearDownCP" />
+
+				<execute macro="UserGroup#tearDownCP" />
+
+				<execute macro="SiteTeam#teardownCP" />
+
+				<execute macro="Site#tearDownCP" />
+			</else>
+		</if>
+	</tear-down>
+
+	<command name="AddSiteTeam" priority="5">
+		<execute macro="ProductMenu#gotoSitesMembers">
+			<var name="portlet" value="Site Teams" />
+		</execute>
+
+		<execute macro="SiteTeam#addCP">
+			<var name="siteTeamDescription" value="Site Team Description" />
+			<var name="siteTeamName" value="Site Team Name" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesMembers">
+			<var name="portlet" value="Site Teams" />
+		</execute>
+
+		<execute macro="SiteTeam#viewCP">
+			<var name="siteTeamName" value="Site Team Name" />
+		</execute>
+	</command>
+
+	<command name="DeleteSiteTeam" priority="5">
+		<execute macro="ProductMenu#gotoSitesMembers">
+			<var name="portlet" value="Site Teams" />
+		</execute>
+
+		<execute macro="SiteTeam#addCP">
+			<var name="siteTeamDescription" value="Site Team Description" />
+			<var name="siteTeamName" value="Site Team Name" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesMembers">
+			<var name="portlet" value="Site Teams" />
+		</execute>
+
+		<execute macro="SiteTeam#viewCP">
+			<var name="siteTeamName" value="Site Team Name" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesMembers">
+			<var name="portlet" value="Site Teams" />
+		</execute>
+
+		<execute macro="SiteTeam#deleteCP">
+			<var name="siteTeamNameList" value="Site Team Name" />
+		</execute>
+	</command>
+
+	<command name="EditSiteTeam" priority="5">
+		<execute macro="ProductMenu#gotoSitesMembers">
+			<var name="portlet" value="Site Teams" />
+		</execute>
+
+		<execute macro="SiteTeam#addCP">
+			<var name="siteTeamDescription" value="Site Team Description" />
+			<var name="siteTeamName" value="Site Team Name" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesMembers">
+			<var name="portlet" value="Site Teams" />
+		</execute>
+
+		<execute macro="SiteTeam#viewCP">
+			<var name="siteTeamName" value="Site Team Name" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesMembers">
+			<var name="portlet" value="Site Teams" />
+		</execute>
+
+		<execute macro="SiteTeam#editCP">
+			<var name="siteTeamDescriptionEdit" value="Site Team Description Edited" />
+			<var name="siteTeamName" value="Site Team Name" />
+			<var name="siteTeamNameEdit" value="Site Team Name Edited" />
+		</execute>
+
+		<execute macro="ProductMenu#gotoSitesMembers">
+			<var name="portlet" value="Site Teams" />
+		</execute>
+
+		<execute macro="SiteTeam#viewCP">
+			<var name="siteTeamName" value="Site Team Name Edited" />
+		</execute>
+	</command>
+</definition>
