@@ -1539,6 +1539,8 @@ public class LiferaySeleniumHelper {
 			LiferaySelenium liferaySelenium, String locator)
 		throws Exception {
 
+		System.out.println("not overloaded");
+
 		liferaySelenium.waitForElementNotPresent(locator, null);
 	}
 
@@ -1551,6 +1553,8 @@ public class LiferaySeleniumHelper {
 		if (Validator.isNotNull(timeout)) {
 			wait = GetterUtil.getInteger(timeout);
 		}
+
+		System.out.println(wait);
 
 		for (int second = 0;; second++) {
 			if (second >= wait) {
