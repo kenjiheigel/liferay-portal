@@ -32,11 +32,6 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 	}
 
 	@Override
-	public void addSelection(String locator, String optionLocator) {
-		WebDriverHelper.addSelection(this, locator, optionLocator);
-	}
-
-	@Override
 	public void antCommand(String fileName, String target) throws Exception {
 		LiferaySeleniumHelper.antCommand(this, fileName, target);
 	}
@@ -82,14 +77,6 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 	}
 
 	@Override
-	public void assertCssValue(
-			String locator, String cssAttribute, String cssValue)
-		throws Exception {
-
-		WebDriverHelper.assertCssValue(this, locator, cssAttribute, cssValue);
-	}
-
-	@Override
 	public void assertEditable(String locator) throws Exception {
 		LiferaySeleniumHelper.assertEditable(this, locator);
 	}
@@ -124,13 +111,6 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 	@Override
 	public void assertHTMLSourceTextPresent(String value) throws Exception {
 		LiferaySeleniumHelper.assertHTMLSourceTextPresent(this, value);
-	}
-
-	@Override
-	public void assertJavaScriptErrors(String ignoreJavaScriptError)
-		throws Exception {
-
-		WebDriverHelper.assertJavaScriptErrors(this, ignoreJavaScriptError);
 	}
 
 	@Override
@@ -250,11 +230,6 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 	}
 
 	@Override
-	public void check(String locator) {
-		WebDriverHelper.check(this, locator);
-	}
-
-	@Override
 	public void click(String locator) {
 		try {
 			tap(locator);
@@ -365,18 +340,8 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 	}
 
 	@Override
-	public String getAttribute(String attributeLocator) {
-		return WebDriverHelper.getAttribute(this, attributeLocator);
-	}
-
-	@Override
 	public String getBodyText() {
 		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getConfirmation() {
-		return WebDriverHelper.getConfirmation(this);
 	}
 
 	@Override
@@ -447,11 +412,6 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 	}
 
 	@Override
-	public String getEval(String script) {
-		return WebDriverHelper.getEval(this, script);
-	}
-
-	@Override
 	public String getFirstNumber(String locator) {
 		throw new UnsupportedOperationException();
 	}
@@ -479,11 +439,6 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 	}
 
 	@Override
-	public String getLocation() throws Exception {
-		return WebDriverHelper.getLocation(this);
-	}
-
-	@Override
 	public String getNumberDecrement(String value) {
 		return LiferaySeleniumHelper.getNumberDecrement(value);
 	}
@@ -506,15 +461,6 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 	@Override
 	public String getSelectedLabel(String selectLocator) {
 		return getSelectedLabel(selectLocator, null);
-	}
-
-	public String getSelectedLabel(String selectLocator, String timeout) {
-		return WebDriverHelper.getSelectedLabel(this, selectLocator, timeout);
-	}
-
-	@Override
-	public String[] getSelectedLabels(String selectLocator) {
-		return WebDriverHelper.getSelectedLabels(this, selectLocator);
 	}
 
 	@Override
@@ -557,11 +503,6 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 	}
 
 	@Override
-	public void goBack() {
-		WebDriverHelper.goBack(this);
-	}
-
-	@Override
 	public void goBackAndWait() {
 		goBack();
 
@@ -596,16 +537,6 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 	@Override
 	public boolean isEditable(String locator) {
 		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean isElementNotPresent(String locator) {
-		return WebDriverHelper.isElementNotPresent(this, locator);
-	}
-
-	@Override
-	public boolean isElementPresent(String locator) {
-		return WebDriverHelper.isElementPresent(this, locator);
 	}
 
 	@Override
@@ -653,11 +584,6 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 	}
 
 	@Override
-	public boolean isNotSelectedLabel(String selectLocator, String pattern) {
-		return WebDriverHelper.isNotSelectedLabel(this, selectLocator, pattern);
-	}
-
-	@Override
 	public boolean isNotText(String locator, String value) throws Exception {
 		return LiferaySeleniumHelper.isNotText(this, locator, value);
 	}
@@ -670,16 +596,6 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 	@Override
 	public boolean isNotVisible(String locator) {
 		return LiferaySeleniumHelper.isNotVisible(this, locator);
-	}
-
-	@Override
-	public boolean isPartialText(String locator, String value) {
-		return WebDriverHelper.isPartialText(this, locator, value);
-	}
-
-	@Override
-	public boolean isSelectedLabel(String selectLocator, String pattern) {
-		return WebDriverHelper.isSelectedLabel(this, selectLocator, pattern);
 	}
 
 	@Override
@@ -776,11 +692,6 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 	}
 
 	@Override
-	public void makeVisible(String locator) {
-		WebDriverHelper.makeVisible(this, locator);
-	}
-
-	@Override
 	public void mouseDown(String locator) {
 		throw new UnsupportedOperationException();
 	}
@@ -825,11 +736,6 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 	}
 
 	@Override
-	public void open(String url) {
-		WebDriverHelper.open(this, url);
-	}
-
-	@Override
 	public void openWindow(String url, String windowID) {
 		open(url);
 	}
@@ -846,11 +752,6 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 
 	@Override
 	public void pauseLoggerCheck() throws Exception {
-	}
-
-	@Override
-	public void refresh() {
-		WebDriverHelper.refresh(this);
 	}
 
 	@Override
@@ -903,11 +804,6 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 	}
 
 	@Override
-	public void select(String selectLocator, String optionLocator) {
-		WebDriverHelper.select(this, selectLocator, optionLocator);
-	}
-
-	@Override
 	public void selectAndWait(String selectLocator, String optionLocator) {
 		select(selectLocator, optionLocator);
 
@@ -920,18 +816,8 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 	}
 
 	@Override
-	public void selectFrame(String locator) {
-		WebDriverHelper.selectFrame(this, locator);
-	}
-
-	@Override
 	public void selectPopUp(String windowID) {
 		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void selectWindow(String windowID) {
-		WebDriverHelper.selectWindow(this, windowID);
 	}
 
 	@Override
@@ -948,11 +834,6 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 		throws Exception {
 
 		LiferaySeleniumHelper.sendEmail(this, to, subject, body);
-	}
-
-	@Override
-	public void sendKeys(String locator, String value) {
-		WebDriverHelper.type(this, locator, value);
 	}
 
 	@Override
@@ -978,11 +859,6 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 
 	@Override
 	public void setDefaultTimeout() {
-	}
-
-	@Override
-	public void setDefaultTimeoutImplicit() {
-		WebDriverHelper.setDefaultTimeoutImplicit(this);
 	}
 
 	@Override
@@ -1099,28 +975,13 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 	}
 
 	@Override
-	public void type(String locator, String value) {
-		WebDriverHelper.type(this, locator, value);
-	}
-
-	@Override
 	public void typeAceEditor(String locator, String value) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void typeAlloyEditor(String locator, String value) {
-		WebDriverHelper.typeAlloyEditor(this, locator, value);
-	}
-
-	@Override
 	public void typeCKEditor(String locator, String value) {
 		LiferaySeleniumHelper.typeCKEditor(this, locator, value);
-	}
-
-	@Override
-	public void typeEditor(String locator, String value) {
-		WebDriverHelper.typeEditor(this, locator, value);
 	}
 
 	@Override
@@ -1135,11 +996,6 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 	@Override
 	public void typeScreen(String value) {
 		LiferaySeleniumHelper.typeScreen(value);
-	}
-
-	@Override
-	public void uncheck(String locator) {
-		WebDriverHelper.uncheck(this, locator);
 	}
 
 	@Override
@@ -1257,22 +1113,6 @@ public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 	@Override
 	public void windowMaximizeAndWait() {
 		throw new UnsupportedOperationException();
-	}
-
-	protected WebElement getWebElement(String locator) {
-		return WebDriverHelper.getWebElement(this, locator);
-	}
-
-	protected WebElement getWebElement(String locator, String timeout) {
-		return WebDriverHelper.getWebElement(this, locator, timeout);
-	}
-
-	protected List<WebElement> getWebElements(String locator) {
-		return WebDriverHelper.getWebElements(this, locator);
-	}
-
-	protected List<WebElement> getWebElements(String locator, String timeout) {
-		return WebDriverHelper.getWebElements(this, locator, timeout);
 	}
 
 	protected void swipeWebElementIntoView(String locator) {
