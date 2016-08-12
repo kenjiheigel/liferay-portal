@@ -32,10 +32,10 @@ import org.openqa.selenium.remote.Response;
  * @author Kenji Heigel
  */
 public class MobileDriverWrapper
-	extends WebDriverWrapper implements MobileDriver {
+	extends BaseWebDriverImpl implements MobileDriver {
 
-	public MobileDriverWrapper(WebDriver webDriver) {
-		super(webDriver);
+	public MobileDriverWrapper(String browserURL, WebDriver webDriver) {
+		super(browserURL, webDriver);
 
 		_mobileDriver = (MobileDriver)webDriver;
 	}
