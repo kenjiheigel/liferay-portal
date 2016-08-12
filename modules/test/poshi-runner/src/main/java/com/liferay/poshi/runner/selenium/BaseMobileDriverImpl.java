@@ -29,10 +29,6 @@ import org.w3c.dom.Node;
 public abstract class BaseMobileDriverImpl extends MobileDriverWrapper {
 	public BaseMobileDriverImpl(String browserURL, WebDriver webDriver) {
 		super(browserURL, webDriver);
-
-		WebDriverHelper.setDefaultWindowHandle(webDriver.getWindowHandle());
-
-		System.setProperty("java.awt.headless", "false");
 	}
 
 	@Override
