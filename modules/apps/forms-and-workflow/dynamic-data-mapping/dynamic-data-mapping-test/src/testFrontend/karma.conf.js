@@ -5,7 +5,7 @@ module.exports = function(config) {
 	config.set(
 		{
 			browserDisconnectTimeout: 5000,
-			browsers: ['Chrome'],
+			browsers: ['Firefox'],
 			files: dependencies.concat(
 				[
 					'tests/**/*.js'
