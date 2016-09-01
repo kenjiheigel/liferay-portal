@@ -46,6 +46,10 @@ module.exports = function(config) {
 
 		reporters: ['junit', 'progress'],
 
+		junitReporter: {
+			outputFile: 'TEST-frontend-js.xml'
+		},
+
 		browsers: ['Firefox'],
 
 		babelPreprocessor: {options: babelOptions}
