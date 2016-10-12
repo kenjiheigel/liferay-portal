@@ -4609,11 +4609,23 @@ go]]></replacevalue>
 						<local name="osgi.module.bnd.file" />
 						<local name="osgi.module.dir" />
 
-						<path id="osgi.module.bnd.file">
-							<fileset dir="${project.dir}/modules">
-								<include name="**/@{osgi.module}/bnd.bnd" />
-							</fileset>
-						</path>
+						<if>
+							<contains string="@{osgi.module}" substring="theme" />
+							<then>
+								<path id="osgi.module.bnd.file">
+									<fileset dir="${project.dir}/modules">
+										<include name="**/@{osgi.module}/app.bnd" />
+									</fileset>
+								</path>
+							</then>
+							<else>
+								<path id="osgi.module.bnd.file">
+									<fileset dir="${project.dir}/modules">
+										<include name="**/@{osgi.module}/bnd.bnd" />
+									</fileset>
+								</path>
+							</else>
+						</if>
 
 						<property name="osgi.module.bnd.file" refid="osgi.module.bnd.file" />
 
@@ -8473,8 +8485,6 @@ jdbc.default.password=${database.mysql.password}</echo>
 			</then>
 		</if>
 
-		<antcall target="deploy-osgi-modules" />
-
 		<antcall target="deploy-specified-plugins">
 			<param name="test.class" value="${test.class}" />
 		</antcall>
@@ -8526,6 +8536,10 @@ jdbc.default.password=${database.mysql.password}</echo>
 			</not>
 			<then>
 				<start-app-server />
+
+				<antcall target="deploy-osgi-modules" />
+
+				<sleep seconds="120" />
 
 				<get-testcase-property property.name="app.server.bundles.size" />
 
