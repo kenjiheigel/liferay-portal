@@ -5788,6 +5788,43 @@ javascript.fast.load=false</echo>
 			</then>
 		</if>
 
+		<get-testcase-property property.name="blacklist.portal.profile.names.ignore" />
+
+		<property name="blacklist.portal.profile.names" value="com.liferay.chat.service,com.liferay.chat.web" />
+
+		<if>
+			<isset property="blacklist.portal.profile.names.ignore" />
+			<then>
+				<beanshell>
+					<![CDATA[
+						String blacklistPortalProfileNamesString = project.getProperty("blacklist.portal.profile.names");
+						String blacklistPortalProfileNamesIgnoreString = project.getProperty("blacklist.portal.profile.names.ignore");
+
+						List blacklistPortalProfileNames = new ArrayList(Arrays.asList(blacklistPortalProfileNamesString.split(",")));
+						List blacklistPortalProfileNamesIgnore = new ArrayList(Arrays.asList(blacklistPortalProfileNamesIgnoreString.split(",")));
+
+						blacklistPortalProfileNames.removeAll(blacklistPortalProfileNamesIgnore);
+
+						StringBuilder sb = new StringBuilder();
+
+						for (int i = 0; i < blacklistPortalProfileNames.size(); i++) {
+							sb.append(blacklistPortalProfileNames.get(i));
+
+							if (i != (blacklistPortalProfileNames.size() - 1)) {
+								sb.append(",");
+							}
+						}
+
+						project.setProperty("blacklist.portal.profile.names", sb.toString());
+					]]>
+				</beanshell>
+			</then>
+		</if>
+
+		<echo append="true" file="portal-impl/src/portal-ext.properties">
+
+module.framework.properties.blacklist.portal.profile.names=${blacklist.portal.profile.names}</echo>
+
 		<get-testcase-property property.name="portal.version" />
 
 		<propertyregex
