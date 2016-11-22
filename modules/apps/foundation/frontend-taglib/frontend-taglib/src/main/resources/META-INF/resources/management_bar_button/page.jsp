@@ -16,14 +16,14 @@
 
 <%@ include file="/management_bar_button/init.jsp" %>
 
-<%
-String taglibOnmouseover = "Liferay.Portal.ToolTip.show(this, '" + LanguageUtil.get(request, label) + "')";
-%>
-
-<aui:a cssClass="<%= cssClass %>" data="<%= data %>" href="<%= href %>" iconCssClass="<%= iconCssClass %>" id="<%= id %>" onmouseover="<%= taglibOnmouseover %>">
-	<c:if test="<%= Validator.isNotNull(icon) %>">
-		<aui:icon cssClass="icon-monospaced" image="<%= icon %>" markupView="lexicon" />
-	</c:if>
-
-	<span class="<%= labelCssClass %>"><liferay-ui:message key="<%= label %>" /></span>
-</aui:a>
+<liferay-ui:icon
+	cssClass="<%= cssClass %>"
+	data="<%= data %>"
+	icon="<%= Validator.isNotNull(icon) ? icon : iconCssClass %>"
+	id="<%= id %>"
+	label="<%= false %>"
+	linkCssClass="icon-monospaced"
+	markupView='<%= Validator.isNotNull(icon) ? "lexicon" : StringPool.BLANK %>'
+	message="<%=  LanguageUtil.get(request, label) %>"
+	url="<%= href %>"
+/>
