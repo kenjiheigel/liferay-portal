@@ -20,7 +20,9 @@ import com.liferay.wysiwyg.web.internal.portlet.WYSIWYGPortlet;
 import com.liferay.wysiwyg.web.internal.portlet.action.WYSIWYGConfigurationAction;
 import com.liferay.wysiwyg.web.internal.upgrade.WYSIWYGWebUpgrade;
 
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
@@ -34,8 +36,13 @@ public class ModulePortalProfile extends BaseDSModulePortalProfile {
 
 	@Activate
 	public void activate(ComponentContext componentContext) {
+		Set<String> supportedPortalProfileNames = new HashSet<String>(
+			Arrays.asList(
+				PortalProfile.PORTAL_PROFILE_NAME_CE,
+				PortalProfile.PORTAL_PROFILE_NAME_DXP));
+
 		init(
-			componentContext, Collections.<String>emptySet(),
+			componentContext, supportedPortalProfileNames,
 			WYSIWYGPortlet.class.getName(),
 			WYSIWYGConfigurationAction.class.getName(),
 			WYSIWYGWebUpgrade.class.getName());
