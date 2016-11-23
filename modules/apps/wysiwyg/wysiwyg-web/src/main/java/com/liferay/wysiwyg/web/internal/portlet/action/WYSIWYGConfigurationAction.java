@@ -24,7 +24,7 @@ import org.osgi.service.component.annotations.Component;
  * @author Peter Fellwock
  */
 @Component(
-	immediate = true,
+	enabled = false, immediate = true,
 	property = {"javax.portlet.name=" + WYSIWYGPortletKeys.WYSIWYG},
 	service = ConfigurationAction.class
 )

@@ -27,7 +27,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Peter Fellwock
  */
 @Component(
-	immediate = true,
+	enabled = false, immediate = true,
 	property = {
 		"com.liferay.portlet.css-class-wrapper=wysiwyg-portlet",
 		"com.liferay.portlet.display-category=category.cms",
