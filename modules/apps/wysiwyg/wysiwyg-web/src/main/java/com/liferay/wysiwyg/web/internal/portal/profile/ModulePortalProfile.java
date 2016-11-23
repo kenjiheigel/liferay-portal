@@ -16,6 +16,9 @@ package com.liferay.wysiwyg.web.internal.portal.profile;
 
 import com.liferay.portal.profile.BaseDSModulePortalProfile;
 import com.liferay.portal.profile.PortalProfile;
+import com.liferay.wysiwyg.web.internal.portlet.WYSIWYGPortlet;
+import com.liferay.wysiwyg.web.internal.portlet.action.WYSIWYGConfigurationAction;
+import com.liferay.wysiwyg.web.internal.upgrade.WYSIWYGWebUpgrade;
 
 import java.util.Collections;
 
@@ -32,7 +35,10 @@ public class ModulePortalProfile extends BaseDSModulePortalProfile {
 	@Activate
 	public void activate(ComponentContext componentContext) {
 		init(
-			componentContext, Collections.<String>emptySet());
+			componentContext, Collections.<String>emptySet(),
+			WYSIWYGPortlet.class.getName(),
+			WYSIWYGConfigurationAction.class.getName(),
+			WYSIWYGWebUpgrade.class.getName());
 	}
 
 }
