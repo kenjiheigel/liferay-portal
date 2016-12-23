@@ -7292,18 +7292,39 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 			<isset property="theme.file.name" />
 			<then>
 				<if>
-					<resourcecount count="0" when="greater">
-						<zipfileset src="${liferay.home}/osgi/war/${theme.file.name}">
-							<patternset>
-								<include name="**/private.lar" />
-							</patternset>
-						</zipfileset>
-					</resourcecount>
+					<available file="${liferay.home}/osgi/war/${theme.file.name}" />
 					<then>
-						<echo append="true" file="${test.ext.properties.file}">
-							theme.contains.resources=true
-						</echo>
+						<if>
+							<resourcecount count="0" when="greater">
+								<zipfileset src="${liferay.home}/osgi/war/${theme.file.name}">
+									<patternset>
+										<include name="**/private.lar" />
+									</patternset>
+								</zipfileset>
+							</resourcecount>
+						</if>
+						<then>
+							<echo append="true" file="${test.ext.properties.file}">
+								theme.contains.resources=true
+							</echo>
+						</then>
 					</then>
+					<else>
+						<if>
+							<resourcecount count="0" when="greater">
+								<zipfileset src="${liferay.home}/deploy/${theme.file.name}">
+									<patternset>
+										<include name="**/private.lar" />
+									</patternset>
+								</zipfileset>
+							</resourcecount>
+						</if>
+						<then>
+							<echo append="true" file="${test.ext.properties.file}">
+								theme.contains.resources=true
+							</echo>
+						</then>
+					</else>
 				</if>
 			</then>
 		</if>
