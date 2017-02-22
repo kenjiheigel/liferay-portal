@@ -151,6 +151,8 @@ public class WebDriverUtil extends PropsValues {
 	}
 
 	private WebDriver _getFirefoxDriver() {
+		System.setProperty("webdriver.firefox.marionette", "false");
+
 		FirefoxProfile firefoxProfile = new FirefoxProfile();
 
 		try {
