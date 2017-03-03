@@ -551,6 +551,15 @@ public abstract class BaseBuild implements Build {
 
 	@Override
 	public Map<String, String> getStartPropertiesTempMap() {
+		try {
+			System.out.println("getStartPropertiesTempMap while running getTempMap for start.properties = " + getTempMap("start.properties"));
+			System.out.println("getStartPropertiesTempMapURL() = " + getStartPropertiesTempMapURL());
+			System.out.println("JSON Object String of getStartPropertiesTempMapURL = " + JenkinsResultsParserUtil.toJSONObject(getStartPropertiesTempMapURL()).toString());
+		}
+		catch (IOException ioe) {
+			System.out.println(ioe.getMessage());
+		}
+
 		return getTempMap("start.properties");
 	}
 
@@ -1459,7 +1468,11 @@ public abstract class BaseBuild implements Build {
 
 		String tempMapURL = getTempMapURL(tempMapName);
 
+		System.out.println("tempMapURL = " + tempMapURL);
+
 		if (tempMapURL == null) {
+			System.out.println("tempMapURL == null");
+
 			return Collections.emptyMap();
 		}
 
@@ -1473,6 +1486,8 @@ public abstract class BaseBuild implements Build {
 
 		if ((tempMapJSONObject == null) ||
 			!tempMapJSONObject.has("properties")) {
+
+			System.out.println("tempMapJSONObject == null or has properties");
 
 			return Collections.emptyMap();
 		}
