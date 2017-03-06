@@ -78,16 +78,8 @@ public class SSOUtil {
 		boolean sessionRedirectOnExpire =
 			PropsValues.SESSION_TIMEOUT_REDIRECT_ON_EXPIRE;
 
-		if (_instance._ssoMap.isEmpty()) {
+		if (_instance._ssoMap.isEmpty() || sessionRedirectOnExpire) {
 			return sessionRedirectOnExpire;
-		}
-
-		if (PrefsPropsUtil.getBoolean(
-				companyId, PropsKeys.OPEN_SSO_AUTH_ENABLED,
-				PropsValues.OPEN_SSO_AUTH_ENABLED) &&
-			PropsValues.OPEN_SSO_LOGOUT_ON_SESSION_EXPIRATION) {
-
-			return true;
 		}
 
 		return _instance._isSessionRedirectOnExpire(companyId);

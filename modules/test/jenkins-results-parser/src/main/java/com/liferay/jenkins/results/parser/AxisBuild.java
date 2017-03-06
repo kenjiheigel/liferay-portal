@@ -279,6 +279,10 @@ public class AxisBuild extends BaseBuild {
 	}
 
 	public String getTestRayLogsURL() {
+		if (testRayLogsURL != null) {
+			return testRayLogsURL;
+		}
+
 		TopLevelBuild topLevelBuild = getTopLevelBuild();
 
 		Properties buildProperties = null;
@@ -303,12 +307,14 @@ public class AxisBuild extends BaseBuild {
 		Map<String, String> startPropertiesTempMap =
 			getStartPropertiesTempMap();
 
-		return JenkinsResultsParserUtil.combine(
+		testRayLogsURL = JenkinsResultsParserUtil.combine(
 			logBaseURL, "/", topLevelBuild.getMaster(), "/",
 			startPropertiesTempMap.get("TOP_LEVEL_START_TIME"), "/",
 			topLevelBuild.getJobName(), "/",
 			Integer.toString(topLevelBuild.getBuildNumber()), "/",
 			getParameterValue("JOB_VARIANT"), "/", getAxisNumber());
+
+		return testRayLogsURL;
 	}
 
 	@Override
@@ -436,6 +442,7 @@ public class AxisBuild extends BaseBuild {
 		"https://testray.liferay.com/reports/production/logs";
 
 	protected String axisVariable;
+	protected String testRayLogsURL;
 
 	private static final FailureMessageGenerator[] _FAILURE_MESSAGE_GENERATORS =
 		{

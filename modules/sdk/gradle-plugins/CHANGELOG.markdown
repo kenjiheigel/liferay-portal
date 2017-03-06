@@ -1182,7 +1182,7 @@ version 1.0.7.
 - [LPS-70890]: Update the [Liferay TLD Formatter] dependency to version 1.0.2.
 - [LPS-70890]: Update the [Liferay XML Formatter] dependency to version 1.0.2.
 
-## 3.2.12 - 2017-03-01
+## 3.2.12 - 2017-03-02
 
 ### Changed
 - [LPS-62970]: Update the [Liferay Gradle Plugins DB Support] dependency to
@@ -1197,6 +1197,20 @@ to version 1.0.94.
 version 1.0.5.
 - [LPS-62970]: Update the [Liferay Gradle Plugins XML Formatter] dependency to
 version 1.0.7.
+
+## 3.2.13 - 2017-03-02
+
+### Changed
+- [LPS-71005]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 1.0.95.
+- [LPS-71005]: Update the [Liferay Source Formatter] dependency to version
+1.0.362.
+
+## 3.2.14 - 2017-03-03
+
+### Changed
+- [LPS-71048]: Update the [Liferay Gradle Plugins Jasper JSPC] dependency to
+version 2.0.1.
 
 [Gradle Bundle Plugin]: https://github.com/TomDmitriev/gradle-bundle-plugin
 [Liferay Ant BND]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/ant-bnd
@@ -1311,4 +1325,6 @@ version 1.0.7.
 [LPS-70870]: https://issues.liferay.com/browse/LPS-70870
 [LPS-70890]: https://issues.liferay.com/browse/LPS-70890
 [LPS-70941]: https://issues.liferay.com/browse/LPS-70941
+[LPS-71005]: https://issues.liferay.com/browse/LPS-71005
+[LPS-71048]: https://issues.liferay.com/browse/LPS-71048
 [LRDOCS-3023]: https://issues.liferay.com/browse/LRDOCS-3023

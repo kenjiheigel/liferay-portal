@@ -1157,10 +1157,22 @@ task executable.
 ### Changed
 - [LPS-70890]: Update the [Liferay Gradle Plugins] dependency to version 3.2.11.
 
-## 3.2.1 - 2017-03-01
+## 3.2.1 - 2017-03-02
 
 ### Changed
 - [LPS-62970]: Update the [Liferay Gradle Plugins] dependency to version 3.2.12.
+
+## 3.2.2 - 2017-03-02
+
+### Added
+- [LPS-67039]: Add the ability to invoke PMD from a sub-repository by using
+`gradle.gradleUserHomeDir` as the root for the `standard-rules.xml` file path.
+- [LPS-71005]: Update the [Liferay Gradle Plugins] dependency to version 3.2.13.
+
+## 3.2.3 - 2017-03-03
+
+### Changed
+- [LPS-71048]: Update the [Liferay Gradle Plugins] dependency to version 3.2.14.
 
 [Liferay CDN]: https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public
 [Liferay Gradle Plugins]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins
@@ -1181,6 +1193,7 @@ task executable.
 [LPS-66853]: https://issues.liferay.com/browse/LPS-66853
 [LPS-66906]: https://issues.liferay.com/browse/LPS-66906
 [LPS-67023]: https://issues.liferay.com/browse/LPS-67023
+[LPS-67039]: https://issues.liferay.com/browse/LPS-67039
 [LPS-67352]: https://issues.liferay.com/browse/LPS-67352
 [LPS-67434]: https://issues.liferay.com/browse/LPS-67434
 [LPS-67573]: https://issues.liferay.com/browse/LPS-67573
@@ -1275,6 +1288,8 @@ task executable.
 [LPS-70890]: https://issues.liferay.com/browse/LPS-70890
 [LPS-70929]: https://issues.liferay.com/browse/LPS-70929
 [LPS-70941]: https://issues.liferay.com/browse/LPS-70941
+[LPS-71005]: https://issues.liferay.com/browse/LPS-71005
+[LPS-71048]: https://issues.liferay.com/browse/LPS-71048
 [LRDOCS-2594]: https://issues.liferay.com/browse/LRDOCS-2594
 [LRDOCS-2841]: https://issues.liferay.com/browse/LRDOCS-2841
 [LRDOCS-2981]: https://issues.liferay.com/browse/LRDOCS-2981
