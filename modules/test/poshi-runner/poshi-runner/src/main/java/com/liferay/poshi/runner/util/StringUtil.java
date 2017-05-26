@@ -70,6 +70,17 @@ public class StringUtil {
 		return s;
 	}
 
+	public static String camelCaseToSentence(String s) {
+		String sentence = s.replaceAll(_CAMEL_CASE_REGEX, " $0");
+
+		if (sentence.charAt(0) == _SINGLE_SPACE) {
+			return sentence.replaceFirst(_SPACE_REGEX, "");
+		}
+		else {
+			return sentence;
+		}
+	}
+
 	public static boolean contains(String s, String text) {
 		return contains(s, text, StringPool.COMMA);
 	}
@@ -489,6 +500,10 @@ public class StringUtil {
 		return new String(reverse);
 	}
 
+	public static String sentenceToCamelCase(String s) {
+		return s.replaceAll(_SPACE_REGEX, "");
+	}
+
 	public static String[] split(String s) {
 		return split(s, StringPool.COMMA);
 	}
@@ -716,5 +731,12 @@ public class StringUtil {
 	public static String valueOf(Object obj) {
 		return String.valueOf(obj);
 	}
+
+	private static final String _CAMEL_CASE_REGEX =
+		"([\\d]+|[A-Z][a-z]+|[A-Z]+(?![a-z]))";
+
+	private static final char _SINGLE_SPACE = ' ';
+
+	private static final String _SPACE_REGEX = "[\\s]+";
 
 }
