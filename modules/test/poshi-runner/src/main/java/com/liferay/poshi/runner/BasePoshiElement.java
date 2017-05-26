@@ -1,0 +1,148 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+package com.liferay.poshi.runner;
+
+import com.liferay.poshi.runner.util.Dom4JUtil;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.dom4j.Attribute;
+import org.dom4j.Element;
+
+/**
+ * @author Kenji Heigel
+ */
+public class BasePoshiElement implements PoshiElement {
+
+	public BasePoshiElement(Element element) {
+		this(element, null);
+	}
+
+	public BasePoshiElement(Element element, PoshiElement parentElement) {
+		_parentElement = parentElement;
+
+		if (_parentElement != null) {
+			depth++;
+		}
+
+		addAttributes(element);
+
+		System.out.println(element.getName() + " " + attributes.toString());
+
+		addChildElements(element);
+
+		tagName = element.getName();
+	}
+
+	@Override
+	public void addAttributes(Element element) {
+		for (Iterator i = element.attributeIterator(); i.hasNext();) {
+			Attribute attribute = (Attribute)i.next();
+
+			attributes.put(attribute.getName(), attribute.getValue());
+		}
+	}
+
+	@Override
+	public void addChildElements(Element element) {
+		for (Iterator i = element.elementIterator(); i.hasNext();) {
+			PoshiElement poshiElement = PoshiElementFactory.newPoshiElement(
+				(Element)i.next(), this);
+
+			if (poshiElement != null) {
+				_childElements.add(poshiElement);
+			}
+		}
+	}
+
+	@Override
+	public List<PoshiElement> getChildElements() {
+		return _childElements;
+	}
+
+	public List<PoshiElement> getChildElements(String tag) {
+		List<PoshiElement> childElements = new ArrayList<>();
+
+		for (PoshiElement childElement : getChildElements()) {
+			String childElementTagName = childElement.getTagName();
+
+			if (childElementTagName.equals(tag)) {
+				childElements.add(childElement);
+			}
+		}
+
+		return childElements;
+	}
+
+	@Override
+	public PoshiElement getParentElement() {
+		return _parentElement;
+	}
+
+	@Override
+	public String getTagName() {
+		return tagName;
+	}
+
+	@Override
+	public String toReadableSyntax() {
+		StringBuilder sb = new StringBuilder();
+
+		for (PoshiElement childElement : _childElements) {
+			sb.append(childElement.toReadableSyntax());
+		}
+
+		return sb.toString();
+	}
+
+	protected int getIndex() {
+		List<PoshiElement> siblingElements =
+			getParentElement().getChildElements();
+
+		return siblingElements.indexOf(this);
+	}
+
+	protected String getReadableTitle() {
+		int index = getIndex();
+
+		if (index == 0) {
+			return "Given";
+		}
+		else if (index == (getSiblingElementsSize() - 1)) {
+			return "Then";
+		}
+
+		return "And";
+	}
+
+	protected int getSiblingElementsSize() {
+		List<PoshiElement> siblingElements =
+			getParentElement().getChildElements();
+
+		return siblingElements.size();
+	}
+
+	protected Map<String, String> attributes = new HashMap<>();
+	protected int depth;
+	protected String tagName;
+
+	private final List<PoshiElement> _childElements = new ArrayList<>();
+	private final PoshiElement _parentElement;
+
+}
