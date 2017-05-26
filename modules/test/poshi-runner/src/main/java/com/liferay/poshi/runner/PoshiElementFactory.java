@@ -51,8 +51,4 @@ public class PoshiElementFactory {
 		return new UnsupportedElement(element, parentElement);
 	}
 
-	public static TestFileElement newPoshiTestFile(String testFilePath) {
-		return null;
-	}
-
 }
