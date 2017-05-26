@@ -64,7 +64,7 @@ public class Dom4JUtil {
 			}
 
 			throw new IllegalArgumentException(
-			"Only elements and strings may be added");
+				"Only elements and strings may be added");
 		}
 	}
 
