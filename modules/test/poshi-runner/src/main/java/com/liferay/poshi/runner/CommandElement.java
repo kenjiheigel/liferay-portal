@@ -99,7 +99,7 @@ public class CommandElement extends BasePoshiElement {
 		if (attributes.get("name") != null) {
 			String name = attributes.get("name");
 
-			sb.append(StringUtil.camelCaseToSentence(name));
+			sb.append(StringUtil.toPhrase(name));
 		}
 
 		sb.append(super.toReadableSyntax());

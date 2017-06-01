@@ -86,7 +86,7 @@ public class ExecuteElement extends BasePoshiElement {
 
 			String macroCommand = macro.split("#")[1];
 
-			String macroCommandSentence = StringUtil.camelCaseToSentence(
+			String macroCommandSentence = StringUtil.toPhrase(
 				macroCommand);
 
 			sb.append(macroCommandSentence);
