@@ -29,6 +29,26 @@ public class VarElement extends BasePoshiElement {
 		super(element, parentElement);
 	}
 
+	public VarElement(String readableSyntax, PoshiElement parentElement) {
+		super(readableSyntax, parentElement);
+	}
+
+	public void addAttributes(String readableSyntax) {
+		String[] items = readableSyntax.split("\\|");
+
+		attributes.put("name", items[1].trim());
+
+		String value = items[2].trim();
+
+		if (value.contains("Util#")) {
+			attributes.put("method", value);
+
+			return;
+		}
+
+		attributes.put("value", value);
+	}
+
 	@Override
 	public String toReadableSyntax() {
 		StringBuilder sb = new StringBuilder();
@@ -56,6 +76,11 @@ public class VarElement extends BasePoshiElement {
 		sb.append("|");
 
 		return sb.toString();
+	}
+
+	@Override
+	protected void setTagName() {
+		tagName = "var";
 	}
 
 }

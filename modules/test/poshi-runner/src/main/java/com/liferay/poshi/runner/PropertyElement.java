@@ -29,4 +29,13 @@ public class PropertyElement extends VarElement {
 		super(element, parentElement);
 	}
 
+	public PropertyElement(String readableSyntax, PoshiElement parentElement) {
+		super(readableSyntax, parentElement);
+	}
+
+	@Override
+	protected void setTagName() {
+		tagName = "property";
+	}
+
 }
