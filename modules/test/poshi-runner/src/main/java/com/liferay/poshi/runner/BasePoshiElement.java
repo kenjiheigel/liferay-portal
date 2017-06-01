@@ -42,6 +42,14 @@ public abstract class BasePoshiElement implements PoshiElement {
 		setTagName(element);
 	}
 
+	public BasePoshiElement(String readableSyntax, PoshiElement parentElement) {
+		_parentElement = parentElement;
+
+		addAttributes(readableSyntax);
+		addChildElements(readableSyntax);
+		setTagName();
+	}
+
 	@Override
 	public void addAttributes(Element element) {
 		for (Iterator i = element.attributeIterator(); i.hasNext();) {
@@ -151,6 +159,9 @@ public abstract class BasePoshiElement implements PoshiElement {
 			getParentElement().getChildElements();
 
 		return siblingElements.size();
+	}
+
+	protected void setTagName() {
 	}
 
 	protected void setTagName(Element element) {
