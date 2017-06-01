@@ -14,6 +14,9 @@
 
 package com.liferay.poshi.runner.util;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -68,17 +71,6 @@ public class StringUtil {
 		}
 
 		return s;
-	}
-
-	public static String camelCaseToSentence(String s) {
-		String sentence = s.replaceAll(_CAMEL_CASE_REGEX, " $0");
-
-		if (sentence.charAt(0) == _SINGLE_SPACE) {
-			return sentence.replaceFirst(_SPACE_REGEX, "");
-		}
-		else {
-			return sentence;
-		}
 	}
 
 	public static boolean contains(String s, String text) {
@@ -400,6 +392,10 @@ public class StringUtil {
 		return sb.substring(0, lengthInt);
 	}
 
+	public static String removeSpaces(String s) {
+		return s.replaceAll(" ", "");
+	}
+
 	public static String replace(String s, String oldSub, String newSub) {
 		if (s == null) {
 			return null;
@@ -500,10 +496,6 @@ public class StringUtil {
 		return new String(reverse);
 	}
 
-	public static String sentenceToCamelCase(String s) {
-		return s.replaceAll(_SPACE_REGEX, "");
-	}
-
 	public static String[] split(String s) {
 		return split(s, StringPool.COMMA);
 	}
@@ -514,6 +506,45 @@ public class StringUtil {
 		}
 
 		return s.split(delimiter);
+	}
+
+	public static List<String> splitByKeys(String s, String[] keys) {
+		List keyIndexes = new ArrayList<>();
+
+		for (String key : keys) {
+			int index = s.indexOf(key);
+
+			while (index >= 0) {
+				keyIndexes.add(index);
+
+				index = s.indexOf(key, index + 1);
+			}
+		}
+
+		if (!keyIndexes.contains(0)) {
+			keyIndexes.add(0);
+		}
+
+		if (!keyIndexes.contains(s.length())) {
+			keyIndexes.add(s.length());
+		}
+
+		Collections.sort(keyIndexes);
+
+		List<String> substrings = new ArrayList<>();
+
+		for (int i = 0; i < keyIndexes.size(); i++) {
+			if ((i + 1) == keyIndexes.size()) {
+				continue;
+			}
+
+			String substring = s.substring(
+				(int)keyIndexes.get(i), (int)keyIndexes.get(i + 1));
+
+			substrings.add(substring);
+		}
+
+		return substrings;
 	}
 
 	public static boolean startsWith(String s, String start) {
@@ -572,6 +603,16 @@ public class StringUtil {
 		}
 
 		return StringUtils.lowerCase(s);
+	}
+
+	public static String toPhrase(String s) {
+		String phrase = s.replaceAll(_PHRASE_REGEX, " $0");
+
+		if (phrase.startsWith(" ")) {
+			return phrase.substring(1);
+		}
+
+		return phrase;
 	}
 
 	public static String toUpperCase(String s) {
@@ -732,11 +773,7 @@ public class StringUtil {
 		return String.valueOf(obj);
 	}
 
-	private static final String _CAMEL_CASE_REGEX =
+	private static final String _PHRASE_REGEX =
 		"([\\d]+|[A-Z][a-z]+|[A-Z]+(?![a-z]))";
-
-	private static final char _SINGLE_SPACE = ' ';
-
-	private static final String _SPACE_REGEX = "[\\s]+";
 
 }
