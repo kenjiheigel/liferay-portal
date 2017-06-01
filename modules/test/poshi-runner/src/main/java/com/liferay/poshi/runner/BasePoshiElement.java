@@ -14,6 +14,20 @@
 
 package com.liferay.poshi.runner;
 
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.AND;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.BACKGROUND;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.FEATURE;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.GIVEN;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.SCENARIO;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.SETUP;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.TEARDOWN;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.THEN;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.THESE_PROPERTIES;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.WHEN;
+import static com.liferay.poshi.runner.util.StringPool.COLON;
+import static com.liferay.poshi.runner.util.StringPool.PIPE;
+import static com.liferay.poshi.runner.util.StringPool.TAB;
+
 import com.liferay.poshi.runner.util.Dom4JUtil;
 
 import java.util.ArrayList;
@@ -145,13 +159,13 @@ public abstract class BasePoshiElement implements PoshiElement {
 		int index = getIndex();
 
 		if (index == 0) {
-			return "Given";
+			return GIVEN;
 		}
 		else if (index == (getSiblingElementsSize() - 1)) {
-			return "Then";
+			return THEN;
 		}
 
-		return "And";
+		return AND;
 	}
 
 	protected int getSiblingElementsSize() {
@@ -167,6 +181,19 @@ public abstract class BasePoshiElement implements PoshiElement {
 	protected void setTagName(Element element) {
 		tagName = element.getName();
 	}
+
+	protected static final String[] READABLE_COMMAND_BLOCK_KEYS = {
+		BACKGROUND + COLON, FEATURE + COLON, SCENARIO + COLON, SETUP + COLON,
+		TEARDOWN + COLON
+	};
+
+	protected static final String[] READABLE_EXECUTE_BLOCK_KEYS = {
+		TAB + AND, TAB + GIVEN, TAB + THEN, TAB + WHEN
+	};
+
+	protected static final String[] READABLE_VARIABLE_BLOCK_KEYS = {
+		TAB + TAB + PIPE
+	};
 
 	protected Map<String, String> attributes = new HashMap<>();
 	protected String tagName;
