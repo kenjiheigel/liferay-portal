@@ -14,6 +14,9 @@
 
 package com.liferay.poshi.runner;
 
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.BACKGROUND;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.FEATURE;
+
 import org.dom4j.Element;
 
 /**
@@ -27,6 +30,42 @@ public class TestFileElement extends BasePoshiElement {
 
 	public TestFileElement(Element element, PoshiElement parentElement) {
 		super(element, parentElement);
+	}
+
+	public TestFileElement(String readableSyntax, PoshiElement parentElement) {
+		super(readableSyntax, parentElement);
+	}
+
+	@Override
+	public void addAttributes(String readableSyntax) {
+		attributes.put("component-name", "portal-acceptance");
+	}
+
+	@Override
+	public void addChildElements(String readableSyntax) {
+		List<String> readableBlocks = StringUtil.splitByKeys(
+			readableSyntax, READABLE_COMMAND_BLOCK_KEYS);
+
+		for (String readableBlock : readableBlocks) {
+			if (readableBlock.startsWith(FEATURE)) {
+				continue;
+			}
+			else if (readableBlock.startsWith(BACKGROUND)) {
+				List<String> readableCommandBlocks = StringUtil.splitByKeys(
+					readableBlock, READABLE_COMMAND_BLOCK_KEYS);
+
+				for (String readableCommandBlock : readableCommandBlocks) {
+					addChildVariableElements(readableCommandBlock);
+				}
+
+				continue;
+			}
+
+			PoshiElement poshiElement = PoshiElementFactory.newPoshiElement(
+				readableBlock, this);
+
+			addChildElement(poshiElement);
+		}
 	}
 
 	@Override
@@ -68,6 +107,11 @@ public class TestFileElement extends BasePoshiElement {
 		}
 
 		return sb.toString();
+	}
+
+	@Override
+	protected void setTagName() {
+		tagName = "definition";
 	}
 
 }
