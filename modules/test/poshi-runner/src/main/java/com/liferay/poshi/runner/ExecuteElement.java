@@ -14,7 +14,14 @@
 
 package com.liferay.poshi.runner;
 
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.AND;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.GIVEN;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.THEN;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.WHEN;
+
 import com.liferay.poshi.runner.util.StringUtil;
+
+import java.util.List;
 
 import org.dom4j.Element;
 
@@ -29,6 +36,34 @@ public class ExecuteElement extends BasePoshiElement {
 
 	public ExecuteElement(Element element, PoshiElement parentElement) {
 		super(element, parentElement);
+	}
+
+	public ExecuteElement(String readableSyntax, PoshiElement parentElement) {
+		super(readableSyntax, parentElement);
+	}
+
+	@Override
+	public void addAttributes(String readableSyntax) {
+		attributes.put("macro", _getClassCommandName(readableSyntax));
+	}
+
+	@Override
+	public void addChildElements(String readableSyntax) {
+		List<String> readableBlocks = StringUtil.splitByKeys(
+			readableSyntax, READABLE_VARIABLE_BLOCK_KEYS);
+
+		for (String readableBlock : readableBlocks) {
+			if (readableBlock.contains(AND) || readableBlock.contains(GIVEN) ||
+				readableBlock.contains(THEN) || readableBlock.contains(WHEN)) {
+
+				continue;
+			}
+
+			PoshiElement poshiElement = PoshiElementFactory.newPoshiElement(
+				readableBlock, this);
+
+			addChildElement(poshiElement);
+		}
 	}
 
 	@Override
@@ -60,6 +95,48 @@ public class ExecuteElement extends BasePoshiElement {
 		sb.append(super.toReadableSyntax());
 
 		return sb.toString();
+	}
+
+	protected void setTagName() {
+		tagName = "execute";
+	}
+
+	private String _getClassCommandName(String readableSyntax) {
+		int index = readableSyntax.indexOf("\n");
+
+		if (index < 0) {
+			index = readableSyntax.length();
+		}
+
+		String line = readableSyntax.substring(0, index);
+
+		for (String key : READABLE_EXECUTE_BLOCK_KEYS) {
+			if (line.startsWith(key)) {
+				Pattern pattern = Pattern.compile(
+					".*?" + key + ".*?.([A-z]*)(.*)");
+
+				Matcher matcher = pattern.matcher(line);
+
+				if (matcher.find()) {
+					StringBuilder sb = new StringBuilder();
+
+					sb.append(matcher.group(1));
+
+					String commandName = matcher.group(2);
+
+					commandName = StringUtil.removeSpaces(commandName);
+
+					if (commandName.length() > 0) {
+						sb.append("#");
+						sb.append(commandName);
+					}
+
+					return sb.toString();
+				}
+			}
+		}
+
+		return null;
 	}
 
 }
