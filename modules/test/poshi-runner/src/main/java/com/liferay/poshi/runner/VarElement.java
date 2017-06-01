@@ -55,7 +55,10 @@ public class VarElement extends BasePoshiElement {
 
 		String parentElementTagName = getParentElement().getTagName();
 
-		if (parentElementTagName.equals("command")) {
+		if (parentElementTagName.equals("command") ||
+			parentElementTagName.equals("set-up") ||
+			parentElementTagName.equals("tear-down")) {
+
 			sb.append("\n\t");
 			sb.append(getReadableTitle());
 			sb.append(" these variables");

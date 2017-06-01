@@ -14,8 +14,20 @@
 
 package com.liferay.poshi.runner;
 
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.AND;
 import static com.liferay.poshi.runner.ReadableSyntaxKeys.BACKGROUND;
 import static com.liferay.poshi.runner.ReadableSyntaxKeys.FEATURE;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.GIVEN;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.SCENARIO;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.SETUP;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.TEARDOWN;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.THESE_PROPERTIES;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.THESE_VARIABLES;
+import static com.liferay.poshi.runner.util.StringPool.COLON;
+
+import com.liferay.poshi.runner.util.StringUtil;
+
+import java.util.List;
 
 import org.dom4j.Element;
 
@@ -72,21 +84,29 @@ public class TestFileElement extends BasePoshiElement {
 	public String toReadableSyntax() {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("Feature:");
+		sb.append(FEATURE);
+		sb.append(COLON);
 		sb.append("\n\n");
-		sb.append("Background: This executes once per feature file");
+		sb.append(BACKGROUND);
+		sb.append(": This executes once per feature file");
 		sb.append("\n\t");
-		sb.append("Given these properties");
+		sb.append(GIVEN);
+		sb.append(" ");
+		sb.append(THESE_PROPERTIES);
 
 		for (PoshiElement childElement : getChildElements("property")) {
 			sb.append(childElement.toReadableSyntax());
 		}
 
-		sb.append("\n\t");
-		sb.append("And these variables");
+		if (getChildElements("var").size() != 0) {
+			sb.append("\n\t");
+			sb.append(AND);
+			sb.append(" ");
+			sb.append(THESE_VARIABLES);
 
-		for (PoshiElement childElement : getChildElements("var")) {
-			sb.append(childElement.toReadableSyntax());
+			for (PoshiElement childElement : getChildElements("var")) {
+				sb.append(childElement.toReadableSyntax());
+			}
 		}
 
 		sb.append("\n");
