@@ -29,22 +29,28 @@ public class PoshiElementFactory {
 		if (elementName.equals("command")) {
 			return new CommandElement(element, parentElement);
 		}
-		else if (elementName.equals("definition")) {
+
+		if (elementName.equals("definition")) {
 			return new TestFileElement(element, parentElement);
 		}
-		else if (elementName.equals("execute")) {
+
+		if (elementName.equals("execute")) {
 			return new ExecuteElement(element, parentElement);
 		}
-		else if (elementName.equals("property")) {
+
+		if (elementName.equals("property")) {
 			return new PropertyElement(element, parentElement);
 		}
-		else if (elementName.equals("set-up")) {
+
+		if (elementName.equals("set-up")) {
 			return new SetUpElement(element, parentElement);
 		}
-		else if (elementName.equals("tear-down")) {
+
+		if (elementName.equals("tear-down")) {
 			return new TearDownElement(element, parentElement);
 		}
-		else if (elementName.equals("var")) {
+
+		if (elementName.equals("var")) {
 			return new VarElement(element, parentElement);
 		}
 
