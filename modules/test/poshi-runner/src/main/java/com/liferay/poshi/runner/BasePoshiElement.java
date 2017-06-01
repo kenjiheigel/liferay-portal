@@ -37,17 +37,9 @@ public abstract class BasePoshiElement implements PoshiElement {
 	public BasePoshiElement(Element element, PoshiElement parentElement) {
 		_parentElement = parentElement;
 
-		if (_parentElement != null) {
-			depth++;
-		}
-
 		addAttributes(element);
-
-		System.out.println(element.getName() + " " + attributes.toString());
-
 		addChildElements(element);
-
-		tagName = element.getName();
+		setTagName(element);
 	}
 
 	@Override
@@ -161,8 +153,11 @@ public abstract class BasePoshiElement implements PoshiElement {
 		return siblingElements.size();
 	}
 
+	protected void setTagName(Element element) {
+		tagName = element.getName();
+	}
+
 	protected Map<String, String> attributes = new HashMap<>();
-	protected int depth;
 	protected String tagName;
 
 	private final List<PoshiElement> _childElements = new ArrayList<>();
