@@ -60,6 +60,10 @@ public abstract class BasePoshiElement implements PoshiElement {
 	}
 
 	@Override
+	public void addAttributes(String readableSyntax) {
+	}
+
+	@Override
 	public void addChildElements(Element element) {
 		for (Iterator i = element.elementIterator(); i.hasNext();) {
 			PoshiElement poshiElement = PoshiElementFactory.newPoshiElement(
@@ -69,6 +73,10 @@ public abstract class BasePoshiElement implements PoshiElement {
 				_childElements.add(poshiElement);
 			}
 		}
+	}
+
+	@Override
+	public void addChildElements(String readableSyntax) {
 	}
 
 	@Override
@@ -109,6 +117,21 @@ public abstract class BasePoshiElement implements PoshiElement {
 		}
 
 		return sb.toString();
+	}
+
+	@Override
+	public Element toXML() {
+		Element element = Dom4JUtil.getNewElement(tagName);
+
+		for (String key : attributes.keySet()) {
+			element.addAttribute(key, attributes.get(key));
+		}
+
+		for (PoshiElement childElement : _childElements) {
+			Dom4JUtil.addToElement(element, childElement.toXML());
+		}
+
+		return element;
 	}
 
 	protected int getIndex() {

@@ -25,7 +25,11 @@ public interface PoshiElement {
 
 	public void addAttributes(Element element);
 
+	public void addAttributes(String readableSyntax);
+
 	public void addChildElements(Element element);
+
+	public void addChildElements(String readableSyntax);
 
 	public List<PoshiElement> getChildElements();
 
@@ -34,5 +38,7 @@ public interface PoshiElement {
 	public String getTagName();
 
 	public String toReadableSyntax();
+
+	public Element toXML();
 
 }
