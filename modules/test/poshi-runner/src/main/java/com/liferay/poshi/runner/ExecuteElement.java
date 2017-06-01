@@ -15,13 +15,18 @@
 package com.liferay.poshi.runner;
 
 import static com.liferay.poshi.runner.ReadableSyntaxKeys.AND;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.AT_LOCATOR;
 import static com.liferay.poshi.runner.ReadableSyntaxKeys.GIVEN;
 import static com.liferay.poshi.runner.ReadableSyntaxKeys.THEN;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.THE_VALUE;
 import static com.liferay.poshi.runner.ReadableSyntaxKeys.WHEN;
 
 import com.liferay.poshi.runner.util.StringUtil;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.dom4j.Element;
 
@@ -44,6 +49,14 @@ public class ExecuteElement extends BasePoshiElement {
 
 	@Override
 	public void addAttributes(String readableSyntax) {
+		if (readableSyntax.contains(AT_LOCATOR) ||
+			readableSyntax.contains(THE_VALUE)) {
+
+			_addFunctionAttributes(readableSyntax);
+
+			return;
+		}
+
 		attributes.put("macro", _getClassCommandName(readableSyntax));
 	}
 
@@ -73,23 +86,41 @@ public class ExecuteElement extends BasePoshiElement {
 		sb.append("\n\t");
 		sb.append(getReadableExecuteKey());
 
-		if (attributes.get("macro") != null) {
+		if (attributes.get("function") != null) {
+			sb.append(" ");
+
+			String function = attributes.get("function");
+
+			sb.append(_getReadableSyntaxCommandPhrase(function));
+
+			List<String> functionAttributes = Arrays.asList(
+				"value1", "locator1", "value2", "locator2");
+
+			for (String functionAttribute : functionAttributes) {
+				if (attributes.get(functionAttribute) != null) {
+					if (functionAttribute.startsWith("locator")) {
+						sb.append(" ");
+						sb.append(AT_LOCATOR);
+					}
+					else {
+						sb.append(" ");
+						sb.append(THE_VALUE);
+					}
+
+					sb.append(" '");
+
+					sb.append(attributes.get(functionAttribute));
+
+					sb.append("'");
+				}
+			}
+		}
+		else if (attributes.get("macro") != null) {
 			sb.append(" ");
 
 			String macro = attributes.get("macro");
 
-			String macroClass = macro.split("#")[0];
-
-			sb.append(macroClass);
-
-			sb.append(" ");
-
-			String macroCommand = macro.split("#")[1];
-
-			String macroCommandSentence = StringUtil.toPhrase(
-				macroCommand);
-
-			sb.append(macroCommandSentence);
+			sb.append(_getReadableSyntaxCommandPhrase(macro));
 		}
 
 		sb.append(super.toReadableSyntax());
@@ -99,6 +130,47 @@ public class ExecuteElement extends BasePoshiElement {
 
 	protected void setTagName() {
 		tagName = "execute";
+	}
+
+	private void _addFunctionAttribute(
+		String readableSyntax, String attributeType) {
+
+		int start = readableSyntax.indexOf("'");
+
+		int end = readableSyntax.indexOf("'", start + 1);
+
+		if (attributes.get(attributeType + "1") == null) {
+			attributes.put(
+				attributeType + "1", readableSyntax.substring(start + 1, end));
+
+			return;
+		}
+
+		attributes.put(
+			attributeType + "2", readableSyntax.substring(start + 1, end));
+	}
+
+	private void _addFunctionAttributes(String readableSyntax) {
+		String[] keys = {AT_LOCATOR, THE_VALUE};
+
+		List<String> functionItems = StringUtil.splitByKeys(
+			readableSyntax, keys);
+
+		for (String functionItem : functionItems) {
+			if (functionItem.contains(AT_LOCATOR)) {
+				_addFunctionAttribute(functionItem, "locator");
+
+				continue;
+			}
+
+			if (functionItem.contains(THE_VALUE)) {
+				_addFunctionAttribute(functionItem, "value");
+
+				continue;
+			}
+
+			attributes.put("function", _getClassCommandName(functionItem));
+		}
 	}
 
 	private String _getClassCommandName(String readableSyntax) {
@@ -137,6 +209,28 @@ public class ExecuteElement extends BasePoshiElement {
 		}
 
 		return null;
+	}
+
+	private String _getReadableSyntaxCommandPhrase(String classCommandName) {
+		StringBuilder sb = new StringBuilder();
+
+		if (classCommandName.contains("#")) {
+			String className = classCommandName.split("#")[0];
+
+			sb.append(className);
+
+			sb.append(" ");
+
+			String commandName = classCommandName.split("#")[1];
+
+			String commandSentence = StringUtil.toPhrase(commandName);
+
+			sb.append(commandSentence);
+
+			return sb.toString();
+		}
+
+		return classCommandName;
 	}
 
 }
