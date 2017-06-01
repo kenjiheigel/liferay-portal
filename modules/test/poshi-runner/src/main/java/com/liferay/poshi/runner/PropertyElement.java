@@ -14,6 +14,8 @@
 
 package com.liferay.poshi.runner;
 
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.THESE_PROPERTIES;
+
 import org.dom4j.Element;
 
 /**
@@ -31,6 +33,11 @@ public class PropertyElement extends VarElement {
 
 	public PropertyElement(String readableSyntax, PoshiElement parentElement) {
 		super(readableSyntax, parentElement);
+	}
+
+	@Override
+	protected String getReadableVariableKey() {
+		return THESE_PROPERTIES;
 	}
 
 	@Override

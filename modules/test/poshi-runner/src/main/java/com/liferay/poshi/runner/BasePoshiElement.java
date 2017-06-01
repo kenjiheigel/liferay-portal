@@ -185,7 +185,7 @@ public abstract class BasePoshiElement implements PoshiElement {
 		return siblingElements.indexOf(this);
 	}
 
-	protected String getReadableTitle() {
+	protected String getReadableExecuteKey() {
 		int index = getIndex();
 
 		if (index == 0) {

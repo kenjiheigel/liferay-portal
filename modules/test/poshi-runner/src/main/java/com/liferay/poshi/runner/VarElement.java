@@ -14,6 +14,8 @@
 
 package com.liferay.poshi.runner;
 
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.THESE_VARIABLES;
+
 import org.dom4j.Element;
 
 /**
@@ -60,8 +62,9 @@ public class VarElement extends BasePoshiElement {
 			parentElementTagName.equals("tear-down")) {
 
 			sb.append("\n\t");
-			sb.append(getReadableTitle());
-			sb.append(" these variables");
+			sb.append(getReadableExecuteKey());
+			sb.append(" ");
+			sb.append(getReadableVariableKey());
 		}
 
 		sb.append("\n\t\t");
@@ -79,6 +82,10 @@ public class VarElement extends BasePoshiElement {
 		sb.append("|");
 
 		return sb.toString();
+	}
+
+	protected String getReadableVariableKey() {
+		return THESE_VARIABLES;
 	}
 
 	@Override

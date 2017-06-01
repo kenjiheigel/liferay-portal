@@ -38,16 +38,13 @@ public class SetUpElement extends CommandElement {
 	}
 
 	@Override
-	public String toReadableSyntax() {
-		return toReadableSyntax(readableTitle);
+	protected String getReadableCommandTitle() {
+		return "Setup: This executes before each scenario";
 	}
 
 	@Override
 	protected void setTagName() {
 		tagName = "set-up";
 	}
-
-	protected String readableTitle =
-		"Setup: This executes before each scenario";
 
 }

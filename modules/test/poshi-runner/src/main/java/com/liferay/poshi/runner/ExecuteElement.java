@@ -71,7 +71,7 @@ public class ExecuteElement extends BasePoshiElement {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("\n\t");
-		sb.append(getReadableTitle());
+		sb.append(getReadableExecuteKey());
 
 		if (attributes.get("macro") != null) {
 			sb.append(" ");

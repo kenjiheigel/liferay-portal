@@ -21,6 +21,7 @@ import static com.liferay.poshi.runner.ReadableSyntaxKeys.SETUP;
 import static com.liferay.poshi.runner.ReadableSyntaxKeys.TEARDOWN;
 import static com.liferay.poshi.runner.ReadableSyntaxKeys.THESE_PROPERTIES;
 import static com.liferay.poshi.runner.ReadableSyntaxKeys.THESE_VARIABLES;
+import static com.liferay.poshi.runner.util.StringPool.COLON;
 
 import com.liferay.poshi.runner.util.StringUtil;
 
@@ -82,7 +83,11 @@ public class CommandElement extends BasePoshiElement {
 
 	@Override
 	public String toReadableSyntax() {
-		return toReadableSyntax(readableTitle);
+		return toReadableSyntax(getReadableCommandTitle());
+	}
+
+	protected String getReadableCommandTitle() {
+		return SCENARIO + COLON;
 	}
 
 	@Override
@@ -95,6 +100,7 @@ public class CommandElement extends BasePoshiElement {
 
 		sb.append("\n");
 		sb.append(readableTitle);
+		sb.append(" ");
 
 		if (attributes.get("name") != null) {
 			String name = attributes.get("name");
@@ -106,8 +112,6 @@ public class CommandElement extends BasePoshiElement {
 
 		return sb.toString();
 	}
-
-	protected String readableTitle = "Scenario: ";
 
 	private String _getCommandName(String readableSyntax) {
 		int start = readableSyntax.indexOf(SCENARIO) + SCENARIO.length() + 1;
