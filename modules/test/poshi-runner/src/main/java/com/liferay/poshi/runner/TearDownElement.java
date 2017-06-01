@@ -37,11 +37,6 @@ public class TearDownElement extends CommandElement {
 	public void addAttributes(String readableSyntax) {
 	}
 
-	public String toReadableSyntax() {
-		return toReadableSyntax(readableTitle);
-	}
-
-	@Override
 	protected String getReadableCommandTitle() {
 		return "Teardown: This executes after each scenario";
 	}

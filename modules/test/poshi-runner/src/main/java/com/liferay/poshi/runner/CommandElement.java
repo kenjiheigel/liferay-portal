@@ -83,23 +83,10 @@ public class CommandElement extends BasePoshiElement {
 
 	@Override
 	public String toReadableSyntax() {
-		return toReadableSyntax(getReadableCommandTitle());
-	}
-
-	protected String getReadableCommandTitle() {
-		return SCENARIO + COLON;
-	}
-
-	@Override
-	protected void setTagName() {
-		tagName = "command";
-	}
-
-	protected String toReadableSyntax(String readableTitle) {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("\n");
-		sb.append(readableTitle);
+		sb.append(getReadableCommandTitle());
 		sb.append(" ");
 
 		if (attributes.get("name") != null) {
@@ -111,6 +98,15 @@ public class CommandElement extends BasePoshiElement {
 		sb.append(super.toReadableSyntax());
 
 		return sb.toString();
+	}
+
+	protected String getReadableCommandTitle() {
+		return SCENARIO + COLON;
+	}
+
+	@Override
+	protected void setTagName() {
+		tagName = "command";
 	}
 
 	private String _getCommandName(String readableSyntax) {
