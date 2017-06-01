@@ -28,7 +28,7 @@ import org.dom4j.Element;
 /**
  * @author Kenji Heigel
  */
-public class BasePoshiElement implements PoshiElement {
+public abstract class BasePoshiElement implements PoshiElement {
 
 	public BasePoshiElement(Element element) {
 		this(element, null);
