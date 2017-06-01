@@ -29,6 +29,7 @@ import static com.liferay.poshi.runner.util.StringPool.PIPE;
 import static com.liferay.poshi.runner.util.StringPool.TAB;
 
 import com.liferay.poshi.runner.util.Dom4JUtil;
+import com.liferay.poshi.runner.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -77,6 +78,10 @@ public abstract class BasePoshiElement implements PoshiElement {
 	public void addAttributes(String readableSyntax) {
 	}
 
+	public void addChildElement(PoshiElement poshiElement) {
+		_childElements.add(poshiElement);
+	}
+
 	@Override
 	public void addChildElements(Element element) {
 		for (Iterator i = element.elementIterator(); i.hasNext();) {
@@ -91,6 +96,31 @@ public abstract class BasePoshiElement implements PoshiElement {
 
 	@Override
 	public void addChildElements(String readableSyntax) {
+	}
+
+	public void addChildVariableElements(String readableSyntax) {
+		List<String> readableVariableBlocks = StringUtil.splitByKeys(
+			readableSyntax, READABLE_VARIABLE_BLOCK_KEYS);
+
+		for (String readableVariableBlock : readableVariableBlocks) {
+			if (!readableVariableBlock.contains(PIPE)) {
+				continue;
+			}
+
+			if (readableSyntax.contains(THESE_PROPERTIES)) {
+				PoshiElement poshiElement = new PropertyElement(
+					readableVariableBlock, this);
+
+				addChildElement(poshiElement);
+
+				continue;
+			}
+
+			PoshiElement poshiElement = PoshiElementFactory.newPoshiElement(
+				readableVariableBlock, this);
+
+			addChildElement(poshiElement);
+		}
 	}
 
 	@Override
