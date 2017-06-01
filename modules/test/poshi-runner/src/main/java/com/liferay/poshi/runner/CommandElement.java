@@ -14,7 +14,17 @@
 
 package com.liferay.poshi.runner;
 
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.BACKGROUND;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.FEATURE;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.SCENARIO;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.SETUP;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.TEARDOWN;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.THESE_PROPERTIES;
+import static com.liferay.poshi.runner.ReadableSyntaxKeys.THESE_VARIABLES;
+
 import com.liferay.poshi.runner.util.StringUtil;
+
+import java.util.List;
 
 import org.dom4j.Element;
 
@@ -31,9 +41,53 @@ public class CommandElement extends BasePoshiElement {
 		super(element, parentElement);
 	}
 
+	public CommandElement(String readableSyntax, PoshiElement parentElement) {
+		super(readableSyntax, parentElement);
+	}
+
+	@Override
+	public void addAttributes(String readableSyntax) {
+		attributes.put("name", _getCommandName(readableSyntax));
+	}
+
+	@Override
+	public void addChildElements(String readableSyntax) {
+		List<String> readableBlocks = StringUtil.splitByKeys(
+			readableSyntax, READABLE_EXECUTE_BLOCK_KEYS);
+
+		for (String readableBlock : readableBlocks) {
+			if (readableBlock.contains(BACKGROUND) ||
+				readableBlock.contains(FEATURE) ||
+				readableBlock.contains(SCENARIO) ||
+				readableBlock.contains(SETUP) ||
+				readableBlock.contains(TEARDOWN)) {
+
+				continue;
+			}
+
+			if (readableBlock.contains(THESE_PROPERTIES) ||
+				readableBlock.contains(THESE_VARIABLES)) {
+
+				addChildVariableElements(readableBlock);
+
+				continue;
+			}
+
+			PoshiElement poshiElement = PoshiElementFactory.newPoshiElement(
+				readableBlock, this);
+
+			addChildElement(poshiElement);
+		}
+	}
+
 	@Override
 	public String toReadableSyntax() {
 		return toReadableSyntax(readableTitle);
+	}
+
+	@Override
+	protected void setTagName() {
+		tagName = "command";
 	}
 
 	protected String toReadableSyntax(String readableTitle) {
@@ -54,5 +108,14 @@ public class CommandElement extends BasePoshiElement {
 	}
 
 	protected String readableTitle = "Scenario: ";
+
+	private String _getCommandName(String readableSyntax) {
+		int start = readableSyntax.indexOf(SCENARIO) + SCENARIO.length() + 1;
+		int end = readableSyntax.indexOf("\n");
+
+		String line = readableSyntax.substring(start, end);
+
+		return StringUtil.removeSpaces(line);
+	}
 
 }
