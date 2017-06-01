@@ -29,6 +29,12 @@ public class UnsupportedElement extends BasePoshiElement {
 		super(element, parentElement);
 	}
 
+	public UnsupportedElement(
+		String readableSyntax, PoshiElement parentElement) {
+
+		super(readableSyntax, parentElement);
+	}
+
 	@Override
 	public String toReadableSyntax() {
 		StringBuilder sb = new StringBuilder();
