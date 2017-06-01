@@ -29,9 +29,22 @@ public class SetUpElement extends CommandElement {
 		super(element, parentElement);
 	}
 
+	public SetUpElement(String readableSyntax, PoshiElement parentElement) {
+		super(readableSyntax, parentElement);
+	}
+
+	@Override
+	public void addAttributes(String readableSyntax) {
+	}
+
 	@Override
 	public String toReadableSyntax() {
 		return toReadableSyntax(readableTitle);
+	}
+
+	@Override
+	protected void setTagName() {
+		tagName = "set-up";
 	}
 
 	protected String readableTitle =

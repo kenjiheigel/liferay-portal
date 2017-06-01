@@ -29,9 +29,22 @@ public class TearDownElement extends CommandElement {
 		super(element, parentElement);
 	}
 
+	public TearDownElement(String readableSyntax, PoshiElement parentElement) {
+		super(readableSyntax, parentElement);
+	}
+
+	@Override
+	public void addAttributes(String readableSyntax) {
+	}
+
 	@Override
 	public String toReadableSyntax() {
 		return toReadableSyntax(readableTitle);
+	}
+
+	@Override
+	protected void setTagName() {
+		tagName = "tear-down";
 	}
 
 	protected String readableTitle =
