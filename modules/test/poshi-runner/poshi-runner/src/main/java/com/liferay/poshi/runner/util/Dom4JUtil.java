@@ -24,8 +24,10 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import org.dom4j.Attribute;
 import org.dom4j.Document;
@@ -182,6 +184,20 @@ public class Dom4JUtil {
 				continue;
 			}
 		}
+	}
+
+	public static List<Element> toElementList(List<?> elementObjects) {
+		if (elementObjects == null) {
+			return null;
+		}
+
+		List<Element> elementList = new ArrayList<>(elementObjects.size());
+
+		for (Object elementObject : elementObjects) {
+			elementList.add((Element)elementObject);
+		}
+
+		return elementList;
 	}
 
 }
