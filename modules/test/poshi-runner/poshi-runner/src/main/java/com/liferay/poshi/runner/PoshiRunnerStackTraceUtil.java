@@ -74,7 +74,9 @@ public final class PoshiRunnerStackTraceUtil {
 			sb.append(msg);
 		}
 
-		Stack<String> stackTrace = (Stack<String>)_stackTrace.clone();
+		Stack<String> stackTrace = new Stack<>();
+
+		stackTrace.addAll(_stackTrace);
 
 		sb.append("\n");
 		sb.append(_filePaths.peek());

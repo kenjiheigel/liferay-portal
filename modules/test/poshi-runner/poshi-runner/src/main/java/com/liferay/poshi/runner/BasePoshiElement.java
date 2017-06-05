@@ -67,7 +67,7 @@ public abstract class BasePoshiElement implements PoshiElement {
 
 	@Override
 	public void addAttributes(Element element) {
-		for (Iterator i = element.attributeIterator(); i.hasNext();) {
+		for (Iterator<?> i = element.attributeIterator(); i.hasNext();) {
 			Attribute attribute = (Attribute)i.next();
 
 			attributes.put(attribute.getName(), attribute.getValue());
@@ -84,7 +84,7 @@ public abstract class BasePoshiElement implements PoshiElement {
 
 	@Override
 	public void addChildElements(Element element) {
-		for (Iterator i = element.elementIterator(); i.hasNext();) {
+		for (Iterator<?> i = element.elementIterator(); i.hasNext();) {
 			PoshiElement poshiElement = PoshiElementFactory.newPoshiElement(
 				(Element)i.next(), this);
 

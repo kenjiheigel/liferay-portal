@@ -22,6 +22,7 @@ import com.liferay.poshi.runner.logger.XMLLoggerHandler;
 import com.liferay.poshi.runner.selenium.LiferaySelenium;
 import com.liferay.poshi.runner.selenium.LiferaySeleniumHelper;
 import com.liferay.poshi.runner.selenium.SeleniumUtil;
+import com.liferay.poshi.runner.util.Dom4JUtil;
 import com.liferay.poshi.runner.util.FileUtil;
 import com.liferay.poshi.runner.util.GetterUtil;
 import com.liferay.poshi.runner.util.PropsUtil;
@@ -66,7 +67,8 @@ public class PoshiRunnerExecutor {
 		String elementName = element.getName();
 
 		if (elementName.equals("and")) {
-			List<Element> andElements = element.elements();
+			List<Element> andElements = Dom4JUtil.toElementList(
+				element.elements());
 
 			conditionalValue = true;
 
@@ -120,7 +122,8 @@ public class PoshiRunnerExecutor {
 			}
 		}
 		else if (elementName.equals("or")) {
-			List<Element> orElements = element.elements();
+			List<Element> orElements = Dom4JUtil.toElementList(
+				element.elements());
 
 			for (Element orElement : orElements) {
 				if (!conditionalValue) {
@@ -133,7 +136,8 @@ public class PoshiRunnerExecutor {
 			}
 		}
 		else if (elementName.equals("not")) {
-			List<Element> notElements = element.elements();
+			List<Element> notElements = Dom4JUtil.toElementList(
+				element.elements());
 
 			Element notElement = notElements.get(0);
 
@@ -153,7 +157,8 @@ public class PoshiRunnerExecutor {
 	public static void parseElement(Element element) throws Exception {
 		LoggerUtil.pauseLoggerCheck();
 
-		List<Element> childElements = element.elements();
+		List<Element> childElements = Dom4JUtil.toElementList(
+			element.elements());
 
 		for (Element childElement : childElements) {
 			String childElementName = childElement.getName();
@@ -304,7 +309,8 @@ public class PoshiRunnerExecutor {
 
 		PoshiRunnerStackTraceUtil.setCurrentElement(executeElement);
 
-		List<Element> executeVarElements = executeElement.elements("var");
+		List<Element> executeVarElements = Dom4JUtil.toElementList(
+			executeElement.elements("var"));
 
 		for (Element executeVarElement : executeVarElements) {
 			runVarElement(executeVarElement, false, false);
@@ -450,7 +456,8 @@ public class PoshiRunnerExecutor {
 
 		XMLLoggerHandler.updateStatus(executeElement, "pending");
 
-		List<Element> executeArgElements = executeElement.elements("arg");
+		List<Element> executeArgElements = Dom4JUtil.toElementList(
+			executeElement.elements("arg"));
 
 		Binding binding = new Binding();
 
@@ -501,7 +508,8 @@ public class PoshiRunnerExecutor {
 
 		XMLLoggerHandler.updateStatus(element, "pending");
 
-		List<Element> ifChildElements = element.elements();
+		List<Element> ifChildElements = Dom4JUtil.toElementList(
+			element.elements());
 
 		Element ifConditionElement = ifChildElements.get(0);
 
@@ -523,14 +531,16 @@ public class PoshiRunnerExecutor {
 			XMLLoggerHandler.updateStatus(ifThenElement, "pass");
 		}
 		else if (element.element("elseif") != null) {
-			List<Element> elseIfElements = element.elements("elseif");
+			List<Element> elseIfElements = Dom4JUtil.toElementList(
+				element.elements("elseif"));
 
 			for (Element elseIfElement : elseIfElements) {
 				PoshiRunnerStackTraceUtil.setCurrentElement(elseIfElement);
 
 				XMLLoggerHandler.updateStatus(elseIfElement, "pending");
 
-				List<Element> elseIfChildElements = elseIfElement.elements();
+				List<Element> elseIfChildElements = Dom4JUtil.toElementList(
+					elseIfElement.elements());
 
 				Element elseIfConditionElement = elseIfChildElements.get(0);
 
@@ -636,7 +646,8 @@ public class PoshiRunnerExecutor {
 
 		Element rootElement = PoshiRunnerContext.getMacroRootElement(className);
 
-		List<Element> rootVarElements = rootElement.elements("var");
+		List<Element> rootVarElements = Dom4JUtil.toElementList(
+			rootElement.elements("var"));
 
 		for (Element rootVarElement : rootVarElements) {
 			runVarElement(rootVarElement, false, true);
@@ -644,7 +655,8 @@ public class PoshiRunnerExecutor {
 
 		PoshiRunnerStackTraceUtil.popStackTrace();
 
-		List<Element> executeVarElements = executeElement.elements("var");
+		List<Element> executeVarElements = Dom4JUtil.toElementList(
+			executeElement.elements("var"));
 
 		for (Element executeVarElement : executeVarElements) {
 			runVarElement(executeVarElement, false, false);
@@ -661,7 +673,8 @@ public class PoshiRunnerExecutor {
 			Map<String, String> macroReturns = runMacroCommandElement(
 				classCommandName, commandElement);
 
-			List<Element> returnElements = executeElement.elements("return");
+			List<Element> returnElements = Dom4JUtil.toElementList(
+				executeElement.elements("return"));
 
 			for (Element returnElement : returnElements) {
 				String returnFrom = returnElement.attributeValue("from");
@@ -698,7 +711,8 @@ public class PoshiRunnerExecutor {
 
 		List<String> args = new ArrayList<>();
 
-		List<Element> argElements = executeElement.elements("arg");
+		List<Element> argElements = Dom4JUtil.toElementList(
+			executeElement.elements("arg"));
 
 		for (int i = 0; i < argElements.size(); i++) {
 			Element argElement = argElements.get(i);
@@ -842,7 +856,7 @@ public class PoshiRunnerExecutor {
 		try {
 			_returnObject = method.invoke(
 				liferaySelenium,
-				arguments.toArray(new String[arguments.size()]));
+				arguments.toArray(new Object[arguments.size()]));
 		}
 		catch (Exception e1) {
 			Throwable throwable = e1.getCause();
@@ -861,7 +875,7 @@ public class PoshiRunnerExecutor {
 				try {
 					_returnObject = method.invoke(
 						liferaySelenium,
-						arguments.toArray(new String[arguments.size()]));
+						arguments.toArray(new Object[arguments.size()]));
 				}
 				catch (Exception e2) {
 					throwable = e2.getCause();
@@ -933,7 +947,8 @@ public class PoshiRunnerExecutor {
 		Element rootElement = PoshiRunnerContext.getTestCaseRootElement(
 			className);
 
-		List<Element> rootVarElements = rootElement.elements("var");
+		List<Element> rootVarElements = Dom4JUtil.toElementList(
+			rootElement.elements("var"));
 
 		for (Element rootVarElement : rootVarElements) {
 			runVarElement(rootVarElement, false, true);
@@ -1178,7 +1193,8 @@ public class PoshiRunnerExecutor {
 				element.attributeValue("max-iterations"));
 		}
 
-		List<Element> whileChildElements = element.elements();
+		List<Element> whileChildElements = Dom4JUtil.toElementList(
+			element.elements());
 
 		Element conditionElement = whileChildElements.get(0);
 

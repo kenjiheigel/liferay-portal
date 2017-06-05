@@ -14,9 +14,9 @@
 
 package com.liferay.poshi.runner;
 
+import com.liferay.poshi.runner.util.Dom4JUtil;
 import com.liferay.poshi.runner.util.OSDetector;
 import com.liferay.poshi.runner.util.PropsUtil;
-import com.liferay.poshi.runner.util.PropsValues;
 import com.liferay.poshi.runner.util.StringUtil;
 import com.liferay.poshi.runner.util.Validator;
 
@@ -132,7 +132,8 @@ public class PoshiRunnerValidation {
 	}
 
 	protected static void parseElements(Element element, String filePath) {
-		List<Element> childElements = element.elements();
+		List<Element> childElements = Dom4JUtil.toElementList(
+			element.elements());
 
 		List<String> possibleElementNames = Arrays.asList(
 			"description", "echo", "execute", "fail", "for", "if", "property",
@@ -305,7 +306,8 @@ public class PoshiRunnerValidation {
 			validateHasChildElements(element, filePath);
 			validateHasNoAttributes(element, filePath);
 
-			List<Element> childElements = element.elements();
+			List<Element> childElements = Dom4JUtil.toElementList(
+				element.elements());
 
 			if (childElements.size() < 2) {
 				_exceptions.add(
@@ -377,7 +379,8 @@ public class PoshiRunnerValidation {
 			validateHasNoAttributes(element, filePath);
 			validateNumberOfChildElements(element, 1, filePath);
 
-			List<Element> childElements = element.elements();
+			List<Element> childElements = Dom4JUtil.toElementList(
+				element.elements());
 
 			validateConditionElement(childElements.get(0), filePath);
 		}
@@ -439,7 +442,8 @@ public class PoshiRunnerValidation {
 	protected static void validateElseElement(
 		Element element, String filePath) {
 
-		List<Element> elseElements = element.elements("else");
+		List<Element> elseElements = Dom4JUtil.toElementList(
+			element.elements("else"));
 
 		if (elseElements.size() > 1) {
 			_exceptions.add(
@@ -463,7 +467,8 @@ public class PoshiRunnerValidation {
 		validateNumberOfChildElements(element, 2, filePath);
 		validateThenElement(element, filePath);
 
-		List<Element> childElements = element.elements();
+		List<Element> childElements = Dom4JUtil.toElementList(
+			element.elements());
 
 		List<String> conditionTags = Arrays.asList(
 			"and", "condition", "contains", "equals", "isset", "not", "or");
@@ -592,7 +597,8 @@ public class PoshiRunnerValidation {
 			validateTestCaseContext(element, filePath);
 		}
 
-		List<Element> childElements = element.elements();
+		List<Element> childElements = Dom4JUtil.toElementList(
+			element.elements());
 
 		if (!childElements.isEmpty()) {
 			primaryAttributeNames = Arrays.asList(
@@ -617,13 +623,15 @@ public class PoshiRunnerValidation {
 				}
 			}
 
-			List<Element> argElements = element.elements("arg");
+			List<Element> argElements = Dom4JUtil.toElementList(
+				element.elements("arg"));
 
 			for (Element argElement : argElements) {
 				validateArgElement(argElement, filePath);
 			}
 
-			List<Element> returnElements = element.elements("return");
+			List<Element> returnElements = Dom4JUtil.toElementList(
+				element.elements("return"));
 
 			for (Element returnElement : returnElements) {
 				if (primaryAttributeName.equals("macro")) {
@@ -637,7 +645,8 @@ public class PoshiRunnerValidation {
 				}
 			}
 
-			List<Element> varElements = element.elements("var");
+			List<Element> varElements = Dom4JUtil.toElementList(
+				element.elements("var"));
 
 			for (Element varElement : varElements) {
 				validateVarElement(varElement, filePath);
@@ -729,7 +738,8 @@ public class PoshiRunnerValidation {
 		validateRequiredChildElementNames(
 			element, Arrays.asList("command"), filePath);
 
-		List<Element> childElements = element.elements();
+		List<Element> childElements = Dom4JUtil.toElementList(
+			element.elements());
 
 		for (Element childElement : childElements) {
 			validateCommandElement(childElement, filePath);
@@ -742,7 +752,8 @@ public class PoshiRunnerValidation {
 	protected static void validateHasChildElements(
 		Element element, String filePath) {
 
-		List<Element> childElements = element.elements();
+		List<Element> childElements = Dom4JUtil.toElementList(
+			element.elements());
 
 		if (childElements.isEmpty()) {
 			_exceptions.add(
@@ -767,7 +778,8 @@ public class PoshiRunnerValidation {
 	protected static void validateHasNoAttributes(
 		Element element, String filePath) {
 
-		List<Attribute> attributes = element.attributes();
+		List<Attribute> attributes = Dom4JUtil.toAttributeList(
+			element.attributes());
 
 		if (!attributes.isEmpty()) {
 			for (Attribute attribute : attributes) {
@@ -788,7 +800,8 @@ public class PoshiRunnerValidation {
 	protected static void validateHasNoChildElements(
 		Element element, String filePath) {
 
-		List<Element> childElements = element.elements();
+		List<Element> childElements = Dom4JUtil.toElementList(
+			element.elements());
 
 		if (!childElements.isEmpty()) {
 			_exceptions.add(
@@ -843,10 +856,11 @@ public class PoshiRunnerValidation {
 	protected static void validateHasRequiredPropertyElements(
 		Element element, String filePath) {
 
-		List<String> requiredPropertyNames = new ArrayList(
+		List<String> requiredPropertyNames = new ArrayList<>(
 			PoshiRunnerContext.getTestCaseRequiredPropertyNames());
 
-		List<Element> propertyElements = element.elements("property");
+		List<Element> propertyElements = Dom4JUtil.toElementList(
+			element.elements("property"));
 
 		for (Element propertyElement : propertyElements) {
 			validatePropertyElement(propertyElement, filePath);
@@ -884,7 +898,8 @@ public class PoshiRunnerValidation {
 
 		String fileName = filePath.substring(filePath.lastIndexOf(".") + 1);
 
-		List<Element> childElements = element.elements();
+		List<Element> childElements = Dom4JUtil.toElementList(
+			element.elements());
 
 		List<String> conditionTags = Arrays.asList(
 			"and", "condition", "contains", "equals", "isset", "not", "or");
@@ -954,7 +969,8 @@ public class PoshiRunnerValidation {
 		validateHasChildElements(element, filePath);
 		validateRequiredChildElementName(element, "command", filePath);
 
-		List<Element> childElements = element.elements();
+		List<Element> childElements = Dom4JUtil.toElementList(
+			element.elements());
 
 		List<String> possibleTagElementNames = Arrays.asList("command", "var");
 
@@ -1068,7 +1084,8 @@ public class PoshiRunnerValidation {
 	protected static void validateNumberOfAttributes(
 		Element element, int number, String filePath) {
 
-		List<Attribute> attributes = element.attributes();
+		List<Attribute> attributes = Dom4JUtil.toAttributeList(
+			element.attributes());
 
 		if (attributes.isEmpty()) {
 			_exceptions.add(
@@ -1093,7 +1110,8 @@ public class PoshiRunnerValidation {
 	protected static void validateNumberOfChildElements(
 		Element element, int number, String filePath) {
 
-		List<Element> childElements = element.elements();
+		List<Element> childElements = Dom4JUtil.toElementList(
+			element.elements());
 
 		if (childElements.isEmpty()) {
 			_exceptions.add(
@@ -1116,7 +1134,8 @@ public class PoshiRunnerValidation {
 	}
 
 	protected static void validateOffElement(Element element, String filePath) {
-		List<Element> offElements = element.elements("off");
+		List<Element> offElements = Dom4JUtil.toElementList(
+			element.elements("off"));
 
 		if (offElements.size() > 1) {
 			_exceptions.add(
@@ -1136,7 +1155,8 @@ public class PoshiRunnerValidation {
 	}
 
 	protected static void validateOnElement(Element element, String filePath) {
-		List<Element> onElements = element.elements("on");
+		List<Element> onElements = Dom4JUtil.toElementList(
+			element.elements("on"));
 
 		if (onElements.size() > 1) {
 			_exceptions.add(
@@ -1192,7 +1212,8 @@ public class PoshiRunnerValidation {
 
 		Element tBodyElement = tableElement.element("tbody");
 
-		List<Element> trElements = tBodyElement.elements();
+		List<Element> trElements = Dom4JUtil.toElementList(
+			tBodyElement.elements());
 
 		if (Validator.isNotNull(trElements)) {
 			for (Element trElement : trElements) {
@@ -1200,7 +1221,8 @@ public class PoshiRunnerValidation {
 				validateNumberOfChildElements(trElement, 3, filePath);
 				validateRequiredChildElementName(trElement, "td", filePath);
 
-				List<Element> tdElements = trElement.elements();
+				List<Element> tdElements = Dom4JUtil.toElementList(
+					trElement.elements());
 
 				Element locatorElement = tdElements.get(1);
 
@@ -1277,7 +1299,8 @@ public class PoshiRunnerValidation {
 	protected static void validatePossibleAttributeNames(
 		Element element, List<String> possibleAttributeNames, String filePath) {
 
-		List<Attribute> attributes = element.attributes();
+		List<Attribute> attributes = Dom4JUtil.toAttributeList(
+			element.attributes());
 
 		for (Attribute attribute : attributes) {
 			String attributeName = attribute.getName();
@@ -1350,7 +1373,8 @@ public class PoshiRunnerValidation {
 
 		boolean found = false;
 
-		List<Element> childElements = element.elements();
+		List<Element> childElements = Dom4JUtil.toElementList(
+			element.elements());
 
 		for (Element childElement : childElements) {
 			if (Objects.equals(childElement.getName(), requiredElementName)) {
@@ -1429,7 +1453,8 @@ public class PoshiRunnerValidation {
 
 		validateDefinitionElement(element, filePath);
 
-		List<Element> childElements = element.elements();
+		List<Element> childElements = Dom4JUtil.toElementList(
+			element.elements());
 
 		if (Validator.isNull(element.attributeValue("extends"))) {
 			validateHasChildElements(element, filePath);
@@ -1533,7 +1558,8 @@ public class PoshiRunnerValidation {
 	protected static void validateThenElement(
 		Element element, String filePath) {
 
-		List<Element> thenElements = element.elements("then");
+		List<Element> thenElements = Dom4JUtil.toElementList(
+			element.elements("then"));
 
 		if (thenElements.isEmpty()) {
 			_exceptions.add(
@@ -1567,7 +1593,8 @@ public class PoshiRunnerValidation {
 		validateRequiredAttributeNames(
 			element, Arrays.asList("name"), filePath);
 
-		List<Attribute> attributes = element.attributes();
+		List<Attribute> attributes = Dom4JUtil.toAttributeList(
+			element.attributes());
 
 		if (attributes.size() <= 2) {
 			if (Validator.isNull(element.getText())) {
@@ -1640,7 +1667,8 @@ public class PoshiRunnerValidation {
 		List<String> conditionTags = Arrays.asList(
 			"and", "condition", "contains", "equals", "isset", "not", "or");
 
-		List<Element> childElements = element.elements();
+		List<Element> childElements = Dom4JUtil.toElementList(
+			element.elements());
 
 		for (int i = 0; i < childElements.size(); i++) {
 			Element childElement = childElements.get(i);
@@ -1689,9 +1717,6 @@ public class PoshiRunnerValidation {
 
 		throw new Exception();
 	}
-
-	private static final String _TEST_BASE_DIR_NAME =
-		PoshiRunnerGetterUtil.getCanonicalPath(PropsValues.TEST_BASE_DIR_NAME);
 
 	private static final Set<Exception> _exceptions = new HashSet<>();
 	private static final Pattern _pattern = Pattern.compile("\\$\\{([^}]*)\\}");
