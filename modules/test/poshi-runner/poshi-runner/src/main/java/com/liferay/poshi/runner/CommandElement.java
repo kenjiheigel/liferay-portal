@@ -121,6 +121,7 @@ public class CommandElement extends BasePoshiElement {
 
 	private void _addPriorityAttribute(String readableSyntax) {
 		int start = readableSyntax.indexOf("Priority: ");
+
 		int end = readableSyntax.indexOf("\n", start);
 
 		String priority = readableSyntax.substring(start + 9, end);
