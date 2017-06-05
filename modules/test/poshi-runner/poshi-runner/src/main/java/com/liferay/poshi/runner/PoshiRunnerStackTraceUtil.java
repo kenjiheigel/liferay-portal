@@ -74,18 +74,14 @@ public final class PoshiRunnerStackTraceUtil {
 			sb.append(msg);
 		}
 
-		Stack<String> stackTrace = new Stack<>();
-
-		stackTrace.addAll(_stackTrace);
-
 		sb.append("\n");
 		sb.append(_filePaths.peek());
 		sb.append(":");
 		sb.append(_currentElement.attributeValue("line-number"));
 
-		while (!stackTrace.isEmpty()) {
+		for (int i = 0; i < _stackTrace.size(); i++) {
 			sb.append("\n");
-			sb.append(stackTrace.pop());
+			sb.append(_stackTrace.get(i));
 		}
 
 		sb.append("\n");
