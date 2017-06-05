@@ -54,7 +54,7 @@ public class SSOUtil {
 			return null;
 		}
 
-		return _instance._getSignInURL(companyId, signInURL);
+		return _instance._getSignInURL(companyd, signInURL);
 	}
 
 	public static boolean isLoginRedirectRequired(long companyId) {
