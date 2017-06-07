@@ -21,6 +21,7 @@ import com.google.common.collect.Multimap;
 import com.liferay.poshi.runner.pql.PQLEntity;
 import com.liferay.poshi.runner.pql.PQLEntityFactory;
 import com.liferay.poshi.runner.selenium.LiferaySelenium;
+import com.liferay.poshi.runner.util.Dom4JUtil;
 import com.liferay.poshi.runner.util.FileUtil;
 import com.liferay.poshi.runner.util.MathUtil;
 import com.liferay.poshi.runner.util.OSDetector;
@@ -86,7 +87,8 @@ public class PoshiRunnerContext {
 				relatedClassCommandName);
 
 			if (commandElement != null) {
-				List<Element> caseElements = commandElement.elements();
+				List<Element> caseElements = Dom4JUtil.toElementList(
+					commandElement.elements());
 
 				for (Element caseElement : caseElements) {
 					actionCaseElements.add(caseElement);
@@ -282,38 +284,6 @@ public class PoshiRunnerContext {
 		_componentClassCommandNames.put(componentName, classCommandNames);
 	}
 
-	private static String[] _combine(String[]... arrays) {
-		int size = 0;
-
-		for (String[] array : arrays) {
-			if (array == null) {
-				continue;
-			}
-
-			size += array.length;
-		}
-
-		if (size == 0) {
-			return new String[0];
-		}
-
-		String[] combinedArray = new String[size];
-
-		int i = 0;
-
-		for (String[] array : arrays) {
-			if (array == null) {
-				continue;
-			}
-
-			for (String string : array) {
-				combinedArray[i++] = string;
-			}
-		}
-
-		return combinedArray;
-	}
-
 	private static int _getAllocatedTestGroupSize(int testCount) {
 		int groupCount = MathUtil.quotient(
 			testCount, PropsValues.TEST_BATCH_MAX_GROUP_SIZE, true);
@@ -327,7 +297,8 @@ public class PoshiRunnerContext {
 
 		Properties properties = new Properties();
 
-		List<Element> rootPropertyElements = rootElement.elements("property");
+		List<Element> rootPropertyElements = Dom4JUtil.toElementList(
+			rootElement.elements("property"));
 
 		for (Element propertyElement : rootPropertyElements) {
 			String propertyName = propertyElement.attributeValue("name");
@@ -336,8 +307,8 @@ public class PoshiRunnerContext {
 			properties.setProperty(propertyName, propertyValue);
 		}
 
-		List<Element> commandPropertyElements = commandElement.elements(
-			"property");
+		List<Element> commandPropertyElements = Dom4JUtil.toElementList(
+			commandElement.elements("property"));
 
 		for (Element propertyElement : commandPropertyElements) {
 			String propertyName = propertyElement.attributeValue("name");
@@ -576,7 +547,7 @@ public class PoshiRunnerContext {
 		Map<Properties, Collection<String>> map = multimap.asMap();
 
 		for (Collection<String> value : map.values()) {
-			List<String> classCommandNameGroup = new ArrayList(value);
+			List<String> classCommandNameGroup = new ArrayList<>(value);
 
 			Collections.sort(classCommandNameGroup);
 
@@ -708,24 +679,6 @@ public class PoshiRunnerContext {
 		return sb.toString();
 	}
 
-	private static Set<String> _getTestCaseCommandNames(String className)
-		throws Exception {
-
-		Element rootElement = getTestCaseRootElement(className);
-
-		List<Element> commandElements = rootElement.elements("command");
-
-		Set<String> commandNames = new TreeSet<>();
-
-		for (Element commandElement : commandElements) {
-			String commandName = commandElement.attributeValue("name");
-
-			commandNames.add(commandName);
-		}
-
-		return commandNames;
-	}
-
 	private static void _initComponentCommandNamesMap() {
 		for (String testCaseClassName : _testCaseClassNames) {
 			Element rootElement = getTestCaseRootElement(testCaseClassName);
@@ -743,8 +696,8 @@ public class PoshiRunnerContext {
 				Element extendsRootElement = getTestCaseRootElement(
 					extendsTestCaseClassName);
 
-				List<Element> extendsCommandElements =
-					extendsRootElement.elements("command");
+				List<Element> extendsCommandElements = Dom4JUtil.toElementList(
+					extendsRootElement.elements("command"));
 
 				for (Element extendsCommandElement : extendsCommandElements) {
 					String extendsCommandName =
@@ -768,7 +721,8 @@ public class PoshiRunnerContext {
 				}
 			}
 
-			List<Element> commandElements = rootElement.elements("command");
+			List<Element> commandElements = Dom4JUtil.toElementList(
+				rootElement.elements("command"));
 
 			for (Element commandElement : commandElements) {
 				String commandName = commandElement.attributeValue("name");
@@ -850,10 +804,12 @@ public class PoshiRunnerContext {
 
 		Element tBodyElement = tableElement.element("tbody");
 
-		List<Element> trElements = tBodyElement.elements("tr");
+		List<Element> trElements = Dom4JUtil.toElementList(
+			tBodyElement.elements("tr"));
 
 		for (Element trElement : trElements) {
-			List<Element> tdElements = trElement.elements("td");
+			List<Element> tdElements = Dom4JUtil.toElementList(
+				trElement.elements("td"));
 
 			Element locatorKeyElement = tdElements.get(0);
 
@@ -924,7 +880,8 @@ public class PoshiRunnerContext {
 					classType + "#" + classCommandName, tearDownElement);
 			}
 
-			List<Element> commandElements = rootElement.elements("command");
+			List<Element> commandElements = Dom4JUtil.toElementList(
+				rootElement.elements("command"));
 
 			for (Element commandElement : commandElements) {
 				String classCommandName =
@@ -1070,7 +1027,8 @@ public class PoshiRunnerContext {
 
 			Element rootElement = document.getRootElement();
 
-			List<Element> toggleElements = rootElement.elements("toggle");
+			List<Element> toggleElements = Dom4JUtil.toElementList(
+				rootElement.elements("toggle"));
 
 			for (Element toggleElement : toggleElements) {
 				String toggleName = toggleElement.attributeValue("name");

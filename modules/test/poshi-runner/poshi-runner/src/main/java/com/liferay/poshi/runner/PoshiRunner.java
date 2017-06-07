@@ -20,6 +20,7 @@ import com.liferay.poshi.runner.logger.SummaryLoggerHandler;
 import com.liferay.poshi.runner.logger.XMLLoggerHandler;
 import com.liferay.poshi.runner.selenium.LiferaySeleniumHelper;
 import com.liferay.poshi.runner.selenium.SeleniumUtil;
+import com.liferay.poshi.runner.util.Dom4JUtil;
 import com.liferay.poshi.runner.util.PropsValues;
 
 import java.util.ArrayList;
@@ -74,7 +75,8 @@ public class PoshiRunner {
 				Element rootElement = PoshiRunnerContext.getTestCaseRootElement(
 					className);
 
-				List<Element> commandElements = rootElement.elements("command");
+				List<Element> commandElements = Dom4JUtil.toElementList(
+					rootElement.elements("command"));
 
 				for (Element commandElement : commandElements) {
 					classCommandNames.add(
@@ -199,7 +201,8 @@ public class PoshiRunner {
 		Element rootElement = PoshiRunnerContext.getTestCaseRootElement(
 			_testClassName);
 
-		List<Element> varElements = rootElement.elements("var");
+		List<Element> varElements = Dom4JUtil.toElementList(
+			rootElement.elements("var"));
 
 		for (Element varElement : varElements) {
 			PoshiRunnerExecutor.runVarElement(varElement, false, false);
@@ -251,7 +254,7 @@ public class PoshiRunner {
 
 	private class Retry implements TestRule {
 
-		public Retry(int retryCount, Class... retryClasses) {
+		public Retry(int retryCount, Class<?>... retryClasses) {
 			_retryCount = retryCount;
 			_retryClasses = retryClasses;
 		}
@@ -290,7 +293,7 @@ public class PoshiRunner {
 								throwables.add(t);
 							}
 
-							for (Class retryClass : _retryClasses) {
+							for (Class<?> retryClass : _retryClasses) {
 								for (Throwable throwable : throwables) {
 									if (retryClass.isInstance(throwable)) {
 										retry = true;
@@ -308,7 +311,7 @@ public class PoshiRunner {
 			};
 		}
 
-		private final Class[] _retryClasses;
+		private final Class<?>[] _retryClasses;
 		private final int _retryCount;
 
 	}

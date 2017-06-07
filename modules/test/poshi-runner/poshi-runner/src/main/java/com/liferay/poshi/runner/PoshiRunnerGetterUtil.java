@@ -15,6 +15,7 @@
 package com.liferay.poshi.runner;
 
 import com.liferay.poshi.runner.selenium.SeleniumUtil;
+import com.liferay.poshi.runner.util.Dom4JUtil;
 import com.liferay.poshi.runner.util.ExternalMethod;
 import com.liferay.poshi.runner.util.FileUtil;
 import com.liferay.poshi.runner.util.OSDetector;
@@ -50,7 +51,8 @@ public class PoshiRunnerGetterUtil {
 
 		List<Element> allChildElements = new ArrayList<>();
 
-		List<Element> childElements = element.elements();
+		List<Element> childElements = Dom4JUtil.toElementList(
+			element.elements());
 
 		if (childElements.isEmpty()) {
 			return allChildElements;
