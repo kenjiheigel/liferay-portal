@@ -1,349 +1,384 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Site Administration" />
-
-	<var name="globalSiteName" value="Global" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="User#firstLoginPG" />
-
-				<execute macro="Site#tearDownCP" />
-
-				<execute macro="Page#tearDownPG" />
-
-				<execute macro="WebContent#tearDownCP">
-					<var name="siteScopeName" value="Global" />
-				</execute>
-
-				<execute macro="WebContentTemplates#tearDownCP">
-					<var name="siteScopeName" value="Global" />
-				</execute>
-
-				<execute macro="WebContentStructures#tearDownCP">
-					<var name="siteScopeName" value="Global" />
-				</execute>
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="AddPageAndChildPageTranslations" priority="3">
-		<property name="test.name.skip.portal.instance" value="SitesUsecase#AddPageAndChildPageTranslations" />
-		<property name="testray.component.names" value="Localization,Site Administration,Site Localization,Site Pages Administration" />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Home" />
-		</execute>
-
-		<execute macro="Page#addPageTranslations">
-			<var name="page" value="Home" />
-			<var name="pageTranslation" value="es_ES" />
-			<var name="pageTranslationName" value="Casa" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#viewTranslationsPG">
-			<var name="pageLocalizationMessage" value="This page is displayed in Spanish (Spain). Display the page in English (United States). Set Spanish (Spain) as your preferred language." />
-			<var name="pageLocalizationPreferredLanguage" value="Set Spanish (Spain) as your preferred language." />
-			<var name="pageName" value="Casa" />
-			<var name="sitePageURL" value="${portalURL}/es/web/site-name/home" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#localizedPG">
-			<var name="pageLocale" value="Display the page in English (United States)" />
-		</execute>
-
-		<execute macro="Page#addChild">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Home" />
-			<var name="siteChildPageName" value="Blog Page" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteScopeSelected" value="true" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-		</execute>
-
-		<execute macro="Page#addPageTranslations">
-			<var name="page" value="Blog Page" />
-			<var name="pageTranslation" value="es_ES" />
-			<var name="pageTranslationName" value="Blog Página" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#viewTranslationsPG">
-			<var name="childPageName" value="Blog Página" />
-			<var name="pageLocalizationMessage" value="This page is displayed in Spanish (Spain). Display the page in English (United States). Set Spanish (Spain) as your preferred language." />
-			<var name="pageLocalizationPreferredLanguage" value="Set Spanish (Spain) as your preferred language." />
-			<var name="sitePageURL" value="${portalURL}/es/web/site-name/blog-page" />
-		</execute>
-	</command>
-
-	<command name="SitesTemplatePermissionPersistence" priority="3">
-		<property name="testray.component.names" value="Permissions,Site Administration" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addCommunityCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoConfigurationPG" >
-			<var name="portletName" value="Polls Display" />
-		</execute>
-
-		<execute macro="PermissionsInline#assertDefaultPG">
-			<var name="roleList" value="Guest,Owner,Power User,Site Member,User" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoConfigurationPG" >
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="PermissionsInline#assertDefaultPG">
-			<var name="roleList" value="Guest,Owner,Power User,Site Member,User" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#viewTitle">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute macro="SiteTemplates#resetPageChanges">
-			<var name="columnNumberTo" value="1" />
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#viewNoSpecificPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoConfigurationPG" >
-			<var name="portletName" value="Polls Display" />
-		</execute>
-
-		<execute macro="PermissionsInline#assertDefaultPG">
-			<var name="roleList" value="Guest,Owner,Power User,Site Member,User" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Polls#addPollPG">
-			<var name="pollsQuestion" value="What is the most important issue for this election?" />
-			<var name="pollsQuestionChoiceA" value="The Economy" />
-			<var name="pollsQuestionChoiceB" value="The National Debt" />
-			<var name="pollsQuestionTitle" value="Election Poll" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Polls#selectPollPG">
-			<var name="pollsQuestionTitle" value="Election Poll" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Polls#viewPollPG">
-			<var name="pollsQuestion" value="What is the most important issue for this election?" />
-			<var name="pollsQuestionChoiceList" value="The Economy,The National Debt" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoConfigurationPG" >
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="PermissionsInline#assertDefaultPG">
-			<var name="roleList" value="Guest,Owner,Power User,Site Member,User" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="This is the message boards thread." />
-			<var name="threadSubject" value="Thread" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
-			<var name="threadBody" value="This is the message boards thread." />
-			<var name="threadSubject" value="Thread" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewPG">
-			<var name="threadBody" value="This is the message boards thread." />
-			<var name="threadSubject" value="Thread" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute function="Open" locator1="${portalURL}/web/site-name/home" />
-
-		<execute macro="Portlet#viewTitle">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
-			<var name="threadBody" value="This is the message boards thread." />
-			<var name="threadSubject" value="Thread" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewPG">
-			<var name="threadBody" value="This is the message boards thread." />
-			<var name="threadSubject" value="Thread" />
-		</execute>
-
-		<execute macro="Portlet#viewTitle">
-			<var name="portletName" value="Polls Display" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="Message#INFO" value1="Please sign in to vote." />
-
-		<execute function="AssertElementPresent" locator1="Search#SEARCH_FIELD" />
-
-		<execute macro="Portlet#viewTitle">
-			<var name="portletName" value="User Statistics" />
-		</execute>
-
-		<execute macro="SignIn#signIn">
-			<var name="userEmailAddress" value="test@liferay.com" />
-			<var name="userPassword" value="test" />
-		</execute>
-
-		<execute function="Open" locator1="${portalURL}/web/site-name/home" />
-
-		<execute macro="PermissionsInline#gotoConfigurationPG" >
-			<var name="portletName" value="Polls Display" />
-		</execute>
-
-		<execute macro="PermissionsInline#addOrRemoveViewPermissionFromAllRoles">
-			<var name="addOrRemoveViewPermission" value="Remove" />
-			<var name="roleList" value="Guest,Owner,Power User,Site Member,User" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoConfigurationPG" >
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="PermissionsInline#addOrRemoveViewPermissionFromAllRoles">
-			<var name="addOrRemoveViewPermission" value="Remove" />
-			<var name="roleList" value="Guest,Owner,Power User,Site Member,User" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute function="Open" locator1="${portalURL}/web/site-name/home" />
-
-		<execute function="AssertTextEquals" locator1="Message#ERROR_1_COLUMN_1" value1="You do not have the roles required to access this portlet." />
-		<execute function="AssertTextEquals" locator1="Message#ERROR_1_COLUMN_2" value1="You do not have the roles required to access this portlet." />
-	</command>
-
-	<command name="ViewDefaultGlobalScopeLandingPage" priority="4">
-		<property name="testray.component.names" value="Site Administration" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Global" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="Site#viewGlobalLandingDefault">
-			<var name="portletName" value="Web Content" />
-			<var name="siteName" value="Global" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Site Administration|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Site Administration|
+		|globalSiteName|Global|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Page And Child Page Translations
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|SitesUsecase#AddPageAndChildPageTranslations|
+	When these properties
+		|testray.component.names|Localization,Site Administration,Site Localization,Site Pages Administration|
+	And these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+	And Page add
+		|pageName|Home|
+	And Page add Page Translations
+		|page|Home|
+		|pageTranslation|es_ES|
+		|pageTranslationName|Casa|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Page view Translations PG
+		|pageLocalizationMessage|This page is displayed in Spanish (Spain). Display the page in English (United States). Set Spanish (Spain) as your preferred language.|
+		|pageLocalizationPreferredLanguage|Set Spanish (Spain) as your preferred language.|
+		|pageName|Casa|
+		|sitePageURL|${portalURL}/es/web/site-name/home|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Page localized PG
+		|pageLocale|Display the page in English (United States)|
+	And Page add Child
+		|page|Public Pages|
+		|pageName|Home|
+		|siteChildPageName|Blog Page|
+		|siteName|Site Name|
+		|siteScopeSelected|true|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+	And Page add Page Translations
+		|page|Blog Page|
+		|pageTranslation|es_ES|
+		|pageTranslationName|Blog Página|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	Then Page view Translations PG
+		|childPageName|Blog Página|
+		|pageLocalizationMessage|This page is displayed in Spanish (Spain). Display the page in English (United States). Set Spanish (Spain) as your preferred language.|
+		|pageLocalizationPreferredLanguage|Set Spanish (Spain) as your preferred language.|
+		|sitePageURL|${portalURL}/es/web/site-name/blog-page|
+Scenario: Sites Template Permission Persistence
+Priority: 3
+	Given these properties
+		|testray.component.names|Permissions,Site Administration|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Community CP
+		|siteName|Site Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And PermissionsInline goto Configuration PG
+		|portletName|Polls Display|
+	And PermissionsInline assert Default PG
+		|roleList|Guest,Owner,Power User,Site Member,User|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And PermissionsInline goto Configuration PG
+		|portletName|Message Boards|
+	And PermissionsInline assert Default PG
+		|roleList|Guest,Owner,Power User,Site Member,User|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Asset Publisher|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Portlet view Title
+		|portletName|Asset Publisher|
+	And SiteTemplates reset Page Changes
+		|columnNumberTo|1|
+		|portletName|Asset Publisher|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Portlet view No Specific PG
+		|portletName|Asset Publisher|
+	And PermissionsInline goto Configuration PG
+		|portletName|Polls Display|
+	And PermissionsInline assert Default PG
+		|roleList|Guest,Owner,Power User,Site Member,User|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Polls add Poll PG
+		|pollsQuestion|What is the most important issue for this election?|
+		|pollsQuestionChoiceA|The Economy|
+		|pollsQuestionChoiceB|The National Debt|
+		|pollsQuestionTitle|Election Poll|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Polls select Poll PG
+		|pollsQuestionTitle|Election Poll|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Polls view Poll PG
+		|pollsQuestion|What is the most important issue for this election?|
+		|pollsQuestionChoiceList|The Economy,The National Debt|
+	And PermissionsInline goto Configuration PG
+		|portletName|Message Boards|
+	And PermissionsInline assert Default PG
+		|roleList|Guest,Owner,Power User,Site Member,User|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And MessageboardsThread add PG
+		|threadBody|This is the message boards thread.|
+		|threadSubject|Thread|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|This is the message boards thread.|
+		|threadSubject|Thread|
+	And MessageboardsThread view PG
+		|threadBody|This is the message boards thread.|
+		|threadSubject|Thread|
+	And User logout PG
+	And these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And Open at locator '${portalURL}/web/site-name/home'
+	And Portlet view Title
+		|portletName|Message Boards|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|This is the message boards thread.|
+		|threadSubject|Thread|
+	And MessageboardsThread view PG
+		|threadBody|This is the message boards thread.|
+		|threadSubject|Thread|
+	And Portlet view Title
+		|portletName|Polls Display|
+	And AssertTextEquals the value 'Please sign in to vote.' at locator 'Message#INFO'
+	And AssertElementPresent at locator 'Search#SEARCH_FIELD'
+	And Portlet view Title
+		|portletName|User Statistics|
+	And SignIn sign In
+		|userEmailAddress|test@liferay.com|
+		|userPassword|test|
+	And Open at locator '${portalURL}/web/site-name/home'
+	And PermissionsInline goto Configuration PG
+		|portletName|Polls Display|
+	And PermissionsInline add Or Remove View Permission From All Roles
+		|addOrRemoveViewPermission|Remove|
+		|roleList|Guest,Owner,Power User,Site Member,User|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And PermissionsInline goto Configuration PG
+		|portletName|Message Boards|
+	And PermissionsInline add Or Remove View Permission From All Roles
+		|addOrRemoveViewPermission|Remove|
+		|roleList|Guest,Owner,Power User,Site Member,User|
+	And User logout PG
+	And Open at locator '${portalURL}/web/site-name/home'
+	And AssertTextEquals the value 'You do not have the roles required to access this portlet.' at locator 'Message#ERROR_1_COLUMN_1'
+	Then AssertTextEquals the value 'You do not have the roles required to access this portlet.' at locator 'Message#ERROR_1_COLUMN_2'
+Scenario: View Default Global Scope Landing Page
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Administration|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Site
+		|site|Global|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	Then Site view Global Landing Default
+		|portletName|Web Content|
+		|siteName|Global|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Page And Child Page Translations
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|SitesUsecase#AddPageAndChildPageTranslations|
+	When these properties
+		|testray.component.names|Localization,Site Administration,Site Localization,Site Pages Administration|
+	And these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+	And Page add
+		|pageName|Home|
+	And Page add Page Translations
+		|page|Home|
+		|pageTranslation|es_ES|
+		|pageTranslationName|Casa|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Page view Translations PG
+		|pageLocalizationMessage|This page is displayed in Spanish (Spain). Display the page in English (United States). Set Spanish (Spain) as your preferred language.|
+		|pageLocalizationPreferredLanguage|Set Spanish (Spain) as your preferred language.|
+		|pageName|Casa|
+		|sitePageURL|${portalURL}/es/web/site-name/home|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Page localized PG
+		|pageLocale|Display the page in English (United States)|
+	And Page add Child
+		|page|Public Pages|
+		|pageName|Home|
+		|siteChildPageName|Blog Page|
+		|siteName|Site Name|
+		|siteScopeSelected|true|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+	And Page add Page Translations
+		|page|Blog Page|
+		|pageTranslation|es_ES|
+		|pageTranslationName|Blog Página|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	Then Page view Translations PG
+		|childPageName|Blog Página|
+		|pageLocalizationMessage|This page is displayed in Spanish (Spain). Display the page in English (United States). Set Spanish (Spain) as your preferred language.|
+		|pageLocalizationPreferredLanguage|Set Spanish (Spain) as your preferred language.|
+		|sitePageURL|${portalURL}/es/web/site-name/blog-page|
+Scenario: Sites Template Permission Persistence
+Priority: 3
+	Given these properties
+		|testray.component.names|Permissions,Site Administration|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Community CP
+		|siteName|Site Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And PermissionsInline goto Configuration PG
+		|portletName|Polls Display|
+	And PermissionsInline assert Default PG
+		|roleList|Guest,Owner,Power User,Site Member,User|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And PermissionsInline goto Configuration PG
+		|portletName|Message Boards|
+	And PermissionsInline assert Default PG
+		|roleList|Guest,Owner,Power User,Site Member,User|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Asset Publisher|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Portlet view Title
+		|portletName|Asset Publisher|
+	And SiteTemplates reset Page Changes
+		|columnNumberTo|1|
+		|portletName|Asset Publisher|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Portlet view No Specific PG
+		|portletName|Asset Publisher|
+	And PermissionsInline goto Configuration PG
+		|portletName|Polls Display|
+	And PermissionsInline assert Default PG
+		|roleList|Guest,Owner,Power User,Site Member,User|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Polls add Poll PG
+		|pollsQuestion|What is the most important issue for this election?|
+		|pollsQuestionChoiceA|The Economy|
+		|pollsQuestionChoiceB|The National Debt|
+		|pollsQuestionTitle|Election Poll|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Polls select Poll PG
+		|pollsQuestionTitle|Election Poll|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Polls view Poll PG
+		|pollsQuestion|What is the most important issue for this election?|
+		|pollsQuestionChoiceList|The Economy,The National Debt|
+	And PermissionsInline goto Configuration PG
+		|portletName|Message Boards|
+	And PermissionsInline assert Default PG
+		|roleList|Guest,Owner,Power User,Site Member,User|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And MessageboardsThread add PG
+		|threadBody|This is the message boards thread.|
+		|threadSubject|Thread|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|This is the message boards thread.|
+		|threadSubject|Thread|
+	And MessageboardsThread view PG
+		|threadBody|This is the message boards thread.|
+		|threadSubject|Thread|
+	And User logout PG
+	And these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And Open at locator '${portalURL}/web/site-name/home'
+	And Portlet view Title
+		|portletName|Message Boards|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|This is the message boards thread.|
+		|threadSubject|Thread|
+	And MessageboardsThread view PG
+		|threadBody|This is the message boards thread.|
+		|threadSubject|Thread|
+	And Portlet view Title
+		|portletName|Polls Display|
+	And AssertTextEquals the value 'Please sign in to vote.' at locator 'Message#INFO'
+	And AssertElementPresent at locator 'Search#SEARCH_FIELD'
+	And Portlet view Title
+		|portletName|User Statistics|
+	And SignIn sign In
+		|userEmailAddress|test@liferay.com|
+		|userPassword|test|
+	And Open at locator '${portalURL}/web/site-name/home'
+	And PermissionsInline goto Configuration PG
+		|portletName|Polls Display|
+	And PermissionsInline add Or Remove View Permission From All Roles
+		|addOrRemoveViewPermission|Remove|
+		|roleList|Guest,Owner,Power User,Site Member,User|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And PermissionsInline goto Configuration PG
+		|portletName|Message Boards|
+	And PermissionsInline add Or Remove View Permission From All Roles
+		|addOrRemoveViewPermission|Remove|
+		|roleList|Guest,Owner,Power User,Site Member,User|
+	And User logout PG
+	And Open at locator '${portalURL}/web/site-name/home'
+	And AssertTextEquals the value 'You do not have the roles required to access this portlet.' at locator 'Message#ERROR_1_COLUMN_1'
+	Then AssertTextEquals the value 'You do not have the roles required to access this portlet.' at locator 'Message#ERROR_1_COLUMN_2'
+Scenario: View Default Global Scope Landing Page
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Administration|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Site
+		|site|Global|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	Then Site view Global Landing Default
+		|portletName|Web Content|
+		|siteName|Global|

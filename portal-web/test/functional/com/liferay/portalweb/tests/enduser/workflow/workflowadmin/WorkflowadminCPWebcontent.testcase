@@ -1,72 +1,78 @@
-<definition component-name="portal-workflow">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Workflow" />
+Feature:
 
-	<var name="workflowAssetType" value="Web Content Article" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Workflow|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Workflow|
+		|workflowAssetType|Web Content Article|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Navigator open URL
+	Then ProductMenu goto Sites Content
+		|portlet|Web Content|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Configure Folder Workflow
+Priority: 4
+	Given Workflow configure Workflow Via Folder Info
+		|workflowDefinition|Single Approver (Version 1)|
+	When WebContentFolder add CP
+		|folderDescription|WC Folder Description|
+		|folderName|WC Folder Name|
+	And WebContentFolder configure Workflow CP
+		|folderName|WC Folder Name|
+		|workflowDefinition|Single Approver (Version 1)|
+		|workflowRestriction|Default Workflow|
+	And WebContentFolder configure Workflow CP
+		|folderName|WC Folder Name|
+		|workflowRestriction|Parent Folder|
+	And WebContentFolder configure Workflow CP
+		|folderName|WC Folder Name|
+		|structureName|Basic Web Content|
+		|workflowDefinition|Single Approver (Version 1)|
+		|workflowRestriction|Specific Restrictions|
+	Then WebContentFolder configure Workflow CP
+		|folderName|WC Folder Name|
+		|workflowDefinition|No Workflow|
+		|workflowRestriction|Default Workflow|
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Navigator open URL
+	Then ProductMenu goto Sites Content
+		|portlet|Web Content|
 
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="WebContent#tearDownCP" />
-
-				<execute macro="Workflow#tearDownPortalWorkflow" />
-
-				<execute macro="Workflow#tearDownSiteWorkflow" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="ConfigureFolderWorkflow" priority="4">
-		<execute macro="Workflow#configureWorkflowViaFolderInfo">
-			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-		</execute>
-
-		<execute macro="WebContentFolder#addCP">
-			<var name="folderDescription" value="WC Folder Description" />
-			<var name="folderName" value="WC Folder Name" />
-		</execute>
-
-		<execute macro="WebContentFolder#configureWorkflowCP">
-			<var name="folderName" value="WC Folder Name" />
-			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowRestriction" value="Default Workflow" />
-		</execute>
-
-		<execute macro="WebContentFolder#configureWorkflowCP">
-			<var name="folderName" value="WC Folder Name" />
-			<var name="workflowRestriction" value="Parent Folder" />
-		</execute>
-
-		<execute macro="WebContentFolder#configureWorkflowCP">
-			<var name="folderName" value="WC Folder Name" />
-			<var name="structureName" value="Basic Web Content" />
-			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowRestriction" value="Specific Restrictions" />
-		</execute>
-
-		<execute macro="WebContentFolder#configureWorkflowCP">
-			<var name="folderName" value="WC Folder Name" />
-			<var name="workflowDefinition" value="No Workflow" />
-			<var name="workflowRestriction" value="Default Workflow" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Configure Folder Workflow
+Priority: 4
+	Given Workflow configure Workflow Via Folder Info
+		|workflowDefinition|Single Approver (Version 1)|
+	When WebContentFolder add CP
+		|folderDescription|WC Folder Description|
+		|folderName|WC Folder Name|
+	And WebContentFolder configure Workflow CP
+		|folderName|WC Folder Name|
+		|workflowDefinition|Single Approver (Version 1)|
+		|workflowRestriction|Default Workflow|
+	And WebContentFolder configure Workflow CP
+		|folderName|WC Folder Name|
+		|workflowRestriction|Parent Folder|
+	And WebContentFolder configure Workflow CP
+		|folderName|WC Folder Name|
+		|structureName|Basic Web Content|
+		|workflowDefinition|Single Approver (Version 1)|
+		|workflowRestriction|Specific Restrictions|
+	Then WebContentFolder configure Workflow CP
+		|folderName|WC Folder Name|
+		|workflowDefinition|No Workflow|
+		|workflowRestriction|Default Workflow|

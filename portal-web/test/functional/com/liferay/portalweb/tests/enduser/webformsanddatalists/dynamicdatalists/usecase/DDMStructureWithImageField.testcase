@@ -1,173 +1,101 @@
-<definition component-name="portal-web-forms-and-data-lists">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Dynamic Data Lists" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Dynamic Data Lists|
 
-		<execute macro="User#firstLoginPG" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Manage Structures
+	And WebContentStructures add CP
+		|structureDescription|WC Structure Description|
+		|structureName|WC Structure Name|
+	And DynamicDataMapping add Field
+		|field|Image|
+		|fieldFieldLabel|Image|
+		|fieldName|image|
+	And WebContentStructures save CP
+		|structureName|WC Structure Name|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Manage Templates
+	And WebContentTemplates add CP
+		|templateDescription|WC Template Description|
+		|templateLanguage|ftl|
+		|templateName|WC Template Name|
+	And WebContentTemplates add Structure
+		|structureName|WC Structure Name|
+		|templateFieldNames|Image|
+		|templateLanguage|ftl|
+	And WebContentTemplates save
+	Then ProductMenu goto Sites Content
+		|portlet|Web Content|
 
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoManageStructures" />
-
-		<execute macro="WebContentStructures#addCP">
-			<var name="structureDescription" value="WC Structure Description" />
-			<var name="structureName" value="WC Structure Name" />
-		</execute>
-
-		<execute macro="DynamicDataMapping#addField">
-			<var name="field" value="Image" />
-			<var name="fieldFieldLabel" value="Image" />
-			<var name="fieldName" value="image" />
-		</execute>
-
-		<execute macro="WebContentStructures#saveCP">
-			<var name="structureName" value="WC Structure Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoManageTemplates" />
-
-		<execute macro="WebContentTemplates#addCP">
-			<var name="templateDescription" value="WC Template Description" />
-			<var name="templateLanguage" value="ftl" />
-			<var name="templateName" value="WC Template Name" />
-		</execute>
-
-		<execute macro="WebContentTemplates#addStructure">
-			<var name="structureName" value="WC Structure Name" />
-			<var name="templateFieldNames" value="Image" />
-			<var name="templateLanguage" value="ftl" />
-		</execute>
-
-		<execute macro="WebContentTemplates#save" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="User#logoutAndLoginPG">
-					<var name="userLoginEmailAddress" value="test@liferay.com" />
-					<var name="userLoginFullName" value="Test Test" />
-				</execute>
-
-				<execute macro="Site#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="ViewFieldTranslations" priority="4">
-		<description message="This is a use case for LPS-69593." />
-
-		<property name="test.name.skip.portal.instance" value="DDMStructureWithImageField#ViewFieldTranslations" />
-
-		<execute macro="WebContentNavigator#gotoAddWithStructureCP">
-			<var name="structureName" value="WC Structure Name" />
-		</execute>
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentTitle" value="English (United States) Title" />
-		</execute>
-
-		<execute macro="ItemSelector#gotoItemSelectorViaSelectButton" />
-
-		<execute macro="ItemSelector#uploadFile">
-			<var name="navTab" value="Documents and Media" />
-			<var name="uploadFileName" value="Document_3.png" />
-		</execute>
-
-		<execute macro="FormFields#editTextAlt">
-			<var name="fieldName" value="image" />
-			<var name="fieldValue" value="English (United States) Image Description" />
-		</execute>
-
-		<execute macro="WebContent#addLocale">
-			<var name="language" value="Spanish (Spain)" />
-			<var name="locale" value="es-ES" />
-		</execute>
-
-		<execute macro="FormFields#editText">
-			<var name="fieldName" value="title" />
-			<var name="fieldValue" value="Spanish (Spain) Title" />
-		</execute>
-
-		<execute macro="FormFields#editTextAlt">
-			<var name="fieldName" value="image" />
-			<var name="fieldValue" value="Spanish (Spain) Image Description" />
-		</execute>
-
-		<execute macro="WebContent#addLocale">
-			<var name="language" value="Portuguese (Brazil)" />
-			<var name="locale" value="pt-BR" />
-		</execute>
-
-		<execute macro="FormFields#editText">
-			<var name="fieldName" value="title" />
-			<var name="fieldValue" value="Portuguese (Brazil) Title" />
-		</execute>
-
-		<execute macro="FormFields#editTextAlt">
-			<var name="fieldName" value="image" />
-			<var name="fieldValue" value="Portuguese (Brazil) Image Description" />
-		</execute>
-
-		<execute macro="WebContent#selectLocale">
-			<var name="locale" value="en-US" />
-		</execute>
-
-		<execute macro="FormFields#viewTextValue">
-			<var name="fieldName" value="title" />
-			<var name="fieldValue" value="English (United States) Title" />
-		</execute>
-
-		<execute macro="FormFields#viewTextValueAlt">
-			<var name="fieldName" value="image" />
-			<var name="fieldValue" value="English (United States) Image Description" />
-		</execute>
-
-		<execute macro="WebContent#selectLocale">
-			<var name="locale" value="es-ES" />
-		</execute>
-
-		<execute macro="FormFields#viewTextValue">
-			<var name="fieldName" value="title" />
-			<var name="fieldValue" value="Spanish (Spain) Title" />
-		</execute>
-
-		<execute macro="FormFields#viewTextValueAlt">
-			<var name="fieldName" value="image" />
-			<var name="fieldValue" value="Spanish (Spain) Image Description" />
-		</execute>
-
-		<execute macro="WebContent#selectLocale">
-			<var name="locale" value="pt-BR" />
-		</execute>
-
-		<execute macro="FormFields#viewTextValue">
-			<var name="fieldName" value="title" />
-			<var name="fieldValue" value="Portuguese (Brazil) Title" />
-		</execute>
-
-		<execute macro="FormFields#viewTextValueAlt">
-			<var name="fieldName" value="image" />
-			<var name="fieldValue" value="Portuguese (Brazil) Image Description" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View Field Translations
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When these properties
+		|test.name.skip.portal.instance|DDMStructureWithImageField#ViewFieldTranslations|
+	And WebContentNavigator goto Add With Structure CP
+		|structureName|WC Structure Name|
+	And WebContent add CP
+		|webContentTitle|English (United States) Title|
+	And ItemSelector goto Item Selector Via Select Button
+	And ItemSelector upload File
+		|navTab|Documents and Media|
+		|uploadFileName|Document_3.png|
+	And FormFields edit Text Alt
+		|fieldName|image|
+		|fieldValue|English (United States) Image Description|
+	And WebContent add Locale
+		|language|Spanish (Spain)|
+		|locale|es-ES|
+	And FormFields edit Text
+		|fieldName|title|
+		|fieldValue|Spanish (Spain) Title|
+	And FormFields edit Text Alt
+		|fieldName|image|
+		|fieldValue|Spanish (Spain) Image Description|
+	And WebContent add Locale
+		|language|Portuguese (Brazil)|
+		|locale|pt-BR|
+	And FormFields edit Text
+		|fieldName|title|
+		|fieldValue|Portuguese (Brazil) Title|
+	And FormFields edit Text Alt
+		|fieldName|image|
+		|fieldValue|Portuguese (Brazil) Image Description|
+	And WebContent select Locale
+		|locale|en-US|
+	And FormFields view Text Value
+		|fieldName|title|
+		|fieldValue|English (United States) Title|
+	And FormFields view Text Value Alt
+		|fieldName|image|
+		|fieldValue|English (United States) Image Description|
+	And WebContent select Locale
+		|locale|es-ES|
+	And FormFields view Text Value
+		|fieldName|title|
+		|fieldValue|Spanish (Spain) Title|
+	And FormFields view Text Value Alt
+		|fieldName|image|
+		|fieldValue|Spanish (Spain) Image Description|
+	And WebContent select Locale
+		|locale|pt-BR|
+	And FormFields view Text Value
+		|fieldName|title|
+		|fieldValue|Portuguese (Brazil) Title|
+	Then FormFields view Text Value Alt
+		|fieldName|image|
+		|fieldValue|Portuguese (Brazil) Image Description|

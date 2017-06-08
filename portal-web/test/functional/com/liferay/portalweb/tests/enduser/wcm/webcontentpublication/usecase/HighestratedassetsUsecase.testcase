@@ -1,147 +1,92 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.component.names" value="Asset Publisher,Highest Rated Assets" />
-	<property name="testray.main.component.name" value="Highest Rated Assets" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.component.names|Asset Publisher,Highest Rated Assets|
+		|testray.main.component.name|Highest Rated Assets|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-		</if>
-	</tear-down>
-
-	<command name="AssertHighestRatededAsset" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<for list="1,2" param="n">
-			<execute macro="Page#add">
-				<var name="pageName" value="Test Page ${n}" />
-				<var name="siteName" value="Site Name" />
-			</execute>
-		</for>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#configureDisplaySettings">
-			<var name="displaySettings" value="Ratings" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page 2" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Highest Rated Assets" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#configureDisplaySettings">
-			<var name="displaySettings" value="Ratings" />
-			<var name="portletName" value="Highest Rated Assets" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<for list="1,2" param="n">
-			<execute macro="WebContentNavigator#gotoAddCP" />
-
-			<execute macro="WebContent#addCP">
-				<var name="webContentContent" value="Web Content Content" />
-				<var name="webContentTitle" value="Web Content Title ${n}" />
-			</execute>
-
-			<execute macro="PortletEntry#publish" />
-		</for>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewAssetDetailsPG">
-			<var name="assetContent" value="Web Content Content" />
-			<var name="assetTitle" value="Web Content Title 1" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#rateAssetPG">
-			<var name="rating" value="3" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page 2" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewAssetDetailsPG">
-			<var name="assetContent" value="Web Content Content" />
-			<var name="assetTitle" value="Web Content Title 2" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#rateAssetPG">
-			<var name="rating" value="5" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page 2" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewAssetDetailsPG">
-			<var name="assetContent" value="Web Content Content" />
-			<var name="assetTitle" value="Web Content Title 1" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewAssetRatingPG">
-			<var name="rating" value="3" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page 2" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewAssetDetailsPG">
-			<var name="assetContent" value="Web Content Content" />
-			<var name="assetTitle" value="Web Content Title 2" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewAssetRatingPG">
-			<var name="rating" value="5" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Assert Highest Rateded Asset
+Priority: 4
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Test Page 1|
+		|siteName|Site Name|
+	And Page add
+		|pageName|Test Page 2|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Test Page 1|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Asset Publisher|
+	And AssetPublisherPortlet configure Display Settings
+		|displaySettings|Ratings|
+	And Navigator goto Site Page
+		|pageName|Test Page 2|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Highest Rated Assets|
+	And AssetPublisherPortlet configure Display Settings
+		|displaySettings|Ratings|
+		|portletName|Highest Rated Assets|
+	And Navigator goto Site Page
+		|pageName|Test Page 1|
+		|siteName|Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|Web Content Content|
+		|webContentTitle|Web Content Title 1|
+	And PortletEntry publish
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|Web Content Content|
+		|webContentTitle|Web Content Title 2|
+	And PortletEntry publish
+	And Navigator goto Site Page
+		|pageName|Test Page 1|
+		|siteName|Site Name|
+	And AssetPublisherPortlet view Asset Details PG
+		|assetContent|Web Content Content|
+		|assetTitle|Web Content Title 1|
+	And AssetPublisherPortlet rate Asset PG
+		|rating|3|
+	And Navigator goto Site Page
+		|pageName|Test Page 2|
+		|siteName|Site Name|
+	And AssetPublisherPortlet view Asset Details PG
+		|assetContent|Web Content Content|
+		|assetTitle|Web Content Title 2|
+	And AssetPublisherPortlet rate Asset PG
+		|rating|5|
+	And Navigator goto Site Page
+		|pageName|Test Page 2|
+		|siteName|Site Name|
+	And AssetPublisherPortlet view Asset Details PG
+		|assetContent|Web Content Content|
+		|assetTitle|Web Content Title 1|
+	And AssetPublisherPortlet view Asset Rating PG
+		|rating|3|
+	And Navigator goto Site Page
+		|pageName|Test Page 2|
+		|siteName|Site Name|
+	And AssetPublisherPortlet view Asset Details PG
+		|assetContent|Web Content Content|
+		|assetTitle|Web Content Title 2|
+	Then AssetPublisherPortlet view Asset Rating PG
+		|rating|5|

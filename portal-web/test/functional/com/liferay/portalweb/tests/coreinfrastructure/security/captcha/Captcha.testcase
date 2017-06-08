@@ -1,80 +1,49 @@
-<definition component-name="portal-security">
-	<property name="osgi.module.configuration.file.names" value="com.liferay.captcha.configuration.CaptchaConfiguration.config" />
-	<property name="osgi.module.configurations" value="maxChallenges=&quot;0&quot;" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Security" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-	</set-up>
+Background: This executes once per feature file
+	Given these properties
+		|osgi.module.configuration.file.names|com.liferay.captcha.configuration.CaptchaConfiguration.config|
+		|osgi.module.configurations|maxChallenges="0"|
+		|portal.upstream|true|
+		|testray.main.component.name|Security|
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="User#firstLoginPG" />
-
-				<execute macro="Page#tearDownPG" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="ViewCaptchaEnabled" priority="4">
-		<execute macro="SignInNavigator#gotoCreateAccount" />
-
-		<execute macro="User#viewCaptchaPG">
-			<var name="captchaType" value="captcha" />
-		</execute>
-	</command>
-
-	<command name="ViewRecaptchaEnabled" priority="4">
-		<property name="test.name.skip.portal.instance" value="Captcha#ViewRecaptchaEnabled" />
-
-		<var name="recaptchaPrivateKey" property-value="recaptcha.private.key" />
-		<var name="recaptchaPublicKey" property-value="recaptcha.public.key" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="System Settings" />
-		</execute>
-
-		<execute macro="SystemSettings#gotoCategory">
-			<var name="category" value="Foundation" />
-		</execute>
-
-		<execute macro="SystemSettings#editConfiguration">
-			<var name="configurationName" value="CAPTCHA" />
-		</execute>
-
-		<execute macro="FormFields#selectSelectOption">
-			<var name="fieldName" value="captchaEngine" />
-			<var name="selectOption" value="reCAPTCHA" />
-		</execute>
-
-		<execute macro="SystemSettings#editTextAreaSetting">
-			<var name="settingName" value="reCaptchaPrivateKey" />
-			<var name="settingValue" value="${recaptchaPrivateKey}" />
-		</execute>
-
-		<execute macro="SystemSettings#editTextAreaSetting">
-			<var name="settingName" value="reCaptchaPublicKey" />
-			<var name="settingValue" value="${recaptchaPublicKey}" />
-		</execute>
-
-		<execute macro="SystemSettings#saveConfiguration" />
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="SignInNavigator#gotoCreateAccount" />
-
-		<execute macro="User#viewCaptchaPG">
-			<var name="captchaType" value="recaptcha" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View Captcha Enabled
+Priority: 4
+	Given SignInNavigator goto Create Account
+	When User view Captcha PG
+		|captchaType|captcha|
+Scenario: View Recaptcha Enabled
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|Captcha#ViewRecaptchaEnabled|
+	When these variables
+		|recaptchaPrivateKey||
+	And these variables
+		|recaptchaPublicKey||
+	And User first Login PG
+	And ProductMenu goto Control Panel Configuration
+		|portlet|System Settings|
+	And SystemSettings goto Category
+		|category|Foundation|
+	And SystemSettings edit Configuration
+		|configurationName|CAPTCHA|
+	And FormFields select Select Option
+		|fieldName|captchaEngine|
+		|selectOption|reCAPTCHA|
+	And SystemSettings edit Text Area Setting
+		|settingName|reCaptchaPrivateKey|
+		|settingValue|${recaptchaPrivateKey}|
+	And SystemSettings edit Text Area Setting
+		|settingName|reCaptchaPublicKey|
+		|settingValue|${recaptchaPublicKey}|
+	And SystemSettings save Configuration
+	And User logout PG
+	And SignInNavigator goto Create Account
+	Then User view Captcha PG
+		|captchaType|recaptcha|

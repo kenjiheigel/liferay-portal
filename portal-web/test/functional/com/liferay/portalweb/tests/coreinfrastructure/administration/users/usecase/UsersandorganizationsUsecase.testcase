@@ -1,1409 +1,842 @@
-<definition component-name="portal-user-management-and-portal-configuration">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Users and Organizations" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="User#logoutAndLoginPG">
-					<var name="userLoginEmailAddress" value="test@liferay.com" />
-					<var name="userLoginFullName" value="Test Test" />
-				</execute>
-
-				<execute macro="User#tearDownCP" />
-
-				<execute macro="Role#tearDownCP" />
-
-				<execute macro="Site#tearDownCP" />
-
-				<execute macro="Suborganization#tearDownCP" />
-
-				<execute macro="Organization#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="AddOrganizationName50Characters" priority="3">
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Organization#addCP">
-			<var name="orgName" value="Organization Staging Organization Web Content Display" />
-			<var name="orgType" value="Organization" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#searchCP">
-			<var name="orgName" value="Organization Staging Organization Web Content Display" />
-			<var name="searchTerm" value="Organization Staging Organization Web Content Display" />
-		</execute>
-
-		<execute macro="Organization#viewCP">
-			<var name="orgName" value="Organization Staging Organization Web Content Display" />
-			<var name="orgType" value="Organization" />
-		</execute>
-	</command>
-
-	<command name="AddUserSpecialCharacters" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="&lt;userfn&gt;" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#viewCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="&lt;userfn&gt;" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#assignRegularRoleCP">
-			<var name="roleTitle" value="Administrator" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="UserBar#gotoProfile" />
-
-		<execute function="AssertTextEquals" locator1="Home#USER_NAME_HEADER" value1="&lt;userfn&gt; userln" />
-	</command>
-
-	<command name="CannotViewSiteSettingsInUserPersonalSite" priority="4">
-		<execute macro="ProductMenu#gotoPersonalSite" />
-
-		<execute macro="ProductMenuHelper#expandPanelSites" />
-
-		<execute macro="ProductMenuHelper#expandCategory">
-			<var name="category" value="Configuration" />
-		</execute>
-
-		<execute function="AssertElementNotPresent" locator1="ProductMenu#PRODUCT_MENU_PANEL_MENU_ITEM" value1="Site Settings" />
-	</command>
-
-	<command name="ImpersonatingAdministratorandOwner" priority="4">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#add">
-			<var name="roleTitle" value="Impersonating Role Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#editPermissionCmdCP">
-			<var name="define" value="true" />
-			<var name="permissionDefinitionKey" value="CONTROL_PANEL_USERS_USERS_AND_ORGANIZATIONS_GENERAL_PERMISSIONS_ACCESS_IN_CONTROL_PANEL_CHECKBOX,CONTROL_PANEL_USERS_USERS_AND_ORGANIZATIONS_GENERAL_PERMISSIONS_VIEW_CHECKBOX,CONTROL_PANEL_USERS_USERS_AND_ORGANIZATIONS_RESOURCE_PERMISSIONS_USER_IMPERSONATE_CHECKBOX,CONTROL_PANEL_USERS_USERS_AND_ORGANIZATIONS_RESOURCE_PERMISSIONS_USER_VIEW_CHECKBOX" />
-			<var name="roleTitle" value="Impersonating Role Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea1@liferay.com" />
-			<var name="userFirstName" value="userfn1" />
-			<var name="userLastName" value="userln1" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea2@liferay.com" />
-			<var name="userFirstName" value="userfn2" />
-			<var name="userLastName" value="userln2" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea3@liferay.com" />
-			<var name="userFirstName" value="userfn3" />
-			<var name="userLastName" value="userln3" />
-			<var name="userScreenName" value="usersn3" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea1@liferay.com" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#assignRegRoleCP">
-			<var name="roleTitle" value="Impersonating Role Name" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#assignRegRoleCP">
-			<var name="roleTitle" value="Administrator" />
-			<var name="userScreenName" value="usersn3" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea2@liferay.com" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea3@liferay.com" />
-			<var name="userScreenName" value="usersn3" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea1@liferay.com" />
-			<var name="userLoginFullName" value="userfn1 userln1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#impersonateCP">
-			<var name="notAdmin" value="true" />
-			<var name="siteName" value="${siteName}" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute function="Close#closeWindow" locator1="title=Welcome - ${siteName}" />
-		<execute function="SelectWindow" locator1="title=Users and Organizations - Control Panel - ${siteName}" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#attemptImpersonateCP">
-			<var name="notAdmin" value="true" />
-			<var name="siteName" value="${siteName}" />
-			<var name="userScreenName" value="usersn3" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#attemptImpersonateCP">
-			<var name="notAdmin" value="true" />
-			<var name="siteName" value="${siteName}" />
-			<var name="userScreenName" value="test" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#assignRegRoleCP">
-			<var name="roleTitle" value="Administrator" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea1@liferay.com" />
-			<var name="userLoginFullName" value="userfn1 userln1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#impersonateCP">
-			<var name="siteName" value="${siteName}" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute function="Close#closeWindow" locator1="title=Welcome - ${siteName}" />
-		<execute function="SelectWindow" locator1="title=Users and Organizations - Control Panel - ${siteName}" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#impersonateCP">
-			<var name="siteName" value="${siteName}" />
-			<var name="userScreenName" value="usersn3" />
-		</execute>
-
-		<execute function="Close#closeWindow" locator1="title=Welcome - ${siteName}" />
-		<execute function="SelectWindow" locator1="title=Users and Organizations - Control Panel - ${siteName}" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#impersonateCP">
-			<var name="siteName" value="${siteName}" />
-			<var name="userScreenName" value="test" />
-		</execute>
-
-		<execute function="Close#closeWindow" locator1="title=Welcome - ${siteName}" />
-		<execute function="SelectWindow" locator1="title=Users and Organizations - Control Panel - ${siteName}" />
-	</command>
-
-	<command name="MultipleUsersandOrganizations" priority="4">
-		<property name="test.name.skip.portal.instance" value="UsersandorganizationsUsecase#MultipleUsersandOrganizations" />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Server Administration" />
-		</execute>
-
-		<execute macro="ServerAdministration#executeServerResourcesActions">
-			<var name="actionsDescription" value="Reindex all search indexes." />
-		</execute>
-
-		<var name="count" value="1" />
-
-		<while>
-			<not>
-				<equals arg1="${count}" arg2="6" />
-			</not>
-			<then>
-				<execute macro="ProductMenu#gotoControlPanelUsers">
-					<var name="portlet" value="Users and Organizations" />
-				</execute>
-
-				<execute macro="User#addCP">
-					<var name="userEmailAddress" value="userea${count}@liferay.com" />
-					<var name="userFirstName" value="userfn${count}" />
-					<var name="userLastName" value="userln${count}" />
-					<var name="userScreenName" value="usersn${count}" />
-				</execute>
-
-				<var method="MathUtil#sum('${count}', '1')" name="count" />
-			</then>
-		</while>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Organization#addCP">
-			<var name="orgName" value="Organization Name 1" />
-			<var name="orgType" value="Organization" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Organization#addCategorizationCP">
-			<var name="orgName" value="Organization Name 1" />
-			<var name="tagName" value="alpha" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Organization#addCP">
-			<var name="orgName" value="Organization Name 2" />
-			<var name="orgType" value="Organization" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#addSiteCP">
-			<var name="organizationSite" value="Community Site" />
-			<var name="orgName" value="Organization Name 2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Organization#addCategorizationCP">
-			<var name="orgName" value="Organization Name 2" />
-			<var name="tagName" value="bravo" />
-		</execute>
-
-		<var name="count" value="1" />
-
-		<while>
-			<not>
-				<equals arg1="${count}" arg2="5" />
-			</not>
-			<then>
-				<execute macro="ProductMenu#gotoControlPanelUsers">
-					<var name="portlet" value="Users and Organizations" />
-				</execute>
-
-				<execute macro="Organization#addCP">
-					<var name="orgName" value="Suborganization Name ${count}" />
-					<var name="orgType" value="Organization" />
-				</execute>
-
-				<execute macro="ProductMenu#gotoControlPanelUsers">
-					<var name="portlet" value="Users and Organizations" />
-				</execute>
-
-				<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-				<execute macro="Organization#searchCP">
-					<var name="orgName" value="Suborganization Name ${count}" />
-					<var name="searchTerm" value="Suborganization Name ${count}" />
-				</execute>
-
-				<execute macro="Organization#selectParentOrganizationCP">
-					<var name="orgName" value="Suborganization Name ${count}" />
-					<var name="parentOrgName" value="Organization Name 2" />
-				</execute>
-
-				<execute macro="ProductMenu#gotoControlPanelUsers">
-					<var name="portlet" value="Users and Organizations" />
-				</execute>
-
-				<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-				<execute macro="Organization#viewParentOrganizationCP">
-					<var name="orgName" value="Suborganization Name ${count}" />
-					<var name="parentOrgExist" value="true" />
-					<var name="parentOrgName" value="Organization Name 2" />
-					<var name="subOrgName" value="Suborganization Name ${count}" />
-				</execute>
-
-				<var method="MathUtil#sum('${count}', '1')" name="count" />
-			</then>
-		</while>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#searchCP">
-			<var name="orgName" value="Organization Name 1" />
-			<var name="searchTerm" value="Organization Name 1" />
-		</execute>
-
-		<execute macro="Organization#viewCP">
-			<var name="orgName" value="Organization Name 1" />
-			<var name="orgType" value="Organization" />
-		</execute>
-
-		<execute macro="Navigator#gotoBack" />
-
-		<execute macro="Organization#searchCP">
-			<var name="orgName" value="Organization Name 2" />
-			<var name="searchTerm" value="Organization Name 2" />
-		</execute>
-
-		<execute macro="Organization#viewCP">
-			<var name="orgName" value="Organization Name 2" />
-			<var name="orgType" value="Organization" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<for list="usersn1,usersn2,usersn3,usersn4,usersn5" param="userScreenName">
-			<var name="key_userScreenName" value="${userScreenName}" />
-
-			<execute function="AssertTextEquals" locator1="UsersAndOrganizations#USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
-		</for>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#addMemberCP">
-			<var name="orgName" value="Organization Name 1" />
-			<var name="userFirstName" value="userfn1" />
-			<var name="userLastName" value="userln1" />
-			<var name="userName" value="userfn1 userln1" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#addMemberCP">
-			<var name="orgName" value="Organization Name 1" />
-			<var name="userFirstName" value="userfn3" />
-			<var name="userLastName" value="userln3" />
-			<var name="userName" value="userfn3 userln3" />
-			<var name="userScreenName" value="usersn3" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#addMemberCP">
-			<var name="orgName" value="Organization Name 1" />
-			<var name="userFirstName" value="userfn5" />
-			<var name="userLastName" value="userln5" />
-			<var name="userName" value="userfn5 userln5" />
-			<var name="userScreenName" value="usersn5" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<var name="key_orgName" value="Organization Name 1" />
-
-		<execute function="Click" locator1="UsersAndOrganizations#ORGANIZATION_TABLE_NAME" />
-
-		<for list="usersn1,usersn3,usersn5" param="userScreenName">
-			<var name="key_userScreenName" value="${userScreenName}" />
-
-			<execute function="AssertTextEquals" locator1="UsersAndOrganizations#USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
-		</for>
-
-		<for list="usersn2,usersn4" param="userScreenName">
-			<var name="key_userScreenName" value="${userScreenName}" />
-
-			<execute function="AssertTextNotPresent" locator1="UsersAndOrganizations#USER_TABLE_SCREEN_NAME" value1="${userScreenName}" />
-		</for>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute function="AssertTextNotPresent" value1="Organization Name 1" />
-
-		<var name="key_siteName" value="Organization Name 2" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Sites#SITE_TABLE_NAME" value1="Organization Name 2" />
-
-		<execute macro="ProductMenu#viewNoSite">
-			<var name="site" value="Organization Name 1" />
-		</execute>
-
-		<execute macro="ProductMenu#viewNoSite">
-			<var name="site" value="Organization Name 2" />
-		</execute>
-
-		<execute macro="UserBar#gotoDashboard" />
-
-		<execute macro="Site#viewNoMySitesViaMySitesPG">
-			<var name="siteName" value="Organization Name 1" />
-		</execute>
-
-		<execute macro="Site#viewNoMySitesViaMySitesPG">
-			<var name="siteName" value="Organization Name 2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#addMemberCP">
-			<var name="orgName" value="Organization Name 2" />
-			<var name="userFirstName" value="Test" />
-			<var name="userLastName" value="Test" />
-			<var name="userName" value="Test Test" />
-			<var name="userScreenName" value="test" />
-		</execute>
-
-		<execute macro="UserBar#gotoDashboard" />
-
-		<execute macro="Site#viewNoMySitesViaMySitesPG">
-			<var name="siteName" value="Organization Name 1" />
-		</execute>
-
-		<execute macro="Site#viewMySitesViaMySitesPG">
-			<var name="memberCount" value="1" />
-			<var name="siteName" value="Organization Name 2" />
-		</execute>
-
-		<execute macro="Site#gotoSiteViaMySitesPG">
-			<var name="siteName" value="Organization Name 2" />
-		</execute>
-
-		<execute function="SelectWindow" locator1="Home - Organization Name 2 - ${siteName}" />
-
-		<execute macro="Page#viewSpecificPG">
-			<var name="pageNameList" value="Home,Wiki" />
-		</execute>
-
-		<for list="Message Boards,User Statistics" param="portletTitleName">
-			<var name="key_portletTitleName" value="${portletTitleName}" />
-
-			<execute function="AssertTextEquals" locator1="Portlet#SPECIFIC_TITLE" value1="${portletTitleName}" />
-		</for>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#basicSearchCP">
-			<var name="userBasicSearch" value="Basic" />
-			<var name="userName" value="userfn1 userln1" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="User#basicSearchCP">
-			<var name="userBasicSearch" value="Basic" />
-			<var name="userName" value="userfn2 userln2" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="User#basicSearchCP">
-			<var name="userBasicSearch" value="Basic" />
-			<var name="userName" value="userfn3 userln3" />
-			<var name="userScreenName" value="usersn3" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#searchCP">
-			<var name="orgName" value="Organization Name 1" />
-			<var name="searchTerm" value="alpha" />
-		</execute>
-
-		<execute macro="Organization#searchCP">
-			<var name="orgName" value="Organization Name 2" />
-			<var name="searchTerm" value="bravo" />
-		</execute>
-
-		<execute macro="Organization#searchCP">
-			<var name="orgName" value="Organization Name 1" />
-			<var name="searchTerm" value="1" />
-		</execute>
-
-		<execute macro="Organization#searchCP">
-			<var name="orgName" value="Organization Name 2" />
-			<var name="searchTerm" value="2" />
-		</execute>
-
-		<execute macro="Organization#searchCP">
-			<var name="orgName" value="Suborganization Name 1" />
-			<var name="searchTerm" value="Suborganization" />
-		</execute>
-
-		<execute macro="Organization#searchCP">
-			<var name="orgName" value="Suborganization Name 2" />
-			<var name="searchTerm" value="Suborganization" />
-		</execute>
-	</command>
-
-	<command name="OrganizationAdministratorActivate" priority="3">
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#definePermissionCP">
-			<var name="permissionDefinitionKey" value="CONTROL_PANEL_GENERAL_PERMISSIONS_GO_TO_CONTROL_PANEL_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="View Control Panel Menu" />
-			<var name="permissionNavigationKey" value="CONTROL_PANEL_GENERAL_PERMISSIONS" />
-			<var name="permissionNavigationValue" value="General Permissions" />
-			<var name="roleTitle" value="Authenticated" />
-			<var name="roleUser" value="User" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Organization#addCP">
-			<var name="orgName" value="Organization Name" />
-			<var name="orgType" value="Organization" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea1@liferay.com" />
-			<var name="userFirstName" value="userfn1" />
-			<var name="userLastName" value="userln1" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea1@liferay.com" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#addMemberCP">
-			<var name="orgName" value="Organization Name" />
-			<var name="userFirstName" value="userfn1" />
-			<var name="userLastName" value="userln1" />
-			<var name="userName" value="userfn1 userln1" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#assignOrgRoleCP">
-			<var name="orgName" value="Organization Name" />
-			<var name="roleTitle" value="Organization Administrator" />
-			<var name="userFirstName" value="userfn1" />
-			<var name="userLastName" value="userln1" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea2@liferay.com" />
-			<var name="userFirstName" value="userfn2" />
-			<var name="userLastName" value="userln2" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#addMemberCP">
-			<var name="orgName" value="Organization Name" />
-			<var name="userFirstName" value="userfn2" />
-			<var name="userLastName" value="userln2" />
-			<var name="userName" value="userfn2 userln2" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="userEmailAddress" value="userea1@liferay.com" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#deactivateCP">
-			<var name="deactivateType" value="Actions" />
-			<var name="userFirstName" value="userfn2" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#activateCP">
-			<var name="userName" value="userfn2 userln2" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="User#logoutUserPG" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-	</command>
-
-	<command name="OrganizationDropDownItems" priority="3">
-		<for list="Site Name A,Site Name B,Site Name C,Site Name D,Site Name E,Site Name F,Site Name G,Site Name H" param="siteName" >
-			<execute macro="ProductMenu#gotoControlPanelSites">
-				<var name="portlet" value="Sites" />
-			</execute>
-
-			<execute macro="Site#addCommunityCP">
-				<var name="siteName" value="${siteName}" />
-			</execute>
-		</for>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<for list="Site Name A,Site Name B,Site Name C,Site Name D,Site Name E,Site Name F,Site Name G,Site Name H" param="siteName" >
-			<var name="key_siteName" value="${siteName}" />
-
-			<execute function="AssertTextEquals#assertPartialText" locator1="Sites#SITE_TABLE_NAME" value1="${siteName}" />
-		</for>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Organization#addCP">
-			<var name="orgName" value="Site Name M" />
-			<var name="orgType" value="Organization" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#addMemberCP">
-			<var name="orgName" value="Site Name M" />
-			<var name="userFirstName" value="Test" />
-			<var name="userLastName" value="Test" />
-			<var name="userName" value="Test Test" />
-			<var name="userScreenName" value="test" />
-		</execute>
-
-		<execute function="AssertTextPresent" locator1="ProductMenu#PRODUCT_MENU_PANEL_MENU_ITEM" value1="Site Name H" />
-	</command>
-
-	<command name="OrganizationSiteDefaultUserAssociations" priority="3">
-		<property name="test.name.skip.portal.instance" value="UsersandorganizationsUsecase#OrganizationSiteDefaultUserAssociations" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addCP">
-			<var name="siteName" value="Site Name Alpha" />
-			<var name="siteType" value="Blank" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Organization#addCP">
-			<var name="orgName" value="Organization Site Bravo" />
-			<var name="orgType" value="Organization" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#addSiteCP">
-			<var name="organizationSite" value="Community Site" />
-			<var name="orgName" value="Organization Site Bravo" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="PortalSettings#editConfigurationUsersDefaultUserAssociationsSitesCP">
-			<var name="siteName" value="Site Name Alpha" />
-		</execute>
-
-		<execute macro="PortalSettings#editConfigurationUsersDefaultUserAssociationsOrganizationSitesCP">
-			<var name="orgName" value="Organization Site Bravo" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#gotoEditCP">
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#viewUserInfomationSitesCP">
-			<var name="siteName" value="Site Name Alpha" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#gotoEditCP">
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#viewUserInfomationSitesCP">
-			<var name="siteName" value="Organization Site Bravo" />
-		</execute>
-	</command>
-
-	<command name="OrganizationUserManagement" priority="3">
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Organization#addCP">
-			<var name="orgName" value="Organization Name" />
-			<var name="orgType" value="Organization" />
-		</execute>
-
-		<execute macro="Organization#addAddressCP">
-			<var name="orgAddressCity" value="Diamond Bar" />
-			<var name="orgAddressCountry" value="United States" />
-			<var name="orgAddressPostal" value="91765" />
-			<var name="orgAddressRegion" value="California" />
-			<var name="orgAddressStreet" value="1400 Montefino Ave" />
-			<var name="orgAddressType" value="Billing" />
-		</execute>
-
-		<execute macro="Organization#addPhoneNumbersCP">
-			<var name="orgPhoneNumber" value="1-877-543-3729" />
-		</execute>
-
-		<execute macro="Organization#addAdditionalEmailAddressesCP">
-			<var name="orgAdditionalEmailAddress" value="testuser@liferay.com" />
-		</execute>
-
-		<execute macro="Organization#addWebsitesCP">
-			<var name="orgWebsite" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="Organization#addServicesCP">
-			<var name="orgServicesClosed" value="18:00" />
-			<var name="orgServicesOpen" value="08:00" />
-		</execute>
-
-		<execute macro="Organization#addCommentCP">
-			<var name="orgComment" value="This is a test organization." />
-			<var name="orgName" value="Organization Name" />
-		</execute>
-
-		<execute macro="Organization#addReminderQueriesCP">
-			<var name="orgLocalizedLanguage" value="Japanese (Japan)" />
-			<var name="orgName" value="Organization Name" />
-			<var name="orgReminderQueriesDefaultLanguage" value="This is just a test" />
-			<var name="orgReminderQuery" value="Nihongo" />
-		</execute>
-	</command>
-
-	<command name="ValidateRegExPasswordPolicyCP" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="test1@liferay.com" />
-			<var name="userFirstName" value="test1" />
-			<var name="userLastName" value="test1" />
-			<var name="userScreenName" value="test1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Password Policies" />
-		</execute>
-
-		<execute function="Click" locator1="PasswordPolicies#DEFAULT_PASSWORD_POLICY_TABLE_ACTIONS_BUTTON" />
-		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
-
-		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Password Syntax Checking" />
-		</execute>
-
-		<execute function="Check#checkToggleSwitch" locator1="Checkbox#ENABLE_SYNTAX_CHECKING" />
-		<execute function="Uncheck#uncheckToggleSwitch" locator1="Checkbox#ALLOW_DICTIONARY_WORDS" />
-		<execute function="Type" locator1="TextInput#MINIMUM_ALPHA_NUMERIC" value1="0" />
-		<execute function="Type" locator1="TextInput#MINIMUM_LENGTH" value1="0" />
-		<execute function="Type" locator1="TextInput#MINIMUM_LOWER_CASE" value1="0" />
-		<execute function="Type" locator1="TextInput#MINIMUM_NUMBERS" value1="0" />
-		<execute function="Type" locator1="TextInput#MINIMUM_SYMBOLS" value1="0" />
-		<execute function="Type" locator1="TextInput#MINIMUM_UPPER_CASE" value1="0" />
-
-		<execute function="Type" locator1="TextInput#REGULAR_EXPRESSION" value1="(?=.{4})(?:[a-zA-Z]*)" />
-
-		<execute macro="Button#clickSave" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordInvalidCP">
-			<var name="newPassword" value="NO1else" />
-			<var name="regex" value="(?=.{4})(?:[a-zA-Z]*)" />
-			<var name="userEmailAddress" value="test1@liferay.com" />
-			<var name="userScreenName" value="test1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="newPassword" value="tryingHARD" />
-			<var name="resetPassword" value="tryingHARDER" />
-			<var name="syntaxCheckingEnabled" value="true" />
-			<var name="userEmailAddress" value="test1@liferay.com" />
-			<var name="userScreenName" value="test1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Password Policies" />
-		</execute>
-
-		<execute function="Click" locator1="PasswordPolicies#DEFAULT_PASSWORD_POLICY_TABLE_ACTIONS_BUTTON" />
-
-		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
-
-		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Password Syntax Checking" />
-		</execute>
-
-		<execute function="Type" locator1="TextInput#REGULAR_EXPRESSION" value1="(?=.{6})(?:[a-zA-Z0-9]*)" />
-
-		<execute macro="Button#clickSave" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="newPassword" value="abcABC" />
-			<var name="resetPassword" value="abcdABCD" />
-			<var name="syntaxCheckingEnabled" value="true" />
-			<var name="userEmailAddress" value="test1@liferay.com" />
-			<var name="userScreenName" value="test1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="newPassword" value="123ABC" />
-			<var name="resetPassword" value="1234ABCD" />
-			<var name="syntaxCheckingEnabled" value="true" />
-			<var name="userEmailAddress" value="test1@liferay.com" />
-			<var name="userScreenName" value="test1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordInvalidCP">
-			<var name="newPassword" value="1-2-3ABC" />
-			<var name="regex" value="(?=.{6})(?:[a-zA-Z0-9]*)" />
-			<var name="userEmailAddress" value="test1@liferay.com" />
-			<var name="userScreenName" value="test1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Password Policies" />
-		</execute>
-
-		<execute function="Click" locator1="PasswordPolicies#DEFAULT_PASSWORD_POLICY_TABLE_ACTIONS_BUTTON" />
-
-		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
-
-		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Password Syntax Checking" />
-		</execute>
-
-		<execute function="Type" locator1="TextInput#MINIMUM_NUMBERS" value1="2" />
-
-		<execute macro="Button#clickSave" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordInvalidCP">
-			<var name="newPassword" value="abcABC" />
-			<var name="trivialPassword" value="true" />
-			<var name="userEmailAddress" value="test1@liferay.com" />
-			<var name="userScreenName" value="test1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordInvalidCP">
-			<var name="newPassword" value="12AB" />
-			<var name="regex" value="(?=.{6})(?:[a-zA-Z0-9]*)" />
-			<var name="userEmailAddress" value="test1@liferay.com" />
-			<var name="userScreenName" value="test1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="newPassword" value="12ABcd" />
-			<var name="resetPassword" value="123ABcd" />
-			<var name="syntaxCheckingEnabled" value="true" />
-			<var name="userEmailAddress" value="test1@liferay.com" />
-			<var name="userScreenName" value="test1" />
-		</execute>
-	</command>
-
-	<command name="ViewContentInLocationOrganizationSite" priority="4">
-		<property name="custom.properties" value="organizations.types=organization,location${line.separator}organizations.rootable[location]=true${line.separator}organizations.children.types[organization]=organization,location" />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="RoleNavigator#gotoRoleType">
-			<var name="roleType" value="Organization" />
-		</execute>
-
-		<execute macro="Role#add">
-			<var name="roleTitle" value="Canada Orgrole" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="RoleNavigator#gotoRoleType">
-			<var name="roleType" value="Organization" />
-		</execute>
-
-		<execute macro="Role#add">
-			<var name="roleTitle" value="United States Orgrole" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea1@liferay.com" />
-			<var name="userFirstName" value="userfn1" />
-			<var name="userLastName" value="userln1" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="Navigator#gotoBack" />
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea1@liferay.com" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea2@liferay.com" />
-			<var name="userFirstName" value="userfn2" />
-			<var name="userLastName" value="userln2" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="Navigator#gotoBack" />
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea2@liferay.com" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Organization#addCP">
-			<var name="orgName" value="North America" />
-			<var name="orgType" value="Organization" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Organization#addCP">
-			<var name="orgCountry" value="United States" />
-			<var name="orgName" value="United States" />
-			<var name="orgParent" value="North America" />
-			<var name="orgType" value="Location" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Organization#addCP">
-			<var name="orgCountry" value="Canada" />
-			<var name="orgName" value="Canada" />
-			<var name="orgParent" value="North America" />
-			<var name="orgType" value="Location" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#addSiteCP">
-			<var name="organizationSite" value="Community Site" />
-			<var name="orgName" value="United States" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#addSiteCP">
-			<var name="organizationSite" value="Community Site" />
-			<var name="orgName" value="Canada" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#addMemberCP">
-			<var name="orgName" value="Canada" />
-			<var name="userFirstName" value="userfn1" />
-			<var name="userLastName" value="userln1" />
-			<var name="userName" value="userfn1 userln1" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#addMemberCP">
-			<var name="orgName" value="United States" />
-			<var name="userFirstName" value="userfn2" />
-			<var name="userLastName" value="userln2" />
-			<var name="userName" value="userfn2 userln2" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#assignOrgRoleCP">
-			<var name="roleTitle" value="Canada Orgrole" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="Navigator#gotoBack" />
-
-		<execute macro="User#assignOrgRoleCP">
-			<var name="roleTitle" value="United States Orgrole" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${portalURL}/web/canada" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#gotoInlinePermissionsPG" />
-
-		<execute macro="PermissionsInline#addOrRemoveViewPermissionFromAllRoles">
-			<var name="addOrRemoveViewPermission" value="Remove" />
-			<var name="roleList" value="Guest,Site Member" />
-		</execute>
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${portalURL}/web/canada" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#gotoInlinePermissionsPG" />
-
-		<execute macro="PermissionsInline#addOrRemoveViewPermissionFromAllRoles">
-			<var name="addOrRemoveViewPermission" value="Add" />
-			<var name="roleList" value="Canada Orgrole" />
-		</execute>
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${portalURL}/web/canada" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="Canada Message Body" />
-			<var name="threadSubject" value="Canada Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${portalURL}/web/united-states" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#gotoInlinePermissionsPG" />
-
-		<execute macro="PermissionsInline#addOrRemoveViewPermissionFromAllRoles">
-			<var name="addOrRemoveViewPermission" value="Remove" />
-			<var name="roleList" value="Guest,Site Member" />
-		</execute>
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${portalURL}/web/united-states" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#gotoInlinePermissionsPG" />
-
-		<execute macro="PermissionsInline#addOrRemoveViewPermissionFromAllRoles">
-			<var name="addOrRemoveViewPermission" value="Add" />
-			<var name="roleList" value="United States Orgrole" />
-		</execute>
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${portalURL}/web/united-states" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="United States Message Body" />
-			<var name="threadSubject" value="United States Message Subject" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea1@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${portalURL}/web/united-states" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewDoNotHaveRequiredPermissionsPG">
-			<var name="threadSubject" value="United States Message Subject" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea2@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${portalURL}/web/canada" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewDoNotHaveRequiredPermissionsPG">
-			<var name="threadSubject" value="Canada Message Subject" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Users and Organizations|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Organization Name 50 Characters
+Priority: 3
+	Given ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	When Organization add CP
+		|orgName|Organization Staging Organization Web Content Display|
+		|orgType|Organization|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization search CP
+		|orgName|Organization Staging Organization Web Content Display|
+		|searchTerm|Organization Staging Organization Web Content Display|
+	Then Organization view CP
+		|orgName|Organization Staging Organization Web Content Display|
+		|orgType|Organization|
+Scenario: Add User Special Characters
+Priority: 4
+	Given ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	When User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|<userfn>|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User view CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|<userfn>|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User assign Regular Role CP
+		|roleTitle|Administrator|
+		|userScreenName|usersn|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And UserBar goto Profile
+	Then AssertTextEquals the value '<userfn> userln' at locator 'Home#USER_NAME_HEADER'
+Scenario: Cannot View Site Settings In User Personal Site
+Priority: 4
+	Given ProductMenu goto Personal Site
+	When ProductMenuHelper expand Panel Sites
+	And ProductMenuHelper expand Category
+		|category|Configuration|
+	Then AssertElementNotPresent the value 'Site Settings' at locator 'ProductMenu#PRODUCT_MENU_PANEL_MENU_ITEM'
+Scenario: Impersonating Administratorand Owner
+Priority: 4
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role add
+		|roleTitle|Impersonating Role Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role edit Permission Cmd CP
+		|define|true|
+		|permissionDefinitionKey|CONTROL_PANEL_USERS_USERS_AND_ORGANIZATIONS_GENERAL_PERMISSIONS_ACCESS_IN_CONTROL_PANEL_CHECKBOX,CONTROL_PANEL_USERS_USERS_AND_ORGANIZATIONS_GENERAL_PERMISSIONS_VIEW_CHECKBOX,CONTROL_PANEL_USERS_USERS_AND_ORGANIZATIONS_RESOURCE_PERMISSIONS_USER_IMPERSONATE_CHECKBOX,CONTROL_PANEL_USERS_USERS_AND_ORGANIZATIONS_RESOURCE_PERMISSIONS_USER_VIEW_CHECKBOX|
+		|roleTitle|Impersonating Role Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea1@liferay.com|
+		|userFirstName|userfn1|
+		|userLastName|userln1|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea2@liferay.com|
+		|userFirstName|userfn2|
+		|userLastName|userln2|
+		|userScreenName|usersn2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea3@liferay.com|
+		|userFirstName|userfn3|
+		|userLastName|userln3|
+		|userScreenName|usersn3|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea1@liferay.com|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role assign Reg Role CP
+		|roleTitle|Impersonating Role Name|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role assign Reg Role CP
+		|roleTitle|Administrator|
+		|userScreenName|usersn3|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea2@liferay.com|
+		|userScreenName|usersn2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea3@liferay.com|
+		|userScreenName|usersn3|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea1@liferay.com|
+		|userLoginFullName|userfn1 userln1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User impersonate CP
+		|notAdmin|true|
+		|siteName|${siteName}|
+		|userScreenName|usersn2|
+	And Close close Window at locator 'title=Welcome - ${siteName}'
+	And SelectWindow at locator 'title=Users and Organizations - Control Panel - ${siteName}'
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User attempt Impersonate CP
+		|notAdmin|true|
+		|siteName|${siteName}|
+		|userScreenName|usersn3|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User attempt Impersonate CP
+		|notAdmin|true|
+		|siteName|${siteName}|
+		|userScreenName|test|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role assign Reg Role CP
+		|roleTitle|Administrator|
+		|userScreenName|usersn1|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea1@liferay.com|
+		|userLoginFullName|userfn1 userln1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User impersonate CP
+		|siteName|${siteName}|
+		|userScreenName|usersn2|
+	And Close close Window at locator 'title=Welcome - ${siteName}'
+	And SelectWindow at locator 'title=Users and Organizations - Control Panel - ${siteName}'
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User impersonate CP
+		|siteName|${siteName}|
+		|userScreenName|usersn3|
+	And Close close Window at locator 'title=Welcome - ${siteName}'
+	And SelectWindow at locator 'title=Users and Organizations - Control Panel - ${siteName}'
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User impersonate CP
+		|siteName|${siteName}|
+		|userScreenName|test|
+	And Close close Window at locator 'title=Welcome - ${siteName}'
+	Then SelectWindow at locator 'title=Users and Organizations - Control Panel - ${siteName}'
+Scenario: Multiple Usersand Organizations
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|UsersandorganizationsUsecase#MultipleUsersandOrganizations|
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Server Administration|
+	And ServerAdministration execute Server Resources Actions
+		|actionsDescription|Reindex all search indexes.|
+	And User add Multiple CP
+		|numberOfUsers|6|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add CP
+		|orgName|Organization Name 1|
+		|orgType|Organization|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add Categorization CP
+		|orgName|Organization Name 1|
+		|tagName|alpha|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add CP
+		|orgName|Organization Name 2|
+		|orgType|Organization|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization add Site CP
+		|organizationSite|Community Site|
+		|orgName|Organization Name 2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add Categorization CP
+		|orgName|Organization Name 2|
+		|tagName|bravo|
+	And Organization add Multiple Suborganizations With Same Parent Organization
+		|numberOfSuborganizations|5|
+		|parentOrganization|Organization Name 2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization search CP
+		|orgName|Organization Name 1|
+		|searchTerm|Organization Name 1|
+	And Organization view CP
+		|orgName|Organization Name 1|
+		|orgType|Organization|
+	And Navigator goto Back
+	And Organization search CP
+		|orgName|Organization Name 2|
+		|searchTerm|Organization Name 2|
+	And Organization view CP
+		|orgName|Organization Name 2|
+		|orgType|Organization|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization view Assigned Members By Screen Name
+		|userScreenNameList|usersn1,usersn2,usersn3,usersn4,usersn5|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization add Member CP
+		|orgName|Organization Name 1|
+		|userFirstName|userfn1|
+		|userLastName|userln1|
+		|userName|userfn1 userln1|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization add Member CP
+		|orgName|Organization Name 1|
+		|userFirstName|userfn3|
+		|userLastName|userln3|
+		|userName|userfn3 userln3|
+		|userScreenName|usersn3|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization add Member CP
+		|orgName|Organization Name 1|
+		|userFirstName|userfn5|
+		|userLastName|userln5|
+		|userName|userfn5 userln5|
+		|userScreenName|usersn5|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And these variables
+		|key_orgName|Organization Name 1|
+	And Click at locator 'UsersAndOrganizations#ORGANIZATION_TABLE_NAME'
+	And Organization view Assigned Members By Screen Name
+		|userScreenNameList|usersn1,usersn3,usersn5|
+	And Organization view Not Assigned Members By Screen Name
+		|userScreenNameList|usersn2,usersn4|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And AssertTextNotPresent the value 'Organization Name 1'
+	And these variables
+		|key_siteName|Organization Name 2|
+	And AssertTextEquals assert Partial Text the value 'Organization Name 2' at locator 'Sites#SITE_TABLE_NAME'
+	And ProductMenu view No Site
+		|site|Organization Name 1|
+	And ProductMenu view No Site
+		|site|Organization Name 2|
+	And UserBar goto Dashboard
+	And Site view No My Sites Via My Sites PG
+		|siteName|Organization Name 1|
+	And Site view No My Sites Via My Sites PG
+		|siteName|Organization Name 2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization add Member CP
+		|orgName|Organization Name 2|
+		|userFirstName|Test|
+		|userLastName|Test|
+		|userName|Test Test|
+		|userScreenName|test|
+	And UserBar goto Dashboard
+	And Site view No My Sites Via My Sites PG
+		|siteName|Organization Name 1|
+	And Site view My Sites Via My Sites PG
+		|memberCount|1|
+		|siteName|Organization Name 2|
+	And Site goto Site Via My Sites PG
+		|siteName|Organization Name 2|
+	And SelectWindow at locator 'Home - Organization Name 2 - ${siteName}'
+	And Page view Specific PG
+		|pageNameList|Home,Wiki|
+	And Portlet view Specific PG
+		|portletName|Message Board|
+	And Portlet view Specific PG
+		|portletName|User Statistics|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User basic Search CP
+		|userBasicSearch|Basic|
+		|userName|userfn1 userln1|
+		|userScreenName|usersn1|
+	And User basic Search CP
+		|userBasicSearch|Basic|
+		|userName|userfn2 userln2|
+		|userScreenName|usersn2|
+	And User basic Search CP
+		|userBasicSearch|Basic|
+		|userName|userfn3 userln3|
+		|userScreenName|usersn3|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization search CP
+		|orgName|Organization Name 1|
+		|searchTerm|alpha|
+	And Organization search CP
+		|orgName|Organization Name 2|
+		|searchTerm|bravo|
+	And Organization search CP
+		|orgName|Organization Name 1|
+		|searchTerm|1|
+	And Organization search CP
+		|orgName|Organization Name 2|
+		|searchTerm|2|
+	And Organization search CP
+		|orgName|Suborganization Name 1|
+		|searchTerm|Suborganization|
+	Then Organization search CP
+		|orgName|Suborganization Name 2|
+		|searchTerm|Suborganization|
+Scenario: Organization Administrator Activate
+Priority: 3
+	Given ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	When Role define Permission CP
+		|permissionDefinitionKey|CONTROL_PANEL_GENERAL_PERMISSIONS_GO_TO_CONTROL_PANEL_CHECKBOX|
+		|permissionDefinitionValue|View Control Panel Menu|
+		|permissionNavigationKey|CONTROL_PANEL_GENERAL_PERMISSIONS|
+		|permissionNavigationValue|General Permissions|
+		|roleTitle|Authenticated|
+		|roleUser|User|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add CP
+		|orgName|Organization Name|
+		|orgType|Organization|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea1@liferay.com|
+		|userFirstName|userfn1|
+		|userLastName|userln1|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea1@liferay.com|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization add Member CP
+		|orgName|Organization Name|
+		|userFirstName|userfn1|
+		|userLastName|userln1|
+		|userName|userfn1 userln1|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization assign Org Role CP
+		|orgName|Organization Name|
+		|roleTitle|Organization Administrator|
+		|userFirstName|userfn1|
+		|userLastName|userln1|
+		|userScreenName|usersn1|
+	And Navigator open URL
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea2@liferay.com|
+		|userFirstName|userfn2|
+		|userLastName|userln2|
+		|userScreenName|usersn2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization add Member CP
+		|orgName|Organization Name|
+		|userFirstName|userfn2|
+		|userLastName|userln2|
+		|userName|userfn2 userln2|
+		|userScreenName|usersn2|
+	And User logout PG
+	And User login User PG
+		|userEmailAddress|userea1@liferay.com|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User deactivate CP
+		|deactivateType|Actions|
+		|userFirstName|userfn2|
+		|userScreenName|usersn2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User activate CP
+		|userName|userfn2 userln2|
+		|userScreenName|usersn2|
+	And User logout User PG
+	Then User login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+Scenario: Organization Drop Down Items
+Priority: 3
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Community CP
+		|siteName|Site Name A|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Community CP
+		|siteName|Site Name B|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Community CP
+		|siteName|Site Name C|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Community CP
+		|siteName|Site Name D|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Community CP
+		|siteName|Site Name E|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Community CP
+		|siteName|Site Name F|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Community CP
+		|siteName|Site Name G|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Community CP
+		|siteName|Site Name H|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And these variables
+		|key_siteName|Site Name A|
+	And AssertTextEquals assert Partial Text the value 'Site Name A' at locator 'Sites#SITE_TABLE_NAME'
+	And these variables
+		|key_siteName|Site Name B|
+	And AssertTextEquals assert Partial Text the value 'Site Name B' at locator 'Sites#SITE_TABLE_NAME'
+	And these variables
+		|key_siteName|Site Name C|
+	And AssertTextEquals assert Partial Text the value 'Site Name C' at locator 'Sites#SITE_TABLE_NAME'
+	And these variables
+		|key_siteName|Site Name D|
+	And AssertTextEquals assert Partial Text the value 'Site Name D' at locator 'Sites#SITE_TABLE_NAME'
+	And these variables
+		|key_siteName|Site Name E|
+	And AssertTextEquals assert Partial Text the value 'Site Name E' at locator 'Sites#SITE_TABLE_NAME'
+	And these variables
+		|key_siteName|Site Name F|
+	And AssertTextEquals assert Partial Text the value 'Site Name F' at locator 'Sites#SITE_TABLE_NAME'
+	And these variables
+		|key_siteName|Site Name G|
+	And AssertTextEquals assert Partial Text the value 'Site Name G' at locator 'Sites#SITE_TABLE_NAME'
+	And these variables
+		|key_siteName|Site Name H|
+	And AssertTextEquals assert Partial Text the value 'Site Name H' at locator 'Sites#SITE_TABLE_NAME'
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add CP
+		|orgName|Site Name M|
+		|orgType|Organization|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization add Member CP
+		|orgName|Site Name M|
+		|userFirstName|Test|
+		|userLastName|Test|
+		|userName|Test Test|
+		|userScreenName|test|
+	Then AssertTextPresent the value 'Site Name H' at locator 'ProductMenu#PRODUCT_MENU_PANEL_MENU_ITEM'
+Scenario: Organization Site Default User Associations
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|UsersandorganizationsUsecase#OrganizationSiteDefaultUserAssociations|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add CP
+		|siteName|Site Name Alpha|
+		|siteType|Blank|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add CP
+		|orgName|Organization Site Bravo|
+		|orgType|Organization|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization add Site CP
+		|organizationSite|Community Site|
+		|orgName|Organization Site Bravo|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	And PortalSettings edit Configuration Users Default User Associations Sites CP
+		|siteName|Site Name Alpha|
+	And PortalSettings edit Configuration Users Default User Associations Organization Sites CP
+		|orgName|Organization Site Bravo|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User goto Edit CP
+		|userScreenName|usersn|
+	And User view User Infomation Sites CP
+		|siteName|Site Name Alpha|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User goto Edit CP
+		|userScreenName|usersn|
+	Then User view User Infomation Sites CP
+		|siteName|Organization Site Bravo|
+Scenario: Organization User Management
+Priority: 3
+	Given ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	When Organization add CP
+		|orgName|Organization Name|
+		|orgType|Organization|
+	And Organization add Address CP
+		|orgAddressCity|Diamond Bar|
+		|orgAddressCountry|United States|
+		|orgAddressPostal|91765|
+		|orgAddressRegion|California|
+		|orgAddressStreet|1400 Montefino Ave|
+		|orgAddressType|Billing|
+	And Organization add Phone Numbers CP
+		|orgPhoneNumber|1-877-543-3729|
+	And Organization add Additional Email Addresses CP
+		|orgAdditionalEmailAddress|testuser@liferay.com|
+	And Organization add Websites CP
+		|orgWebsite|http://www.liferay.com|
+	And Organization add Services CP
+		|orgServicesClosed|18:00|
+		|orgServicesOpen|08:00|
+	And Organization add Comment CP
+		|orgComment|This is a test organization.|
+		|orgName|Organization Name|
+	Then Organization add Reminder Queries CP
+		|orgLocalizedLanguage|Japanese (Japan)|
+		|orgName|Organization Name|
+		|orgReminderQueriesDefaultLanguage|This is just a test|
+		|orgReminderQuery|Nihongo|
+Scenario: Validate Reg Ex Password Policy CP
+Priority: 4
+	Given ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	When User add CP
+		|userEmailAddress|test1@liferay.com|
+		|userFirstName|test1|
+		|userLastName|test1|
+		|userScreenName|test1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Password Policies|
+	And Click at locator 'PasswordPolicies#DEFAULT_PASSWORD_POLICY_TABLE_ACTIONS_BUTTON'
+	And AssertClick the value 'Edit' at locator 'MenuItem#EDIT'
+	And Panel expand Panel
+		|panelHeading|Password Syntax Checking|
+	And Check check Toggle Switch at locator 'Checkbox#ENABLE_SYNTAX_CHECKING'
+	And Uncheck uncheck Toggle Switch at locator 'Checkbox#ALLOW_DICTIONARY_WORDS'
+	And Type the value '0' at locator 'TextInput#MINIMUM_ALPHA_NUMERIC'
+	And Type the value '0' at locator 'TextInput#MINIMUM_LENGTH'
+	And Type the value '0' at locator 'TextInput#MINIMUM_LOWER_CASE'
+	And Type the value '0' at locator 'TextInput#MINIMUM_NUMBERS'
+	And Type the value '0' at locator 'TextInput#MINIMUM_SYMBOLS'
+	And Type the value '0' at locator 'TextInput#MINIMUM_UPPER_CASE'
+	And Type the value '(?=.{4})(?:[a-zA-Z]*)' at locator 'TextInput#REGULAR_EXPRESSION'
+	And Button click Save
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password Invalid CP
+		|newPassword|NO1else|
+		|regex|(?=.{4})(?:[a-zA-Z]*)|
+		|userEmailAddress|test1@liferay.com|
+		|userScreenName|test1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|newPassword|tryingHARD|
+		|resetPassword|tryingHARDER|
+		|syntaxCheckingEnabled|true|
+		|userEmailAddress|test1@liferay.com|
+		|userScreenName|test1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Password Policies|
+	And Click at locator 'PasswordPolicies#DEFAULT_PASSWORD_POLICY_TABLE_ACTIONS_BUTTON'
+	And AssertClick the value 'Edit' at locator 'MenuItem#EDIT'
+	And Panel expand Panel
+		|panelHeading|Password Syntax Checking|
+	And Type the value '(?=.{6})(?:[a-zA-Z0-9]*)' at locator 'TextInput#REGULAR_EXPRESSION'
+	And Button click Save
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|newPassword|abcABC|
+		|resetPassword|abcdABCD|
+		|syntaxCheckingEnabled|true|
+		|userEmailAddress|test1@liferay.com|
+		|userScreenName|test1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|newPassword|123ABC|
+		|resetPassword|1234ABCD|
+		|syntaxCheckingEnabled|true|
+		|userEmailAddress|test1@liferay.com|
+		|userScreenName|test1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password Invalid CP
+		|newPassword|1-2-3ABC|
+		|regex|(?=.{6})(?:[a-zA-Z0-9]*)|
+		|userEmailAddress|test1@liferay.com|
+		|userScreenName|test1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Password Policies|
+	And Click at locator 'PasswordPolicies#DEFAULT_PASSWORD_POLICY_TABLE_ACTIONS_BUTTON'
+	And AssertClick the value 'Edit' at locator 'MenuItem#EDIT'
+	And Panel expand Panel
+		|panelHeading|Password Syntax Checking|
+	And Type the value '2' at locator 'TextInput#MINIMUM_NUMBERS'
+	And Button click Save
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password Invalid CP
+		|newPassword|abcABC|
+		|trivialPassword|true|
+		|userEmailAddress|test1@liferay.com|
+		|userScreenName|test1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password Invalid CP
+		|newPassword|12AB|
+		|regex|(?=.{6})(?:[a-zA-Z0-9]*)|
+		|userEmailAddress|test1@liferay.com|
+		|userScreenName|test1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	Then User edit Password CP
+		|newPassword|12ABcd|
+		|resetPassword|123ABcd|
+		|syntaxCheckingEnabled|true|
+		|userEmailAddress|test1@liferay.com|
+		|userScreenName|test1|
+Scenario: View Content In Location Organization Site
+Priority: 4
+	Given these properties
+		|custom.properties|organizations.types=organization,location${line.separator}organizations.rootable[location]=true${line.separator}organizations.children.types[organization]=organization,location|
+	When these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And RoleNavigator goto Role Type
+		|roleType|Organization|
+	And Role add
+		|roleTitle|Canada Orgrole|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And RoleNavigator goto Role Type
+		|roleType|Organization|
+	And Role add
+		|roleTitle|United States Orgrole|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea1@liferay.com|
+		|userFirstName|userfn1|
+		|userLastName|userln1|
+		|userScreenName|usersn1|
+	And Navigator goto Back
+	And User edit Password CP
+		|userEmailAddress|userea1@liferay.com|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea2@liferay.com|
+		|userFirstName|userfn2|
+		|userLastName|userln2|
+		|userScreenName|usersn2|
+	And Navigator goto Back
+	And User edit Password CP
+		|userEmailAddress|userea2@liferay.com|
+		|userScreenName|usersn2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add CP
+		|orgName|North America|
+		|orgType|Organization|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add CP
+		|orgCountry|United States|
+		|orgName|United States|
+		|orgParent|North America|
+		|orgType|Location|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add CP
+		|orgCountry|Canada|
+		|orgName|Canada|
+		|orgParent|North America|
+		|orgType|Location|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization add Site CP
+		|organizationSite|Community Site|
+		|orgName|United States|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization add Site CP
+		|organizationSite|Community Site|
+		|orgName|Canada|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization add Member CP
+		|orgName|Canada|
+		|userFirstName|userfn1|
+		|userLastName|userln1|
+		|userName|userfn1 userln1|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization add Member CP
+		|orgName|United States|
+		|userFirstName|userfn2|
+		|userLastName|userln2|
+		|userName|userfn2 userln2|
+		|userScreenName|usersn2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User assign Org Role CP
+		|roleTitle|Canada Orgrole|
+		|userScreenName|usersn1|
+	And Navigator goto Back
+	And User assign Org Role CP
+		|roleTitle|United States Orgrole|
+		|userScreenName|usersn2|
+	And Navigator open Specific URL
+		|url|${portalURL}/web/canada|
+	And MessageboardsPortlet goto Inline Permissions PG
+	And PermissionsInline add Or Remove View Permission From All Roles
+		|addOrRemoveViewPermission|Remove|
+		|roleList|Guest,Site Member|
+	And Navigator open Specific URL
+		|url|${portalURL}/web/canada|
+	And MessageboardsPortlet goto Inline Permissions PG
+	And PermissionsInline add Or Remove View Permission From All Roles
+		|addOrRemoveViewPermission|Add|
+		|roleList|Canada Orgrole|
+	And Navigator open Specific URL
+		|url|${portalURL}/web/canada|
+	And MessageboardsThread add PG
+		|threadBody|Canada Message Body|
+		|threadSubject|Canada Message Subject|
+	And Navigator open Specific URL
+		|url|${portalURL}/web/united-states|
+	And MessageboardsPortlet goto Inline Permissions PG
+	And PermissionsInline add Or Remove View Permission From All Roles
+		|addOrRemoveViewPermission|Remove|
+		|roleList|Guest,Site Member|
+	And Navigator open Specific URL
+		|url|${portalURL}/web/united-states|
+	And MessageboardsPortlet goto Inline Permissions PG
+	And PermissionsInline add Or Remove View Permission From All Roles
+		|addOrRemoveViewPermission|Add|
+		|roleList|United States Orgrole|
+	And Navigator open Specific URL
+		|url|${portalURL}/web/united-states|
+	And MessageboardsThread add PG
+		|threadBody|United States Message Body|
+		|threadSubject|United States Message Subject|
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|userea1@liferay.com|
+	And Navigator open Specific URL
+		|url|${portalURL}/web/united-states|
+	And MessageboardsThread view Do Not Have Required Permissions PG
+		|threadSubject|United States Message Subject|
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|userea2@liferay.com|
+	And Navigator open Specific URL
+		|url|${portalURL}/web/canada|
+	Then MessageboardsThread view Do Not Have Required Permissions PG
+		|threadSubject|Canada Message Subject|

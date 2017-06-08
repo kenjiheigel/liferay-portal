@@ -1,233 +1,132 @@
-<definition component-name="portal-workflow">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Workflow" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Workflow|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="DMDocument#tearDownCP" />
-
-				<execute macro="Navigator#openURL" />
-
-				<execute macro="ProductMenu#gotoSitesContent">
-					<var name="portlet" value="Documents and Media" />
-				</execute>
-
-				<execute macro="Workflow#configureWorkflowViaPortlet">
-					<var name="workflowDefinition" value="No Workflow" />
-				</execute>
-
-				<execute macro="DMDocumentType#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="ConfigureFolderWorkflow" priority="4">
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Workflow#configureWorkflowViaFolderInfo">
-			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-		</execute>
-
-		<execute macro="DMFolder#addCP">
-			<var name="dmFolderDescription" value="DM Folder Description" />
-			<var name="dmFolderName" value="DM Folder Name" />
-		</execute>
-
-		<execute macro="DMFolder#configureWorkflowCP">
-			<var name="dmFolderName" value="DM Folder Name" />
-			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowRestriction" value="Default Workflow" />
-		</execute>
-
-		<execute macro="DMFolder#configureWorkflowCP">
-			<var name="dmFolderName" value="DM Folder Name" />
-			<var name="workflowRestriction" value="Parent Folder" />
-		</execute>
-
-		<execute macro="DMFolder#configureWorkflowCP">
-			<var name="dmDocumentTypeName" value="Google Docs" />
-			<var name="dmFolderName" value="DM Folder Name" />
-			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowRestriction" value="Specific Restrictions" />
-		</execute>
-
-		<execute macro="DMFolder#configureWorkflowCP">
-			<var name="dmFolderName" value="DM Folder Name" />
-			<var name="workflowDefinition" value="No Workflow" />
-			<var name="workflowRestriction" value="Default Workflow" />
-		</execute>
-	</command>
-
-	<command name="SaveAsDraftAndViewCategories" priority="3">
-		<description message="This is a use case for LPS-60870." />
-
-		<property name="custom.properties" value="dl.file.entry.drafts.enabled=true" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="legal" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Other" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMFolder#addCP">
-			<var name="dmFolderDescription" value="DM Folder Description" />
-			<var name="dmFolderName" value="DM Folder Name" />
-		</execute>
-
-		<execute macro="DMFolder#configureWorkflowCP">
-			<var name="dmFolderName" value="DM Folder Name" />
-			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowRestriction" value="Default Workflow" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMFolder#gotoCP">
-			<var name="dmDocumentTitle" value="DM Folder Name" />
-			<var name="dmFolderName" value="DM Folder Name" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoAddDocumentType" />
-
-		<execute macro="DMDocument#editDocument">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="DMDocument#addCategories">
-			<var name="categoryNameList" value="legal,Other" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Button#clickSubmitForPublication" />
-
-		<execute macro="Alert#viewSuccessMessage" />
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="workflowAssetTitle" value="DM Document Title" />
-			<var name="workflowAssetType" value="Document" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Workflow#approveTaskByActions">
-			<var name="workflowAssetTitle" value="DM Document Title" />
-			<var name="workflowAssetType" value="Document" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMFolder#gotoCP">
-			<var name="dmDocumentTitle" value="DM Folder Name" />
-			<var name="dmFolderName" value="DM Folder Name" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoEditDocument">
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="DMDocument#viewCategories">
-			<var name="categoryNameList" value="legal,Other" />
-		</execute>
-
-		<execute macro="Button#clickSaveAsDraft" />
-
-		<execute macro="Alert#viewSuccessMessage" />
-
-		<execute macro="DMNavigator#gotoEditDocument">
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="DMDocument#viewCategories">
-			<var name="categoryNameList" value="legal,Other" />
-		</execute>
-
-		<execute macro="Button#clickSubmitForPublication" />
-
-		<execute macro="DMNavigator#gotoEditDocument">
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="DMDocument#viewCategories">
-			<var name="categoryNameList" value="legal,Other" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="workflowAssetTitle" value="DM Document Title" />
-			<var name="workflowAssetType" value="Document" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Workflow#viewTaskAssignedToMeDetails">
-			<var name="workflowAssetContent" value="DM Document Title" />
-			<var name="workflowAssetTitle" value="DM Document Title" />
-			<var name="workflowAssetType" value="Document" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Workflow#gotoPreviewEdit" />
-
-		<execute macro="DMDocument#viewCategories">
-			<var name="categoryNameList" value="legal,Other" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Configure Folder Workflow
+Priority: 4
+	Given ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	When Workflow configure Workflow Via Folder Info
+		|workflowDefinition|Single Approver (Version 1)|
+	And DMFolder add CP
+		|dmFolderDescription|DM Folder Description|
+		|dmFolderName|DM Folder Name|
+	And DMFolder configure Workflow CP
+		|dmFolderName|DM Folder Name|
+		|workflowDefinition|Single Approver (Version 1)|
+		|workflowRestriction|Default Workflow|
+	And DMFolder configure Workflow CP
+		|dmFolderName|DM Folder Name|
+		|workflowRestriction|Parent Folder|
+	And DMFolder configure Workflow CP
+		|dmDocumentTypeName|Google Docs|
+		|dmFolderName|DM Folder Name|
+		|workflowDefinition|Single Approver (Version 1)|
+		|workflowRestriction|Specific Restrictions|
+	Then DMFolder configure Workflow CP
+		|dmFolderName|DM Folder Name|
+		|workflowDefinition|No Workflow|
+		|workflowRestriction|Default Workflow|
+Scenario: Save As Draft And View Categories
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When these properties
+		|custom.properties|dl.file.entry.drafts.enabled=true|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyName|Vocabulary Name|
+	And Category add CP
+		|categoryName|legal|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryName|Other|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMFolder add CP
+		|dmFolderDescription|DM Folder Description|
+		|dmFolderName|DM Folder Name|
+	And DMFolder configure Workflow CP
+		|dmFolderName|DM Folder Name|
+		|workflowDefinition|Single Approver (Version 1)|
+		|workflowRestriction|Default Workflow|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMFolder goto CP
+		|dmDocumentTitle|DM Folder Name|
+		|dmFolderName|DM Folder Name|
+	And DMNavigator goto Add Document Type
+	And DMDocument edit Document
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_1.doc|
+		|dmDocumentTitle|DM Document Title|
+	And DMDocument add Categories
+		|categoryNameList|legal,Other|
+		|vocabularyName|Vocabulary Name|
+	And Button click Submit For Publication
+	And Alert view Success Message
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|DM Document Title|
+		|workflowAssetType|Document|
+		|workflowTask|Review|
+	And Workflow approve Task By Actions
+		|workflowAssetTitle|DM Document Title|
+		|workflowAssetType|Document|
+		|workflowTask|Review|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMFolder goto CP
+		|dmDocumentTitle|DM Folder Name|
+		|dmFolderName|DM Folder Name|
+	And DMNavigator goto Edit Document
+		|dmDocumentTitle|DM Document Title|
+	And DMDocument view Categories
+		|categoryNameList|legal,Other|
+	And Button click Save As Draft
+	And Alert view Success Message
+	And DMNavigator goto Edit Document
+		|dmDocumentTitle|DM Document Title|
+	And DMDocument view Categories
+		|categoryNameList|legal,Other|
+	And Button click Submit For Publication
+	And DMNavigator goto Edit Document
+		|dmDocumentTitle|DM Document Title|
+	And DMDocument view Categories
+		|categoryNameList|legal,Other|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|DM Document Title|
+		|workflowAssetType|Document|
+		|workflowTask|Review|
+	And Workflow view Task Assigned To Me Details
+		|workflowAssetContent|DM Document Title|
+		|workflowAssetTitle|DM Document Title|
+		|workflowAssetType|Document|
+		|workflowTask|Review|
+	And Workflow goto Preview Edit
+	Then DMDocument view Categories
+		|categoryNameList|legal,Other|

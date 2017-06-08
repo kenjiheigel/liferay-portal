@@ -1,476 +1,275 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.component.names" value="Site and Page Templates" />
-	<property name="testray.main.component.name" value="Site and Page Templates" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Site#tearDownCP" />
-
-				<execute macro="SiteTemplates#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="AddSiteTemplate" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#addCP">
-			<var name="siteTemplateActive" value="Yes" />
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-
-		<execute macro="SiteTemplates#viewCP">
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addSiteTemplateCP">
-			<var name="siteName" value="Site Name" />
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-	</command>
-
-	<command name="AddSiteTemplateApplySiteTemplateChangesToSite" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#addCP">
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addCP">
-			<var name="siteName" value="Site Template Site Name" />
-			<var name="siteTemplateName" value="Site Template Name" />
-			<var name="siteType" value="Site Template" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Template Site Name" />
-		</execute>
-
-		<execute macro="Portlet#viewNoPortletsPresentPG" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="LexiconEntry#gotoEntryMenuItem">
-			<var name="menuItem" value="Manage" />
-			<var name="rowEntry" value="Site Template Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSiteViaLink">
-			<var name="site" value="Site Template Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Hello World" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Template Site Name" />
-		</execute>
-
-		<execute macro="Portlet#viewPG">
-			<var name="portletName" value="Hello World" />
-		</execute>
-	</command>
-
-	<command name="AddSiteTemplateDisablePageModification" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#addCP">
-			<var name="disableChanges" value="true" />
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addCP">
-			<var name="siteName" value="Site Template Site Name" />
-			<var name="siteTemplateName" value="Site Template Name" />
-			<var name="siteType" value="Site Template" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Template Site Name" />
-		</execute>
-
-		<execute macro="Page#viewPageLockCheck" />
-
-		<execute function="AssertElementNotPresent" locator1="ControlMenu#ADD" />
-	</command>
-
-	<command name="DeactivateDefaultSiteTemplate" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#editTemplateStatusCP">
-			<var name="siteTemplateActiveEdit" value="No" />
-			<var name="siteTemplateName" value="Community Site" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#viewTemplateStatusCP">
-			<var name="siteTemplateActiveEdit" value="No" />
-			<var name="siteTemplateName" value="Community Site" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="SiteTemplates#viewNoTemplatesDisplay">
-			<var name="siteTemplateName" value="Community Site" />
-		</execute>
-	</command>
-
-	<command name="DeleteSiteTemplate" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#addCP">
-			<var name="siteTemplateActive" value="Yes" />
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#deleteCP">
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#viewDefaultCP">
-			<var name="siteTemplateNameList" value="Intranet Site,Community Site" />
-		</execute>
-	</command>
-
-	<command name="DeleteSiteTemplateAssociatedWithASite" priority="4">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#addCP">
-			<var name="siteTemplateActive" value="Yes" />
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addSiteTemplateCP">
-			<var name="siteName" value="Site Name" />
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#deleteCP">
-			<var name="associatedToSite" value="true" />
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#viewCP">
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-	</command>
-
-	<command name="EditSiteTemplate" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#addCP">
-			<var name="siteTemplateActive" value="Yes" />
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-
-		<execute macro="SiteTemplates#viewCP">
-			<var name="siteTemplateDescription" value="This is a site template description" />
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#editCP">
-			<var name="siteTemplateDescription" value="Site Template Description Edit" />
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#viewCP">
-			<var name="siteTemplateDescription" value="Site Template Description Edit" />
-			<var name="siteTemplateName" value="Site Template Name Edit" />
-		</execute>
-	</command>
-
-	<command name="EditSiteTemplateStatus" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#addCP">
-			<var name="siteTemplateActive" value="Yes" />
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addSiteTemplateCP">
-			<var name="siteName" value="Site Name" />
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#editTemplateStatusCP">
-			<var name="siteTemplateActiveEdit" value="No" />
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#viewTemplateStatusCP">
-			<var name="siteTemplateActiveEdit" value="No" />
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-	</command>
-
-	<command name="LocalizeDefaultSiteTemplates" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#viewDefaultCP">
-			<var name="siteTemplateNameList" value="Community Site,Intranet Site" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoUserMyAccount">
-			<var name="portlet" value="Account Settings" />
-		</execute>
-
-		<execute macro="MyAccount#changeUserLanguage">
-			<var name="languageName" value="español (España)" />
-			<var name="saveButton" value="Save" />
-			<var name="successMessage" value="Su petición ha terminado con éxito." />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoLocalizedControlPanel">
-			<var name="category" value="Sitios web" />
-			<var name="portlet" value="Plantillas de sitio web" />
-			<var name="tab" value="Panel de control" />
-		</execute>
-
-		<execute macro="SiteTemplates#viewDefaultDataLocalizedCP">
-			<var name="siteTemplateDescriptionList" value="Sitio con foro y wiki,Sitio con documentos y noticias" />
-			<var name="siteTemplateNameList" value="Sitio de la Comunidad,Sitio de intranet" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoLocalizedUserMyAccount">
-			<var name="category" value="Mi cuenta" />
-			<var name="portlet" value="Mi cuenta" />
-		</execute>
-
-		<execute macro="MyAccount#changeUserLanguage">
-			<var name="languageName" value="English (United States)" />
-			<var name="saveButton" value="Guardar" />
-			<var name="successMessage" value="Your request completed successfully." />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#viewDefaultCP">
-			<var name="siteTemplateNameList" value="Community Site,Intranet Site" />
-		</execute>
-	</command>
-
-	<command name="OnlySiteAdminCanModifyPageAssociatedWithSiteTemplate" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#addCP">
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addCP">
-			<var name="siteName" value="Site Template Site Name" />
-			<var name="siteTemplateName" value="Site Template Name" />
-			<var name="siteType" value="Site Template" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Template Site Name" />
-		</execute>
-
-		<execute function="AssertElementPresent" locator1="ControlMenu#ADD" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Template Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#logoutUserPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Template Site Name" />
-		</execute>
-
-		<execute function="AssertElementNotPresent" locator1="ControlMenu#ADD" />
-
-		<execute macro="User#logoutUserPG" />
-
-		<execute macro="User#loginUserPG" />
-	</command>
-
-	<command name="ResetPageChanges" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addCommunityCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#dragAndDropPortletToColumnPG">
-			<var name="columnNumberFrom" value="2" />
-			<var name="columnNumberTo" value="1" />
-			<var name="portletName" value="User Statistics" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="SiteTemplates#resetPageChanges">
-			<var name="columnNumberTo" value="1" />
-			<var name="portletName" value="User Statistics" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="SiteTemplates#viewResetPageChanges">
-			<var name="columnNumberFrom" value="2" />
-			<var name="portletName" value="User Statistics" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.component.names|Site and Page Templates|
+		|testray.main.component.name|Site and Page Templates|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Site Template
+Priority: 4
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	When SiteTemplates add CP
+		|siteTemplateActive|Yes|
+		|siteTemplateName|Site Template Name|
+	And SiteTemplates view CP
+		|siteTemplateName|Site Template Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	Then Site add Site Template CP
+		|siteName|Site Name|
+		|siteTemplateName|Site Template Name|
+Scenario: Add Site Template Apply Site Template Changes To Site
+Priority: 4
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	When SiteTemplates add CP
+		|siteTemplateName|Site Template Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add CP
+		|siteName|Site Template Site Name|
+		|siteTemplateName|Site Template Name|
+		|siteType|Site Template|
+	And ProductMenu goto Site
+		|site|Site Template Site Name|
+	And Portlet view No Portlets Present PG
+	And ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	And LexiconEntry goto Entry Menu Item
+		|menuItem|Manage|
+		|rowEntry|Site Template Name|
+	And ProductMenu goto Site Via Link
+		|site|Site Template Name|
+	And Portlet add PG
+		|portletName|Hello World|
+	And ProductMenu goto Site
+		|site|Site Template Site Name|
+	Then Portlet view PG
+		|portletName|Hello World|
+Scenario: Add Site Template Disable Page Modification
+Priority: 4
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	When SiteTemplates add CP
+		|disableChanges|true|
+		|siteTemplateName|Site Template Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add CP
+		|siteName|Site Template Site Name|
+		|siteTemplateName|Site Template Name|
+		|siteType|Site Template|
+	And ProductMenu goto Site
+		|site|Site Template Site Name|
+	And Page view Page Lock Check
+	Then AssertElementNotPresent at locator 'ControlMenu#ADD'
+Scenario: Deactivate Default Site Template
+Priority: 4
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	And SiteTemplates edit Template Status CP
+		|siteTemplateActiveEdit|No|
+		|siteTemplateName|Community Site|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	And SiteTemplates view Template Status CP
+		|siteTemplateActiveEdit|No|
+		|siteTemplateName|Community Site|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	Then SiteTemplates view No Templates Display
+		|siteTemplateName|Community Site|
+Scenario: Delete Site Template
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	And SiteTemplates add CP
+		|siteTemplateActive|Yes|
+		|siteTemplateName|Site Template Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	And SiteTemplates delete CP
+		|siteTemplateName|Site Template Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	Then SiteTemplates view Default CP
+		|siteTemplateNameList|Intranet Site,Community Site|
+Scenario: Delete Site Template Associated With A Site
+Priority: 4
+	Given these properties
+		|portal.acceptance|true|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	And SiteTemplates add CP
+		|siteTemplateActive|Yes|
+		|siteTemplateName|Site Template Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Site Template CP
+		|siteName|Site Name|
+		|siteTemplateName|Site Template Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	And SiteTemplates delete CP
+		|associatedToSite|true|
+		|siteTemplateName|Site Template Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	Then SiteTemplates view CP
+		|siteTemplateName|Site Template Name|
+Scenario: Edit Site Template
+Priority: 4
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	When SiteTemplates add CP
+		|siteTemplateActive|Yes|
+		|siteTemplateName|Site Template Name|
+	And SiteTemplates view CP
+		|siteTemplateDescription|This is a site template description|
+		|siteTemplateName|Site Template Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	And SiteTemplates edit CP
+		|siteTemplateDescription|Site Template Description Edit|
+		|siteTemplateName|Site Template Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	Then SiteTemplates view CP
+		|siteTemplateDescription|Site Template Description Edit|
+		|siteTemplateName|Site Template Name Edit|
+Scenario: Edit Site Template Status
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	And SiteTemplates add CP
+		|siteTemplateActive|Yes|
+		|siteTemplateName|Site Template Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Site Template CP
+		|siteName|Site Name|
+		|siteTemplateName|Site Template Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	And SiteTemplates edit Template Status CP
+		|siteTemplateActiveEdit|No|
+		|siteTemplateName|Site Template Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	Then SiteTemplates view Template Status CP
+		|siteTemplateActiveEdit|No|
+		|siteTemplateName|Site Template Name|
+Scenario: Localize Default Site Templates
+Priority: 4
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	When SiteTemplates view Default CP
+		|siteTemplateNameList|Community Site,Intranet Site|
+	And ProductMenu goto User My Account
+		|portlet|Account Settings|
+	And MyAccount change User Language
+		|languageName|español (España)|
+		|saveButton|Save|
+		|successMessage|Su petición ha terminado con éxito.|
+	And Navigator open URL
+	And ProductMenu goto Localized Control Panel
+		|category|Sitios web|
+		|portlet|Plantillas de sitio web|
+		|tab|Panel de control|
+	And SiteTemplates view Default Data Localized CP
+		|siteTemplateDescriptionList|Sitio con foro y wiki,Sitio con documentos y noticias|
+		|siteTemplateNameList|Sitio de la Comunidad,Sitio de intranet|
+	And Navigator open URL
+	And ProductMenu goto Localized User My Account
+		|category|Mi cuenta|
+		|portlet|Mi cuenta|
+	And MyAccount change User Language
+		|languageName|English (United States)|
+		|saveButton|Guardar|
+		|successMessage|Your request completed successfully.|
+	And Navigator open URL
+	And ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	Then SiteTemplates view Default CP
+		|siteTemplateNameList|Community Site,Intranet Site|
+Scenario: Only Site Admin Can Modify Page Associated With Site Template
+Priority: 4
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	When SiteTemplates add CP
+		|siteTemplateName|Site Template Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add CP
+		|siteName|Site Template Site Name|
+		|siteTemplateName|Site Template Name|
+		|siteType|Site Template|
+	And ProductMenu goto Site
+		|site|Site Template Site Name|
+	And AssertElementPresent at locator 'ControlMenu#ADD'
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|Site Template Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And User logout User PG
+	And User login User PG
+		|userEmailAddress|userea@liferay.com|
+	And ProductMenu goto Site
+		|site|Site Template Site Name|
+	And AssertElementNotPresent at locator 'ControlMenu#ADD'
+	And User logout User PG
+	Then User login User PG
+Scenario: Reset Page Changes
+Priority: 4
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Community CP
+		|siteName|Site Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Portlet drag And Drop Portlet To Column PG
+		|columnNumberFrom|2|
+		|columnNumberTo|1|
+		|portletName|User Statistics|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And SiteTemplates reset Page Changes
+		|columnNumberTo|1|
+		|portletName|User Statistics|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	Then SiteTemplates view Reset Page Changes
+		|columnNumberFrom|2|
+		|portletName|User Statistics|

@@ -1,130 +1,167 @@
-<definition component-name="portal-business-productivity-ee">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="test.run.environment" value="EE" />
-	<property name="testray.main.component.name" value="Kaleo Designer" />
+Feature:
 
-	<var name="kfFieldSetName" value="New Kaleo Field Set" />
-	<var name="workflowAssetType" value="Process" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|test.run.environment|EE|
+		|testray.main.component.name|Kaleo Designer|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|test.run.environment|EE|
+		|testray.main.component.name|Kaleo Designer|
+		|kfFieldSetName|New Kaleo Field Set|
+		|workflowAssetType|Process|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Navigator open URL
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Kaleo Designer|
+	Then KaleoDesigner edit Workflow Definition Via KDCP
+		|workflowDefinitionTitle|Single Approver|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Delete Task Node
+Priority: 5
+	Given KaleoDesigner edit Workflow Definition Title Via Workflow CP
+		|workflowDefinitionTitle|Edited Workflow Definition|
+	When KaleoDesigner select Node
+		|nodeNodeLabel|update|
+	And KaleoDesigner delete Node
+		|nodeNodeLabel|update|
+	And KaleoDesigner publish Workflow Definition Via KDCP
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Kaleo Designer|
+	And KaleoDesigner view Table Definition Published Via KDCP
+		|workflowDefinitionName|Single Approver|
+		|workflowDefinitionTitle|Edited Workflow Definition|
+		|workflowDefinitionVersionNumber|2|
+	And KaleoDesigner edit Workflow Definition Via KDCP
+		|workflowDefinitionTitle|Edited Workflow Definition|
+	Then KaleoDesigner view Node Not Present
+		|nodeNodeLabel|update|
+Scenario: View Invalid Source XML Remains After Tab Switch
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When KaleoDesigner edit Source XML
+		|kdSourceXML|INVALID|
+		|line|6|
+	And KaleoDesigner view View Tab
+	And KaleoDesigner view Source XML Tab
+	Then KaleoDesigner view Source XML Line
+		|kdSourceXML|INVALID|
+		|line|6|
+Scenario: View Node Notification Recipient Persists After Switching Tabs
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When KaleoDesigner select Node
+		|nodeNodeLabel|review|
+	And KaleoDesigner edit Node Notifications
+		|nodeNotificationsDescription|Review Notification Description|
+		|nodeNotificationsName|Review Notification|
+		|nodeNotificationsRecipientType|Role Type|
+		|roleName|Administrator|
+		|roleType|Regular|
+	And KaleoDesigner view Source XML Tab
+	And KaleoDesigner view View Tab
+	And KaleoDesigner select Node
+		|nodeNodeLabel|review|
+	Then KaleoDesigner view Node Notifications
+		|nodeNotificationsName|Review Notification|
+		|nodeNotificationsRecipientType|Role Type|
+		|roleName|Administrator|
+		|roleType|Regular|
+Scenario: View User Notification Option
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When KaleoDesigner select Node
+		|nodeNodeLabel|review|
+	Then KaleoDesigner view Node Notifications
+		|nodeNotificationsName|Review Notification|
+		|nodeNotificationsType|User Notification|
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Navigator open URL
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Kaleo Designer|
+	Then KaleoDesigner edit Workflow Definition Via KDCP
+		|workflowDefinitionTitle|Single Approver|
 
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Kaleo Designer" />
-		</execute>
-
-		<execute macro="KaleoDesigner#editWorkflowDefinitionViaKDCP">
-			<var name="workflowDefinitionTitle" value="Single Approver" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-		</if>
-	</tear-down>
-
-	<command name="DeleteTaskNode" priority="5">
-		<execute macro="KaleoDesigner#editWorkflowDefinitionTitleViaWorkflowCP">
-			<var name="workflowDefinitionTitle" value="Edited Workflow Definition" />
-		</execute>
-
-		<execute macro="KaleoDesigner#selectNode">
-			<var name="nodeNodeLabel" value="update" />
-		</execute>
-
-		<execute macro="KaleoDesigner#deleteNode">
-			<var name="nodeNodeLabel" value="update" />
-		</execute>
-
-		<execute macro="KaleoDesigner#publishWorkflowDefinitionViaKDCP" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Kaleo Designer" />
-		</execute>
-
-		<execute macro="KaleoDesigner#viewTableDefinitionPublishedViaKDCP">
-			<var name="workflowDefinitionName" value="Single Approver" />
-			<var name="workflowDefinitionTitle" value="Edited Workflow Definition" />
-			<var name="workflowDefinitionVersionNumber" value="2" />
-		</execute>
-
-		<execute macro="KaleoDesigner#editWorkflowDefinitionViaKDCP">
-			<var name="workflowDefinitionTitle" value="Edited Workflow Definition" />
-		</execute>
-
-		<execute macro="KaleoDesigner#viewNodeNotPresent">
-			<var name="nodeNodeLabel" value="update" />
-		</execute>
-	</command>
-
-	<command name="ViewInvalidSourceXMLRemainsAfterTabSwitch" priority="4">
-		<description message="This is a use case for LPS-48590." />
-
-		<execute macro="KaleoDesigner#editSourceXML">
-			<var name="kdSourceXML" value="INVALID" />
-			<var name="line" value="6" />
-		</execute>
-
-		<execute macro="KaleoDesigner#viewViewTab" />
-		<execute macro="KaleoDesigner#viewSourceXMLTab" />
-
-		<execute macro="KaleoDesigner#viewSourceXMLLine">
-			<var name="kdSourceXML" value="INVALID" />
-			<var name="line" value="6" />
-		</execute>
-	</command>
-
-	<command name="ViewNodeNotificationRecipientPersistsAfterSwitchingTabs" priority="4">
-		<description message="This is a use case for LPS-46657." />
-
-		<execute macro="KaleoDesigner#selectNode">
-			<var name="nodeNodeLabel" value="review" />
-		</execute>
-
-		<execute macro="KaleoDesigner#editNodeNotifications">
-			<var name="nodeNotificationsDescription" value="Review Notification Description" />
-			<var name="nodeNotificationsName" value="Review Notification" />
-			<var name="nodeNotificationsRecipientType" value="Role Type" />
-			<var name="roleName" value="Administrator" />
-			<var name="roleType" value="Regular" />
-		</execute>
-
-		<execute macro="KaleoDesigner#viewSourceXMLTab" />
-		<execute macro="KaleoDesigner#viewViewTab" />
-
-		<execute macro="KaleoDesigner#selectNode">
-			<var name="nodeNodeLabel" value="review" />
-		</execute>
-
-		<execute macro="KaleoDesigner#viewNodeNotifications">
-			<var name="nodeNotificationsName" value="Review Notification" />
-			<var name="nodeNotificationsRecipientType" value="Role Type" />
-			<var name="roleName" value="Administrator" />
-			<var name="roleType" value="Regular" />
-		</execute>
-	</command>
-
-	<command name="ViewUserNotificationOption" priority="3">
-		<description message="This is a use case for LPS-46605." />
-
-		<execute macro="KaleoDesigner#selectNode">
-			<var name="nodeNodeLabel" value="review" />
-		</execute>
-
-		<execute macro="KaleoDesigner#viewNodeNotifications">
-			<var name="nodeNotificationsName" value="Review Notification" />
-			<var name="nodeNotificationsType" value="User Notification" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Delete Task Node
+Priority: 5
+	Given KaleoDesigner edit Workflow Definition Title Via Workflow CP
+		|workflowDefinitionTitle|Edited Workflow Definition|
+	When KaleoDesigner select Node
+		|nodeNodeLabel|update|
+	And KaleoDesigner delete Node
+		|nodeNodeLabel|update|
+	And KaleoDesigner publish Workflow Definition Via KDCP
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Kaleo Designer|
+	And KaleoDesigner view Table Definition Published Via KDCP
+		|workflowDefinitionName|Single Approver|
+		|workflowDefinitionTitle|Edited Workflow Definition|
+		|workflowDefinitionVersionNumber|2|
+	And KaleoDesigner edit Workflow Definition Via KDCP
+		|workflowDefinitionTitle|Edited Workflow Definition|
+	Then KaleoDesigner view Node Not Present
+		|nodeNodeLabel|update|
+Scenario: View Invalid Source XML Remains After Tab Switch
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When KaleoDesigner edit Source XML
+		|kdSourceXML|INVALID|
+		|line|6|
+	And KaleoDesigner view View Tab
+	And KaleoDesigner view Source XML Tab
+	Then KaleoDesigner view Source XML Line
+		|kdSourceXML|INVALID|
+		|line|6|
+Scenario: View Node Notification Recipient Persists After Switching Tabs
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When KaleoDesigner select Node
+		|nodeNodeLabel|review|
+	And KaleoDesigner edit Node Notifications
+		|nodeNotificationsDescription|Review Notification Description|
+		|nodeNotificationsName|Review Notification|
+		|nodeNotificationsRecipientType|Role Type|
+		|roleName|Administrator|
+		|roleType|Regular|
+	And KaleoDesigner view Source XML Tab
+	And KaleoDesigner view View Tab
+	And KaleoDesigner select Node
+		|nodeNodeLabel|review|
+	Then KaleoDesigner view Node Notifications
+		|nodeNotificationsName|Review Notification|
+		|nodeNotificationsRecipientType|Role Type|
+		|roleName|Administrator|
+		|roleType|Regular|
+Scenario: View User Notification Option
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When KaleoDesigner select Node
+		|nodeNodeLabel|review|
+	Then KaleoDesigner view Node Notifications
+		|nodeNotificationsName|Review Notification|
+		|nodeNotificationsType|User Notification|

@@ -1,429 +1,255 @@
-<definition component-name="portal-user-management-and-portal-configuration">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Portal Instances" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="PortalInstances#tearDownCP" />
-
-				<execute macro="Page#tearDownPG" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="AddPortalInstance" priority="5">
-		<property name="test.name.skip.portal.instance" value="PortalconfigurationUsecase#AddPortalInstance" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Virtual Instances" />
-		</execute>
-
-		<execute macro="PortalInstances#addCP">
-			<var name="mailDomain" value="www.able.com" />
-			<var name="virtualHost" value="www.able.com" />
-			<var name="webId" value="www.able.com" />
-		</execute>
-
-		<execute macro="PortalInstances#viewCP">
-			<var name="virtualHost" value="www.able.com" />
-		</execute>
-	</command>
-
-	<command name="DefaultPortalLandingPage" priority="5">
-		<property name="test.name.skip.portal.instance" value="PortalconfigurationUsecase#DefaultPortalLandingPage" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="PortalSettings#editDefaultLandingPageCP">
-			<var name="defaultLandingPage" value="/web/guest/landing" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="landing" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute function="AssertLocation" value1="${portalURL}/web/guest/landing" />
-	</command>
-
-	<command name="DeletePortalInstance" priority="5">
-		<property name="test.name.skip.portal.instance" value="PortalconfigurationUsecase#DeletePortalInstance" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Virtual Instances" />
-		</execute>
-
-		<execute macro="PortalInstances#addCP">
-			<var name="mailDomain" value="www.able.com" />
-			<var name="virtualHost" value="www.able.com" />
-			<var name="webId" value="www.able.com" />
-		</execute>
-
-		<execute macro="PortalInstances#deleteCP">
-			<var name="virtualHost" value="www.able.com" />
-		</execute>
-	</command>
-
-	<command name="PermissionCheckPortalInstances" priority="4">
-		<property name="test.name.skip.portal.instance" value="PortalconfigurationUsecase#PermissionCheckPortalInstances" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Virtual Instances" />
-		</execute>
-
-		<execute macro="PortalInstances#addCP">
-			<var name="mailDomain" value="www.able.com" />
-			<var name="virtualHost" value="www.able.com" />
-			<var name="webId" value="www.able.com" />
-		</execute>
-
-		<execute macro="PortalInstances#addCP">
-			<var name="mailDomain" value="www.baker.com" />
-			<var name="virtualHost" value="www.baker.com" />
-			<var name="webId" value="www.baker.com" />
-		</execute>
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@www.able.com" />
-			<var name="virtualHostsURL" value="http://www.able.com:8080" />
-		</execute>
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="http://www.able.com:8080" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoDocumentCP">
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="DMDocument#viewCP">
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<var method="selenium#getLocation()" name="documentURL" />
-
-		<var method="StringUtil#replace('${documentURL}', 'able', 'baker')" name="otherInstanceAccessAttempt" />
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@www.baker.com" />
-			<var name="virtualHostsURL" value="http://www.baker.com:8080" />
-		</execute>
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${otherInstanceAccessAttempt}" />
-		</execute>
-
-		<execute macro="Alert#viewRequestFailedToComplete" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="You do not have the required permissions." />
-	</command>
-
-	<command name="ViewDeactivatedPortalInstance" priority="5">
-		<property name="test.name.skip.portal.instance" value="PortalconfigurationUsecase#ViewDeactivatedPortalInstance" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="System Settings" />
-		</execute>
-
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Foundation" />
-		</execute>
-
-		<execute macro="SystemSettings#editConfiguration">
-			<var name="configurationName" value="Inactive Request Handler" />
-		</execute>
-
-		<execute macro="SystemSettings#enableSetting">
-			<var name="checkboxSetting" value="SHOW_INACTIVE_REQUEST_MESSAGE" />
-		</execute>
-
-		<execute macro="SystemSettings#saveConfiguration" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Virtual Instances" />
-		</execute>
-
-		<execute macro="PortalInstances#addCP">
-			<var name="mailDomain" value="www.able.com" />
-			<var name="virtualHost" value="www.able.com" />
-			<var name="webId" value="www.able.com" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Wiki Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Wiki" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Language Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Language Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language Selector" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@www.able.com" />
-			<var name="virtualHostsURL" value="http://www.able.com:8080" />
-		</execute>
-
-		<execute macro="Page#viewNoPG">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Page#viewNoPG">
-			<var name="pageName" value="Wiki Page" />
-		</execute>
-
-		<execute macro="Page#viewNoPG">
-			<var name="pageName" value="Language Page" />
-		</execute>
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="http://www.able.com:8080" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Web Content Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoSpecificURLPage">
-			<var name="pageName" value="Web Content Page" />
-			<var name="url" value="http://www.able.com:8080" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="Navigator#gotoSpecificURLPage">
-			<var name="pageName" value="Web Content Page" />
-			<var name="url" value="http://www.able.com:8080" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Hello World" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Virtual Instances" />
-		</execute>
-
-		<execute macro="PortalInstances#deactivatePortalInstance">
-			<var name="virtualHost" value="www.able.com" />
-		</execute>
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="http://www.able.com:8080" />
-		</execute>
-
-		<execute macro="Page#viewInactiveRequestMessage">
-			<var name="resource" value="instance" />
-		</execute>
-	</command>
-
-	<command name="ViewVirtualHostPrivateSitePage" priority="4">
-		<property name="custom.properties" value="virtual.hosts.valid.hosts=localhost,127.0.0.1,www.able.com,www.baker.com,www.charlie.com" />
-		<property name="test.name.skip.portal.instance" value="PortalconfigurationUsecase#ViewVirtualHostPrivateSitePage" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="PortalSettings#editVirtualHostCP">
-			<var name="virtualHostName" value="www.able.com" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#addVirtualHostsURLCP">
-			<var name="publicPageVirtualHostURL" value="www.baker.com" />
-			<var name="publicVirtualHosts" value="${publicPageVirtualHostURL}" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#addVirtualHostsURLCP">
-			<var name="privatePageVirtualHostURL" value="www.charlie.com" />
-			<var name="privateVirtualHosts" value="${privatePageVirtualHostURL}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Public Page" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Private Page" />
-			<var name="sitePagePrivacy" value="Private Pages" />
-		</execute>
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="http://www.charlie.com:8080" />
-		</execute>
-
-		<var name="key_pageName" value="Welcome" />
-
-		<execute function="AssertElementPresent" locator1="Home#PAGE" value1="Welcome" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="specificURL" value="http://www.charlie.com:8080/group/guest" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<var name="key_pageName" value="Private Page" />
-
-		<execute function="AssertTextEquals" locator1="Home#PAGE" value1="Private Page" />
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-	</command>
-
-	<command name="ViewVirtualInstanceInheritsSystemSettings" priority="4">
-		<property name="test.name.skip.portal.instance" value="PortalconfigurationUsecase#ViewVirtualInstanceInheritsSystemSettings" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="System Settings" />
-		</execute>
-
-		<execute macro="SystemSettings#gotoCategory">
-			<var name="category" value="Foundation" />
-		</execute>
-
-		<execute macro="SystemSettings#editConfiguration">
-			<var name="configurationName" value="LDAP Auth" />
-		</execute>
-
-		<execute macro="SystemSettings#enableSetting">
-			<var name="checkboxSetting" value="ENABLED_CHECKBOX" />
-		</execute>
-
-		<execute macro="SystemSettings#saveConfiguration" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Virtual Instances" />
-		</execute>
-
-		<execute macro="PortalInstances#addCP">
-			<var name="mailDomain" value="www.able.com" />
-			<var name="virtualHost" value="www.able.com" />
-			<var name="webId" value="www.able.com" />
-		</execute>
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@www.able.com" />
-			<var name="virtualHostsURL" value="http://www.able.com:8080" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="PortalSettingsNavigator#gotoLDAP" />
-
-		<execute macro="PortalSettings#viewEnabledLDAPSetting">
-			<var name="enableCheckboxKey" value="ENABLED" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Portal Instances|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Portal Instance
+Priority: 5
+	Given these properties
+		|test.name.skip.portal.instance|PortalconfigurationUsecase#AddPortalInstance|
+	When ProductMenu goto Control Panel Configuration
+		|portlet|Virtual Instances|
+	And PortalInstances add CP
+		|mailDomain|www.able.com|
+		|virtualHost|www.able.com|
+		|webId|www.able.com|
+	Then PortalInstances view CP
+		|virtualHost|www.able.com|
+Scenario: Default Portal Landing Page
+Priority: 5
+	Given these properties
+		|test.name.skip.portal.instance|PortalconfigurationUsecase#DefaultPortalLandingPage|
+	When ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	And PortalSettings edit Default Landing Page CP
+		|defaultLandingPage|/web/guest/landing|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And Page add
+		|pageName|landing|
+		|siteName|${siteName}|
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	Then AssertLocation the value '${portalURL}/web/guest/landing'
+Scenario: Delete Portal Instance
+Priority: 5
+	Given these properties
+		|test.name.skip.portal.instance|PortalconfigurationUsecase#DeletePortalInstance|
+	When ProductMenu goto Control Panel Configuration
+		|portlet|Virtual Instances|
+	And PortalInstances add CP
+		|mailDomain|www.able.com|
+		|virtualHost|www.able.com|
+		|webId|www.able.com|
+	Then PortalInstances delete CP
+		|virtualHost|www.able.com|
+Scenario: Permission Check Portal Instances
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|PortalconfigurationUsecase#PermissionCheckPortalInstances|
+	When ProductMenu goto Control Panel Configuration
+		|portlet|Virtual Instances|
+	And PortalInstances add CP
+		|mailDomain|www.able.com|
+		|virtualHost|www.able.com|
+		|webId|www.able.com|
+	And PortalInstances add CP
+		|mailDomain|www.baker.com|
+		|virtualHost|www.baker.com|
+		|webId|www.baker.com|
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|test@www.able.com|
+		|virtualHostsURL|http://www.able.com:8080|
+	And Navigator open Specific URL
+		|url|http://www.able.com:8080|
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMDocument add CP
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_1.doc|
+		|dmDocumentTitle|DM Document Title|
+	And DMNavigator goto Document CP
+		|dmDocumentTitle|DM Document Title|
+	And DMDocument view CP
+		|dmDocumentTitle|DM Document Title|
+	And these variables
+		|documentURL|selenium#getLocation()|
+	And these variables
+		|otherInstanceAccessAttempt|StringUtil#replace('${documentURL}', 'able', 'baker')|
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|test@www.baker.com|
+		|virtualHostsURL|http://www.baker.com:8080|
+	And Navigator open Specific URL
+		|url|${otherInstanceAccessAttempt}|
+	And Alert view Request Failed To Complete
+	Then AssertTextEquals assert Partial Text the value 'You do not have the required permissions.' at locator 'Message#ERROR_2'
+Scenario: View Deactivated Portal Instance
+Priority: 5
+	Given these properties
+		|test.name.skip.portal.instance|PortalconfigurationUsecase#ViewDeactivatedPortalInstance|
+	When ProductMenu goto Control Panel Configuration
+		|portlet|System Settings|
+	And Navigator goto Nav Item
+		|navItem|Foundation|
+	And SystemSettings edit Configuration
+		|configurationName|Inactive Request Handler|
+	And SystemSettings enable Setting
+		|checkboxSetting|SHOW_INACTIVE_REQUEST_MESSAGE|
+	And SystemSettings save Configuration
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Virtual Instances|
+	And PortalInstances add CP
+		|mailDomain|www.able.com|
+		|virtualHost|www.able.com|
+		|webId|www.able.com|
+	And Navigator open URL
+	And Page add
+		|pageName|Blogs Page|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Page add
+		|pageName|Wiki Page|
+	And Navigator goto Page
+		|pageName|Wiki Page|
+	And Portlet add PG
+		|portletName|Wiki|
+	And Page add
+		|pageName|Language Page|
+	And Navigator goto Page
+		|pageName|Language Page|
+	And Portlet add PG
+		|portletName|Language Selector|
+	And User logout PG
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|test@www.able.com|
+		|virtualHostsURL|http://www.able.com:8080|
+	And Page view No PG
+		|pageName|Blogs Page|
+	And Page view No PG
+		|pageName|Wiki Page|
+	And Page view No PG
+		|pageName|Language Page|
+	And Navigator open Specific URL
+		|url|http://www.able.com:8080|
+	And Page add
+		|pageName|Web Content Page|
+	And Navigator goto Specific URL Page
+		|pageName|Web Content Page|
+		|url|http://www.able.com:8080|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And Navigator goto Specific URL Page
+		|pageName|Web Content Page|
+		|url|http://www.able.com:8080|
+	And Portlet add PG
+		|portletName|Hello World|
+	And User logout PG
+	And User login PG
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Virtual Instances|
+	And PortalInstances deactivate Portal Instance
+		|virtualHost|www.able.com|
+	And Navigator open Specific URL
+		|url|http://www.able.com:8080|
+	Then Page view Inactive Request Message
+		|resource|instance|
+Scenario: View Virtual Host Private Site Page
+Priority: 4
+	Given these properties
+		|custom.properties|virtual.hosts.valid.hosts=localhost,127.0.0.1,www.able.com,www.baker.com,www.charlie.com|
+	When these properties
+		|test.name.skip.portal.instance|PortalconfigurationUsecase#ViewVirtualHostPrivateSitePage|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	And PortalSettings edit Virtual Host CP
+		|virtualHostName|www.able.com|
+	And Navigator open URL
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Site add Virtual Hosts URLCP
+		|publicPageVirtualHostURL|www.baker.com|
+		|publicVirtualHosts|${publicPageVirtualHostURL}|
+	And Navigator open URL
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Site add Virtual Hosts URLCP
+		|privatePageVirtualHostURL|www.charlie.com|
+		|privateVirtualHosts|${privatePageVirtualHostURL}|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Public Page|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Private Page|
+		|sitePagePrivacy|Private Pages|
+	And Navigator open Specific URL
+		|url|http://www.charlie.com:8080|
+	And these variables
+		|key_pageName|Welcome|
+	And AssertElementPresent the value 'Welcome' at locator 'Home#PAGE'
+	And User login PG
+		|password|test|
+		|specificURL|http://www.charlie.com:8080/group/guest|
+		|userEmailAddress|test@liferay.com|
+	And these variables
+		|key_pageName|Private Page|
+	And AssertTextEquals the value 'Private Page' at locator 'Home#PAGE'
+	And User logout PG
+	Then User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+Scenario: View Virtual Instance Inherits System Settings
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|PortalconfigurationUsecase#ViewVirtualInstanceInheritsSystemSettings|
+	When ProductMenu goto Control Panel Configuration
+		|portlet|System Settings|
+	And SystemSettings goto Category
+		|category|Foundation|
+	And SystemSettings edit Configuration
+		|configurationName|LDAP Auth|
+	And SystemSettings enable Setting
+		|checkboxSetting|ENABLED_CHECKBOX|
+	And SystemSettings save Configuration
+	And Navigator open URL
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Virtual Instances|
+	And PortalInstances add CP
+		|mailDomain|www.able.com|
+		|virtualHost|www.able.com|
+		|webId|www.able.com|
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|test@www.able.com|
+		|virtualHostsURL|http://www.able.com:8080|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	And PortalSettingsNavigator goto LDAP
+	Then PortalSettings view Enabled LDAP Setting
+		|enableCheckboxKey|ENABLED|

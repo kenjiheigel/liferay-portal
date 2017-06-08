@@ -1,231 +1,247 @@
-<definition component-name="portal-collaboration">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column" />
-	<property name="testray.main.component.name" value="Notifications" />
+Feature:
 
-	<var name="pageName" value="Wiki Test Page" />
-	<var name="portletName" value="Wiki" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Notifications|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Notifications|
+		|pageName|Wiki Test Page|
+		|portletName|Wiki|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Wiki Test Page|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And Portlet add PG
+		|portletName|Wiki|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	Then User assign Regular Role CP
+		|roleTitle|Administrator|
+		|userScreenName|usersn|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View Website Notification For New Wiki Page
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiPortlet subscribe To Node CP
+		|wikiNodeName|Main|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And WikiNavigator goto All Pages PG
+	And WikiPage add PG
+		|wikiPageContent|Wiki Page Content|
+		|wikiPageTitle|Wiki Page Title|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Notifications view Badge Count
+		|notificationCount|1|
+	And Notifications goto Notifications
+	And Notifications view New Content
+		|assetType|wiki page|
+		|contentBody|Wiki Page Title|
+		|user|userfn userln|
+	And Notifications navigate To Content
+		|contentBody|Wiki Page Title|
+	And WikiPage view PG
+		|wikiPageContent|Wiki Page Content|
+		|wikiPageTitle|Wiki Page Title|
+	Then Notifications view Badge Count
+		|notificationCount|0|
+Scenario: View Website Notification For Updated Wiki Page
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Wiki Test Page|
+	When WikiNavigator goto All Pages PG
+	And WikiPage add PG
+		|wikiPageContent|Wiki Page Content|
+		|wikiPageTitle|Wiki Page Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiPortlet subscribe To Node CP
+		|wikiNodeName|Main|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And WikiNavigator goto All Pages PG
+	And WikiPage edit Page PG
+		|wikiPageContent|Wiki Page Content|
+		|wikiPageContentEdit|Wiki Page Content Edit|
+		|wikiPageTitle|Wiki Page Title|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Notifications view Badge Count
+		|notificationCount|1|
+	And Notifications goto Notifications
+	And Notifications view Updated Content
+		|assetType|wiki page|
+		|contentBody|Wiki Page Title|
+		|user|userfn userln|
+	And Notifications navigate To Content
+		|contentBody|Wiki Page Title|
+	And WikiPage view PG
+		|wikiPageContent|Wiki Page Content Edit|
+		|wikiPageTitle|Wiki Page Title|
+	Then Notifications view Badge Count
+		|notificationCount|0|
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Wiki Test Page|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And Portlet add PG
+		|portletName|Wiki|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	Then User assign Regular Role CP
+		|roleTitle|Administrator|
+		|userScreenName|usersn|
 
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Wiki" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="password" value="password" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#assignRegularRoleCP">
-			<var name="roleTitle" value="Administrator" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="WikiPortlet#tearDownCP" />
-
-				<execute macro="WikiPage#tearDownCP" />
-
-				<execute macro="WikiNode#tearDownCP" />
-
-				<execute macro="Page#tearDownPG" />
-
-				<execute macro="User#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="ViewWebsiteNotificationForNewWikiPage" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Wiki" />
-		</execute>
-
-		<execute macro="WikiPortlet#subscribeToNodeCP">
-			<var name="wikiNodeName" value="Main" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoAllPagesPG" />
-
-		<execute macro="WikiPage#addPG">
-			<var name="wikiPageContent" value="Wiki Page Content" />
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="1" />
-		</execute>
-
-		<execute macro="Notifications#gotoNotifications" />
-
-		<execute macro="Notifications#viewNewContent">
-			<var name="assetType" value="wiki page" />
-			<var name="contentBody" value="Wiki Page Title" />
-			<var name="user" value="userfn userln" />
-		</execute>
-
-		<execute macro="Notifications#navigateToContent">
-			<var name="contentBody" value="Wiki Page Title" />
-		</execute>
-
-		<execute macro="WikiPage#viewPG">
-			<var name="wikiPageContent" value="Wiki Page Content" />
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-	</command>
-
-	<command name="ViewWebsiteNotificationForUpdatedWikiPage" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoAllPagesPG" />
-
-		<execute macro="WikiPage#addPG">
-			<var name="wikiPageContent" value="Wiki Page Content" />
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Wiki" />
-		</execute>
-
-		<execute macro="WikiPortlet#subscribeToNodeCP">
-			<var name="wikiNodeName" value="Main" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoAllPagesPG" />
-
-		<execute macro="WikiPage#editPagePG">
-			<var name="wikiPageContent" value="Wiki Page Content" />
-			<var name="wikiPageContentEdit" value="Wiki Page Content Edit" />
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="1" />
-		</execute>
-
-		<execute macro="Notifications#gotoNotifications" />
-
-		<execute macro="Notifications#viewUpdatedContent">
-			<var name="assetType" value="wiki page" />
-			<var name="contentBody" value="Wiki Page Title" />
-			<var name="user" value="userfn userln" />
-		</execute>
-
-		<execute macro="Notifications#navigateToContent">
-			<var name="contentBody" value="Wiki Page Title" />
-		</execute>
-
-		<execute macro="WikiPage#viewPG">
-			<var name="wikiPageContent" value="Wiki Page Content Edit" />
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View Website Notification For New Wiki Page
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiPortlet subscribe To Node CP
+		|wikiNodeName|Main|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And WikiNavigator goto All Pages PG
+	And WikiPage add PG
+		|wikiPageContent|Wiki Page Content|
+		|wikiPageTitle|Wiki Page Title|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Notifications view Badge Count
+		|notificationCount|1|
+	And Notifications goto Notifications
+	And Notifications view New Content
+		|assetType|wiki page|
+		|contentBody|Wiki Page Title|
+		|user|userfn userln|
+	And Notifications navigate To Content
+		|contentBody|Wiki Page Title|
+	And WikiPage view PG
+		|wikiPageContent|Wiki Page Content|
+		|wikiPageTitle|Wiki Page Title|
+	Then Notifications view Badge Count
+		|notificationCount|0|
+Scenario: View Website Notification For Updated Wiki Page
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Wiki Test Page|
+	When WikiNavigator goto All Pages PG
+	And WikiPage add PG
+		|wikiPageContent|Wiki Page Content|
+		|wikiPageTitle|Wiki Page Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiPortlet subscribe To Node CP
+		|wikiNodeName|Main|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And WikiNavigator goto All Pages PG
+	And WikiPage edit Page PG
+		|wikiPageContent|Wiki Page Content|
+		|wikiPageContentEdit|Wiki Page Content Edit|
+		|wikiPageTitle|Wiki Page Title|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Notifications view Badge Count
+		|notificationCount|1|
+	And Notifications goto Notifications
+	And Notifications view Updated Content
+		|assetType|wiki page|
+		|contentBody|Wiki Page Title|
+		|user|userfn userln|
+	And Notifications navigate To Content
+		|contentBody|Wiki Page Title|
+	And WikiPage view PG
+		|wikiPageContent|Wiki Page Content Edit|
+		|wikiPageTitle|Wiki Page Title|
+	Then Notifications view Badge Count
+		|notificationCount|0|

@@ -1,176 +1,104 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.component.names" value="Navigation" />
-	<property name="testray.main.component.name" value="Navigation" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.component.names|Navigation|
+		|testray.main.component.name|Navigation|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Site#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="DisplayStyleOptions" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Sites Directory" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="parentSiteName" value="Site Name" />
-			<var name="siteName" value="Child SiteName 1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#searchInputCP">
-			<var name="siteName" value="Child SiteName 1" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Child SiteName 1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="parentSiteName" value="Site Name" />
-			<var name="siteName" value="Child SiteName 2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#searchInputCP">
-			<var name="siteName" value="Child SiteName 2" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Child SiteName 2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="parentSiteName" value="Site Name" />
-			<var name="siteName" value="Child SiteName 3" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#searchInputCP">
-			<var name="siteName" value="Child SiteName 3" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Child SiteName 3" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="SitesDirectory#viewDefaultConfigurationPG" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="SitesDirectory#viewDescriptivePG">
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="SitesDirectory#viewDescriptivePG">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="SitesDirectory#configureSetupPG">
-			<var name="directorySites" value="Parent Level" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="Message#INFO" value1="No sites were found." />
-
-		<execute macro="SitesDirectory#configureSetupPG">
-			<var name="directoryDisplayStyle" value="List Hierarchy" />
-			<var name="directorySites" value="Top Level" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="SitesDirectory#viewListHierarchyPG">
-			<var name="availableSiteName" value="${siteName}" />
-			<var name="childSiteName1" value="Child SiteName 1" />
-			<var name="childSiteName2" value="Child SiteName 2" />
-			<var name="childSiteName3" value="Child SiteName 3" />
-			<var name="currentSiteName" value="Site Name" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Display Style Options
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Sites Directory|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|parentSiteName|Site Name|
+		|siteName|Child SiteName 1|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site search Input CP
+		|siteName|Child SiteName 1|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Child SiteName 1|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|parentSiteName|Site Name|
+		|siteName|Child SiteName 2|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site search Input CP
+		|siteName|Child SiteName 2|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Child SiteName 2|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|parentSiteName|Site Name|
+		|siteName|Child SiteName 3|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site search Input CP
+		|siteName|Child SiteName 3|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Child SiteName 3|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And SitesDirectory view Default Configuration PG
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And SitesDirectory view Descriptive PG
+		|siteName|${siteName}|
+	And SitesDirectory view Descriptive PG
+		|siteName|Site Name|
+	And SitesDirectory configure Setup PG
+		|directorySites|Parent Level|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And AssertTextEquals the value 'No sites were found.' at locator 'Message#INFO'
+	And SitesDirectory configure Setup PG
+		|directoryDisplayStyle|List Hierarchy|
+		|directorySites|Top Level|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Site Name|
+	Then SitesDirectory view List Hierarchy PG
+		|availableSiteName|${siteName}|
+		|childSiteName1|Child SiteName 1|
+		|childSiteName2|Child SiteName 2|
+		|childSiteName3|Child SiteName 3|
+		|currentSiteName|Site Name|

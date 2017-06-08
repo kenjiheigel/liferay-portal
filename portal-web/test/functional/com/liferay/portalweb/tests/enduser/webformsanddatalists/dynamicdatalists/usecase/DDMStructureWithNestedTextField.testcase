@@ -1,117 +1,89 @@
-<definition component-name="portal-web-forms-and-data-lists">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Dynamic Data Lists" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Dynamic Data Lists|
 
-		<execute macro="User#firstLoginPG" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Dynamic Data Lists|
+	And DDLDataDefinition add CP
+	And DynamicDataMapping add Field
+		|field|Text|
+		|fieldFieldLabel|Text Parent|
+		|fieldName|textParent|
+	And DynamicDataMapping add Field Nested
+		|field|Text|
+		|fieldFieldLabel|Text Child|
+		|fieldName|textChild|
+	And DDLDataDefinition save
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Dynamic Data Lists|
+	And DDLList add CP
+	And DDLDataDefinition select CP
+	And DDLList save
+	And Navigator open URL
+	Then ProductMenu goto Sites Content
+		|portlet|Dynamic Data Lists|
 
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Dynamic Data Lists" />
-		</execute>
-
-		<execute macro="DDLDataDefinition#addCP" />
-
-		<execute macro="DynamicDataMapping#addField">
-			<var name="field" value="Text" />
-			<var name="fieldFieldLabel" value="Text Parent" />
-			<var name="fieldName" value="textParent" />
-		</execute>
-
-		<execute macro="DynamicDataMapping#addFieldNested">
-			<var name="field" value="Text" />
-			<var name="fieldFieldLabel" value="Text Child" />
-			<var name="fieldName" value="textChild" />
-		</execute>
-
-		<execute macro="DDLDataDefinition#save" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Dynamic Data Lists" />
-		</execute>
-
-		<execute macro="DDLList#addCP" />
-
-		<execute macro="DDLDataDefinition#selectCP" />
-
-		<execute macro="DDLList#save" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Dynamic Data Lists" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="User#firstLoginPG" />
-
-				<execute macro="DDLList#tearDownCP" />
-
-				<execute macro="DDLDataDefinition#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="ViewFieldTranslations" priority="4">
-		<description message="This is a use case for LPS-69335." />
-
-		<execute macro="DDLRecord#addCP" />
-
-		<execute macro="DDLRecord#populateFieldText">
-			<var name="ddlRecordFieldData" value="English (United States) Parent" />
-			<var name="fieldName" value="textParent" />
-		</execute>
-
-		<execute macro="DDLRecord#populateFieldText">
-			<var name="ddlRecordFieldData" value="English (United States) Child" />
-			<var name="fieldName" value="textChild" />
-		</execute>
-
-		<for list="Spanish (Spain),Portuguese (Brazil)" param="language">
-			<execute macro="DDLRecord#addTranslation">
-				<var name="localizedLanguage" value="${language}" />
-			</execute>
-
-			<execute macro="DDLRecord#populateFieldText">
-				<var name="ddlRecordFieldData" value="${language} Parent" />
-				<var name="fieldName" value="textParent" />
-			</execute>
-
-			<execute macro="DDLRecord#populateFieldText">
-				<var name="ddlRecordFieldData" value="${language} Child" />
-				<var name="fieldName" value="textChild" />
-			</execute>
-		</for>
-
-		<for list="English (United States),Spanish (Spain),Portuguese (Brazil)" param="language">
-			<execute macro="DDLRecord#selectTranslation">
-				<var name="localizedLanguage" value="${language}" />
-			</execute>
-
-			<execute macro="FormFields#viewTextValue">
-				<var name="fieldName" value="textParent" />
-				<var name="fieldValue" value="${language} Parent" />
-			</execute>
-
-			<execute macro="FormFields#viewTextValue">
-				<var name="fieldName" value="textChild" />
-				<var name="fieldValue" value="${language} Child" />
-			</execute>
-		</for>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View Field Translations
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When DDLRecord add CP
+	And DDLRecord populate Field Text
+		|ddlRecordFieldData|English (United States) Parent|
+		|fieldName|textParent|
+	And DDLRecord populate Field Text
+		|ddlRecordFieldData|English (United States) Child|
+		|fieldName|textChild|
+	And DDLRecord add Translation
+		|localizedLanguage|Spanish (Spain)|
+	And DDLRecord populate Field Text
+		|ddlRecordFieldData|Spanish (Spain) Parent|
+		|fieldName|textParent|
+	And DDLRecord populate Field Text
+		|ddlRecordFieldData|Spanish (Spain) Child|
+		|fieldName|textChild|
+	And DDLRecord add Translation
+		|localizedLanguage|Portuguese (Brazil)|
+	And DDLRecord populate Field Text
+		|ddlRecordFieldData|Portuguese (Brazil) Parent|
+		|fieldName|textParent|
+	And DDLRecord populate Field Text
+		|ddlRecordFieldData|Portuguese (Brazil) Child|
+		|fieldName|textChild|
+	And DDLRecord select Translation
+		|localizedLanguage|English (United States)|
+	And FormFields view Text Value
+		|fieldName|textParent|
+		|fieldValue|English (United States) Parent|
+	And FormFields view Text Value
+		|fieldName|textChild|
+		|fieldValue|English (United States) Child|
+	And DDLRecord select Translation
+		|localizedLanguage|Spanish (Spain)|
+	And FormFields view Text Value
+		|fieldName|textParent|
+		|fieldValue|Spanish (Spain) Parent|
+	And FormFields view Text Value
+		|fieldName|textChild|
+		|fieldValue|Spanish (Spain) Child|
+	And DDLRecord select Translation
+		|localizedLanguage|Portuguese (Brazil)|
+	And FormFields view Text Value
+		|fieldName|textParent|
+		|fieldValue|Portuguese (Brazil) Parent|
+	Then FormFields view Text Value
+		|fieldName|textChild|
+		|fieldValue|Portuguese (Brazil) Child|

@@ -1,292 +1,317 @@
-<definition component-name="portal-workflow">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Workflow" />
-
-	<var name="pageName" value="Asset Publisher Page" />
-	<var name="portletName" value="Asset Publisher" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Workflow Configuration" />
-		</execute>
-
-		<execute macro="Workflow#configureWorkflow">
-			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowResourceValue" value="Blogs Entry" />
-		</execute>
-
-		<execute macro="Workflow#configureWorkflow">
-			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowResourceValue" value="Message Boards Message" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="Workflow#configureWorkflowViaFolderInfo">
-			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="MessageboardsThread#tearDownCP" />
-
-				<execute macro="BlogsEntry#tearDownCP" />
-
-				<execute macro="WebContent#tearDownCP" />
-
-				<execute macro="Page#tearDownPG" />
-
-				<execute macro="Workflow#tearDownPortalWorkflow" />
-
-				<execute macro="Workflow#tearDownSiteWorkflow" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="ApproveBlogsEntryPG" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="Blogs#addWithWorkflowViaAP">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="workflowAssetTitle" value="Blogs Entry Title" />
-			<var name="workflowAssetType" value="Blogs Entry" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewWithWorkflowPGViaAP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#approveTaskByActions">
-			<var name="workflowAssetTitle" value="Blogs Entry Title" />
-			<var name="workflowAssetType" value="Blogs Entry" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewPGViaAP">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Submissions" />
-		</execute>
-
-		<execute macro="Workflow#gotoViewCompletedAssetViaMySubmissions">
-			<var name="workflowAssetTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntryAsWorkflowAsset">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="ApproveMessageBoardsThreadPG" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addWithWorkflowCP">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="workflowAssetTitle" value="MB Thread Message Subject" />
-			<var name="workflowAssetType" value="Message Boards Message" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewWithWorkflowPGViaAP">
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#approveTaskByActions">
-			<var name="workflowAssetTitle" value="MB Thread Message Subject" />
-			<var name="workflowAssetType" value="Message Boards Message" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewPGViaAP">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-	</command>
-
-	<command name="ApproveWebContentPG" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="WebContent#addWithWorkflowPGViaAP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="workflowAssetTitle" value="WC WebContent Title" />
-			<var name="workflowAssetType" value="Web Content Article" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="WebContent#viewWithWorkflowPGViaAP">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#approveTaskByActions">
-			<var name="workflowAssetTitle" value="WC WebContent Title" />
-			<var name="workflowAssetType" value="Web Content Article" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaAP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-	</command>
-
-	<command name="RejectBlogsEntryPG" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="Blogs#addWithWorkflowViaAP">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="workflowAssetTitle" value="Blogs Entry Title" />
-			<var name="workflowAssetType" value="Blogs Entry" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewWithWorkflowPGViaAP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#rejectTaskByActions">
-			<var name="workflowAssetTitle" value="Blogs Entry Title" />
-			<var name="workflowAssetType" value="Blogs Entry" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#viewRejectedTask">
-			<var name="workflowAssetTitle" value="Blogs Entry Title" />
-			<var name="workflowAssetType" value="Blogs Entry" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewWithWorkflowPGViaAP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="webContentTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Workflow|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Workflow|
+		|pageName|Asset Publisher Page|
+		|portletName|Asset Publisher|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Navigator open URL
+	And ProductMenu goto Sites Configuration
+		|portlet|Workflow Configuration|
+	And Workflow configure Workflow
+		|workflowDefinition|Single Approver (Version 1)|
+		|workflowResourceValue|Blogs Entry|
+	And Workflow configure Workflow
+		|workflowDefinition|Single Approver (Version 1)|
+		|workflowResourceValue|Message Boards Message|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And Workflow configure Workflow Via Folder Info
+		|workflowDefinition|Single Approver (Version 1)|
+	And Page add
+		|pageName|Asset Publisher Page|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	Then Portlet add PG
+		|portletName|Asset Publisher|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Approve Blogs Entry PG
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Asset Publisher Page|
+	When Blogs add With Workflow Via AP
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|Blogs Entry Title|
+		|workflowAssetType|Blogs Entry|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And BlogsEntry view With Workflow PG Via AP
+		|entryTitle|Blogs Entry Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow approve Task By Actions
+		|workflowAssetTitle|Blogs Entry Title|
+		|workflowAssetType|Blogs Entry|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And BlogsEntry view PG Via AP
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Page goto My Account
+		|portletName|My Submissions|
+	And Workflow goto View Completed Asset Via My Submissions
+		|workflowAssetTitle|Blogs Entry Title|
+	Then BlogsEntry view Entry As Workflow Asset
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+Scenario: Approve Message Boards Thread PG
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread add With Workflow CP
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|MB Thread Message Subject|
+		|workflowAssetType|Message Boards Message|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And MessageboardsThread view With Workflow PG Via AP
+		|threadSubject|MB Thread Message Subject|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow approve Task By Actions
+		|workflowAssetTitle|MB Thread Message Subject|
+		|workflowAssetType|Message Boards Message|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	Then MessageboardsThread view PG Via AP
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+Scenario: Approve Web Content PG
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Asset Publisher Page|
+	When WebContent add With Workflow PG Via AP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And WebContent view With Workflow PG Via AP
+		|webContentTitle|WC WebContent Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow approve Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	Then WebContent view PG Via AP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+Scenario: Reject Blogs Entry PG
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Asset Publisher Page|
+	When Blogs add With Workflow Via AP
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|Blogs Entry Title|
+		|workflowAssetType|Blogs Entry|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And BlogsEntry view With Workflow PG Via AP
+		|entryTitle|Blogs Entry Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow reject Task By Actions
+		|workflowAssetTitle|Blogs Entry Title|
+		|workflowAssetType|Blogs Entry|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow view Rejected Task
+		|workflowAssetTitle|Blogs Entry Title|
+		|workflowAssetType|Blogs Entry|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	Then BlogsEntry view With Workflow PG Via AP
+		|entryTitle|Blogs Entry Title|
+		|webContentTitle|Blogs Entry Title|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Navigator open URL
+	And ProductMenu goto Sites Configuration
+		|portlet|Workflow Configuration|
+	And Workflow configure Workflow
+		|workflowDefinition|Single Approver (Version 1)|
+		|workflowResourceValue|Blogs Entry|
+	And Workflow configure Workflow
+		|workflowDefinition|Single Approver (Version 1)|
+		|workflowResourceValue|Message Boards Message|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And Workflow configure Workflow Via Folder Info
+		|workflowDefinition|Single Approver (Version 1)|
+	And Page add
+		|pageName|Asset Publisher Page|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	Then Portlet add PG
+		|portletName|Asset Publisher|
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Approve Blogs Entry PG
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Asset Publisher Page|
+	When Blogs add With Workflow Via AP
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|Blogs Entry Title|
+		|workflowAssetType|Blogs Entry|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And BlogsEntry view With Workflow PG Via AP
+		|entryTitle|Blogs Entry Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow approve Task By Actions
+		|workflowAssetTitle|Blogs Entry Title|
+		|workflowAssetType|Blogs Entry|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And BlogsEntry view PG Via AP
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Page goto My Account
+		|portletName|My Submissions|
+	And Workflow goto View Completed Asset Via My Submissions
+		|workflowAssetTitle|Blogs Entry Title|
+	Then BlogsEntry view Entry As Workflow Asset
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+Scenario: Approve Message Boards Thread PG
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread add With Workflow CP
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|MB Thread Message Subject|
+		|workflowAssetType|Message Boards Message|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And MessageboardsThread view With Workflow PG Via AP
+		|threadSubject|MB Thread Message Subject|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow approve Task By Actions
+		|workflowAssetTitle|MB Thread Message Subject|
+		|workflowAssetType|Message Boards Message|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	Then MessageboardsThread view PG Via AP
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+Scenario: Approve Web Content PG
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Asset Publisher Page|
+	When WebContent add With Workflow PG Via AP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And WebContent view With Workflow PG Via AP
+		|webContentTitle|WC WebContent Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow approve Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	Then WebContent view PG Via AP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+Scenario: Reject Blogs Entry PG
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Asset Publisher Page|
+	When Blogs add With Workflow Via AP
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|Blogs Entry Title|
+		|workflowAssetType|Blogs Entry|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And BlogsEntry view With Workflow PG Via AP
+		|entryTitle|Blogs Entry Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow reject Task By Actions
+		|workflowAssetTitle|Blogs Entry Title|
+		|workflowAssetType|Blogs Entry|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow view Rejected Task
+		|workflowAssetTitle|Blogs Entry Title|
+		|workflowAssetType|Blogs Entry|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	Then BlogsEntry view With Workflow PG Via AP
+		|entryTitle|Blogs Entry Title|
+		|webContentTitle|Blogs Entry Title|

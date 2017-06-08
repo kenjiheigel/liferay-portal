@@ -1,81 +1,46 @@
-<definition component-name="portal-test-plugins">
-	<property name="custom.properties" value="web.server.display.node=true" />
-	<property name="ext.plugins.includes" value="sample-ext" />
-	<property name="portal.release.environment" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Test Plugins" />
+Feature:
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|custom.properties|web.server.display.node=true|
+		|ext.plugins.includes|sample-ext|
+		|portal.release.environment|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Test Plugins|
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="MessageboardsThread#tearDownCP" />
 
-				<execute macro="DMDocument#tearDownCP" />
-
-				<execute macro="Page#tearDownPG" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="ViewSampleExtPluginValidationViaDeploy" priority="5">
-		<execute macro="Portlet#assertServerStartup" />
-
-		<execute macro="Portlet#shutdownServer" />
-
-		<execute macro="Portlet#assertServerShutdown" />
-
-		<execute macro="Portlet#startServer">
-			<var name="deleteLiferayHome" value="false" />
-		</execute>
-
-		<execute macro="Portlet#assertServerStartup" />
-
-		<execute function="AssertConsoleTextPresent" value1="EXT_ATOM_SERVLET_INSTALLED" />
-
-		<execute function="AssertConsoleTextPresent" value1="EXT_WEB_SERVLET_INSTALLED" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#INFO" value1="ext_portal_impl_installed_" />
-
-		<execute function="AssertElementNotPresent" locator1="Home#ERROR_MESSAGE_EXPIRED_SESSION" />
-
-		<execute function="AssertElementNotPresent" locator1="UserBar#USER_SIGN_IN" />
-
-		<execute function="Pause" locator1="120000" />
-
-		<execute function="AssertTextEquals" locator1="Home#ERROR_MESSAGE_EXPIRED_SESSION" value1="DangerDue to inactivity, your session has expired. Please save any data you may have entered before refreshing the page." />
-		<execute function="Refresh" />
-
-		<execute function="AssertElementPresent" locator1="UserBar#USER_SIGN_IN" value1="Sign In" />
-	</command>
-
-	<command name="ViewSampleExtPluginValidationViaDirectDeploy" priority="5">
-		<property name="direct.deploy.enabled" value="true" />
-
-		<execute function="AssertConsoleTextPresent" value1="EXT_ATOM_SERVLET_INSTALLED" />
-
-		<execute function="AssertConsoleTextPresent" value1="EXT_WEB_SERVLET_INSTALLED" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#INFO" value1="ext_portal_impl_installed_" />
-
-		<execute function="AssertElementNotPresent" locator1="Home#ERROR_MESSAGE_EXPIRED_SESSION" />
-
-		<execute function="AssertElementNotPresent" locator1="UserBar#USER_SIGN_IN" />
-
-		<execute function="Pause" locator1="120000" />
-
-		<execute function="AssertTextEquals" locator1="Home#ERROR_MESSAGE_EXPIRED_SESSION" value1="DangerDue to inactivity, your session has expired. Please save any data you may have entered before refreshing the page." />
-		<execute function="Refresh" />
-
-		<execute function="AssertElementPresent" locator1="UserBar#USER_SIGN_IN" value1="Sign In" />
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View Sample Ext Plugin Validation Via Deploy
+Priority: 5
+	Given Portlet assert Server Startup
+	When Portlet shutdown Server
+	And Portlet assert Server Shutdown
+	And Portlet start Server
+		|deleteLiferayHome|false|
+	And Portlet assert Server Startup
+	And AssertConsoleTextPresent the value 'EXT_ATOM_SERVLET_INSTALLED'
+	And AssertConsoleTextPresent the value 'EXT_WEB_SERVLET_INSTALLED'
+	And User first Login PG
+	And AssertTextEquals assert Partial Text the value 'ext_portal_impl_installed_' at locator 'Message#INFO'
+	And AssertElementNotPresent at locator 'Home#ERROR_MESSAGE_EXPIRED_SESSION'
+	And AssertElementNotPresent at locator 'UserBar#USER_SIGN_IN'
+	And Pause at locator '120000'
+	And AssertTextEquals the value 'DangerDue to inactivity, your session has expired. Please save any data you may have entered before refreshing the page.' at locator 'Home#ERROR_MESSAGE_EXPIRED_SESSION'
+	And Refresh
+	Then AssertElementPresent the value 'Sign In' at locator 'UserBar#USER_SIGN_IN'
+Scenario: View Sample Ext Plugin Validation Via Direct Deploy
+Priority: 5
+	Given these properties
+		|direct.deploy.enabled|true|
+	When AssertConsoleTextPresent the value 'EXT_ATOM_SERVLET_INSTALLED'
+	And AssertConsoleTextPresent the value 'EXT_WEB_SERVLET_INSTALLED'
+	And User first Login PG
+	And AssertTextEquals assert Partial Text the value 'ext_portal_impl_installed_' at locator 'Message#INFO'
+	And AssertElementNotPresent at locator 'Home#ERROR_MESSAGE_EXPIRED_SESSION'
+	And AssertElementNotPresent at locator 'UserBar#USER_SIGN_IN'
+	And Pause at locator '120000'
+	And AssertTextEquals the value 'DangerDue to inactivity, your session has expired. Please save any data you may have entered before refreshing the page.' at locator 'Home#ERROR_MESSAGE_EXPIRED_SESSION'
+	And Refresh
+	Then AssertElementPresent the value 'Sign In' at locator 'UserBar#USER_SIGN_IN'

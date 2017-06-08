@@ -1,881 +1,537 @@
-<definition component-name="portal-collaboration">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Blogs" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="BlogsEntry#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command description="Ensure that a user can add multiple Blogs Entries." name="AddBlogsEntries" priority="4">
-		<property name="testray.component.names" value="Blogs" />
-		<property name="testray.main.component.name" value="Blogs" />
-
-		<task summary="Add a blogs entry called 'Blogs Entry1 Title' with content 'Blogs Entry1 Content'">
-			<execute macro="Navigator#openURL" />
-
-			<execute macro="ProductMenu#gotoSitesContent">
-				<var name="portlet" value="Blogs" />
-			</execute>
-
-			<execute macro="Blogs#addEntry">
-				<var name="entryContent" value="Blogs Entry1 Content" />
-				<var name="entryTitle" value="Blogs Entry1 Title" />
-			</execute>
-		</task>
-
-		<task summary="Add a blogs entry called 'Blogs Entry2 Title' with content 'Blogs Entry2 Content'">
-			<execute macro="Navigator#openURL" />
-
-			<execute macro="ProductMenu#gotoSitesContent">
-				<var name="portlet" value="Blogs" />
-			</execute>
-
-			<execute macro="Blogs#addEntry">
-				<var name="entryContent" value="Blogs Entry2 Content" />
-				<var name="entryTitle" value="Blogs Entry2 Title" />
-			</execute>
-		</task>
-
-		<task summary="Add a blogs entry called 'Blogs Entry3 Title' with content 'Blogs Entry3 Content'">
-			<execute macro="Navigator#openURL" />
-
-			<execute macro="ProductMenu#gotoSitesContent">
-				<var name="portlet" value="Blogs" />
-			</execute>
-
-			<execute macro="Blogs#addEntry">
-				<var name="entryContent" value="Blogs Entry3 Content" />
-				<var name="entryTitle" value="Blogs Entry3 Title" />
-			</execute>
-		</task>
-
-		<task summary="Ensure blogs entry 'Blogs Entry1 Title' with content 'Blogs Entry1 Content' can be found">
-			<execute macro="Navigator#openURL" />
-
-			<execute macro="ProductMenu#gotoSitesContent">
-				<var name="portlet" value="Blogs" />
-			</execute>
-
-			<execute macro="BlogsNavigator#gotoEntryCP">
-				<var name="entryTitle" value="Blogs Entry1 Title" />
-			</execute>
-
-			<execute macro="BlogsEntry#viewEntry">
-				<var name="entryContent" value="Blogs Entry1 Content" />
-				<var name="entryTitle" value="Blogs Entry1 Title" />
-			</execute>
-		</task>
-
-		<task summary="Ensure blogs entry 'Blogs Entry2 Title' with content 'Blogs Entry2 Content' can be found">
-			<execute macro="Navigator#openURL" />
-
-			<execute macro="ProductMenu#gotoSitesContent">
-				<var name="portlet" value="Blogs" />
-			</execute>
-
-			<execute macro="BlogsNavigator#gotoEntryCP">
-				<var name="entryTitle" value="Blogs Entry2 Title" />
-			</execute>
-
-			<execute macro="BlogsEntry#viewEntry">
-				<var name="entryContent" value="Blogs Entry2 Content" />
-				<var name="entryTitle" value="Blogs Entry2 Title" />
-			</execute>
-		</task>
-
-		<task summary="Ensure blogs entry 'Blogs Entry3 Title' with content 'Blogs Entry3 Content' can be found">
-			<execute macro="Navigator#openURL" />
-
-			<execute macro="ProductMenu#gotoSitesContent">
-				<var name="portlet" value="Blogs" />
-			</execute>
-
-			<execute macro="BlogsNavigator#gotoEntryCP">
-				<var name="entryTitle" value="Blogs Entry3 Title" />
-			</execute>
-
-			<execute macro="BlogsEntry#viewEntry">
-				<var name="entryContent" value="Blogs Entry3 Content" />
-				<var name="entryTitle" value="Blogs Entry3 Title" />
-			</execute>
-		</task>
-	</command>
-
-	<command name="AddBlogsEntry" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryCP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="AddBlogsEntryContentNull" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addWithInvalidContent">
-			<var name="entryInvalidContent" value="" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewDefaultCP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="AddBlogsEntryTitleEscapeCharacters" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle">&amp; &lt; &gt; &quot; Escape Characters Entry</var>
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryCP">
-			<var name="entryTitle">&amp; &lt; &gt; &quot; Escape Characters Entry</var>
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle">&amp; &lt; &gt; &quot; Escape Characters Entry</var>
-		</execute>
-	</command>
-
-	<command name="AddBlogsEntryTitleNull" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addWithInvalidTitle">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryInvalidTitle" value="" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewDefaultCP">
-			<var name="entryTitle" value="" />
-		</execute>
-	</command>
-
-	<command name="AddBlogsEntryWithInlineImageViaURL" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoAddEntry" />
-
-		<execute macro="BlogsEntry#addTitle">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#addContent">
-			<var name="entryContent" value="Blogs Entry Content" />
-		</execute>
-
-		<execute macro="ItemSelector#gotoItemSelectorViaAlloyEditor" />
-
-		<execute macro="ItemSelector#addFromURL">
-			<var name="imageSourceURL" value="https://dummyimage.com/600x400/000/fff.jpg" />
-		</execute>
-
-		<execute function="Pause" locator1="1000" />
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryCP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewInlineImage">
-			<var name="uploadFileName" value="https://dummyimage.com/600x400/000/fff.jpg" />
-		</execute>
-	</command>
-
-	<command name="AddBlogsEntryWithSubtitle" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryCP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="CKEditorSmoke" priority="5">
-		<property name="custom.properties" value="editor.wysiwyg.portal-web.docroot.html.portlet.blogs.edit_entry.jsp=ckeditor" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoAddEntry" />
-
-		<execute macro="AlloyEditor#addTitle">
-			<var name="title" value="CKEditor Entry Title" />
-		</execute>
-
-		<execute macro="CKEditor#assertEditorPresent" />
-
-		<execute macro="CKEditor#addContent">
-			<var name="content" value="CKEditor Entry Content" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryCP">
-			<var name="entryTitle" value="CKEditor Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewTitle">
-			<var name="entryTitle" value="CKEditor Entry Title" />
-		</execute>
-
-		<execute function="SelectFrame" locator1="CKEditor#BODY_FIELD_IFRAME" />
-
-		<execute macro="CKEditor#viewEntryContent">
-			<var name="content" value="CKEditor Entry Content" />
-		</execute>
-	</command>
-
-	<command name="DeleteBlogsEntries" priority="5">
-		<property name="portal.acceptance" value="quarantine" />
-
-		<for list="1,2,3" param="entryCount" >
-			<execute macro="Navigator#openURL" />
-
-			<execute macro="ProductMenu#gotoSitesContent">
-				<var name="portlet" value="Blogs" />
-			</execute>
-
-			<execute macro="Blogs#addEntry">
-				<var name="entryContent" value="Blogs Entry${entryCount} Content" />
-				<var name="entryTitle" value="Blogs Entry${entryCount} Title" />
-			</execute>
-		</for>
-
-		<for list="1,2,3" param="entryCount" >
-			<execute macro="Navigator#openURL" />
-
-			<execute macro="ProductMenu#gotoSitesContent">
-				<var name="portlet" value="Blogs" />
-			</execute>
-
-			<execute macro="BlogsNavigator#gotoEntryCP">
-				<var name="entryContent" value="Blogs Entry${entryCount} Content" />
-				<var name="entryTitle" value="Blogs Entry${entryCount} Title" />
-			</execute>
-
-			<execute macro="BlogsEntry#viewEntry">
-				<var name="entryContent" value="Blogs Entry${entryCount} Content" />
-				<var name="entryTitle" value="Blogs Entry${entryCount} Title" />
-			</execute>
-		</for>
-
-		<for list="1,2,3" param="entryCount" >
-			<execute macro="Navigator#openURL" />
-
-			<execute macro="ProductMenu#gotoSitesContent">
-				<var name="portlet" value="Blogs" />
-			</execute>
-
-			<execute macro="BlogsNavigator#moveToRecycleBinCP">
-				<var name="assetType" value="Blogs Entry" />
-				<var name="entryTitle" value="Blogs Entry${entryCount} Title" />
-			</execute>
-		</for>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<for list="1,2,3" param="entryCount" >
-			<execute macro="BlogsEntry#viewNoCP">
-				<var name="entryTitle" value="Blogs Entry${entryCount} Title" />
-			</execute>
-		</for>
-	</command>
-
-	<command name="EditBlogsEntryContent" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEditCP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#editContent">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryContentEdit" value="Blogs Entry Content Edit" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryCP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content Edit" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="EditBlogsEntryTitle" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEditCP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#editTitle">
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="entryTitleEdit" value="Blogs Entry Title Edit" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryCP">
-			<var name="entryTitle" value="Blogs Entry Title Edit" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title Edit" />
-		</execute>
-	</command>
-
-	<command name="PublishBlogsEntryDraft" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addDraft">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#publishDraftCP">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryCP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="SaveBlogsEntryDraft" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addDraft">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryCP">
-			<var name="entryStatus" value="Draft" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="SaveBlogsEntryDraftAuto" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addDraftViaAutoSave">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryCP">
-			<var name="entryStatus" value="Draft" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="SearchBlogsEntryContent" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="DMPortlet#setDescriptiveView" />
-
-		<execute macro="BlogsEntry#searchCP">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySearchTerm" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#searchCP">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySearchTerm" value="Blogs" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#searchCP">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySearchTerm" value="Entry" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#searchCP">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySearchTerm" value="Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#searchNoCP">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySearchTerm" value="Blogs1 Entry1 Content1" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="SearchBlogsEntryTitle" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="DMPortlet#setDescriptiveView" />
-
-		<execute macro="BlogsEntry#searchCP">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySearchTerm" value="Blogs Entry Title" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#searchCP">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySearchTerm" value="Blogs" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#searchCP">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySearchTerm" value="Entry" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#searchCP">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySearchTerm" value="Title" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#searchNoCP">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySearchTerm" value="Blogs1 Entry1 Title1" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="SearchBlogsImagesViaItemSelector" priority="3">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntryWithUploadedCoverImage">
-			<var name="coverImageName" value="Document_1" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="navTab" value="Upload Image" />
-			<var name="uploadFileName" value="Document_1.jpg" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="BlogsNavigator#gotoEntryCP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="uploadFileName" value="Document_1" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoBrowseImage" />
-
-		<execute macro="ItemSelector#searchBlogImages">
-			<var name="imageFileName" value="Document_1.jpg" />
-		</execute>
-	</command>
-
-	<command name="SearchDMImagesViaItemSelector" priority="3">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntryWithUploadedCoverImage">
-			<var name="coverImageName" value="Document_1" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="navTab" value="Documents and Media" />
-			<var name="uploadFileName" value="Document_1.jpg" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="BlogsNavigator#gotoEntryCP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="uploadFileName" value="Document_1" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoBrowseImage" />
-
-		<execute macro="ItemSelector#searchDMImages">
-			<var name="imageFileName" value="Document_1.jpg" />
-		</execute>
-	</command>
-
-	<command name="ViewBlogsEntryDraftWithCoverImage" priority="3">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntryWithUploadedCoverImage">
-			<var name="coverImageName" value="Document_1" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="navTab" value="Upload Image" />
-			<var name="uploadFileName" value="Document_1.jpg" />
-		</execute>
-
-		<execute function="Pause" locator1="1000" />
-
-		<execute macro="BlogsEntry#saveAsDraft" />
-
-		<execute function="Click" locator1="Icon#BACK" />
-
-		<execute function="Click" locator1="Icon#DISPLAY_STYLE_DESCRIPTIVE" />
-
-		<var name="key_entryTitle" value="Blogs Entry Title" />
-
-		<execute function="AssertTextEquals" locator1="Blogs#DESCRIPTIVE_VIEW_ENTRY_TITLE" value1="Blogs Entry Title" />
-		<execute function="AssertTextEquals" locator1="Blogs#DESCRIPTIVE_VIEW_ENTRY_STATUS" value1="Draft" />
-
-		<execute macro="BlogsNavigator#gotoEntryCP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="uploadFileName" value="Document_1" />
-		</execute>
-	</command>
-
-	<command name="ViewCoverImageDetails" priority="3">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntryWithUploadedCoverImage">
-			<var name="coverImageName" value="Document_1" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="navTab" value="Upload Image" />
-			<var name="uploadFileName" value="Document_1.jpg" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="BlogsNavigator#gotoEntryCP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="uploadFileName" value="Document_1" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoBrowseImage" />
-
-		<execute macro="ItemSelector#viewBlogImageDetails">
-			<var name="imageFileName" value="Document_1.jpg" />
-			<var name="imageFormat" value="jpg" />
-			<var name="imageSize" value="13KB" />
-			<var name="imageStatus" value="approved" />
-			<var name="lastModifiedBy" value="Test Test" />
-			<var name="uploadFileName" value="Document_1.jpg" />
-			<var name="versionNumber" value="1.0" />
-		</execute>
-	</command>
-
-	<command name="ViewErrorMessageForNullCustomAbstract" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoAddEntry" />
-
-		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Configuration" />
-		</execute>
-
-		<execute function="Click" locator1="Radio#CUSTOM_ABSTRACT" />
-
-		<execute function="AssertClick#assertTextClickAt" locator1="Button#PUBLISH" value1="Publish" />
-
-		<execute function="AssertTextEquals" locator1="BlogsEntry#TITLE_FIELD_HELPER" value1="This field is required to publish the entry." />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="BlogsEntry#CONTENT_FIELD_HELPER" value1="This field is required." />
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Blogs|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Blogs Entries
+Description: Ensure that a user can add multiple Blogs Entries.
+Priority: 4
+	Given these properties
+		|testray.component.names|Blogs|
+	When these properties
+		|testray.main.component.name|Blogs|
+##########################################################
+The Poshi task element is not supported in the readable syntax. Please update this test.
+##########################################################
+##########################################################
+The Poshi task element is not supported in the readable syntax. Please update this test.
+##########################################################
+##########################################################
+The Poshi task element is not supported in the readable syntax. Please update this test.
+##########################################################
+##########################################################
+The Poshi task element is not supported in the readable syntax. Please update this test.
+##########################################################
+##########################################################
+The Poshi task element is not supported in the readable syntax. Please update this test.
+##########################################################
+##########################################################
+The Poshi task element is not supported in the readable syntax. Please update this test.
+##########################################################
+Scenario: Add Blogs Entry
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Entry CP
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+Scenario: Add Blogs Entry Content Null
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add With Invalid Content
+		|entryInvalidContent||
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	Then BlogsEntry view Default CP
+		|entryTitle|Blogs Entry Title|
+Scenario: Add Blogs Entry Title Escape Characters
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle||
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Entry CP
+		|entryTitle||
+	Then BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle||
+Scenario: Add Blogs Entry Title Null
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add With Invalid Title
+		|entryContent|Blogs Entry Content|
+		|entryInvalidTitle||
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	Then BlogsEntry view Default CP
+		|entryTitle||
+Scenario: Add Blogs Entry With Inline Image Via URL
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Add Entry
+	And BlogsEntry add Title
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry add Content
+		|entryContent|Blogs Entry Content|
+	And ItemSelector goto Item Selector Via Alloy Editor
+	And ItemSelector add From URL
+		|imageSourceURL|https://dummyimage.com/600x400/000/fff.jpg|
+	And Pause at locator '1000'
+	And PortletEntry publish
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Entry CP
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Inline Image
+		|uploadFileName|https://dummyimage.com/600x400/000/fff.jpg|
+Scenario: Add Blogs Entry With Subtitle
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Entry CP
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+Scenario: CK Editor Smoke
+Priority: 5
+	Given these properties
+		|custom.properties|editor.wysiwyg.portal-web.docroot.html.portlet.blogs.edit_entry.jsp=ckeditor|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Add Entry
+	And AlloyEditor add Title
+		|title|CKEditor Entry Title|
+	And CKEditor assert Editor Present
+	And CKEditor add Content
+		|content|CKEditor Entry Content|
+	And PortletEntry publish
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Entry CP
+		|entryTitle|CKEditor Entry Title|
+	And BlogsEntry view Title
+		|entryTitle|CKEditor Entry Title|
+	And SelectFrame at locator 'CKEditor#BODY_FIELD_IFRAME'
+	Then CKEditor view Entry Content
+		|content|CKEditor Entry Content|
+Scenario: Delete Blogs Entries
+Priority: 5
+	Given these properties
+		|portal.acceptance|quarantine|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry1 Content|
+		|entryTitle|Blogs Entry1 Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry2 Content|
+		|entryTitle|Blogs Entry2 Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry3 Content|
+		|entryTitle|Blogs Entry3 Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Entry CP
+		|entryContent|Blogs Entry1 Content|
+		|entryTitle|Blogs Entry1 Title|
+	And BlogsEntry view Entry
+		|entryContent|Blogs Entry1 Content|
+		|entryTitle|Blogs Entry1 Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Entry CP
+		|entryContent|Blogs Entry2 Content|
+		|entryTitle|Blogs Entry2 Title|
+	And BlogsEntry view Entry
+		|entryContent|Blogs Entry2 Content|
+		|entryTitle|Blogs Entry2 Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Entry CP
+		|entryContent|Blogs Entry3 Content|
+		|entryTitle|Blogs Entry3 Title|
+	And BlogsEntry view Entry
+		|entryContent|Blogs Entry3 Content|
+		|entryTitle|Blogs Entry3 Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator move To Recycle Bin CP
+		|assetType|Blogs Entry|
+		|entryTitle|Blogs Entry1 Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator move To Recycle Bin CP
+		|assetType|Blogs Entry|
+		|entryTitle|Blogs Entry2 Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator move To Recycle Bin CP
+		|assetType|Blogs Entry|
+		|entryTitle|Blogs Entry3 Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsEntry view No CP
+		|entryTitle|Blogs Entry1 Title|
+	And BlogsEntry view No CP
+		|entryTitle|Blogs Entry2 Title|
+	Then BlogsEntry view No CP
+		|entryTitle|Blogs Entry3 Title|
+Scenario: Edit Blogs Entry Content
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Edit CP
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry edit Content
+		|entryContent|Blogs Entry Content|
+		|entryContentEdit|Blogs Entry Content Edit|
+		|entryTitle|Blogs Entry Title|
+	And PortletEntry publish
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Entry CP
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Entry
+		|entryContent|Blogs Entry Content Edit|
+		|entryTitle|Blogs Entry Title|
+Scenario: Edit Blogs Entry Title
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Edit CP
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry edit Title
+		|entryTitle|Blogs Entry Title|
+		|entryTitleEdit|Blogs Entry Title Edit|
+	And PortletEntry publish
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Entry CP
+		|entryTitle|Blogs Entry Title Edit|
+	Then BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title Edit|
+Scenario: Publish Blogs Entry Draft
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Draft
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs publish Draft CP
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Entry CP
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+Scenario: Save Blogs Entry Draft
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Draft
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Entry CP
+		|entryStatus|Draft|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+Scenario: Save Blogs Entry Draft Auto
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Draft Via Auto Save
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Entry CP
+		|entryStatus|Draft|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+Scenario: Search Blogs Entry Content
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And DMPortlet set Descriptive View
+	And BlogsEntry search CP
+		|entryContent|Blogs Entry Content|
+		|entrySearchTerm|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry search CP
+		|entryContent|Blogs Entry Content|
+		|entrySearchTerm|Blogs|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry search CP
+		|entryContent|Blogs Entry Content|
+		|entrySearchTerm|Entry|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry search CP
+		|entryContent|Blogs Entry Content|
+		|entrySearchTerm|Content|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry search No CP
+		|entryContent|Blogs Entry Content|
+		|entrySearchTerm|Blogs1 Entry1 Content1|
+		|entryTitle|Blogs Entry Title|
+Scenario: Search Blogs Entry Title
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And DMPortlet set Descriptive View
+	And BlogsEntry search CP
+		|entryContent|Blogs Entry Content|
+		|entrySearchTerm|Blogs Entry Title|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry search CP
+		|entryContent|Blogs Entry Content|
+		|entrySearchTerm|Blogs|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry search CP
+		|entryContent|Blogs Entry Content|
+		|entrySearchTerm|Entry|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry search CP
+		|entryContent|Blogs Entry Content|
+		|entrySearchTerm|Title|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry search No CP
+		|entryContent|Blogs Entry Content|
+		|entrySearchTerm|Blogs1 Entry1 Title1|
+		|entryTitle|Blogs Entry Title|
+Scenario: Search Blogs Images Via Item Selector
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry With Uploaded Cover Image
+		|coverImageName|Document_1|
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+		|navTab|Upload Image|
+		|uploadFileName|Document_1.jpg|
+	And PortletEntry publish
+	And BlogsNavigator goto Entry CP
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+		|uploadFileName|Document_1|
+	And BlogsNavigator goto Browse Image
+	Then ItemSelector search Blog Images
+		|imageFileName|Document_1.jpg|
+Scenario: Search DM Images Via Item Selector
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry With Uploaded Cover Image
+		|coverImageName|Document_1|
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+		|navTab|Documents and Media|
+		|uploadFileName|Document_1.jpg|
+	And PortletEntry publish
+	And BlogsNavigator goto Entry CP
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+		|uploadFileName|Document_1|
+	And BlogsNavigator goto Browse Image
+	Then ItemSelector search DM Images
+		|imageFileName|Document_1.jpg|
+Scenario: View Blogs Entry Draft With Cover Image
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry With Uploaded Cover Image
+		|coverImageName|Document_1|
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+		|navTab|Upload Image|
+		|uploadFileName|Document_1.jpg|
+	And Pause at locator '1000'
+	And BlogsEntry save As Draft
+	And Click at locator 'Icon#BACK'
+	And Click at locator 'Icon#DISPLAY_STYLE_DESCRIPTIVE'
+	And these variables
+		|key_entryTitle|Blogs Entry Title|
+	And AssertTextEquals the value 'Blogs Entry Title' at locator 'Blogs#DESCRIPTIVE_VIEW_ENTRY_TITLE'
+	And AssertTextEquals the value 'Draft' at locator 'Blogs#DESCRIPTIVE_VIEW_ENTRY_STATUS'
+	And BlogsNavigator goto Entry CP
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+		|uploadFileName|Document_1|
+Scenario: View Cover Image Details
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry With Uploaded Cover Image
+		|coverImageName|Document_1|
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+		|navTab|Upload Image|
+		|uploadFileName|Document_1.jpg|
+	And PortletEntry publish
+	And BlogsNavigator goto Entry CP
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+		|uploadFileName|Document_1|
+	And BlogsNavigator goto Browse Image
+	Then ItemSelector view Blog Image Details
+		|imageFileName|Document_1.jpg|
+		|imageFormat|jpg|
+		|imageSize|13KB|
+		|imageStatus|approved|
+		|lastModifiedBy|Test Test|
+		|uploadFileName|Document_1.jpg|
+		|versionNumber|1.0|
+Scenario: View Error Message For Null Custom Abstract
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Add Entry
+	And Panel expand Panel
+		|panelHeading|Configuration|
+	And Click at locator 'Radio#CUSTOM_ABSTRACT'
+	And AssertClick assert Text Click At the value 'Publish' at locator 'Button#PUBLISH'
+	And AssertTextEquals the value 'This field is required to publish the entry.' at locator 'BlogsEntry#TITLE_FIELD_HELPER'
+	Then AssertTextEquals assert Partial Text the value 'This field is required.' at locator 'BlogsEntry#CONTENT_FIELD_HELPER'

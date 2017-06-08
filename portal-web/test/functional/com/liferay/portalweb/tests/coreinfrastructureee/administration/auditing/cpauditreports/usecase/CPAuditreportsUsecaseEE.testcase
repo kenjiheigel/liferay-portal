@@ -1,236 +1,157 @@
-<definition component-name="portal-core-infrastructure-portal-services-ee">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="test.run.environment" value="EE" />
-	<property name="testray.main.component.name" value="Auditing" />
-	<property name="testray.testcase.product.edition" value="EE" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|test.run.environment|EE|
+		|testray.main.component.name|Auditing|
+		|testray.testcase.product.edition|EE|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="User#tearDownCP" />
-
-				<execute macro="Role#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="ViewResourceActionsCP" priority="4">
-		<property name="test.name.skip.portal.instance" value="CPAuditreportsUsecaseEE#ViewResourceActionsCP" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Server Administration" />
-		</execute>
-
-		<execute macro="ServerAdministration#executeServerResourcesActions">
-			<var name="actionsDescription" value="Reindex all search indexes." />
-		</execute>
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<var name="key_userScreenName" value="test" />
-
-		<execute function="AssertClick" locator1="UsersAndOrganizations#USER_TABLE_SCREEN_NAME" value1="test" />
-
-		<execute function="Pause" locator1="5000" />
-
-		<var locator="UsersAndOrganizationsEditUser#DETAILS_USER_ID_FIELD" name="userId" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Audit" />
-		</execute>
-
-		<execute macro="Audit#searchCP">
-			<var name="searchTerm" value="${userId}" />
-			<var name="userId" value="${userId}" />
-			<var name="userName" value="Test Test" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Audit" />
-		</execute>
-
-		<execute macro="Audit#searchCP">
-			<var name="searchTerm" value="Test Test" />
-			<var name="userName" value="Test Test" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Audit" />
-		</execute>
-
-		<execute macro="Audit#searchCP">
-			<var name="resourceId" value="${userId}" />
-			<var name="searchTerm" value="${userId}" />
-			<var name="userName" value="Test Test" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Audit" />
-		</execute>
-
-		<execute macro="Audit#searchCP">
-			<var name="resourceName" value="User" />
-			<var name="searchTerm" value="User" />
-			<var name="userName" value="Test Test" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Audit" />
-		</execute>
-
-		<execute macro="Audit#searchCP">
-			<var name="resourceAction" value="Login" />
-			<var name="searchTerm" value="Login" />
-			<var name="userName" value="Test Test" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserInvalidPG">
-			<var name="password" value="user" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Audit" />
-		</execute>
-
-		<var name="key_resourceAction" value="Login Failure" />
-		<var name="key_resourceName" value="User" />
-
-		<execute function="AssertTextEquals" locator1="AuditReports#REPORTS_TABLE_RESOURCE_ACTION" value1="Login Failure" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="test1@liferay.com" />
-			<var name="userFirstName" value="test1" />
-			<var name="userLastName" value="test1" />
-			<var name="userScreenName" value="test1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="test1@liferay.com" />
-			<var name="userScreenName" value="test1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#impersonateCP">
-			<var name="siteName" value="${siteName}" />
-			<var name="userScreenName" value="test1" />
-		</execute>
-
-		<execute function="Close#closeWindow" locator1="title=Welcome - ${siteName}" />
-		<execute function="SelectWindow" locator1="title=Users and Organizations - Control Panel - ${siteName}" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Audit" />
-		</execute>
-
-		<var name="key_resourceAction" value="Impersonate" />
-		<var name="key_resourceName" value="User" />
-
-		<execute function="AssertTextEquals" locator1="AuditReports#REPORTS_TABLE_RESOURCE_ACTION" value1="Impersonate" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#add">
-			<var name="roleTitle" value="Role1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#assignRegRoleCP">
-			<var name="roleTitle" value="Role1" />
-			<var name="userScreenName" value="test1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="User Groups" />
-		</execute>
-
-		<execute macro="UserGroup#addCP">
-			<var name="userGroupName" value="User Group1" />
-		</execute>
-
-		<execute macro="UserGroup#assignMemberCP">
-			<var name="userGroupName" value="User Group1" />
-			<var name="userScreenName" value="test1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Audit" />
-		</execute>
-
-		<var name="key_resourceAction" value="Add" />
-		<var name="key_resourceName" value="Role" />
-
-		<execute function="AssertTextEquals" locator1="AuditReports#REPORTS_TABLE_RESOURCE_NAME" value1="Role" />
-
-		<var name="key_resourceAction" value="Add" />
-		<var name="key_resourceName" value="Role" />
-
-		<execute function="AssertTextEquals" locator1="AuditReports#REPORTS_TABLE_RESOURCE_ACTION" value1="Add" />
-
-		<var name="key_resourceAction" value="Assign" />
-		<var name="key_resourceName" value="User" />
-
-		<execute function="AssertTextEquals" locator1="AuditReports#REPORTS_TABLE_RESOURCE_NAME" value1="User" />
-
-		<var name="key_resourceAction" value="Assign" />
-		<var name="key_resourceName" value="User" />
-
-		<execute function="AssertTextEquals" locator1="AuditReports#REPORTS_TABLE_RESOURCE_ACTION" value1="Assign" />
-
-		<var name="key_resourceAction" value="Add" />
-		<var name="key_resourceName" value="User Group" />
-
-		<execute function="AssertTextEquals" locator1="AuditReports#REPORTS_TABLE_RESOURCE_NAME" value1="User Group" />
-
-		<var name="key_resourceAction" value="Add" />
-		<var name="key_resourceName" value="User Group" />
-
-		<execute function="AssertTextEquals" locator1="AuditReports#REPORTS_TABLE_RESOURCE_ACTION" value1="Add" />
-
-		<execute function="AssertTextEquals" locator1="xpath=(//tr[contains(.,'Assign') and contains(.,'User')]/td[4])[2]" value1="User" />
-		<execute function="AssertTextEquals" locator1="xpath=(//tr[contains(.,'Assign') and contains(.,'User')]/td[5])[2]" value1="Assign" />
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View Resource Actions CP
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|CPAuditreportsUsecaseEE#ViewResourceActionsCP|
+	When ProductMenu goto Control Panel Configuration
+		|portlet|Server Administration|
+	And ServerAdministration execute Server Resources Actions
+		|actionsDescription|Reindex all search indexes.|
+	And TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And these variables
+		|key_userScreenName|test|
+	And AssertClick the value 'test' at locator 'UsersAndOrganizations#USER_TABLE_SCREEN_NAME'
+	And Pause at locator '5000'
+	And these variables
+		|userId||
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Audit|
+	And Audit search CP
+		|searchTerm|${userId}|
+		|userId|${userId}|
+		|userName|Test Test|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Audit|
+	And Audit search CP
+		|searchTerm|Test Test|
+		|userName|Test Test|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Audit|
+	And Audit search CP
+		|resourceId|${userId}|
+		|searchTerm|${userId}|
+		|userName|Test Test|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Audit|
+	And Audit search CP
+		|resourceName|User|
+		|searchTerm|User|
+		|userName|Test Test|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Audit|
+	And Audit search CP
+		|resourceAction|Login|
+		|searchTerm|Login|
+		|userName|Test Test|
+	And User logout PG
+	And User login User Invalid PG
+		|password|user|
+		|userEmailAddress|test@liferay.com|
+	And User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Audit|
+	And these variables
+		|key_resourceAction|Login Failure|
+	And these variables
+		|key_resourceName|User|
+	And AssertTextEquals the value 'Login Failure' at locator 'AuditReports#REPORTS_TABLE_RESOURCE_ACTION'
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|test1@liferay.com|
+		|userFirstName|test1|
+		|userLastName|test1|
+		|userScreenName|test1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|test1@liferay.com|
+		|userScreenName|test1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User impersonate CP
+		|siteName|${siteName}|
+		|userScreenName|test1|
+	And Close close Window at locator 'title=Welcome - ${siteName}'
+	And SelectWindow at locator 'title=Users and Organizations - Control Panel - ${siteName}'
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Audit|
+	And these variables
+		|key_resourceAction|Impersonate|
+	And these variables
+		|key_resourceName|User|
+	And AssertTextEquals the value 'Impersonate' at locator 'AuditReports#REPORTS_TABLE_RESOURCE_ACTION'
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role add
+		|roleTitle|Role1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role assign Reg Role CP
+		|roleTitle|Role1|
+		|userScreenName|test1|
+	And ProductMenu goto Control Panel Users
+		|portlet|User Groups|
+	And UserGroup add CP
+		|userGroupName|User Group1|
+	And UserGroup assign Member CP
+		|userGroupName|User Group1|
+		|userScreenName|test1|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Audit|
+	And these variables
+		|key_resourceAction|Add|
+	And these variables
+		|key_resourceName|Role|
+	And AssertTextEquals the value 'Role' at locator 'AuditReports#REPORTS_TABLE_RESOURCE_NAME'
+	And these variables
+		|key_resourceAction|Add|
+	And these variables
+		|key_resourceName|Role|
+	And AssertTextEquals the value 'Add' at locator 'AuditReports#REPORTS_TABLE_RESOURCE_ACTION'
+	And these variables
+		|key_resourceAction|Assign|
+	And these variables
+		|key_resourceName|User|
+	And AssertTextEquals the value 'User' at locator 'AuditReports#REPORTS_TABLE_RESOURCE_NAME'
+	And these variables
+		|key_resourceAction|Assign|
+	And these variables
+		|key_resourceName|User|
+	And AssertTextEquals the value 'Assign' at locator 'AuditReports#REPORTS_TABLE_RESOURCE_ACTION'
+	And these variables
+		|key_resourceAction|Add|
+	And these variables
+		|key_resourceName|User Group|
+	And AssertTextEquals the value 'User Group' at locator 'AuditReports#REPORTS_TABLE_RESOURCE_NAME'
+	And these variables
+		|key_resourceAction|Add|
+	And these variables
+		|key_resourceName|User Group|
+	And AssertTextEquals the value 'Add' at locator 'AuditReports#REPORTS_TABLE_RESOURCE_ACTION'
+	And AssertTextEquals the value 'User' at locator 'xpath=(//tr[contains(.,'Assign') and contains(.,'User')]/td[4])[2]'
+	Then AssertTextEquals the value 'Assign' at locator 'xpath=(//tr[contains(.,'Assign') and contains(.,'User')]/td[5])[2]'

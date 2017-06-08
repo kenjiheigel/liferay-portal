@@ -1,166 +1,82 @@
-<definition component-name="portal-document-management-ee">
-	<property name="cmis.repository.type" value="sharepoint2010" />
-	<property name="custom.properties" value="session.store.password=true${line.separator}company.security.auth.type=screenName${line.separator}default.layout.template.id=1_column" />
-	<property name="osgi.app.includes" value="sharepoint" />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="test.run.environment" value="EE" />
-	<property name="testray.main.component.name" value="Documents Management" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|cmis.repository.type|sharepoint2010|
+		|custom.properties|session.store.password=true${line.separator}company.security.auth.type=screenName${line.separator}default.layout.template.id=1_column|
+		|osgi.app.includes|sharepoint|
+		|portal.release|true|
+		|portal.upstream|true|
+		|test.run.environment|EE|
+		|testray.main.component.name|Documents Management|
 
-		<var method="TestPropsUtil#get('cmis.repository.vm.host.name')" name="sharepointVMHostName" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When these variables
+		|sharepointVMHostName|TestPropsUtil#get('cmis.repository.vm.host.name')|
+	And AntCommand the value 'clean-sharepoint-repository -Dssh.host=${sharepointVMHostName}' at locator 'build-test-sharepoint.xml'
+	And User login PG
+		|authenticationMethod|By Screen Name|
+		|userScreenName|test|
+	And Page goto My Account
+		|portletName|Account Settings|
+	And User edit Details Via My Account
+		|userScreenNameEdit|administrator|
+	And Page goto My Account
+		|portletName|Account Settings|
+	And User edit Password Via My Account
+		|currentPassword|test|
+		|newPassword|password|
+	And User logout PG
+	And User login PG
+		|authenticationMethod|By Screen Name|
+		|password|password|
+		|userScreenName|administrator|
+	And Page add
+		|pageName|Documents and Media Page|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Portlet add PG
+		|portletName|Documents and Media|
+	And DMNavigator goto Add Repository PG
+	And DMRepository edit
+		|dmRepositoryName|Sharepoint Repository Name|
+	And DMRepository add Sharepoint
+		|dmRepositoryLibraryName|Documents|
+		|dmRepositorySiteURL|http://${sharepointVMHostName}|
+	And PortletEntry save
+	And DMDocument enable Actions Menu On Portlet
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	Then DMPortlet set Descriptive View
 
-		<execute function="AntCommand" locator1="build-test-sharepoint.xml" value1="clean-sharepoint-repository -Dssh.host=${sharepointVMHostName}" />
-
-		<execute macro="User#loginPG">
-			<var name="authenticationMethod" value="By Screen Name" />
-			<var name="userScreenName" value="test" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="Account Settings" />
-		</execute>
-
-		<execute macro="User#editDetailsViaMyAccount">
-			<var name="userScreenNameEdit" value="administrator" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="Account Settings" />
-		</execute>
-
-		<execute macro="User#editPasswordViaMyAccount">
-			<var name="currentPassword" value="test" />
-			<var name="newPassword" value="password" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG">
-			<var name="authenticationMethod" value="By Screen Name" />
-			<var name="password" value="password" />
-			<var name="userScreenName" value="administrator" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoAddRepositoryPG" />
-
-		<execute macro="DMRepository#edit">
-			<var name="dmRepositoryName" value="Sharepoint Repository Name" />
-		</execute>
-
-		<execute macro="DMRepository#addSharepoint">
-			<var name="dmRepositoryLibraryName" value="Documents" />
-			<var name="dmRepositorySiteURL" value="http://${sharepointVMHostName}" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="DMDocument#enableActionsMenuOnPortlet" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMPortlet#setDescriptiveView" />
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="DMRepository#tearDownCP" />
-
-				<execute macro="DMDocument#tearDownCP" />
-
-				<execute macro="Page#gotoMyAccount">
-					<var name="portletName" value="Account Settings" />
-				</execute>
-
-				<execute macro="User#editDetailsViaMyAccount">
-					<var name="userScreenNameEdit" value="test" />
-				</execute>
-
-				<execute macro="Page#gotoMyAccount">
-					<var name="portletName" value="Account Settings" />
-				</execute>
-
-				<execute macro="User#editPasswordViaMyAccount">
-					<var name="currentPassword" value="password" />
-					<var name="newPassword" value="test" />
-				</execute>
-
-				<execute macro="User#logoutPG" />
-
-				<execute macro="User#loginPG">
-					<var name="authenticationMethod" value="By Screen Name" />
-					<var name="password" value="test" />
-					<var name="userScreenName" value="test" />
-				</execute>
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="ViewDocumentAsGuest" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoRepository">
-			<var name="dmRepositoryName" value="Sharepoint Repository Name" />
-		</execute>
-
-		<execute macro="DMDocument#addPG">
-			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="Document_1.doc" />
-		</execute>
-
-		<execute macro="DMDocument#viewPG">
-			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="Document_1.doc" />
-			<var name="dmRepositoryName" value="true" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMPortlet#setDescriptiveView" />
-
-		<execute macro="DMNavigator#gotoRepository">
-			<var name="dmRepositoryName" value="Sharepoint Repository Name" />
-		</execute>
-
-		<execute macro="DMDocument#viewPG">
-			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="Document_1.doc" />
-			<var name="dmRepositoryName" value="true" />
-		</execute>
-
-		<execute macro="User#loginPG">
-			<var name="authenticationMethod" value="By Screen Name" />
-			<var name="password" value="password" />
-			<var name="userScreenName" value="administrator" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View Document As Guest
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Documents and Media Page|
+	When DMNavigator goto Repository
+		|dmRepositoryName|Sharepoint Repository Name|
+	And DMDocument add PG
+		|dmDocumentFile|Document_1.doc|
+		|dmDocumentTitle|Document_1.doc|
+	And DMDocument view PG
+		|dmDocumentFile|Document_1.doc|
+		|dmDocumentTitle|Document_1.doc|
+		|dmRepositoryName|true|
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMPortlet set Descriptive View
+	And DMNavigator goto Repository
+		|dmRepositoryName|Sharepoint Repository Name|
+	And DMDocument view PG
+		|dmDocumentFile|Document_1.doc|
+		|dmDocumentTitle|Document_1.doc|
+		|dmRepositoryName|true|
+	Then User login PG
+		|authenticationMethod|By Screen Name|
+		|password|password|
+		|userScreenName|administrator|

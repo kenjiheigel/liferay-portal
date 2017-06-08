@@ -1,253 +1,180 @@
-<definition component-name="portal-tags">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.component.names" value="Tags" />
-	<property name="testray.main.component.name" value="Tags" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.component.names|Tags|
+		|testray.main.component.name|Tags|
 
-		<execute macro="User#firstLoginPG" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And ProductMenu goto Sites Content
+		|portlet|Tags|
+	Then Tag add CP
+		|tagName|tagname1|
 
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Tags" />
-		</execute>
-
-		<execute macro="Tag#addCP">
-			<var name="tagName" value="tagname1" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Tag#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="CannotMergeSingleTagViewWarning" priority="4">
-		<execute macro="Tag#gotoMerge">
-			<var name="mergeMethod" value="menuItem" />
-			<var name="tagName" value="tagname1" />
-		</execute>
-
-		<execute macro="Tag#mergeSingleTagWarning" />
-	</command>
-
-	<command name="DeleteMultipleTagsFromToolbar" priority="4">
-		<execute macro="Tag#viewCP">
-			<var name="tagName" value="tagname1" />
-		</execute>
-
-		<for list="2,3" param="i">
-			<execute macro="Tag#addCP">
-				<var name="tagName" value="tagname${i}" />
-			</execute>
-
-			<execute macro="Tag#viewCP">
-				<var name="tagName" value="tagname${i}" />
-			</execute>
-		</for>
-
-		<execute macro="PortletEntry#deleteViaToolbar">
-			<var name="rowEntries" value="tagname1,tagname2,tagname3" />
-		</execute>
-
-		<execute macro="Alert#viewSuccessMessage" />
-
-		<execute macro="Portlet#viewEmptyMessage">
-			<var name="message" value="There are no tags." />
-		</execute>
-	</command>
-
-	<command name="DeleteTagFromMenu" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Tag#viewCP">
-			<var name="tagName" value="tagname1" />
-		</execute>
-
-		<execute macro="PortletEntry#deleteViaMenuItem">
-			<var name="rowEntry" value="tagname1" />
-		</execute>
-
-		<execute macro="Alert#viewSuccessMessage" />
-
-		<execute macro="Portlet#viewEmptyMessage">
-			<var name="message" value="There are no tags." />
-		</execute>
-	</command>
-
-	<command name="DeleteTagFromToolbar" priority="4">
-		<execute macro="Tag#viewCP">
-			<var name="tagName" value="tagname1" />
-		</execute>
-
-		<execute macro="PortletEntry#deleteViaToolbar">
-			<var name="rowEntries" value="tagname1" />
-		</execute>
-
-		<execute macro="Alert#viewSuccessMessage" />
-
-		<execute macro="Portlet#viewEmptyMessage">
-			<var name="message" value="There are no tags." />
-		</execute>
-	</command>
-
-	<command name="EditTagAndCancel" priority="4">
-		<execute macro="Tag#viewCP">
-			<var name="tagName" value="tagname1" />
-		</execute>
-
-		<execute macro="LexiconEntry#gotoEntryMenuItem">
-			<var name="menuItem" value="Edit" />
-			<var name="rowEntry" value="tagname1" />
-		</execute>
-
-		<execute macro="PortletEntry#inputName">
-			<var name="name" value="tagname2" />
-		</execute>
-
-		<execute macro="Button#clickCancel" />
-
-		<execute macro="Tag#viewCP">
-			<var name="tagName" value="tagname1" />
-		</execute>
-
-		<execute function="AssertTextNotPresent" value1="tagname2" />
-	</command>
-
-	<command name="EditTagAndSave" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Tag#viewCP">
-			<var name="tagName" value="tagname1" />
-		</execute>
-
-		<execute macro="LexiconEntry#gotoEntryMenuItem">
-			<var name="menuItem" value="Edit" />
-			<var name="rowEntry" value="tagname1" />
-		</execute>
-
-		<execute macro="PortletEntry#inputName">
-			<var name="name" value="tagname2" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Tag#viewCP">
-			<var name="tagName" value="tagname2" />
-		</execute>
-
-		<execute function="AssertTextNotPresent" value1="tagname1" />
-	</command>
-
-	<command name="MergeMultipleTags" priority="4">
-		<for list="2,3" param="i">
-			<execute macro="Tag#addCP">
-				<var name="tagName" value="tagname${i}" />
-			</execute>
-
-			<execute macro="Tag#viewCP">
-				<var name="tagName" value="tagname${i}" />
-			</execute>
-		</for>
-
-		<for list="1,2,3" param="i">
-			<execute macro="LexiconEntry#selectEntry">
-				<var name="rowEntry" value="tagname${i}" />
-			</execute>
-		</for>
-
-		<execute macro="Tag#gotoMerge" />
-
-		<execute macro="Tag#mergeTags">
-			<var name="mergedTag" value="tagname1" />
-			<var name="tagNameList" value="tagname1,tagname2,tagname3" />
-		</execute>
-
-		<execute macro="Tag#viewCP">
-			<var name="tagName" value="tagname1" />
-		</execute>
-
-		<for list="2,3" param="i">
-			<execute function="AssertTextNotPresent" value1="tagname${i}" />
-		</for>
-	</command>
-
-	<command name="MergeTagsSelectAdditionalTag" priority="3">
-		<for list="2,3,4,5,6,7" param="i">
-			<execute macro="Tag#addCP">
-				<var name="tagName" value="tagname${i}" />
-			</execute>
-
-			<execute macro="Tag#viewCP">
-				<var name="tagName" value="tagname${i}" />
-			</execute>
-		</for>
-
-		<execute macro="Pagination#changePagination">
-			<var name="itemsPerPage" value="5" />
-		</execute>
-
-		<execute macro="Pagination#viewResults">
-			<var name="results" value="Showing 1 to 5 of 7 entries." />
-		</execute>
-
-		<for list="1,2,3" param="i">
-			<execute macro="LexiconEntry#selectEntry">
-				<var name="rowEntry" value="tagname${i}" />
-			</execute>
-		</for>
-
-		<execute macro="Tag#gotoMerge" />
-
-		<execute macro="Tag#mergeTagsSelectAdditionalTags">
-			<var name="tagName" value="tagname7" />
-		</execute>
-
-		<execute macro="Tag#mergeTags">
-			<var name="mergedTag" value="tagname1" />
-			<var name="tagNameList" value="tagname1,tagname2,tagname3,tagname7" />
-		</execute>
-
-		<for list="1,4,5,6" param="i">
-			<execute macro="Tag#viewCP">
-				<var name="tagName" value="tagname${i}" />
-			</execute>
-		</for>
-
-		<for list="2,3,7" param="i">
-			<execute function="AssertTextNotPresent" value1="tagname${i}" />
-		</for>
-	</command>
-
-	<command name="ToggleDisplayStyles" priority="4">
-		<execute macro="Portlet#changeDisplayStyle">
-			<var name="displayStyle" value="icon" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="Card#GENERIC_LARGE_TEXT" value1="tagname1" />
-
-		<execute macro="Portlet#changeDisplayStyle">
-			<var name="displayStyle" value="descriptive" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="ContentRow#ENTRY_CONTENT_DESCRIPTIVE_TITLE" value1="tagname1" />
-
-		<execute macro="Portlet#changeDisplayStyle">
-			<var name="displayStyle" value="list" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="ContentRow#ENTRY_CONTENT_LIST_COLUMN" value1="tagname1">
-			<var name="key_columnNumber" value="2" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Cannot Merge Single Tag View Warning
+Priority: 4
+	Given Tag goto Merge
+		|mergeMethod|menuItem|
+		|tagName|tagname1|
+	When Tag merge Single Tag Warning
+Scenario: Delete Multiple Tags From Toolbar
+Priority: 4
+	Given Tag view CP
+		|tagName|tagname1|
+	When Tag add CP
+		|tagName|tagname2|
+	And Tag view CP
+		|tagName|tagname2|
+	And Tag add CP
+		|tagName|tagname3|
+	And Tag view CP
+		|tagName|tagname3|
+	And PortletEntry delete Via Toolbar
+		|rowEntries|tagname1,tagname2,tagname3|
+	And Alert view Success Message
+	Then Portlet view Empty Message
+		|message|There are no tags.|
+Scenario: Delete Tag From Menu
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Tag view CP
+		|tagName|tagname1|
+	And PortletEntry delete Via Menu Item
+		|rowEntry|tagname1|
+	And Alert view Success Message
+	Then Portlet view Empty Message
+		|message|There are no tags.|
+Scenario: Delete Tag From Toolbar
+Priority: 4
+	Given Tag view CP
+		|tagName|tagname1|
+	When PortletEntry delete Via Toolbar
+		|rowEntries|tagname1|
+	And Alert view Success Message
+	Then Portlet view Empty Message
+		|message|There are no tags.|
+Scenario: Edit Tag And Cancel
+Priority: 4
+	Given Tag view CP
+		|tagName|tagname1|
+	When LexiconEntry goto Entry Menu Item
+		|menuItem|Edit|
+		|rowEntry|tagname1|
+	And PortletEntry input Name
+		|name|tagname2|
+	And Button click Cancel
+	And Tag view CP
+		|tagName|tagname1|
+	Then AssertTextNotPresent the value 'tagname2'
+Scenario: Edit Tag And Save
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Tag view CP
+		|tagName|tagname1|
+	And LexiconEntry goto Entry Menu Item
+		|menuItem|Edit|
+		|rowEntry|tagname1|
+	And PortletEntry input Name
+		|name|tagname2|
+	And PortletEntry save
+	And Tag view CP
+		|tagName|tagname2|
+	Then AssertTextNotPresent the value 'tagname1'
+Scenario: Merge Multiple Tags
+Priority: 4
+	Given Tag add CP
+		|tagName|tagname2|
+	When Tag view CP
+		|tagName|tagname2|
+	And Tag add CP
+		|tagName|tagname3|
+	And Tag view CP
+		|tagName|tagname3|
+	And LexiconEntry select Entry
+		|rowEntry|tagname1|
+	And LexiconEntry select Entry
+		|rowEntry|tagname2|
+	And LexiconEntry select Entry
+		|rowEntry|tagname3|
+	And Tag goto Merge
+	And Tag merge Tags
+		|mergedTag|tagname1|
+		|tagNameList|tagname1,tagname2,tagname3|
+	And Tag view CP
+		|tagName|tagname1|
+	And AssertTextNotPresent the value 'tagname2'
+	Then AssertTextNotPresent the value 'tagname3'
+Scenario: Merge Tags Select Additional Tag
+Priority: 3
+	Given Tag add CP
+		|tagName|tagname2|
+	When Tag view CP
+		|tagName|tagname2|
+	And Tag add CP
+		|tagName|tagname3|
+	And Tag view CP
+		|tagName|tagname3|
+	And Tag add CP
+		|tagName|tagname4|
+	And Tag view CP
+		|tagName|tagname4|
+	And Tag add CP
+		|tagName|tagname5|
+	And Tag view CP
+		|tagName|tagname5|
+	And Tag add CP
+		|tagName|tagname6|
+	And Tag view CP
+		|tagName|tagname6|
+	And Tag add CP
+		|tagName|tagname7|
+	And Tag view CP
+		|tagName|tagname7|
+	And Pagination change Pagination
+		|itemsPerPage|5|
+	And Pagination view Results
+		|results|Showing 1 to 5 of 7 entries.|
+	And LexiconEntry select Entry
+		|rowEntry|tagname1|
+	And LexiconEntry select Entry
+		|rowEntry|tagname2|
+	And LexiconEntry select Entry
+		|rowEntry|tagname3|
+	And Tag goto Merge
+	And Tag merge Tags Select Additional Tags
+		|tagName|tagname7|
+	And Tag merge Tags
+		|mergedTag|tagname1|
+		|tagNameList|tagname1,tagname2,tagname3,tagname7|
+	And Tag view CP
+		|tagName|tagname1|
+	And Tag view CP
+		|tagName|tagname4|
+	And Tag view CP
+		|tagName|tagname5|
+	And Tag view CP
+		|tagName|tagname6|
+	And AssertTextNotPresent the value 'tagname2'
+	And AssertTextNotPresent the value 'tagname3'
+	Then AssertTextNotPresent the value 'tagname7'
+Scenario: Toggle Display Styles
+Priority: 4
+	Given Portlet change Display Style
+		|displayStyle|icon|
+	When AssertTextEquals the value 'tagname1' at locator 'Card#GENERIC_LARGE_TEXT'
+	And Portlet change Display Style
+		|displayStyle|descriptive|
+	And AssertTextEquals the value 'tagname1' at locator 'ContentRow#ENTRY_CONTENT_DESCRIPTIVE_TITLE'
+	And Portlet change Display Style
+		|displayStyle|list|
+	Then AssertTextEquals the value 'tagname1' at locator 'ContentRow#ENTRY_CONTENT_LIST_COLUMN'
+		|key_columnNumber|2|

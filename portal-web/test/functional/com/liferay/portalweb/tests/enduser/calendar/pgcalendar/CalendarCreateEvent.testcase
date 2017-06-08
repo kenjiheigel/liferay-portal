@@ -1,1336 +1,1663 @@
-<definition component-name="portal-calendar">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles" />
-	<property name="testray.main.component.name" value="Calendar" />
-
-	<var name="pageName" value="Calendar Page" />
-	<var name="portletName" value="Calendar" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Calendar Page" />
-			<var name="portletName" value="Calendar" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Navigator#gotoPage">
-					<var name="pageName" value="Calendar Page" />
-				</execute>
-
-				<if>
-					<condition function="IsElementPresent" locator1="Calendar#SCHEDULER_EVENT_GENERIC" />
-					<then>
-						<execute macro="CalendarEvent#tearDown" />
-					</then>
-				</if>
-
-				<execute macro="Calendar#tearDown" />
-
-				<execute macro="Calendar#tearDownColor" />
-
-				<execute macro="CalendarResource#tearDown" />
-
-				<execute macro="CalendarConfiguration#tearDown" />
-
-				<execute macro="Page#tearDownPG" />
-
-				<execute macro="User#tearDownCP" />
-
-				<execute macro="Site#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="AddAfterClosingModal" priority="3">
-		<description message="This is a use case for LPS-64945." />
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#editTitle">
-			<var name="eventTitle" value="Calendar Event Title" />
-		</execute>
-
-		<execute macro="CalendarNavigator#closeModal">
-			<var name="modalTitle" value="New Event" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#editTitle">
-			<var name="eventTitle" value="Calendar Event Title" />
-		</execute>
-
-		<execute macro="CalendarEvent#publish" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#view">
-			<var name="eventTitle" value="Calendar Event Title" />
-		</execute>
-	</command>
-
-	<command name="AddAllDay" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="eventTitle" value="Calendar Event All Day Title" />
-			<var name="eventType" value="All Day" />
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewAllDay">
-			<var name="eventTitle" value="Calendar Event All Day Title" />
-		</execute>
-	</command>
-
-	<command name="AddAllDayRSVPYes" priority="3">
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="eventTitle" value="Calendar Event All Day Title" />
-			<var name="eventType" value="All Day" />
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewApprovedRSVP">
-			<var name="eventTitle" value="Calendar Event All Day Title" />
-			<var name="rsvp" value="Yes" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewAllDay">
-			<var name="eventTitle" value="Calendar Event All Day Title" />
-		</execute>
-	</command>
-
-	<command name="AddAllDayWithRemindersEnabled" priority="3">
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="duration1" value="Minutes" />
-			<var name="duration2" value="Minutes" />
-			<var name="eventTitle" value="Calendar Event All Day Title" />
-			<var name="eventType" value="All Day" />
-			<var name="number1" value="5" />
-			<var name="number2" value="10" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="reminders" value="true" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewAllDay">
-			<var name="eventTitle" value="Calendar Event All Day Title" />
-		</execute>
-	</command>
-
-	<command name="AddAllDayWithTag" priority="3">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="eventTitle" value="Calendar Event All Day Title" />
-			<var name="eventType" value="All Day" />
-			<var name="optionSet" value="true" />
-			<var name="optionSetValue" value="tag" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="specificOptionSetValue" value="tag1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewDetails">
-			<var name="calendarName" value="${siteName}" />
-			<var name="eventTitle" value="Calendar Event All Day Title" />
-			<var name="eventType" value="All Day" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewDetailsTags">
-			<var name="tagText" value="tag1" />
-		</execute>
-	</command>
-
-	<command name="AddAllDayWithUserInviteAccept" priority="3">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Calendar#add">
-			<var name="calendarName" value="userfn userln" />
-			<var name="calendarType" value="Other Calendars" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="eventTitle" value="Calendar Event All Day Title" />
-			<var name="eventType" value="All Day" />
-			<var name="optionSet" value="true" />
-			<var name="optionSetValue" value="inviteResource" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="specificOptionSetValue" value="userfn userln" />
-			<var name="user" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#addRSVP">
-			<var name="eventTitle" value="Calendar Event All Day Title" />
-			<var name="rsvp" value="Yes" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewAllDay">
-			<var name="eventTitle" value="Calendar Event All Day Title" />
-		</execute>
-	</command>
-
-	<command name="AddAsPowerUserWhenSiteMemberNoViewPermissions" priority="4">
-		<description message="This is a use case for LPS-55163." />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Calendar#removeViewPermissions">
-			<var name="calendarName" value="${siteName}" />
-			<var name="calendarType" value="Current Site Calendars" />
-			<var name="roleTitle" value="Site Member" />
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#editTitle">
-			<var name="eventTitle" value="Calendar Event" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewAvailableCalendars">
-			<var name="availableCalendarList" value="userfn userln" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewUnavailableCalendarsNotPresent">
-			<var name="unavailableCalendarList" value="Test Test,Liferay" />
-		</execute>
-
-		<execute macro="CalendarEvent#publish" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#view">
-			<var name="eventTitle" value="Calendar Event" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="AddRegular" priority="4">
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-			<var name="eventType" value="Regular" />
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#view">
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-		</execute>
-	</command>
-
-	<command name="AddRegularRSVPYes" priority="4">
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-			<var name="eventType" value="Regular" />
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewApprovedRSVP">
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-			<var name="rsvp" value="Yes" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#view">
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-		</execute>
-	</command>
-
-	<command name="AddRegularWithRemindersEnabled" priority="4">
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="duration1" value="Minutes" />
-			<var name="duration2" value="Minutes" />
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-			<var name="eventType" value="Regular" />
-			<var name="number1" value="5" />
-			<var name="number2" value="10" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="reminders" value="true" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarScheduler#viewEventWithReminders">
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-		</execute>
-
-		<execute macro="CalendarEvent#view">
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-		</execute>
-	</command>
-
-	<command name="AddRegularWithTag" priority="4">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-			<var name="eventType" value="Regular" />
-			<var name="optionSet" value="true" />
-			<var name="optionSetValue" value="tag" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="specificOptionSetValue" value="tag1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewDetails">
-			<var name="calendarName" value="${siteName}" />
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-			<var name="eventType" value="Regular" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewDetailsTags">
-			<var name="tagText" value="tag1" />
-		</execute>
-	</command>
-
-	<command name="AddRegularWithUserInvite" priority="4">
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-			<var name="eventType" value="Regular" />
-			<var name="optionSet" value="true" />
-			<var name="optionSetValue" value="inviteResource" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="specificOptionSetValue" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#view">
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-		</execute>
-	</command>
-
-	<command name="AddRegularWithUserInviteAccept" priority="4">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Calendar#add">
-			<var name="calendarName" value="userfn userln" />
-			<var name="calendarType" value="Other Calendars" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-			<var name="eventType" value="Regular" />
-			<var name="optionSet" value="true" />
-			<var name="optionSetValue" value="inviteResource" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="specificOptionSetValue" value="userfn userln" />
-			<var name="user" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#addRSVP">
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-			<var name="rsvp" value="Yes" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#view">
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-		</execute>
-	</command>
-
-	<command name="AddRepeating" priority="4">
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="eventType" value="Repeating" />
-			<var name="frequency" value="Daily" />
-			<var name="numberOfOccurrences" value="1" />
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#view">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoEventDetails">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="eventType" value="Repeating" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewRepeatingEventViaViewDetails">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="eventType" value="Repeating" />
-			<var name="frequency" value="Daily" />
-			<var name="numberOfOccurrences" value="1" />
-		</execute>
-	</command>
-
-	<command name="AddRepeatingMonthly2Times" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="eventType" value="Repeating" />
-			<var name="frequency" value="Monthly" />
-			<var name="numberOfOccurrences" value="2" />
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#view">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="numberOfOccurrences" value="2" />
-		</execute>
-	</command>
-
-	<command name="AddRepeatingRSVPYes" priority="3">
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="eventType" value="Repeating" />
-			<var name="frequency" value="Daily" />
-			<var name="numberOfOccurrences" value="1" />
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewApprovedRSVP">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="rsvp" value="Yes" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#view">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="frequency" value="Daily" />
-			<var name="numberOfOccurrences" value="1" />
-		</execute>
-	</command>
-
-	<command name="AddRepeatingWeekly2Times" priority="4">
-		<execute macro="CalendarNavigator#gotoConfiguration" />
-
-		<execute macro="CalendarConfiguration#editTimeZonePacific" />
-
-		<execute macro="CalendarConfiguration#save" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="eventType" value="Repeating" />
-			<var name="frequency" value="Weekly" />
-			<var name="numberOfOccurrences" value="2" />
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#view">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="frequency" value="Weekly" />
-			<var name="numberOfOccurrences" value="2" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoEventDetails">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="eventType" value="Repeating" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewRepeatingEventViaViewDetails">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="eventType" value="Repeating" />
-			<var name="frequency" value="Weekly" />
-			<var name="numberOfOccurrences" value="2" />
-		</execute>
-	</command>
-
-	<command name="AddRepeatingWithEndDateBeforeStartDate" priority="3">
-		<description message="This is a use case for LPS-56337." />
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#editTitle">
-			<var name="eventTitle" value="Calendar Repeating Event" />
-		</execute>
-
-		<execute macro="CalendarEvent#setRepeating">
-			<var name="endOnDate" value="10/01/2015" />
-			<var name="endOnDateSummary" value="October 1, 2015" />
-			<var name="frequency" value="Daily" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewRepeatingEventErrorMessage" />
-	</command>
-
-	<command name="AddRepeatingWithRemindersEnabled" priority="3">
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="duration1" value="Minutes" />
-			<var name="duration2" value="Minutes" />
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="eventType" value="Repeating" />
-			<var name="frequency" value="Daily" />
-			<var name="number1" value="5" />
-			<var name="number2" value="10" />
-			<var name="numberOfOccurrences" value="1" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="reminders" value="true" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarScheduler#viewEventWithReminders">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-		</execute>
-
-		<execute macro="CalendarEvent#view">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="frequency" value="Daily" />
-			<var name="numberOfOccurrences" value="1" />
-		</execute>
-	</command>
-
-	<command name="AddRepeatingWithTag" priority="3">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="eventType" value="Repeating" />
-			<var name="frequency" value="Daily" />
-			<var name="numberOfOccurrences" value="1" />
-			<var name="optionSet" value="true" />
-			<var name="optionSetValue" value="tag" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="specificOptionSetValue" value="tag1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewDetails">
-			<var name="calendarName" value="${siteName}" />
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="eventType" value="Repeating" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewDetailsTags">
-			<var name="tagText" value="tag1" />
-		</execute>
-	</command>
-
-	<command name="AddRepeatingWithUserInviteAccept" priority="3">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Calendar#add">
-			<var name="calendarName" value="userfn userln" />
-			<var name="calendarType" value="Other Calendars" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="eventType" value="Repeating" />
-			<var name="frequency" value="Daily" />
-			<var name="numberOfOccurrences" value="1" />
-			<var name="optionSet" value="true" />
-			<var name="optionSetValue" value="inviteResource" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="specificOptionSetValue" value="userfn userln" />
-			<var name="user" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#addRSVP">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="rsvp" value="Yes" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#view">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="frequency" value="Daily" />
-			<var name="numberOfOccurrences" value="1" />
-		</execute>
-	</command>
-
-	<command name="AddRepeatingYearly" priority="4">
-		<description message="This is a use case for LPS-51402." />
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#editTitle">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-		</execute>
-
-		<execute macro="CalendarEvent#setDates">
-			<var name="endDate" value="02/21/2016" />
-			<var name="startDate" value="02/21/2016" />
-		</execute>
-
-		<execute macro="CalendarEvent#setTimes">
-			<var name="endDateTime" value="02:00 AM" />
-			<var name="startDateTime" value="01:00 AM" />
-		</execute>
-
-		<execute macro="CalendarEvent#setRepeatingYearly">
-			<var name="frequency" value="Yearly" />
-			<var name="yearlyRecurrenceSummary" value="Yearly, On The Third Sunday Of February" />
-			<var name="yearlyRecurrenceSummaryPreviousDay" value="Yearly, On The Third Saturday Of February" />
-		</execute>
-
-		<execute macro="CalendarEvent#publish" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoMonthViaSmallCalendar">
-			<var name="dateMonth" value="February 2016" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoSpecificBusyDayViaSmallCalendar">
-			<var name="dateNumber" value="2" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewYearly">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Day" />
-		</execute>
-
-		<execute macro="CalendarScheduler#selectSpecificEvent">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="eventToday" value="false" />
-		</execute>
-
-		<execute macro="CalendarScheduler#gotoDetailsViaDialogBox" />
-
-		<execute macro="CalendarEvent#viewRepeatingEventViaViewDetails">
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="eventType" value="Repeating" />
-			<var name="frequency" value="Yearly" />
-			<var name="yearlyRecurrenceSummary" value="Yearly, on the Third Sunday of February" />
-		</execute>
-	</command>
-
-	<command name="AddViaScheduler" priority="4">
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Day" />
-		</execute>
-
-		<execute macro="CalendarScheduler#addEventToday">
-			<var name="eventTitle" value="Calendar Event Today Day" />
-			<var name="viewType" value="Day" />
-		</execute>
-
-		<execute macro="CalendarEvent#view">
-			<var name="eventTitle" value="Calendar Event Today Day" />
-		</execute>
-
-		<execute macro="CalendarEvent#tearDown" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Week" />
-		</execute>
-
-		<execute macro="CalendarScheduler#addEventToday">
-			<var name="eventTitle" value="Calendar Event Today Week" />
-			<var name="viewType" value="Week" />
-		</execute>
-
-		<execute macro="CalendarEvent#view">
-			<var name="eventTitle" value="Calendar Event Today Week" />
-		</execute>
-
-		<execute macro="CalendarEvent#tearDown" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Alert#viewSuccessMessage" />
-
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Month" />
-		</execute>
-
-		<execute macro="CalendarScheduler#addEventToday">
-			<var name="eventTitle" value="Calendar Event Today Month" />
-			<var name="viewType" value="Month" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewAllDay">
-			<var name="eventTitle" value="Calendar Event Today Month" />
-		</execute>
-	</command>
-
-	<command name="AddWithRelatedAssetViaAssetPublisher" priority="4">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="AP Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="AP Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="AP Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#addAsset">
-			<var name="assetType" value="Calendar Event" />
-		</execute>
-
-		<execute macro="CalendarEvent#editTitle">
-			<var name="eventTitle" value="Calendar Event Title" />
-		</execute>
-
-		<execute macro="CalendarEvent#gotoConfigureRelatedAssets" />
-
-		<execute macro="RelatedAssets#selectAsset">
-			<var name="assetTitle" value="Blogs Entry Title" />
-			<var name="assetType" value="Blogs Entry" />
-		</execute>
-
-		<execute macro="CalendarEvent#selectEventIframe" />
-
-		<execute macro="CalendarEvent#publish" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#view">
-			<var name="eventTitle" value="Calendar Event Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="AP Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewViaAssetPublisher">
-			<var name="calendarName" value="${siteName}" />
-			<var name="eventTitle" value="Calendar Event Title" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewPG">
-			<var name="assetContent" value="Blogs Entry Content" />
-			<var name="assetTitle" value="Blogs Entry Title" />
-			<var name="relatedAssetTitle" value="Calendar Event Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="AP Page" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewPG">
-			<var name="assetContent" value="Starts" />
-			<var name="assetTitle" value="Calendar Event Title" />
-			<var name="relatedAssetTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#gotoViewInContext" />
-
-		<execute macro="CalendarEvent#viewDetailsInPortlet">
-			<var name="calendarName" value="${siteName}" />
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="relatedAssetTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="CancelRepeatingDialog" priority="4">
-		<description message="This is a use case for LPS-45616." />
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#editTitle">
-			<var name="eventTitle" value="Calendar Non-Repeating Event 1" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewNoRepeating" />
-
-		<execute macro="CalendarEvent#gotoRepeatConfiguration" />
-
-		<execute function="KeyPress" locator1="CalendarEditEvent#REPEAT_ENDS_NEVER_RADIO" value1="\ESCAPE" />
-
-		<execute macro="CalendarEvent#viewNoRepeating" />
-
-		<execute macro="CalendarEvent#viewTitle">
-			<var name="eventTitle" value="Calendar Non-Repeating Event 1" />
-		</execute>
-
-		<execute macro="CalendarEvent#publish" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#editTitle">
-			<var name="eventTitle" value="Calendar Non-Repeating Event 2" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewNoRepeating" />
-
-		<execute macro="CalendarEvent#gotoRepeatConfiguration" />
-
-		<execute macro="CalendarEvent#selectRepeatFrequency">
-			<var name="frequency" value="Daily" />
-		</execute>
-
-		<execute function="KeyPress" locator1="CalendarEditEvent#REPEAT_ENDS_NEVER_RADIO" value1="\ESCAPE" />
-
-		<execute macro="CalendarEvent#viewNoRepeating" />
-
-		<execute macro="CalendarEvent#viewTitle">
-			<var name="eventTitle" value="Calendar Non-Repeating Event 2" />
-		</execute>
-
-		<execute macro="CalendarEvent#publish" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#editTitle">
-			<var name="eventTitle" value="Calendar Non-Repeating Event 3" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewNoRepeating" />
-
-		<execute macro="CalendarEvent#gotoRepeatConfiguration" />
-
-		<execute macro="Button#clickCancel" />
-
-		<execute macro="CalendarEvent#viewTitle">
-			<var name="eventTitle" value="Calendar Non-Repeating Event 3" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewNoRepeating" />
-
-		<execute macro="CalendarEvent#publish" />
-	</command>
-
-	<command name="InviteAndViewAdditionalUsers" priority="3">
-		<description message="This is a use case for LPS-46700." />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-			<var name="eventType" value="Regular" />
-			<var name="optionSet" value="true" />
-			<var name="optionSetValue" value="inviteResource" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="specificOptionSetValue" value="userfn userln,Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#view">
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewUsers">
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-			<var name="eventType" value="Regular" />
-			<var name="usersList" value="userfn userln,Test Test" />
-		</execute>
-	</command>
-
-	<command name="InviteUsersAndViewResponse" priority="4">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="usersn1@liferay.com" />
-			<var name="userFirstName" value="userfn1" />
-			<var name="userLastName" value="userln1" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="usersn2@liferay.com" />
-			<var name="userFirstName" value="userfn2" />
-			<var name="userLastName" value="userln2" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="usersn3@liferay.com" />
-			<var name="userFirstName" value="userfn3" />
-			<var name="userLastName" value="userln3" />
-			<var name="userScreenName" value="usersn3" />
-		</execute>
-
-		<for list="usersn1,usersn2,usersn3" param="userScreenName">
-			<execute macro="ProductMenu#gotoControlPanelUsers">
-				<var name="portlet" value="Users and Organizations" />
-			</execute>
-
-			<execute macro="User#editPasswordCP">
-				<var name="userEmailAddress" value="${userScreenName}@liferay.com" />
-				<var name="userScreenName" value="${userScreenName}" />
-			</execute>
-		</for>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="eventType" value="Regular" />
-			<var name="optionSet" value="true" />
-			<var name="optionSetValue" value="inviteResource" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="specificOptionSetValue" value="userfn1 userln1,userfn2 userln2,userfn3 userln3" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="usersn1@liferay.com" />
-			<var name="userLoginFullName" value="userfn1 userln1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#addRSVP">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="rsvp" value="Maybe" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="usersn2@liferay.com" />
-			<var name="userLoginFullName" value="userfn2 userln2" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#addRSVP">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="rsvp" value="No" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="usersn3@liferay.com" />
-			<var name="userLoginFullName" value="userfn3 userln3" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#addRSVP">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="rsvp" value="Yes" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoEditEvent">
-			<var name="eventTitle" value="Calendar Event Title" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewRSVPAccepted">
-			<var name="resourceName" value="${siteName}" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewRSVPAccepted">
-			<var name="resourceName" value="userfn3 userln3" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewRSVPDeclined">
-			<var name="resourceName" value="userfn2 userln2" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewRSVPMaybe">
-			<var name="resourceName" value="userfn1 userln1" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles|
+		|testray.main.component.name|Calendar|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles|
+		|testray.main.component.name|Calendar|
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Calendar Page|
+	Then Portlet add PG
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add After Closing Modal
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Calendar Event Title|
+	And CalendarNavigator close Modal
+		|modalTitle|New Event|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Calendar Event Title|
+	And CalendarEvent publish
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view
+		|eventTitle|Calendar Event Title|
+Scenario: Add All Day
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event All Day Title|
+		|eventType|All Day|
+		|pageName|Calendar Page|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view All Day
+		|eventTitle|Calendar Event All Day Title|
+Scenario: Add All Day RSVP Yes
+Priority: 3
+	Given CalendarNavigator goto Add Event
+	When CalendarEvent add
+		|eventTitle|Calendar Event All Day Title|
+		|eventType|All Day|
+		|pageName|Calendar Page|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view Approved RSVP
+		|eventTitle|Calendar Event All Day Title|
+		|rsvp|Yes|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view All Day
+		|eventTitle|Calendar Event All Day Title|
+Scenario: Add All Day With Reminders Enabled
+Priority: 3
+	Given CalendarNavigator goto Add Event
+	When CalendarEvent add
+		|duration1|Minutes|
+		|duration2|Minutes|
+		|eventTitle|Calendar Event All Day Title|
+		|eventType|All Day|
+		|number1|5|
+		|number2|10|
+		|pageName|Calendar Page|
+		|reminders|true|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view All Day
+		|eventTitle|Calendar Event All Day Title|
+Scenario: Add All Day With Tag
+Priority: 3
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event All Day Title|
+		|eventType|All Day|
+		|optionSet|true|
+		|optionSetValue|tag|
+		|pageName|Calendar Page|
+		|specificOptionSetValue|tag1|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view Details
+		|calendarName|${siteName}|
+		|eventTitle|Calendar Event All Day Title|
+		|eventType|All Day|
+	Then CalendarEvent view Details Tags
+		|tagText|tag1|
+Scenario: Add All Day With User Invite Accept
+Priority: 3
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar add
+		|calendarName|userfn userln|
+		|calendarType|Other Calendars|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event All Day Title|
+		|eventType|All Day|
+		|optionSet|true|
+		|optionSetValue|inviteResource|
+		|pageName|Calendar Page|
+		|specificOptionSetValue|userfn userln|
+		|user|userfn userln|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent add RSVP
+		|eventTitle|Calendar Event All Day Title|
+		|rsvp|Yes|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view All Day
+		|eventTitle|Calendar Event All Day Title|
+Scenario: Add As Power User When Site Member No View Permissions
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And Navigator open URL
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar remove View Permissions
+		|calendarName|${siteName}|
+		|calendarType|Current Site Calendars|
+		|roleTitle|Site Member|
+		|site|${siteName}|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Calendar Event|
+	And CalendarEvent view Available Calendars
+		|availableCalendarList|userfn userln|
+	And CalendarEvent view Unavailable Calendars Not Present
+		|unavailableCalendarList|Test Test,Liferay|
+	And CalendarEvent publish
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view
+		|eventTitle|Calendar Event|
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+Scenario: Add Regular
+Priority: 4
+	Given CalendarNavigator goto Add Event
+	When CalendarEvent add
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|pageName|Calendar Page|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view
+		|eventTitle|Calendar Event Regular Title|
+Scenario: Add Regular RSVP Yes
+Priority: 4
+	Given CalendarNavigator goto Add Event
+	When CalendarEvent add
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|pageName|Calendar Page|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view Approved RSVP
+		|eventTitle|Calendar Event Regular Title|
+		|rsvp|Yes|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view
+		|eventTitle|Calendar Event Regular Title|
+Scenario: Add Regular With Reminders Enabled
+Priority: 4
+	Given CalendarNavigator goto Add Event
+	When CalendarEvent add
+		|duration1|Minutes|
+		|duration2|Minutes|
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|number1|5|
+		|number2|10|
+		|pageName|Calendar Page|
+		|reminders|true|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarScheduler view Event With Reminders
+		|eventTitle|Calendar Event Regular Title|
+	Then CalendarEvent view
+		|eventTitle|Calendar Event Regular Title|
+Scenario: Add Regular With Tag
+Priority: 4
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|optionSet|true|
+		|optionSetValue|tag|
+		|pageName|Calendar Page|
+		|specificOptionSetValue|tag1|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view Details
+		|calendarName|${siteName}|
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+	Then CalendarEvent view Details Tags
+		|tagText|tag1|
+Scenario: Add Regular With User Invite
+Priority: 4
+	Given CalendarNavigator goto Add Event
+	When CalendarEvent add
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|optionSet|true|
+		|optionSetValue|inviteResource|
+		|pageName|Calendar Page|
+		|specificOptionSetValue|Test Test|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view
+		|eventTitle|Calendar Event Regular Title|
+Scenario: Add Regular With User Invite Accept
+Priority: 4
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar add
+		|calendarName|userfn userln|
+		|calendarType|Other Calendars|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|optionSet|true|
+		|optionSetValue|inviteResource|
+		|pageName|Calendar Page|
+		|specificOptionSetValue|userfn userln|
+		|user|userfn userln|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent add RSVP
+		|eventTitle|Calendar Event Regular Title|
+		|rsvp|Yes|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view
+		|eventTitle|Calendar Event Regular Title|
+Scenario: Add Repeating
+Priority: 4
+	Given CalendarNavigator goto Add Event
+	When CalendarEvent add
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Daily|
+		|numberOfOccurrences|1|
+		|pageName|Calendar Page|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view
+		|eventTitle|Calendar Event Repeating Title|
+	And CalendarNavigator goto Event Details
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+	Then CalendarEvent view Repeating Event Via View Details
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Daily|
+		|numberOfOccurrences|1|
+Scenario: Add Repeating Monthly 2 Times
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Monthly|
+		|numberOfOccurrences|2|
+		|pageName|Calendar Page|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view
+		|eventTitle|Calendar Event Repeating Title|
+		|numberOfOccurrences|2|
+Scenario: Add Repeating RSVP Yes
+Priority: 3
+	Given CalendarNavigator goto Add Event
+	When CalendarEvent add
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Daily|
+		|numberOfOccurrences|1|
+		|pageName|Calendar Page|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view Approved RSVP
+		|eventTitle|Calendar Event Repeating Title|
+		|rsvp|Yes|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view
+		|eventTitle|Calendar Event Repeating Title|
+		|frequency|Daily|
+		|numberOfOccurrences|1|
+Scenario: Add Repeating Weekly 2 Times
+Priority: 4
+	Given CalendarNavigator goto Configuration
+	When CalendarConfiguration edit Time Zone Pacific
+	And CalendarConfiguration save
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Weekly|
+		|numberOfOccurrences|2|
+		|pageName|Calendar Page|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view
+		|eventTitle|Calendar Event Repeating Title|
+		|frequency|Weekly|
+		|numberOfOccurrences|2|
+	And CalendarNavigator goto Event Details
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+	Then CalendarEvent view Repeating Event Via View Details
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Weekly|
+		|numberOfOccurrences|2|
+Scenario: Add Repeating With End Date Before Start Date
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Calendar Repeating Event|
+	And CalendarEvent set Repeating
+		|endOnDate|10/01/2015|
+		|endOnDateSummary|October 1, 2015|
+		|frequency|Daily|
+	Then CalendarEvent view Repeating Event Error Message
+Scenario: Add Repeating With Reminders Enabled
+Priority: 3
+	Given CalendarNavigator goto Add Event
+	When CalendarEvent add
+		|duration1|Minutes|
+		|duration2|Minutes|
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Daily|
+		|number1|5|
+		|number2|10|
+		|numberOfOccurrences|1|
+		|pageName|Calendar Page|
+		|reminders|true|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarScheduler view Event With Reminders
+		|eventTitle|Calendar Event Repeating Title|
+	Then CalendarEvent view
+		|eventTitle|Calendar Event Repeating Title|
+		|frequency|Daily|
+		|numberOfOccurrences|1|
+Scenario: Add Repeating With Tag
+Priority: 3
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Daily|
+		|numberOfOccurrences|1|
+		|optionSet|true|
+		|optionSetValue|tag|
+		|pageName|Calendar Page|
+		|specificOptionSetValue|tag1|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view Details
+		|calendarName|${siteName}|
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+	Then CalendarEvent view Details Tags
+		|tagText|tag1|
+Scenario: Add Repeating With User Invite Accept
+Priority: 3
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar add
+		|calendarName|userfn userln|
+		|calendarType|Other Calendars|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Daily|
+		|numberOfOccurrences|1|
+		|optionSet|true|
+		|optionSetValue|inviteResource|
+		|pageName|Calendar Page|
+		|specificOptionSetValue|userfn userln|
+		|user|userfn userln|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent add RSVP
+		|eventTitle|Calendar Event Repeating Title|
+		|rsvp|Yes|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view
+		|eventTitle|Calendar Event Repeating Title|
+		|frequency|Daily|
+		|numberOfOccurrences|1|
+Scenario: Add Repeating Yearly
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Calendar Event Repeating Title|
+	And CalendarEvent set Dates
+		|endDate|02/21/2016|
+		|startDate|02/21/2016|
+	And CalendarEvent set Times
+		|endDateTime|02:00 AM|
+		|startDateTime|01:00 AM|
+	And CalendarEvent set Repeating Yearly
+		|frequency|Yearly|
+		|yearlyRecurrenceSummary|Yearly, On The Third Sunday Of February|
+		|yearlyRecurrenceSummaryPreviousDay|Yearly, On The Third Saturday Of February|
+	And CalendarEvent publish
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Month Via Small Calendar
+		|dateMonth|February 2016|
+	And CalendarNavigator goto Specific Busy Day Via Small Calendar
+		|dateNumber|2|
+	And CalendarEvent view Yearly
+		|eventTitle|Calendar Event Repeating Title|
+	And CalendarNavigator goto View
+		|viewType|Day|
+	And CalendarScheduler select Specific Event
+		|eventTitle|Calendar Event Repeating Title|
+		|eventToday|false|
+	And CalendarScheduler goto Details Via Dialog Box
+	Then CalendarEvent view Repeating Event Via View Details
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Yearly|
+		|yearlyRecurrenceSummary|Yearly, on the Third Sunday of February|
+Scenario: Add Via Scheduler
+Priority: 4
+	Given CalendarNavigator goto View
+		|viewType|Day|
+	When CalendarScheduler add Event Today
+		|eventTitle|Calendar Event Today Day|
+		|viewType|Day|
+	And CalendarEvent view
+		|eventTitle|Calendar Event Today Day|
+	And CalendarEvent tear Down
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto View
+		|viewType|Week|
+	And CalendarScheduler add Event Today
+		|eventTitle|Calendar Event Today Week|
+		|viewType|Week|
+	And CalendarEvent view
+		|eventTitle|Calendar Event Today Week|
+	And CalendarEvent tear Down
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Alert view Success Message
+	And CalendarNavigator goto View
+		|viewType|Month|
+	And CalendarScheduler add Event Today
+		|eventTitle|Calendar Event Today Month|
+		|viewType|Month|
+	Then CalendarEvent view All Day
+		|eventTitle|Calendar Event Today Month|
+Scenario: Add With Related Asset Via Asset Publisher
+Priority: 4
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When Page add
+		|pageName|AP Page|
+	And Navigator goto Page
+		|pageName|AP Page|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Navigator goto Page
+		|pageName|AP Page|
+	And Portlet add PG
+		|portletName|Asset Publisher|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And AssetPublisherPortlet add Asset
+		|assetType|Calendar Event|
+	And CalendarEvent edit Title
+		|eventTitle|Calendar Event Title|
+	And CalendarEvent goto Configure Related Assets
+	And RelatedAssets select Asset
+		|assetTitle|Blogs Entry Title|
+		|assetType|Blogs Entry|
+	And CalendarEvent select Event Iframe
+	And CalendarEvent publish
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view
+		|eventTitle|Calendar Event Title|
+	And Navigator goto Page
+		|pageName|AP Page|
+	And CalendarEvent view Via Asset Publisher
+		|calendarName|${siteName}|
+		|eventTitle|Calendar Event Title|
+	And AssetPublisherPortlet view PG
+		|assetContent|Blogs Entry Content|
+		|assetTitle|Blogs Entry Title|
+		|relatedAssetTitle|Calendar Event Title|
+	And Navigator goto Page
+		|pageName|AP Page|
+	And AssetPublisherPortlet view PG
+		|assetContent|Starts|
+		|assetTitle|Calendar Event Title|
+		|relatedAssetTitle|Blogs Entry Title|
+	And AssetPublisherPortlet goto View In Context
+	Then CalendarEvent view Details In Portlet
+		|calendarName|${siteName}|
+		|eventTitle|Calendar Event Title|
+		|relatedAssetTitle|Blogs Entry Title|
+Scenario: Cancel Repeating Dialog
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Calendar Non-Repeating Event 1|
+	And CalendarEvent view No Repeating
+	And CalendarEvent goto Repeat Configuration
+	And KeyPress the value '\ESCAPE' at locator 'CalendarEditEvent#REPEAT_ENDS_NEVER_RADIO'
+	And CalendarEvent view No Repeating
+	And CalendarEvent view Title
+		|eventTitle|Calendar Non-Repeating Event 1|
+	And CalendarEvent publish
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Calendar Non-Repeating Event 2|
+	And CalendarEvent view No Repeating
+	And CalendarEvent goto Repeat Configuration
+	And CalendarEvent select Repeat Frequency
+		|frequency|Daily|
+	And KeyPress the value '\ESCAPE' at locator 'CalendarEditEvent#REPEAT_ENDS_NEVER_RADIO'
+	And CalendarEvent view No Repeating
+	And CalendarEvent view Title
+		|eventTitle|Calendar Non-Repeating Event 2|
+	And CalendarEvent publish
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Calendar Non-Repeating Event 3|
+	And CalendarEvent view No Repeating
+	And CalendarEvent goto Repeat Configuration
+	And Button click Cancel
+	And CalendarEvent view Title
+		|eventTitle|Calendar Non-Repeating Event 3|
+	And CalendarEvent view No Repeating
+	Then CalendarEvent publish
+Scenario: Invite And View Additional Users
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|optionSet|true|
+		|optionSetValue|inviteResource|
+		|pageName|Calendar Page|
+		|specificOptionSetValue|userfn userln,Test Test|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view
+		|eventTitle|Calendar Event Regular Title|
+	Then CalendarEvent view Users
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|usersList|userfn userln,Test Test|
+Scenario: Invite Users And View Response
+Priority: 4
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|usersn1@liferay.com|
+		|userFirstName|userfn1|
+		|userLastName|userln1|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|usersn2@liferay.com|
+		|userFirstName|userfn2|
+		|userLastName|userln2|
+		|userScreenName|usersn2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|usersn3@liferay.com|
+		|userFirstName|userfn3|
+		|userLastName|userln3|
+		|userScreenName|usersn3|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|usersn1@liferay.com|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|usersn2@liferay.com|
+		|userScreenName|usersn2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|usersn3@liferay.com|
+		|userScreenName|usersn3|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event Title|
+		|eventType|Regular|
+		|optionSet|true|
+		|optionSetValue|inviteResource|
+		|pageName|Calendar Page|
+		|specificOptionSetValue|userfn1 userln1,userfn2 userln2,userfn3 userln3|
+	And User logout And Login PG
+		|userLoginEmailAddress|usersn1@liferay.com|
+		|userLoginFullName|userfn1 userln1|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent add RSVP
+		|eventTitle|Calendar Event Title|
+		|rsvp|Maybe|
+	And User logout And Login PG
+		|userLoginEmailAddress|usersn2@liferay.com|
+		|userLoginFullName|userfn2 userln2|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent add RSVP
+		|eventTitle|Calendar Event Title|
+		|rsvp|No|
+	And User logout And Login PG
+		|userLoginEmailAddress|usersn3@liferay.com|
+		|userLoginFullName|userfn3 userln3|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent add RSVP
+		|eventTitle|Calendar Event Title|
+		|rsvp|Yes|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Edit Event
+		|eventTitle|Calendar Event Title|
+	And CalendarEvent view RSVP Accepted
+		|resourceName|${siteName}|
+	And CalendarEvent view RSVP Accepted
+		|resourceName|userfn3 userln3|
+	And CalendarEvent view RSVP Declined
+		|resourceName|userfn2 userln2|
+	Then CalendarEvent view RSVP Maybe
+		|resourceName|userfn1 userln1|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Calendar Page|
+	Then Portlet add PG
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add After Closing Modal
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Calendar Event Title|
+	And CalendarNavigator close Modal
+		|modalTitle|New Event|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Calendar Event Title|
+	And CalendarEvent publish
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view
+		|eventTitle|Calendar Event Title|
+Scenario: Add All Day
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event All Day Title|
+		|eventType|All Day|
+		|pageName|Calendar Page|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view All Day
+		|eventTitle|Calendar Event All Day Title|
+Scenario: Add All Day RSVP Yes
+Priority: 3
+	Given CalendarNavigator goto Add Event
+	When CalendarEvent add
+		|eventTitle|Calendar Event All Day Title|
+		|eventType|All Day|
+		|pageName|Calendar Page|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view Approved RSVP
+		|eventTitle|Calendar Event All Day Title|
+		|rsvp|Yes|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view All Day
+		|eventTitle|Calendar Event All Day Title|
+Scenario: Add All Day With Reminders Enabled
+Priority: 3
+	Given CalendarNavigator goto Add Event
+	When CalendarEvent add
+		|duration1|Minutes|
+		|duration2|Minutes|
+		|eventTitle|Calendar Event All Day Title|
+		|eventType|All Day|
+		|number1|5|
+		|number2|10|
+		|pageName|Calendar Page|
+		|reminders|true|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view All Day
+		|eventTitle|Calendar Event All Day Title|
+Scenario: Add All Day With Tag
+Priority: 3
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event All Day Title|
+		|eventType|All Day|
+		|optionSet|true|
+		|optionSetValue|tag|
+		|pageName|Calendar Page|
+		|specificOptionSetValue|tag1|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view Details
+		|calendarName|${siteName}|
+		|eventTitle|Calendar Event All Day Title|
+		|eventType|All Day|
+	Then CalendarEvent view Details Tags
+		|tagText|tag1|
+Scenario: Add All Day With User Invite Accept
+Priority: 3
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar add
+		|calendarName|userfn userln|
+		|calendarType|Other Calendars|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event All Day Title|
+		|eventType|All Day|
+		|optionSet|true|
+		|optionSetValue|inviteResource|
+		|pageName|Calendar Page|
+		|specificOptionSetValue|userfn userln|
+		|user|userfn userln|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent add RSVP
+		|eventTitle|Calendar Event All Day Title|
+		|rsvp|Yes|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view All Day
+		|eventTitle|Calendar Event All Day Title|
+Scenario: Add As Power User When Site Member No View Permissions
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And Navigator open URL
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar remove View Permissions
+		|calendarName|${siteName}|
+		|calendarType|Current Site Calendars|
+		|roleTitle|Site Member|
+		|site|${siteName}|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Calendar Event|
+	And CalendarEvent view Available Calendars
+		|availableCalendarList|userfn userln|
+	And CalendarEvent view Unavailable Calendars Not Present
+		|unavailableCalendarList|Test Test,Liferay|
+	And CalendarEvent publish
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view
+		|eventTitle|Calendar Event|
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+Scenario: Add Regular
+Priority: 4
+	Given CalendarNavigator goto Add Event
+	When CalendarEvent add
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|pageName|Calendar Page|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view
+		|eventTitle|Calendar Event Regular Title|
+Scenario: Add Regular RSVP Yes
+Priority: 4
+	Given CalendarNavigator goto Add Event
+	When CalendarEvent add
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|pageName|Calendar Page|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view Approved RSVP
+		|eventTitle|Calendar Event Regular Title|
+		|rsvp|Yes|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view
+		|eventTitle|Calendar Event Regular Title|
+Scenario: Add Regular With Reminders Enabled
+Priority: 4
+	Given CalendarNavigator goto Add Event
+	When CalendarEvent add
+		|duration1|Minutes|
+		|duration2|Minutes|
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|number1|5|
+		|number2|10|
+		|pageName|Calendar Page|
+		|reminders|true|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarScheduler view Event With Reminders
+		|eventTitle|Calendar Event Regular Title|
+	Then CalendarEvent view
+		|eventTitle|Calendar Event Regular Title|
+Scenario: Add Regular With Tag
+Priority: 4
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|optionSet|true|
+		|optionSetValue|tag|
+		|pageName|Calendar Page|
+		|specificOptionSetValue|tag1|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view Details
+		|calendarName|${siteName}|
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+	Then CalendarEvent view Details Tags
+		|tagText|tag1|
+Scenario: Add Regular With User Invite
+Priority: 4
+	Given CalendarNavigator goto Add Event
+	When CalendarEvent add
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|optionSet|true|
+		|optionSetValue|inviteResource|
+		|pageName|Calendar Page|
+		|specificOptionSetValue|Test Test|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view
+		|eventTitle|Calendar Event Regular Title|
+Scenario: Add Regular With User Invite Accept
+Priority: 4
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar add
+		|calendarName|userfn userln|
+		|calendarType|Other Calendars|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|optionSet|true|
+		|optionSetValue|inviteResource|
+		|pageName|Calendar Page|
+		|specificOptionSetValue|userfn userln|
+		|user|userfn userln|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent add RSVP
+		|eventTitle|Calendar Event Regular Title|
+		|rsvp|Yes|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view
+		|eventTitle|Calendar Event Regular Title|
+Scenario: Add Repeating
+Priority: 4
+	Given CalendarNavigator goto Add Event
+	When CalendarEvent add
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Daily|
+		|numberOfOccurrences|1|
+		|pageName|Calendar Page|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view
+		|eventTitle|Calendar Event Repeating Title|
+	And CalendarNavigator goto Event Details
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+	Then CalendarEvent view Repeating Event Via View Details
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Daily|
+		|numberOfOccurrences|1|
+Scenario: Add Repeating Monthly 2 Times
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Monthly|
+		|numberOfOccurrences|2|
+		|pageName|Calendar Page|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view
+		|eventTitle|Calendar Event Repeating Title|
+		|numberOfOccurrences|2|
+Scenario: Add Repeating RSVP Yes
+Priority: 3
+	Given CalendarNavigator goto Add Event
+	When CalendarEvent add
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Daily|
+		|numberOfOccurrences|1|
+		|pageName|Calendar Page|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view Approved RSVP
+		|eventTitle|Calendar Event Repeating Title|
+		|rsvp|Yes|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view
+		|eventTitle|Calendar Event Repeating Title|
+		|frequency|Daily|
+		|numberOfOccurrences|1|
+Scenario: Add Repeating Weekly 2 Times
+Priority: 4
+	Given CalendarNavigator goto Configuration
+	When CalendarConfiguration edit Time Zone Pacific
+	And CalendarConfiguration save
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Weekly|
+		|numberOfOccurrences|2|
+		|pageName|Calendar Page|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view
+		|eventTitle|Calendar Event Repeating Title|
+		|frequency|Weekly|
+		|numberOfOccurrences|2|
+	And CalendarNavigator goto Event Details
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+	Then CalendarEvent view Repeating Event Via View Details
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Weekly|
+		|numberOfOccurrences|2|
+Scenario: Add Repeating With End Date Before Start Date
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Calendar Repeating Event|
+	And CalendarEvent set Repeating
+		|endOnDate|10/01/2015|
+		|endOnDateSummary|October 1, 2015|
+		|frequency|Daily|
+	Then CalendarEvent view Repeating Event Error Message
+Scenario: Add Repeating With Reminders Enabled
+Priority: 3
+	Given CalendarNavigator goto Add Event
+	When CalendarEvent add
+		|duration1|Minutes|
+		|duration2|Minutes|
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Daily|
+		|number1|5|
+		|number2|10|
+		|numberOfOccurrences|1|
+		|pageName|Calendar Page|
+		|reminders|true|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarScheduler view Event With Reminders
+		|eventTitle|Calendar Event Repeating Title|
+	Then CalendarEvent view
+		|eventTitle|Calendar Event Repeating Title|
+		|frequency|Daily|
+		|numberOfOccurrences|1|
+Scenario: Add Repeating With Tag
+Priority: 3
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Daily|
+		|numberOfOccurrences|1|
+		|optionSet|true|
+		|optionSetValue|tag|
+		|pageName|Calendar Page|
+		|specificOptionSetValue|tag1|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view Details
+		|calendarName|${siteName}|
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+	Then CalendarEvent view Details Tags
+		|tagText|tag1|
+Scenario: Add Repeating With User Invite Accept
+Priority: 3
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar add
+		|calendarName|userfn userln|
+		|calendarType|Other Calendars|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Daily|
+		|numberOfOccurrences|1|
+		|optionSet|true|
+		|optionSetValue|inviteResource|
+		|pageName|Calendar Page|
+		|specificOptionSetValue|userfn userln|
+		|user|userfn userln|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent add RSVP
+		|eventTitle|Calendar Event Repeating Title|
+		|rsvp|Yes|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view
+		|eventTitle|Calendar Event Repeating Title|
+		|frequency|Daily|
+		|numberOfOccurrences|1|
+Scenario: Add Repeating Yearly
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Calendar Event Repeating Title|
+	And CalendarEvent set Dates
+		|endDate|02/21/2016|
+		|startDate|02/21/2016|
+	And CalendarEvent set Times
+		|endDateTime|02:00 AM|
+		|startDateTime|01:00 AM|
+	And CalendarEvent set Repeating Yearly
+		|frequency|Yearly|
+		|yearlyRecurrenceSummary|Yearly, On The Third Sunday Of February|
+		|yearlyRecurrenceSummaryPreviousDay|Yearly, On The Third Saturday Of February|
+	And CalendarEvent publish
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Month Via Small Calendar
+		|dateMonth|February 2016|
+	And CalendarNavigator goto Specific Busy Day Via Small Calendar
+		|dateNumber|2|
+	And CalendarEvent view Yearly
+		|eventTitle|Calendar Event Repeating Title|
+	And CalendarNavigator goto View
+		|viewType|Day|
+	And CalendarScheduler select Specific Event
+		|eventTitle|Calendar Event Repeating Title|
+		|eventToday|false|
+	And CalendarScheduler goto Details Via Dialog Box
+	Then CalendarEvent view Repeating Event Via View Details
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Yearly|
+		|yearlyRecurrenceSummary|Yearly, on the Third Sunday of February|
+Scenario: Add Via Scheduler
+Priority: 4
+	Given CalendarNavigator goto View
+		|viewType|Day|
+	When CalendarScheduler add Event Today
+		|eventTitle|Calendar Event Today Day|
+		|viewType|Day|
+	And CalendarEvent view
+		|eventTitle|Calendar Event Today Day|
+	And CalendarEvent tear Down
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto View
+		|viewType|Week|
+	And CalendarScheduler add Event Today
+		|eventTitle|Calendar Event Today Week|
+		|viewType|Week|
+	And CalendarEvent view
+		|eventTitle|Calendar Event Today Week|
+	And CalendarEvent tear Down
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Alert view Success Message
+	And CalendarNavigator goto View
+		|viewType|Month|
+	And CalendarScheduler add Event Today
+		|eventTitle|Calendar Event Today Month|
+		|viewType|Month|
+	Then CalendarEvent view All Day
+		|eventTitle|Calendar Event Today Month|
+Scenario: Add With Related Asset Via Asset Publisher
+Priority: 4
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When Page add
+		|pageName|AP Page|
+	And Navigator goto Page
+		|pageName|AP Page|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Navigator goto Page
+		|pageName|AP Page|
+	And Portlet add PG
+		|portletName|Asset Publisher|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And AssetPublisherPortlet add Asset
+		|assetType|Calendar Event|
+	And CalendarEvent edit Title
+		|eventTitle|Calendar Event Title|
+	And CalendarEvent goto Configure Related Assets
+	And RelatedAssets select Asset
+		|assetTitle|Blogs Entry Title|
+		|assetType|Blogs Entry|
+	And CalendarEvent select Event Iframe
+	And CalendarEvent publish
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view
+		|eventTitle|Calendar Event Title|
+	And Navigator goto Page
+		|pageName|AP Page|
+	And CalendarEvent view Via Asset Publisher
+		|calendarName|${siteName}|
+		|eventTitle|Calendar Event Title|
+	And AssetPublisherPortlet view PG
+		|assetContent|Blogs Entry Content|
+		|assetTitle|Blogs Entry Title|
+		|relatedAssetTitle|Calendar Event Title|
+	And Navigator goto Page
+		|pageName|AP Page|
+	And AssetPublisherPortlet view PG
+		|assetContent|Starts|
+		|assetTitle|Calendar Event Title|
+		|relatedAssetTitle|Blogs Entry Title|
+	And AssetPublisherPortlet goto View In Context
+	Then CalendarEvent view Details In Portlet
+		|calendarName|${siteName}|
+		|eventTitle|Calendar Event Title|
+		|relatedAssetTitle|Blogs Entry Title|
+Scenario: Cancel Repeating Dialog
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Calendar Non-Repeating Event 1|
+	And CalendarEvent view No Repeating
+	And CalendarEvent goto Repeat Configuration
+	And KeyPress the value '\ESCAPE' at locator 'CalendarEditEvent#REPEAT_ENDS_NEVER_RADIO'
+	And CalendarEvent view No Repeating
+	And CalendarEvent view Title
+		|eventTitle|Calendar Non-Repeating Event 1|
+	And CalendarEvent publish
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Calendar Non-Repeating Event 2|
+	And CalendarEvent view No Repeating
+	And CalendarEvent goto Repeat Configuration
+	And CalendarEvent select Repeat Frequency
+		|frequency|Daily|
+	And KeyPress the value '\ESCAPE' at locator 'CalendarEditEvent#REPEAT_ENDS_NEVER_RADIO'
+	And CalendarEvent view No Repeating
+	And CalendarEvent view Title
+		|eventTitle|Calendar Non-Repeating Event 2|
+	And CalendarEvent publish
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Calendar Non-Repeating Event 3|
+	And CalendarEvent view No Repeating
+	And CalendarEvent goto Repeat Configuration
+	And Button click Cancel
+	And CalendarEvent view Title
+		|eventTitle|Calendar Non-Repeating Event 3|
+	And CalendarEvent view No Repeating
+	Then CalendarEvent publish
+Scenario: Invite And View Additional Users
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|optionSet|true|
+		|optionSetValue|inviteResource|
+		|pageName|Calendar Page|
+		|specificOptionSetValue|userfn userln,Test Test|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view
+		|eventTitle|Calendar Event Regular Title|
+	Then CalendarEvent view Users
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|usersList|userfn userln,Test Test|
+Scenario: Invite Users And View Response
+Priority: 4
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|usersn1@liferay.com|
+		|userFirstName|userfn1|
+		|userLastName|userln1|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|usersn2@liferay.com|
+		|userFirstName|userfn2|
+		|userLastName|userln2|
+		|userScreenName|usersn2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|usersn3@liferay.com|
+		|userFirstName|userfn3|
+		|userLastName|userln3|
+		|userScreenName|usersn3|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|usersn1@liferay.com|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|usersn2@liferay.com|
+		|userScreenName|usersn2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|usersn3@liferay.com|
+		|userScreenName|usersn3|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event Title|
+		|eventType|Regular|
+		|optionSet|true|
+		|optionSetValue|inviteResource|
+		|pageName|Calendar Page|
+		|specificOptionSetValue|userfn1 userln1,userfn2 userln2,userfn3 userln3|
+	And User logout And Login PG
+		|userLoginEmailAddress|usersn1@liferay.com|
+		|userLoginFullName|userfn1 userln1|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent add RSVP
+		|eventTitle|Calendar Event Title|
+		|rsvp|Maybe|
+	And User logout And Login PG
+		|userLoginEmailAddress|usersn2@liferay.com|
+		|userLoginFullName|userfn2 userln2|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent add RSVP
+		|eventTitle|Calendar Event Title|
+		|rsvp|No|
+	And User logout And Login PG
+		|userLoginEmailAddress|usersn3@liferay.com|
+		|userLoginFullName|userfn3 userln3|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent add RSVP
+		|eventTitle|Calendar Event Title|
+		|rsvp|Yes|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Edit Event
+		|eventTitle|Calendar Event Title|
+	And CalendarEvent view RSVP Accepted
+		|resourceName|${siteName}|
+	And CalendarEvent view RSVP Accepted
+		|resourceName|userfn3 userln3|
+	And CalendarEvent view RSVP Declined
+		|resourceName|userfn2 userln2|
+	Then CalendarEvent view RSVP Maybe
+		|resourceName|userfn1 userln1|

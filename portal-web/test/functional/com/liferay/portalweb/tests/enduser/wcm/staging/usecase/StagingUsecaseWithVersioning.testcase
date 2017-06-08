@@ -1,477 +1,270 @@
-<definition component-name="portal-staging">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Staging" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#activateStagingCP">
-			<var name="pageVersioningEnabled" value="true" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Site#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="EnableAndDeleteSitePageVariationPage" priority="4">
-		<execute macro="Staging#addSitePagesVariationPG">
-			<var name="copySitePagesVariationName" value="Main Variation" />
-			<var name="sitePagesVariationName" value="Test Site Pages Variation" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page Name" />
-			<var name="pageStaging" value="true" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#markAsReadyForPublication" />
-
-		<execute macro="Staging#changeSitePageVariationPG">
-			<var name="sitePagesVariationMenulistName" value="Main Variation" />
-			<var name="sitePagesVariationName" value="Test Site Pages Variation" />
-		</execute>
-
-		<execute macro="Staging#enablePageInSitePagesVariation">
-			<var name="pageName" value="Test Page Name" />
-			<var name="sitePagesVariationName" value="main-variation" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#deletePG">
-			<var name="pageName" value="Test Page Name" />
-		</execute>
-	</command>
-
-	<command name="PublishCustomPortletTitle" priority="3">
-		<execute macro="Staging#addSitePagesVariationPG">
-			<var name="sitePagesVariationName" value="Site Pages Variation Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#viewSitePagesVariationPG">
-			<var name="sitePagesVariationName" value="Site Pages Variation Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Sites Directory" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#viewSpecificPG">
-			<var name="portletName" value="Sites Directory" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Look and Feel Configuration" />
-		</execute>
-
-		<execute macro="IFrame#selectConfigurationFrame" />
-
-		<execute macro="Portlet#configureCustomTitleViaLookandfeelPG">
-			<var name="portletName" value="Sites Directory" />
-		</execute>
-
-		<execute macro="Portlet#configureApplicationDecoratorViaLookandfeelPG">
-			<var name="applicationDecorator" value="Decorate" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#viewSpecificPG">
-			<var name="portletName" value="Sites Directory Custom" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedView" />
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#configurePublishToLive">
-			<var name="applicationName" value="Sites Directory" />
-			<var name="markAsReadyForPublication" value="true" />
-		</execute>
-
-		<execute macro="Staging#publishToLive" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#viewNoSpecificPG">
-			<var name="portletName" value="Sites Directory" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#publishToLive" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#viewSpecificPG">
-			<var name="portletName" value="Sites Directory Custom" />
-		</execute>
-	</command>
-
-	<command name="StagingBlogsCP" priority="3">
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-			<var name="siteScopeName" value="Site Name" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedView" />
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#publishToLive" />
-	</command>
-
-	<command name="StagingLogo" priority="3">
-		<execute macro="Page#viewDefaultLogoPG" />
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoPublicPages" />
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedView" />
-
-		<execute macro="Page#changeLogoViaPageCP">
-			<var name="logoFile" value="Document_2.png" />
-			<var name="page" value="Public Pages" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#viewCustomLogoPG" />
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedView" />
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#configurePublishToLive">
-			<var name="uncheckLogo" value="true" />
-		</execute>
-
-		<execute macro="Staging#publishToLive" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#viewDefaultLogoPG" />
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#publishToLive" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#viewCustomLogoPG" />
-	</command>
-
-	<command name="StagingPortletPublishContentCount" priority="4">
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="Web Content Content" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="WebContent#viewTitle">
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedView" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="Staging#viewPublishContentCountViaPortletStagingCP">
-			<var name="contentCount" value="1" />
-			<var name="contentInformation" value="Web Content (1)" />
-			<var name="stagingDateRange" value="From Last Publish Date" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedView" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="Staging#publishToLiveNowViaPortletCP" />
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedView" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="Staging#viewNoPublishContentCountViaPortletStagingCP">
-			<var name="stagingDateRange" value="From Last Publish Date" />
-		</execute>
-	</command>
-
-	<command name="StagingSiteVariationIncompletePage" priority="4">
-		<execute macro="Staging#addSitePagesVariationPG">
-			<var name="sitePagesVariationName" value="Site Pages Variation Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page Name" />
-			<var name="pageStaging" value="true" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#selectSitePagesVariationName">
-			<var name="sitePagesVariationName" value="Main Variation" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage" >
-			<var name="page" value="Test Page Name" />
-		</execute>
-
-		<execute macro="Staging#viewIncompletePageViaStagingPageVariation">
-			<var name="pageName" value="Test Page Name" />
-			<var name="sitePagesVariationName" value="main-variation" />
-		</execute>
-	</command>
-
-	<command name="StagingVersionHistory" priority="4">
-		<execute function="Click" locator1="Icon#STAGING_BAR_VERTICAL_ELLIPSIS" />
-
-		<execute function="Click" locator1="Staging#HISTORY_BUTTON" />
-
-		<execute function="SelectFrame" locator1="IFrame#METADATA_SETS_IFRAME" />
-
-		<var locator="Staging#HISTORY_VERSION" name="historyVersion" />
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#viewHistoryVersionPG">
-			<var name="historyVersion" value="${historyVersion}" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#viewSpecificPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Staging#viewHistoryVersionPG">
-			<var name="historyVersion" value="${historyVersion}" />
-			<var name="modifiedVersion" value="true" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#undoStagingPageVersioningPG" />
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#viewNoSpecificPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Staging#viewHistoryVersionPG">
-			<var name="historyVersion" value="${historyVersion}" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#redoStagingPageVersioningPG" />
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#viewSpecificPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Staging#viewHistoryVersionPG">
-			<var name="historyVersion" value="${historyVersion}" />
-			<var name="modifiedVersion" value="true" />
-		</execute>
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#publishToLive" />
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Staging|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging activate Staging CP
+		|pageVersioningEnabled|true|
+		|siteName|Site Name|
+	Then Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Enable And Delete Site Page Variation Page
+Priority: 4
+	Given Staging add Site Pages Variation PG
+		|copySitePagesVariationName|Main Variation|
+		|sitePagesVariationName|Test Site Pages Variation|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Test Page Name|
+		|pageStaging|true|
+		|siteName|Site Name|
+	And Navigator goto Staged Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And Staging mark As Ready For Publication
+	And Staging change Site Page Variation PG
+		|sitePagesVariationMenulistName|Main Variation|
+		|sitePagesVariationName|Test Site Pages Variation|
+	And Staging enable Page In Site Pages Variation
+		|pageName|Test Page Name|
+		|sitePagesVariationName|main-variation|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	Then Page delete PG
+		|pageName|Test Page Name|
+Scenario: Publish Custom Portlet Title
+Priority: 3
+	Given Staging add Site Pages Variation PG
+		|sitePagesVariationName|Site Pages Variation Name|
+	When Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Staging view Site Pages Variation PG
+		|sitePagesVariationName|Site Pages Variation Name|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Sites Directory|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Portlet view Specific PG
+		|portletName|Sites Directory|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Portlet goto Portlet Options
+		|portletOption|Look and Feel Configuration|
+	And IFrame select Configuration Frame
+	And Portlet configure Custom Title Via Lookandfeel PG
+		|portletName|Sites Directory|
+	And Portlet configure Application Decorator Via Lookandfeel PG
+		|applicationDecorator|Decorate|
+	And PortletEntry save
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Portlet view Specific PG
+		|portletName|Sites Directory Custom|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Navigator goto Staged View
+	And Staging goto Publish To Live
+	And Staging configure Publish To Live
+		|applicationName|Sites Directory|
+		|markAsReadyForPublication|true|
+	And Staging publish To Live
+	And Navigator goto Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Portlet view No Specific PG
+		|portletName|Sites Directory|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Staging goto Publish To Live
+	And Staging publish To Live
+	And Navigator goto Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	Then Portlet view Specific PG
+		|portletName|Sites Directory Custom|
+Scenario: Staging Blogs CP
+Priority: 3
+	Given ProductMenu goto Sites Content
+		|portlet|Blogs|
+		|siteScopeName|Site Name|
+	When Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And Navigator goto Staged View
+	And Staging goto Publish To Live
+	Then Staging publish To Live
+Scenario: Staging Logo
+Priority: 3
+	Given Page view Default Logo PG
+	When Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Public Pages
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Navigator goto Staged View
+	And Page change Logo Via Page CP
+		|logoFile|Document_2.png|
+		|page|Public Pages|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Page view Custom Logo PG
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Navigator goto Staged View
+	And Staging goto Publish To Live
+	And Staging configure Publish To Live
+		|uncheckLogo|true|
+	And Staging publish To Live
+	And Navigator goto Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Page view Default Logo PG
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Staging goto Publish To Live
+	And Staging publish To Live
+	And Navigator goto Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	Then Page view Custom Logo PG
+Scenario: Staging Portlet Publish Content Count
+Priority: 4
+	Given ProductMenu goto Sites Content
+		|portlet|Web Content|
+	When WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|Web Content Content|
+		|webContentTitle|Web Content Title|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|Web Content Title|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Navigator goto Staged View
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And Staging view Publish Content Count Via Portlet Staging CP
+		|contentCount|1|
+		|contentInformation|Web Content (1)|
+		|stagingDateRange|From Last Publish Date|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Navigator goto Staged View
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And Staging publish To Live Now Via Portlet CP
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Navigator goto Staged View
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	Then Staging view No Publish Content Count Via Portlet Staging CP
+		|stagingDateRange|From Last Publish Date|
+Scenario: Staging Site Variation Incomplete Page
+Priority: 4
+	Given Staging add Site Pages Variation PG
+		|sitePagesVariationName|Site Pages Variation Name|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Test Page Name|
+		|pageStaging|true|
+		|siteName|Site Name|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+		|site|Site Name|
+	And Page select Site Pages Variation Name
+		|sitePagesVariationName|Main Variation|
+	And SitePageNavigator goto Edit Page
+		|page|Test Page Name|
+	Then Staging view Incomplete Page Via Staging Page Variation
+		|pageName|Test Page Name|
+		|sitePagesVariationName|main-variation|
+Scenario: Staging Version History
+Priority: 4
+	Given Click at locator 'Icon#STAGING_BAR_VERTICAL_ELLIPSIS'
+	When Click at locator 'Staging#HISTORY_BUTTON'
+	And SelectFrame at locator 'IFrame#METADATA_SETS_IFRAME'
+	And these variables
+		|historyVersion||
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Staging view History Version PG
+		|historyVersion|${historyVersion}|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Portlet view Specific PG
+		|portletName|Blogs|
+	And Staging view History Version PG
+		|historyVersion|${historyVersion}|
+		|modifiedVersion|true|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Staging undo Staging Page Versioning PG
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Portlet view No Specific PG
+		|portletName|Blogs|
+	And Staging view History Version PG
+		|historyVersion|${historyVersion}|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Staging redo Staging Page Versioning PG
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Portlet view Specific PG
+		|portletName|Blogs|
+	And Staging view History Version PG
+		|historyVersion|${historyVersion}|
+		|modifiedVersion|true|
+	And Staging goto Publish To Live
+	Then Staging publish To Live

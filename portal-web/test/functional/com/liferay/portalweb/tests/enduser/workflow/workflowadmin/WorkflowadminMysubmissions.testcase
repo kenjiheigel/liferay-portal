@@ -1,351 +1,444 @@
-<definition component-name="portal-workflow">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Workflow" />
-
-	<var name="workflowAssetType" value="Web Content Article" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="Workflow#configureWorkflowViaFolderInfo">
-			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="WebContent#tearDownCP" />
-
-				<execute macro="Workflow#tearDownPortalWorkflow" />
-
-				<execute macro="Workflow#tearDownSiteWorkflow" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="WithdrawTaskAssignedToMeByActions" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<var name="webContentContent" value="WC WebContent Content" />
-		<var name="webContentTitle" value="WC WebContent Title" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addWithWorkflowCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="workflowAssetTitle" value="WC WebContent Title" />
-			<var name="workflowAssetType" value="Web Content Article" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Submissions" />
-		</execute>
-
-		<execute macro="Workflow#withdrawTaskByActions">
-			<var name="workflowAssetTitle" value="WC WebContent Title" />
-			<var name="workflowAssetType" value="Web Content Article" />
-			<var name="workflowDefinition" value="Single Approver" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoViewStatus">
-			<var name="webContentStatus" value="Draft" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewStatus">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentStatus" value="Draft" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-	</command>
-
-	<command name="WithdrawTaskAssignedToMeByDetails" priority="3">
-		<var name="webContentContent" value="WC WebContent Content" />
-		<var name="webContentTitle" value="WC WebContent Title" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addWithWorkflowCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByDetails">
-			<var name="workflowAssetContent" value="WC WebContent Content" />
-			<var name="workflowAssetTitle" value="WC WebContent Title" />
-			<var name="workflowAssetType" value="Web Content Article" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Submissions" />
-		</execute>
-
-		<execute macro="Workflow#withdrawTaskByDetails">
-			<var name="workflowAssetContent" value="WC WebContent Content" />
-			<var name="workflowAssetTitle" value="WC WebContent Title" />
-			<var name="workflowAssetType" value="Web Content Article" />
-			<var name="workflowDefinition" value="Single Approver" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoViewStatus">
-			<var name="webContentStatus" value="Draft" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewStatus">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentStatus" value="Draft" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-	</command>
-
-	<command name="WithdrawTaskAssignedToMyRolesByActions" priority="4">
-		<var name="webContentContent" value="WC WebContent Content" />
-		<var name="webContentTitle" value="WC WebContent Title" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addWithWorkflowCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Submissions" />
-		</execute>
-
-		<execute macro="Workflow#withdrawTaskByActions">
-			<var name="workflowAssetTitle" value="WC WebContent Title" />
-			<var name="workflowAssetType" value="Web Content Article" />
-			<var name="workflowDefinition" value="Single Approver" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoViewStatus">
-			<var name="webContentStatus" value="Draft" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewStatus">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentStatus" value="Draft" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-	</command>
-
-	<command name="WithdrawTaskAssignedToMyRolesByDetails" priority="3">
-		<var name="webContentContent" value="WC WebContent Content" />
-		<var name="webContentTitle" value="WC WebContent Title" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addWithWorkflowCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Submissions" />
-		</execute>
-
-		<execute macro="Workflow#withdrawTaskByDetails">
-			<var name="workflowAssetContent" value="WC WebContent Content" />
-			<var name="workflowAssetTitle" value="WC WebContent Title" />
-			<var name="workflowAssetType" value="Web Content Article" />
-			<var name="workflowDefinition" value="Single Approver" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoViewStatus">
-			<var name="webContentStatus" value="Draft" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewStatus">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentStatus" value="Draft" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-	</command>
-
-	<command name="WithdrawTaskCompletedNoByActions" priority="4">
-		<var name="webContentContent" value="WC WebContent Content" />
-		<var name="webContentTitle" value="WC WebContent Title" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addWithWorkflowCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="workflowAssetTitle" value="WC WebContent Title" />
-			<var name="workflowAssetType" value="Web Content Article" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#approveTaskByActions">
-			<var name="workflowAssetTitle" value="WC WebContent Title" />
-			<var name="workflowAssetType" value="Web Content Article" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Submissions" />
-		</execute>
-
-		<execute macro="Workflow#viewCannotWithdrawTaskByActions">
-			<var name="workflowAssetTitle" value="WC WebContent Title" />
-			<var name="workflowAssetType" value="Web Content Article" />
-			<var name="workflowDefinition" value="Single Approver" />
-			<var name="workflowTask" value="Approved" />
-		</execute>
-	</command>
-
-	<command name="WithdrawTaskCompletedNoByDetails" priority="3">
-		<var name="webContentContent" value="WC WebContent Content" />
-		<var name="webContentTitle" value="WC WebContent Title" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addWithWorkflowCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByDetails">
-			<var name="workflowAssetContent" value="WC WebContent Content" />
-			<var name="workflowAssetTitle" value="WC WebContent Title" />
-			<var name="workflowAssetType" value="Web Content Article" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#approveTaskByDetails">
-			<var name="workflowAssetContent" value="WC WebContent Content" />
-			<var name="workflowAssetTitle" value="WC WebContent Title" />
-			<var name="workflowAssetType" value="Web Content Article" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Submissions" />
-		</execute>
-
-		<execute macro="Workflow#withdrawTaskCompletedNoByDetails">
-			<var name="workflowAssetContent" value="WC WebContent Content" />
-			<var name="workflowAssetTitle" value="WC WebContent Title" />
-			<var name="workflowAssetType" value="Web Content Article" />
-			<var name="workflowDefinition" value="Single Approver" />
-			<var name="workflowTask" value="Approved" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Workflow|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Workflow|
+		|workflowAssetType|Web Content Article|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	Then Workflow configure Workflow Via Folder Info
+		|workflowDefinition|Single Approver (Version 1)|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Withdraw Task Assigned To Me By Actions
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these variables
+		|webContentContent|WC WebContent Content|
+	And these variables
+		|webContentTitle|WC WebContent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Workflow CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Submissions|
+	And Workflow withdraw Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowDefinition|Single Approver|
+		|workflowTask|Review|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto View Status
+		|webContentStatus|Draft|
+		|webContentTitle|WC WebContent Title|
+	Then WebContent view Status
+		|webContentContent|WC WebContent Content|
+		|webContentStatus|Draft|
+		|webContentTitle|WC WebContent Title|
+Scenario: Withdraw Task Assigned To Me By Details
+Priority: 3
+	Given these variables
+		|webContentContent|WC WebContent Content|
+	When these variables
+		|webContentTitle|WC WebContent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Workflow CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Details
+		|workflowAssetContent|WC WebContent Content|
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Submissions|
+	And Workflow withdraw Task By Details
+		|workflowAssetContent|WC WebContent Content|
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowDefinition|Single Approver|
+		|workflowTask|Review|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto View Status
+		|webContentStatus|Draft|
+		|webContentTitle|WC WebContent Title|
+	Then WebContent view Status
+		|webContentContent|WC WebContent Content|
+		|webContentStatus|Draft|
+		|webContentTitle|WC WebContent Title|
+Scenario: Withdraw Task Assigned To My Roles By Actions
+Priority: 4
+	Given these variables
+		|webContentContent|WC WebContent Content|
+	When these variables
+		|webContentTitle|WC WebContent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Workflow CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Page goto My Account
+		|portletName|My Submissions|
+	And Workflow withdraw Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowDefinition|Single Approver|
+		|workflowTask|Review|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto View Status
+		|webContentStatus|Draft|
+		|webContentTitle|WC WebContent Title|
+	Then WebContent view Status
+		|webContentContent|WC WebContent Content|
+		|webContentStatus|Draft|
+		|webContentTitle|WC WebContent Title|
+Scenario: Withdraw Task Assigned To My Roles By Details
+Priority: 3
+	Given these variables
+		|webContentContent|WC WebContent Content|
+	When these variables
+		|webContentTitle|WC WebContent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Workflow CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Page goto My Account
+		|portletName|My Submissions|
+	And Workflow withdraw Task By Details
+		|workflowAssetContent|WC WebContent Content|
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowDefinition|Single Approver|
+		|workflowTask|Review|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto View Status
+		|webContentStatus|Draft|
+		|webContentTitle|WC WebContent Title|
+	Then WebContent view Status
+		|webContentContent|WC WebContent Content|
+		|webContentStatus|Draft|
+		|webContentTitle|WC WebContent Title|
+Scenario: Withdraw Task Completed No By Actions
+Priority: 4
+	Given these variables
+		|webContentContent|WC WebContent Content|
+	When these variables
+		|webContentTitle|WC WebContent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Workflow CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow approve Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Submissions|
+	Then Workflow view Cannot Withdraw Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowDefinition|Single Approver|
+		|workflowTask|Approved|
+Scenario: Withdraw Task Completed No By Details
+Priority: 3
+	Given these variables
+		|webContentContent|WC WebContent Content|
+	When these variables
+		|webContentTitle|WC WebContent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Workflow CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Details
+		|workflowAssetContent|WC WebContent Content|
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow approve Task By Details
+		|workflowAssetContent|WC WebContent Content|
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Submissions|
+	Then Workflow withdraw Task Completed No By Details
+		|workflowAssetContent|WC WebContent Content|
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowDefinition|Single Approver|
+		|workflowTask|Approved|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	Then Workflow configure Workflow Via Folder Info
+		|workflowDefinition|Single Approver (Version 1)|
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Withdraw Task Assigned To Me By Actions
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these variables
+		|webContentContent|WC WebContent Content|
+	And these variables
+		|webContentTitle|WC WebContent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Workflow CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Submissions|
+	And Workflow withdraw Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowDefinition|Single Approver|
+		|workflowTask|Review|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto View Status
+		|webContentStatus|Draft|
+		|webContentTitle|WC WebContent Title|
+	Then WebContent view Status
+		|webContentContent|WC WebContent Content|
+		|webContentStatus|Draft|
+		|webContentTitle|WC WebContent Title|
+Scenario: Withdraw Task Assigned To Me By Details
+Priority: 3
+	Given these variables
+		|webContentContent|WC WebContent Content|
+	When these variables
+		|webContentTitle|WC WebContent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Workflow CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Details
+		|workflowAssetContent|WC WebContent Content|
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Submissions|
+	And Workflow withdraw Task By Details
+		|workflowAssetContent|WC WebContent Content|
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowDefinition|Single Approver|
+		|workflowTask|Review|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto View Status
+		|webContentStatus|Draft|
+		|webContentTitle|WC WebContent Title|
+	Then WebContent view Status
+		|webContentContent|WC WebContent Content|
+		|webContentStatus|Draft|
+		|webContentTitle|WC WebContent Title|
+Scenario: Withdraw Task Assigned To My Roles By Actions
+Priority: 4
+	Given these variables
+		|webContentContent|WC WebContent Content|
+	When these variables
+		|webContentTitle|WC WebContent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Workflow CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Page goto My Account
+		|portletName|My Submissions|
+	And Workflow withdraw Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowDefinition|Single Approver|
+		|workflowTask|Review|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto View Status
+		|webContentStatus|Draft|
+		|webContentTitle|WC WebContent Title|
+	Then WebContent view Status
+		|webContentContent|WC WebContent Content|
+		|webContentStatus|Draft|
+		|webContentTitle|WC WebContent Title|
+Scenario: Withdraw Task Assigned To My Roles By Details
+Priority: 3
+	Given these variables
+		|webContentContent|WC WebContent Content|
+	When these variables
+		|webContentTitle|WC WebContent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Workflow CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Page goto My Account
+		|portletName|My Submissions|
+	And Workflow withdraw Task By Details
+		|workflowAssetContent|WC WebContent Content|
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowDefinition|Single Approver|
+		|workflowTask|Review|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto View Status
+		|webContentStatus|Draft|
+		|webContentTitle|WC WebContent Title|
+	Then WebContent view Status
+		|webContentContent|WC WebContent Content|
+		|webContentStatus|Draft|
+		|webContentTitle|WC WebContent Title|
+Scenario: Withdraw Task Completed No By Actions
+Priority: 4
+	Given these variables
+		|webContentContent|WC WebContent Content|
+	When these variables
+		|webContentTitle|WC WebContent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Workflow CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow approve Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Submissions|
+	Then Workflow view Cannot Withdraw Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowDefinition|Single Approver|
+		|workflowTask|Approved|
+Scenario: Withdraw Task Completed No By Details
+Priority: 3
+	Given these variables
+		|webContentContent|WC WebContent Content|
+	When these variables
+		|webContentTitle|WC WebContent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Workflow CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Details
+		|workflowAssetContent|WC WebContent Content|
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow approve Task By Details
+		|workflowAssetContent|WC WebContent Content|
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Submissions|
+	Then Workflow withdraw Task Completed No By Details
+		|workflowAssetContent|WC WebContent Content|
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowDefinition|Single Approver|
+		|workflowTask|Approved|

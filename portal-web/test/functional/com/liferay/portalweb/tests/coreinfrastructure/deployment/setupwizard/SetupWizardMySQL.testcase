@@ -1,150 +1,110 @@
-<definition component-name="portal-deployment-mysql">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="setup.wizard.enabled" value="true" />
-	<property name="testray.main.component.name" value="Setup Wizard" />
+Feature:
 
-	<command name="MySQLtoMySQL" priority="4">
-		<execute macro="SetupWizard#configureDefaultPG" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|setup.wizard.enabled|true|
+		|testray.main.component.name|Setup Wizard|
 
-		<execute macro="Smoke#viewWelcomePage" />
 
-		<execute macro="Smoke#runSmoke" />
-	</command>
-
-	<command name="MySQLtoMySQLEditedAdministratorUser" priority="4">
-		<execute macro="SetupWizard#viewDefaultPortalNamePG" />
-		<property name="test.name.skip.portal.instance" value="SetupWizardMySQL#MySQLtoMySQLEditAdministratorUser" />
-
-		<execute macro="SetupWizard#configureSampleDataPG">
-			<var name="addSampleData" value="false" />
-		</execute>
-
-		<execute macro="SetupWizard#configureAdministratorUserPG">
-			<var name="administratorEmail" value="testsetupwizard@liferay.com" />
-			<var name="administratorFirstName" value="TestSetupWizardFN" />
-			<var name="administratorLastName" value="TestSetupWizardLN" />
-		</execute>
-
-		<execute macro="SetupWizard#configureDatabasePG">
-			<var name="databaseName" value="lportal" />
-			<var name="databasePassword" property-value="database.mysql.password" />
-			<var name="databaseType" value="MySQL" />
-			<var name="databaseUserName" property-value="database.mysql.username" />
-			<var name="jdbcDriverClassName" property-value="database.mysql.driver" />
-			<var name="jdbcURL" property-value="database.mysql.url" />
-		</execute>
-
-		<execute macro="SetupWizard#finishConfigurationPG" />
-
-		<execute macro="SetupWizard#viewConfigurationSavedPG" />
-
-		<execute macro="Portlet#shutdownServer" />
-
-		<execute macro="Portlet#startServer">
-			<var name="base_branch" value="${base_branch}" />
-			<var name="deleteLiferayHome" value="false" />
-		</execute>
-
-		<execute macro="SetupWizard#viewConfiguredDatabaseInConsole">
-			<var name="databaseType" value="${databaseType}" />
-		</execute>
-
-		<if>
-			<isset var="virtualHostsURL" />
-			<then>
-				<execute macro="Navigator#openSpecificURL">
-					<var name="url" value="${virtualHostsURL}" />
-				</execute>
-			</then>
-			<else>
-				<execute macro="Navigator#openURL" />
-			</else>
-		</if>
-
-		<execute macro="User#acceptEndUserLicenseAgreement" />
-
-		<execute macro="User#resetPassword">
-			<var name="resetPassword" value="${resetPassword}" />
-			<var name="setupWizardEnabled" value="${setupWizardEnabled}" />
-			<var name="syntaxCheckingEnabled" value="${syntaxCheckingEnabled}" />
-		</execute>
-
-		<execute macro="User#answerPasswordReminder" />
-
-		<execute function="AssertElementPresent" locator1="UserBar#USER_AVATAR_IMAGE" />
-
-		<execute macro="User#viewLoggedInPG">
-			<var name="userFirstName" value="TestSetupWizardFN" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="Account Settings" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="TextInput#EMAIL_ADDRESS" value1="testsetupwizard@liferay.com" />
-		<execute function="AssertTextEquals" locator1="TextInput#FIRST_NAME" value1="TestSetupWizardFN" />
-		<execute function="AssertTextEquals" locator1="TextInput#LAST_NAME" value1="TestSetupWizardLN" />
-		<execute function="AssertTextEquals" locator1="TextInput#SCREEN_NAME" value1="testsetupwizard" />
-	</command>
-
-	<command name="MySQLtoMySQLLportal1" priority="5">
-		<property name="databases.size" value="1" />
-		<property name="portal.acceptance.tomcat.mysql" value="true" />
-		<property name="test.name.skip.portal.instance" value="SetupWizardMySQL#MySQLtoMySQLLportal1" />
-
-		<execute macro="SetupWizard#configurePG">
-			<var name="administratorEmail" value="test@liferay.com" />
-			<var name="administratorFirstName" value="Test" />
-			<var name="administratorLastName" value="Test" />
-			<var name="databaseName" value="lportal1" />
-			<var name="databasePassword" property-value="database.mysql.password" />
-			<var name="databaseType" value="MySQL" />
-			<var name="databaseUserName" property-value="database.mysql.username" />
-			<var name="jdbcDriverClassName" property-value="database.mysql.driver" />
-			<var name="jdbcURL" property-value="database.mysql.url" />
-		</execute>
-
-		<execute macro="Smoke#viewWelcomePage">
-			<var name="userFirstName" value="Joe" />
-			<var name="userLastName" value="Bloggs" />
-		</execute>
-
-		<execute macro="Smoke#runSmoke" />
-	</command>
-
-	<command name="MySQLtoMySQLLportal1SampleDataDisabled" priority="5">
-		<property name="databases.size" value="1" />
-		<property name="portal.acceptance.tomcat.mysql" value="true" />
-		<property name="test.name.skip.portal.instance" value="SetupWizardMySQL#MySQLtoMySQLLportal1SampleDataDisabled" />
-
-		<execute macro="SetupWizard#configurePG">
-			<var name="addSampleData" value="false" />
-			<var name="administratorEmail" value="test@liferay.com" />
-			<var name="administratorFirstName" value="Test" />
-			<var name="administratorLastName" value="Test" />
-			<var name="databaseName" value="lportal1" />
-			<var name="databasePassword" property-value="database.mysql.password" />
-			<var name="databaseType" value="MySQL" />
-			<var name="databaseUserName" property-value="database.mysql.username" />
-			<var name="jdbcDriverClassName" property-value="database.mysql.driver" />
-			<var name="jdbcURL" property-value="database.mysql.url" />
-		</execute>
-
-		<execute macro="Smoke#viewWelcomePage" />
-
-		<execute macro="Smoke#runSmoke" />
-	</command>
-
-	<command name="MySQLtoMySQLSampleDataDisabled" priority="4">
-		<property name="test.name.skip.portal.instance" value="SetupWizardMySQL#MySQLtoMySQLSampleDataDisabled" />
-
-		<execute macro="SetupWizard#configureDefaultPG">
-			<var name="addSampleData" value="false" />
-		</execute>
-
-		<execute macro="Smoke#viewWelcomePage" />
-
-		<execute macro="Smoke#runSmoke" />
-	</command>
-</definition>
+Scenario: My SQ Lto My SQL
+Priority: 4
+	Given SetupWizard configure Default PG
+	When Smoke view Welcome Page
+	Then Smoke run Smoke
+Scenario: My SQ Lto My SQL Edited Administrator User
+Priority: 4
+	Given SetupWizard view Default Portal Name PG
+	When these properties
+		|test.name.skip.portal.instance|SetupWizardMySQL#MySQLtoMySQLEditAdministratorUser|
+	And SetupWizard configure Sample Data PG
+		|addSampleData|false|
+	And SetupWizard configure Administrator User PG
+		|administratorEmail|testsetupwizard@liferay.com|
+		|administratorFirstName|TestSetupWizardFN|
+		|administratorLastName|TestSetupWizardLN|
+	And SetupWizard configure Database PG
+		|databaseName|lportal|
+		|databasePassword||
+		|databaseType|MySQL|
+		|databaseUserName||
+		|jdbcDriverClassName||
+		|jdbcURL||
+	And SetupWizard finish Configuration PG
+	And SetupWizard view Configuration Saved PG
+	And Portlet shutdown Server
+	And Portlet start Server
+		|base_branch|${base_branch}|
+		|deleteLiferayHome|false|
+	And SetupWizard view Configured Database In Console
+		|databaseType|${databaseType}|
+##########################################################
+The Poshi if element is not supported in the readable syntax. Please update this test.
+##########################################################
+	And User accept End User License Agreement
+	And User reset Password
+		|resetPassword|${resetPassword}|
+		|setupWizardEnabled|${setupWizardEnabled}|
+		|syntaxCheckingEnabled|${syntaxCheckingEnabled}|
+	And User answer Password Reminder
+	And AssertElementPresent at locator 'UserBar#USER_AVATAR_IMAGE'
+	And User view Logged In PG
+		|userFirstName|TestSetupWizardFN|
+	And Page goto My Account
+		|portletName|Account Settings|
+	And AssertTextEquals the value 'testsetupwizard@liferay.com' at locator 'TextInput#EMAIL_ADDRESS'
+	And AssertTextEquals the value 'TestSetupWizardFN' at locator 'TextInput#FIRST_NAME'
+	And AssertTextEquals the value 'TestSetupWizardLN' at locator 'TextInput#LAST_NAME'
+	Then AssertTextEquals the value 'testsetupwizard' at locator 'TextInput#SCREEN_NAME'
+Scenario: My SQ Lto My SQL Lportal 1
+Priority: 5
+	Given these properties
+		|databases.size|1|
+	When these properties
+		|portal.acceptance.tomcat.mysql|true|
+	And these properties
+		|test.name.skip.portal.instance|SetupWizardMySQL#MySQLtoMySQLLportal1|
+	And SetupWizard configure PG
+		|administratorEmail|test@liferay.com|
+		|administratorFirstName|Test|
+		|administratorLastName|Test|
+		|databaseName|lportal1|
+		|databasePassword||
+		|databaseType|MySQL|
+		|databaseUserName||
+		|jdbcDriverClassName||
+		|jdbcURL||
+	And Smoke view Welcome Page
+		|userFirstName|Joe|
+		|userLastName|Bloggs|
+	Then Smoke run Smoke
+Scenario: My SQ Lto My SQL Lportal 1 Sample Data Disabled
+Priority: 5
+	Given these properties
+		|databases.size|1|
+	When these properties
+		|portal.acceptance.tomcat.mysql|true|
+	And these properties
+		|test.name.skip.portal.instance|SetupWizardMySQL#MySQLtoMySQLLportal1SampleDataDisabled|
+	And SetupWizard configure PG
+		|addSampleData|false|
+		|administratorEmail|test@liferay.com|
+		|administratorFirstName|Test|
+		|administratorLastName|Test|
+		|databaseName|lportal1|
+		|databasePassword||
+		|databaseType|MySQL|
+		|databaseUserName||
+		|jdbcDriverClassName||
+		|jdbcURL||
+	And Smoke view Welcome Page
+	Then Smoke run Smoke
+Scenario: My SQ Lto My SQL Sample Data Disabled
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|SetupWizardMySQL#MySQLtoMySQLSampleDataDisabled|
+	When SetupWizard configure Default PG
+		|addSampleData|false|
+	And Smoke view Welcome Page
+	Then Smoke run Smoke

@@ -1,803 +1,590 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Site Administration" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="User#tearDownCP" />
-
-				<execute macro="Site#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="DisplayMySitesPagination" priority="3">
-		<property name="testray.component.names" value="Site Administration" />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<for list="01,02,03,04,05,06,07,08,09,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24" param="number">
-			<execute macro="ProductMenu#gotoControlPanelSites">
-				<var name="portlet" value="Sites" />
-			</execute>
-
-			<execute macro="Site#addBlankCP">
-				<var name="siteName" value="Site Name ${number}" />
-			</execute>
-		</for>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="My Sites" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page" />
-		</execute>
-
-		<execute macro="Pagination#viewResults">
-			<var name="results" value="Showing 1 to 20 of 25 entries." />
-		</execute>
-
-		<execute macro="Pagination#changePagination">
-			<var name="itemsPerPage" value="5" />
-		</execute>
-
-		<execute macro="Pagination#viewResults">
-			<var name="results" value="Showing 1 to 5 of 25 entries." />
-		</execute>
-	</command>
-
-	<command name="JoinSiteOpen" priority="4">
-		<property name="testray.component.names" value="Site Administration,Users and Organizations" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG" >
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="UserBar#gotoDashboard" />
-
-		<execute macro="Site#joinViaMySitesPG">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-	</command>
-
-	<command name="JoinSitePrivateNo" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="testray.component.names" value="Site Administration,Users and Organizations" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="membershipType" value="Private" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG" >
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="UserBar#gotoDashboard" />
-
-		<execute macro="Site#joinViaMySitesPG">
-			<var name="membershipType" value="Private" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-	</command>
-
-	<command name="JoinSiteRestricted" priority="5">
-		<property name="testray.component.names" value="Site Administration,Users and Organizations" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="membershipType" value="Restricted" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG" >
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="UserBar#gotoDashboard" />
-
-		<execute macro="Site#joinViaMySitesPG">
-			<var name="membershipType" value="Restricted" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="UserBar#gotoDashboard" />
-
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Available Sites" />
-		</execute>
-
-		<execute macro="MySites#viewMembershipRequested">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#approveJoinSiteRestrictedViaMySitesPG">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG" >
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="UserBar#gotoDashboard" />
-
-		<execute macro="Site#viewMySitesViaMySitesPG">
-			<var name="memberCount" value="2" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-	</command>
-
-	<command name="LeaveSite" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="testray.component.names" value="Site Administration,Users and Organizations" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG" >
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="UserBar#gotoDashboard" />
-
-		<execute macro="Site#joinViaMySitesPG">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="UserBar#gotoDashboard" />
-
-		<execute macro="Site#leaveViaMySitesPG">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-	</command>
-
-	<command name="SearchSite" priority="4">
-		<property name="testray.component.names" value="Site Administration" />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="My Sites" />
-		</execute>
-
-		<execute macro="Site#searchInputCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Site#viewMySitesViaMySitesPG">
-			<var name="memberCount" value="1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-	</command>
-
-	<command name="ViewMembershipAssignViaSiteCP" priority="3">
-		<property name="testray.component.names" value="Site Administration,Users and Organizations" />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#assignRegularRoleCP">
-			<var name="roleTitle" value="Power User" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Public Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Site#assignUserSitesCP">
-			<var name="siteName" value="Site Name" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="My Sites" />
-		</execute>
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page" />
-		</execute>
-
-		<execute macro="Site#viewMySitesViaMySitesPG">
-			<var name="memberCount" value="2" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-	</command>
-
-	<command name="ViewNoInactiveSite" priority="3">
-		<property name="testray.component.names" value="Site Administration" />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#inactivateCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="My Sites" />
-		</execute>
-
-		<execute macro="Site#searchInputCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Site#viewNoMySitesViaMySitesPG">
-			<var name="memberCount" value="1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-	</command>
-
-	<command name="ViewNoJoinOption" priority="3">
-		<property name="testray.component.names" value="Site Administration,Users and Organizations" />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#assignRegularRoleCP">
-			<var name="roleTitle" value="Administrator" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Public Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Site#manageMembershipOptions">
-			<var name="allowManualMembershipManagement" value="false" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="My Sites" />
-		</execute>
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page" />
-		</execute>
-
-		<execute macro="MySites#viewNoOptions">
-			<var name="navItem" value="Available Sites" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-	</command>
-
-	<command name="ViewNoLeaveOption" priority="3">
-		<property name="testray.component.names" value="Site Administration" />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Public Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Site#manageMembershipOptions">
-			<var name="allowManualMembershipManagement" value="false" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="My Sites" />
-		</execute>
-
-		<execute macro="Site#searchInputCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="MySites#viewNoOptions">
-			<var name="itemName" value="Leave" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-	</command>
-
-	<command name="ViewSitePages" priority="3">
-		<property name="testray.component.names" value="Site Administration" />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Public Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Private Page" />
-			<var name="siteName" value="Site Name" />
-			<var name="sitePagePrivacy" value="Private" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="My Sites" />
-		</execute>
-
-		<execute macro="MySites#gotoPagesPG">
-			<var name="menuItem" value="Go to Public Pages" />
-			<var name="pageName" value="Public Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page" />
-		</execute>
-
-		<execute macro="MySites#gotoPagesPG">
-			<var name="menuItem" value="Go to Private Pages" />
-			<var name="pageName" value="Private Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-	</command>
-
-	<command name="ViewSiteWithTags" priority="4">
-		<property name="testray.component.names" value="Site Administration,Tags" />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<for list="apple,banana,mango" param="tagName" >
-			<execute macro="Tag#addViaSiteCP">
-				<var name="tagName" value="${tagName}" />
-			</execute>
-		</for>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="My Sites" />
-		</execute>
-
-		<execute macro="Site#viewMySitesViaMySitesPG">
-			<var name="memberCount" value="1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<for list="apple,banana,mango" param="tagName" >
-			<execute macro="MySites#viewTags">
-				<var name="tagName" value="${tagName}" />
-			</execute>
-		</for>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Site Administration|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Display My Sites Pagination
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Administration|
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 01|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 02|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 03|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 04|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 05|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 06|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 07|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 08|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 09|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 10|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 11|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 12|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 13|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 14|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 15|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 16|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 17|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 18|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 19|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 20|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 21|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 22|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 23|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 24|
+	And Navigator open URL
+	And Page add
+		|pageName|Test Page|
+		|siteName|${siteName}|
+	And Portlet add PG
+		|portletName|My Sites|
+	And Navigator goto Page
+		|pageName|Test Page|
+	And Pagination view Results
+		|results|Showing 1 to 20 of 25 entries.|
+	And Pagination change Pagination
+		|itemsPerPage|5|
+	Then Pagination view Results
+		|results|Showing 1 to 5 of 25 entries.|
+Scenario: Join Site Open
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Administration,Users and Organizations|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And UserBar goto Dashboard
+	And Site join Via My Sites PG
+		|siteName|Site Name|
+	And User logout PG
+	Then User login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+		|userScreenName|usersn|
+Scenario: Join Site Private No
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|testray.component.names|Site Administration,Users and Organizations|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|membershipType|Private|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And UserBar goto Dashboard
+	And Site join Via My Sites PG
+		|membershipType|Private|
+		|siteName|Site Name|
+	And User logout PG
+	Then User login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+		|userScreenName|usersn|
+Scenario: Join Site Restricted
+Priority: 5
+	Given these properties
+		|testray.component.names|Site Administration,Users and Organizations|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|membershipType|Restricted|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And UserBar goto Dashboard
+	And Site join Via My Sites PG
+		|membershipType|Restricted|
+		|siteName|Site Name|
+	And UserBar goto Dashboard
+	And Navigator goto Nav Item
+		|navItem|Available Sites|
+	And MySites view Membership Requested
+		|siteName|Site Name|
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site approve Join Site Restricted Via My Sites PG
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And UserBar goto Dashboard
+	And Site view My Sites Via My Sites PG
+		|memberCount|2|
+		|siteName|Site Name|
+	And User logout PG
+	Then User login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+		|userScreenName|usersn|
+Scenario: Leave Site
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|testray.component.names|Site Administration,Users and Organizations|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And UserBar goto Dashboard
+	And Site join Via My Sites PG
+		|siteName|Site Name|
+	And UserBar goto Dashboard
+	And Site leave Via My Sites PG
+		|siteName|Site Name|
+	And User logout PG
+	Then User login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+		|userScreenName|usersn|
+Scenario: Search Site
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Administration|
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And Page add
+		|pageName|Test Page|
+		|siteName|${siteName}|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And Navigator goto Page
+		|pageName|Test Page|
+	And Portlet add PG
+		|portletName|My Sites|
+	And Site search Input CP
+		|siteName|Site Name|
+	Then Site view My Sites Via My Sites PG
+		|memberCount|1|
+		|siteName|Site Name|
+Scenario: View Membership Assign Via Site CP
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Administration,Users and Organizations|
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User assign Regular Role CP
+		|roleTitle|Power User|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And Page add
+		|pageName|Public Page|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Site assign User Sites CP
+		|siteName|Site Name|
+		|userScreenName|usersn|
+	And Navigator open URL
+	And Page add
+		|pageName|Test Page|
+		|siteName|${siteName}|
+	And Portlet add PG
+		|portletName|My Sites|
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Test Page|
+	Then Site view My Sites Via My Sites PG
+		|memberCount|2|
+		|siteName|Site Name|
+Scenario: View No Inactive Site
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Administration|
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Site inactivate CP
+		|siteName|Site Name|
+	And Page add
+		|pageName|Test Page|
+		|siteName|${siteName}|
+	And Navigator goto Page
+		|pageName|Test Page|
+	And Portlet add PG
+		|portletName|My Sites|
+	And Site search Input CP
+		|siteName|Site Name|
+	Then Site view No My Sites Via My Sites PG
+		|memberCount|1|
+		|siteName|Site Name|
+Scenario: View No Join Option
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Administration,Users and Organizations|
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User assign Regular Role CP
+		|roleTitle|Administrator|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And Page add
+		|pageName|Public Page|
+		|siteName|Site Name|
+	And Site manage Membership Options
+		|allowManualMembershipManagement|false|
+	And Navigator open URL
+	And Page add
+		|pageName|Test Page|
+		|siteName|${siteName}|
+	And Portlet add PG
+		|portletName|My Sites|
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Test Page|
+	Then MySites view No Options
+		|navItem|Available Sites|
+		|siteName|Site Name|
+Scenario: View No Leave Option
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Administration|
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And Page add
+		|pageName|Public Page|
+		|siteName|Site Name|
+	And Site manage Membership Options
+		|allowManualMembershipManagement|false|
+	And Navigator open URL
+	And Page add
+		|pageName|Test Page|
+		|siteName|${siteName}|
+	And Navigator goto Page
+		|pageName|Test Page|
+	And Portlet add PG
+		|portletName|My Sites|
+	And Site search Input CP
+		|siteName|Site Name|
+	Then MySites view No Options
+		|itemName|Leave|
+		|siteName|Site Name|
+Scenario: View Site Pages
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Administration|
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And Page add
+		|pageName|Test Page|
+		|siteName|${siteName}|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And Page add
+		|pageName|Public Page|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Private Page|
+		|siteName|Site Name|
+		|sitePagePrivacy|Private|
+	And Navigator goto Page
+		|pageName|Test Page|
+	And Portlet add PG
+		|portletName|My Sites|
+	And MySites goto Pages PG
+		|menuItem|Go to Public Pages|
+		|pageName|Public Page|
+		|siteName|Site Name|
+	And Navigator goto Page
+		|pageName|Test Page|
+	Then MySites goto Pages PG
+		|menuItem|Go to Private Pages|
+		|pageName|Private Page|
+		|siteName|Site Name|
+Scenario: View Site With Tags
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Administration,Tags|
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Tag add Via Site CP
+		|tagName|apple|
+	And Tag add Via Site CP
+		|tagName|banana|
+	And Tag add Via Site CP
+		|tagName|mango|
+	And Page add
+		|pageName|Test Page|
+		|siteName|${siteName}|
+	And Navigator goto Page
+		|pageName|Test Page|
+	And Portlet add PG
+		|portletName|My Sites|
+	And Site view My Sites Via My Sites PG
+		|memberCount|1|
+		|siteName|Site Name|
+	And MySites view Tags
+		|tagName|apple|
+	And MySites view Tags
+		|tagName|banana|
+	Then MySites view Tags
+		|tagName|mango|

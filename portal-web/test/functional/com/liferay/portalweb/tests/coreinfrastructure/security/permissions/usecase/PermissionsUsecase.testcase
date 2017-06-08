@@ -1,46 +1,30 @@
-<definition component-name="portal-security">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Permissions" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Permissions|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="PortalSettings#tearDownAuthenticationCP" />
-
-				<execute macro="Page#tearDownPG" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="ViewNoDisplayPortletConfigurationPermission" priority="4">
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<var name="url1" value="${portalURL}/testxxx/?p_p_id=com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet&amp;p_p_lifecycle=0&amp;p_p_state=maximized&amp;_com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet_mvcPath=%2Fedit_configuration.jsp&amp;_com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet_portletResource=com_liferay_users_admin_web_portlet_UsersAdminPortlet" />
-		<var name="url2" value="${portalURL}/testxxx/?p_p_id=com_liferay_users_admin_web_portlet_UsersAdminPortlet&amp;p_p_state=maximized" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="testxxx" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute function="Open" locator1="${url1}" />
-		<execute function="AssertTextEquals" locator1="Message#ERROR_2" value1="You do not have the required permissions." />
-
-		<execute function="Open" locator1="${url2}" />
-		<execute function="AssertTextEquals" locator1="Message#ERROR" value1="You do not have the roles required to access this portlet." />
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View No Display Portlet Configuration Permission
+Priority: 4
+	Given these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	When these variables
+		|url1|${portalURL}/testxxx/?p_p_id=com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet&p_p_lifecycle=0&p_p_state=maximized&_com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet_mvcPath=%2Fedit_configuration.jsp&_com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet_portletResource=com_liferay_users_admin_web_portlet_UsersAdminPortlet|
+	And these variables
+		|url2|${portalURL}/testxxx/?p_p_id=com_liferay_users_admin_web_portlet_UsersAdminPortlet&p_p_state=maximized|
+	And Page add
+		|pageName|testxxx|
+	And User logout PG
+	And Open at locator '${url1}'
+	And AssertTextEquals the value 'You do not have the required permissions.' at locator 'Message#ERROR_2'
+	And Open at locator '${url2}'
+	Then AssertTextEquals the value 'You do not have the roles required to access this portlet.' at locator 'Message#ERROR'

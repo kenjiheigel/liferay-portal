@@ -1,548 +1,616 @@
-<definition component-name="portal-permissions">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Permissions" />
-
-	<var name="siteName" value="Site Name" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Workflow#tearDownSiteWorkflow" />
-
-				<execute macro="Role#tearDownCP" />
-
-				<execute macro="User#tearDownCP" />
-
-				<execute macro="Site#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="AccessStaging" priority="4">
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#activateStagingCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="password" value="password" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#add">
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#definePermissionCP">
-			<var name="permissionDefinitionKey" value="CONTROL_PANEL_SITES_SITES_RESOURCE_PERMISSIONS_SITE_VIEW_STAGING_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="View Staging" />
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#assignRegRoleCP">
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="password" value="test" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#viewStagingLocalLivePG" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="password" value="test" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="test test" />
-		</execute>
-	</command>
-
-	<command name="StagingBlogsRolesWorkflow" priority="4">
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="usereapu@liferay.com" />
-			<var name="userFirstName" value="userfnpu" />
-			<var name="userLastName" value="userlnpu" />
-			<var name="userScreenName" value="usersnpu" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="password" value="password" />
-			<var name="userEmailAddress" value="usereapu@liferay.com" />
-			<var name="userScreenName" value="usersnpu" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="RoleNavigator#gotoRoleType">
-			<var name="roleType" value="Site" />
-		</execute>
-
-		<execute macro="Role#add">
-			<var name="roleTitle" value="Power User Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#definePermissionsCP">
-			<var name="permissionDefinitionKeys" value="SITE_ADMIN_PAGES_SITE_PAGES_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION_CHECKBOX,SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_SITE_MANAGE_PAGES_CHECKBOX" />
-			<var name="roleTitle" value="Power User Name" />
-			<var name="roleType" value="Site" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#definePermissionCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_ADD_ENTRY_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Add Entry" />
-			<var name="roleTitle" value="Power User Name" />
-			<var name="roleType" value="Site" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfnpu" />
-			<var name="userLastName" value="userlnpu" />
-			<var name="userScreenName" value="usersnpu" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignSiteRoleCP">
-			<var name="resourceName" value="userfnpu userlnpu" />
-			<var name="roleTitle" value="Power User Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="usereacr@liferay.com" />
-			<var name="userFirstName" value="userfncr" />
-			<var name="userLastName" value="userlncr" />
-			<var name="userScreenName" value="usersncr" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="password" value="password" />
-			<var name="userEmailAddress" value="usereacr@liferay.com" />
-			<var name="userScreenName" value="usersncr" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#assignRegRoleCP">
-			<var name="roleTitle" value="Portal Content Reviewer" />
-			<var name="userScreenName" value="usersncr" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfncr" />
-			<var name="userLastName" value="userlncr" />
-			<var name="userScreenName" value="usersncr" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="usereaa@liferay.com" />
-			<var name="userFirstName" value="userfna" />
-			<var name="userLastName" value="userlna" />
-			<var name="userScreenName" value="usersna" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="password" value="password" />
-			<var name="userEmailAddress" value="usereaa@liferay.com" />
-			<var name="userScreenName" value="usersna" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#assignRegRoleCP">
-			<var name="roleTitle" value="Administrator" />
-			<var name="userScreenName" value="usersna" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfna" />
-			<var name="userLastName" value="userlna" />
-			<var name="userScreenName" value="usersna" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#activateStagingCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Workflow Configuration" />
-		</execute>
-
-		<execute macro="Workflow#configureWorkflow">
-			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowResourceValue" value="Blogs Entry" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="password" value="test" />
-			<var name="userLoginEmailAddress" value="usereapu@liferay.com" />
-			<var name="userLoginFullName" value="userfnpu userlnpu" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Blogs Test Page" />
-			<var name="pageStaging" value="true" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Blogs Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Blogs Test Page" />
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="User#logoutUserPG" />
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute function="AssertElementNotPresent" locator1="Home#PAGE_2_GUEST_VIEW" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="usereaa@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Blogs Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#publishToLive" />
-
-		<execute macro="User#logoutUserPG" />
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute function="AssertElementPresent" locator1="Home#PAGE_2_GUEST_VIEW" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="usereapu@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Blogs Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#addWithWorkflowPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutUserPG" />
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute function="AssertClick" locator1="Home#PAGE_2_GUEST_VIEW" value1="Blogs Test Page" />
-
-		<var name="key_entryTitle" value="Blogs Entry Title" />
-
-		<execute function="AssertElementNotPresent" locator1="BlogsEntry#TITLE" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="usereacr@liferay.com" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="workflowAssetTitle" value="Blogs Entry Title" />
-			<var name="workflowAssetType" value="Blogs Entry" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Workflow#approveTaskByActions">
-			<var name="workflowAssetTitle" value="Blogs Entry Title" />
-			<var name="workflowAssetType" value="Blogs Entry" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="User#logoutUserPG" />
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute function="AssertClick" locator1="Home#PAGE_2_GUEST_VIEW" value1="Blogs Test Page" />
-
-		<var name="key_entryTitle" value="Blogs Entry Title" />
-
-		<execute function="AssertElementNotPresent" locator1="BlogsEntry#TITLE" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="usereaa@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Blogs Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#publishToLive" />
-
-		<execute macro="User#logoutUserPG" />
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute function="Click" locator1="Home#PAGE_2_GUEST_VIEW" />
-
-		<var name="key_entryTitle" value="Blogs Entry Title" />
-
-		<execute function="AssertTextEquals" locator1="BlogsEntry#TITLE" value1="Blogs Entry Title" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Permissions|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Permissions|
+		|siteName|Site Name|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	Then Page add
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Access Staging
+Priority: 4
+	Given Navigator open Site URL
+		|siteName|Site Name|
+	When ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging activate Staging CP
+		|siteName|Site Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role add
+		|roleTitle|Regrole Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permission CP
+		|permissionDefinitionKey|CONTROL_PANEL_SITES_SITES_RESOURCE_PERMISSIONS_SITE_VIEW_STAGING_CHECKBOX|
+		|permissionDefinitionValue|View Staging|
+		|roleTitle|Regrole Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role assign Reg Role CP
+		|roleTitle|Regrole Name|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And User logout And Login PG
+		|password|test|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Staging view Staging Local Live PG
+	Then User logout And Login PG
+		|password|test|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|test test|
+Scenario: Staging Blogs Roles Workflow
+Priority: 4
+	Given Navigator open Site URL
+		|siteName|Site Name|
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|usereapu@liferay.com|
+		|userFirstName|userfnpu|
+		|userLastName|userlnpu|
+		|userScreenName|usersnpu|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress|usereapu@liferay.com|
+		|userScreenName|usersnpu|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And RoleNavigator goto Role Type
+		|roleType|Site|
+	And Role add
+		|roleTitle|Power User Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permissions CP
+		|permissionDefinitionKeys|SITE_ADMIN_PAGES_SITE_PAGES_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION_CHECKBOX,SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_SITE_MANAGE_PAGES_CHECKBOX|
+		|roleTitle|Power User Name|
+		|roleType|Site|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permission CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_ADD_ENTRY_CHECKBOX|
+		|permissionDefinitionValue|Add Entry|
+		|roleTitle|Power User Name|
+		|roleType|Site|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfnpu|
+		|userLastName|userlnpu|
+		|userScreenName|usersnpu|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign Site Role CP
+		|resourceName|userfnpu userlnpu|
+		|roleTitle|Power User Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|usereacr@liferay.com|
+		|userFirstName|userfncr|
+		|userLastName|userlncr|
+		|userScreenName|usersncr|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress|usereacr@liferay.com|
+		|userScreenName|usersncr|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role assign Reg Role CP
+		|roleTitle|Portal Content Reviewer|
+		|userScreenName|usersncr|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfncr|
+		|userLastName|userlncr|
+		|userScreenName|usersncr|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|usereaa@liferay.com|
+		|userFirstName|userfna|
+		|userLastName|userlna|
+		|userScreenName|usersna|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress|usereaa@liferay.com|
+		|userScreenName|usersna|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role assign Reg Role CP
+		|roleTitle|Administrator|
+		|userScreenName|usersna|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfna|
+		|userLastName|userlna|
+		|userScreenName|usersna|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging activate Staging CP
+		|siteName|Site Name|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Workflow Configuration|
+	And Workflow configure Workflow
+		|workflowDefinition|Single Approver (Version 1)|
+		|workflowResourceValue|Blogs Entry|
+	And User logout And Login PG
+		|password|test|
+		|userLoginEmailAddress|usereapu@liferay.com|
+		|userLoginFullName|userfnpu userlnpu|
+	And Page add
+		|pageName|Blogs Test Page|
+		|pageStaging|true|
+		|siteName|Site Name|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Test Page|
+		|siteName|Site Name|
+	And Portlet add PG
+		|pageName|Blogs Test Page|
+		|portletName|Blogs|
+	And User logout User PG
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And AssertElementNotPresent at locator 'Home#PAGE_2_GUEST_VIEW'
+	And User login User PG
+		|password|test|
+		|userEmailAddress|usereaa@liferay.com|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Test Page|
+		|siteName|Site Name|
+	And Staging goto Publish To Live
+	And Staging publish To Live
+	And User logout User PG
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And AssertElementPresent at locator 'Home#PAGE_2_GUEST_VIEW'
+	And User login User PG
+		|password|test|
+		|userEmailAddress|usereapu@liferay.com|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Test Page|
+		|siteName|Site Name|
+	And BlogsEntry add With Workflow PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And User logout User PG
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And AssertClick the value 'Blogs Test Page' at locator 'Home#PAGE_2_GUEST_VIEW'
+	And these variables
+		|key_entryTitle|Blogs Entry Title|
+	And AssertElementNotPresent at locator 'BlogsEntry#TITLE'
+	And User login User PG
+		|password|test|
+		|userEmailAddress|usereacr@liferay.com|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|Blogs Entry Title|
+		|workflowAssetType|Blogs Entry|
+		|workflowTask|Review|
+	And Workflow approve Task By Actions
+		|workflowAssetTitle|Blogs Entry Title|
+		|workflowAssetType|Blogs Entry|
+		|workflowTask|Review|
+	And User logout User PG
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And AssertClick the value 'Blogs Test Page' at locator 'Home#PAGE_2_GUEST_VIEW'
+	And these variables
+		|key_entryTitle|Blogs Entry Title|
+	And AssertElementNotPresent at locator 'BlogsEntry#TITLE'
+	And User login User PG
+		|password|test|
+		|userEmailAddress|usereaa@liferay.com|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Test Page|
+		|siteName|Site Name|
+	And Staging goto Publish To Live
+	And Staging publish To Live
+	And User logout User PG
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Click at locator 'Home#PAGE_2_GUEST_VIEW'
+	And these variables
+		|key_entryTitle|Blogs Entry Title|
+	And AssertTextEquals the value 'Blogs Entry Title' at locator 'BlogsEntry#TITLE'
+	Then User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	Then Page add
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Access Staging
+Priority: 4
+	Given Navigator open Site URL
+		|siteName|Site Name|
+	When ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging activate Staging CP
+		|siteName|Site Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role add
+		|roleTitle|Regrole Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permission CP
+		|permissionDefinitionKey|CONTROL_PANEL_SITES_SITES_RESOURCE_PERMISSIONS_SITE_VIEW_STAGING_CHECKBOX|
+		|permissionDefinitionValue|View Staging|
+		|roleTitle|Regrole Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role assign Reg Role CP
+		|roleTitle|Regrole Name|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And User logout And Login PG
+		|password|test|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Staging view Staging Local Live PG
+	Then User logout And Login PG
+		|password|test|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|test test|
+Scenario: Staging Blogs Roles Workflow
+Priority: 4
+	Given Navigator open Site URL
+		|siteName|Site Name|
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|usereapu@liferay.com|
+		|userFirstName|userfnpu|
+		|userLastName|userlnpu|
+		|userScreenName|usersnpu|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress|usereapu@liferay.com|
+		|userScreenName|usersnpu|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And RoleNavigator goto Role Type
+		|roleType|Site|
+	And Role add
+		|roleTitle|Power User Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permissions CP
+		|permissionDefinitionKeys|SITE_ADMIN_PAGES_SITE_PAGES_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION_CHECKBOX,SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_SITE_MANAGE_PAGES_CHECKBOX|
+		|roleTitle|Power User Name|
+		|roleType|Site|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permission CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_ADD_ENTRY_CHECKBOX|
+		|permissionDefinitionValue|Add Entry|
+		|roleTitle|Power User Name|
+		|roleType|Site|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfnpu|
+		|userLastName|userlnpu|
+		|userScreenName|usersnpu|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign Site Role CP
+		|resourceName|userfnpu userlnpu|
+		|roleTitle|Power User Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|usereacr@liferay.com|
+		|userFirstName|userfncr|
+		|userLastName|userlncr|
+		|userScreenName|usersncr|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress|usereacr@liferay.com|
+		|userScreenName|usersncr|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role assign Reg Role CP
+		|roleTitle|Portal Content Reviewer|
+		|userScreenName|usersncr|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfncr|
+		|userLastName|userlncr|
+		|userScreenName|usersncr|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|usereaa@liferay.com|
+		|userFirstName|userfna|
+		|userLastName|userlna|
+		|userScreenName|usersna|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress|usereaa@liferay.com|
+		|userScreenName|usersna|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role assign Reg Role CP
+		|roleTitle|Administrator|
+		|userScreenName|usersna|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfna|
+		|userLastName|userlna|
+		|userScreenName|usersna|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging activate Staging CP
+		|siteName|Site Name|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Workflow Configuration|
+	And Workflow configure Workflow
+		|workflowDefinition|Single Approver (Version 1)|
+		|workflowResourceValue|Blogs Entry|
+	And User logout And Login PG
+		|password|test|
+		|userLoginEmailAddress|usereapu@liferay.com|
+		|userLoginFullName|userfnpu userlnpu|
+	And Page add
+		|pageName|Blogs Test Page|
+		|pageStaging|true|
+		|siteName|Site Name|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Test Page|
+		|siteName|Site Name|
+	And Portlet add PG
+		|pageName|Blogs Test Page|
+		|portletName|Blogs|
+	And User logout User PG
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And AssertElementNotPresent at locator 'Home#PAGE_2_GUEST_VIEW'
+	And User login User PG
+		|password|test|
+		|userEmailAddress|usereaa@liferay.com|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Test Page|
+		|siteName|Site Name|
+	And Staging goto Publish To Live
+	And Staging publish To Live
+	And User logout User PG
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And AssertElementPresent at locator 'Home#PAGE_2_GUEST_VIEW'
+	And User login User PG
+		|password|test|
+		|userEmailAddress|usereapu@liferay.com|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Test Page|
+		|siteName|Site Name|
+	And BlogsEntry add With Workflow PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And User logout User PG
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And AssertClick the value 'Blogs Test Page' at locator 'Home#PAGE_2_GUEST_VIEW'
+	And these variables
+		|key_entryTitle|Blogs Entry Title|
+	And AssertElementNotPresent at locator 'BlogsEntry#TITLE'
+	And User login User PG
+		|password|test|
+		|userEmailAddress|usereacr@liferay.com|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|Blogs Entry Title|
+		|workflowAssetType|Blogs Entry|
+		|workflowTask|Review|
+	And Workflow approve Task By Actions
+		|workflowAssetTitle|Blogs Entry Title|
+		|workflowAssetType|Blogs Entry|
+		|workflowTask|Review|
+	And User logout User PG
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And AssertClick the value 'Blogs Test Page' at locator 'Home#PAGE_2_GUEST_VIEW'
+	And these variables
+		|key_entryTitle|Blogs Entry Title|
+	And AssertElementNotPresent at locator 'BlogsEntry#TITLE'
+	And User login User PG
+		|password|test|
+		|userEmailAddress|usereaa@liferay.com|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Test Page|
+		|siteName|Site Name|
+	And Staging goto Publish To Live
+	And Staging publish To Live
+	And User logout User PG
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Click at locator 'Home#PAGE_2_GUEST_VIEW'
+	And these variables
+		|key_entryTitle|Blogs Entry Title|
+	And AssertTextEquals the value 'Blogs Entry Title' at locator 'BlogsEntry#TITLE'
+	Then User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|

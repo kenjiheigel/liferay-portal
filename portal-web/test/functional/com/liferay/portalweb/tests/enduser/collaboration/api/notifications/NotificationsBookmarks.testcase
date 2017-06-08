@@ -1,272 +1,295 @@
-<definition component-name="portal-collaboration">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column" />
-	<property name="testray.main.component.name" value="Notifications" />
+Feature:
 
-	<var name="pageName" value="Bookmarks Page" />
-	<var name="portletName" value="Bookmarks" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Notifications|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Notifications|
+		|pageName|Bookmarks Page|
+		|portletName|Bookmarks|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Bookmarks Page|
+	And Navigator goto Page
+		|pageName|Bookmarks Page|
+	And Portlet add PG
+		|portletName|Bookmarks|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	Then User assign Regular Role CP
+		|roleTitle|Administrator|
+		|userScreenName|usersn|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View Website Notification For New Bookmark In Folder
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Bookmarks Page|
+	When BookmarksFolder add PG
+		|folderDescription|Bookmarks Folder Description|
+		|folderName|Bookmarks Folder Name|
+	And Navigator goto Page
+		|pageName|Bookmarks Page|
+	And BookmarksFolder subscribe PG
+		|folderDescription|Bookmarks Folder Description|
+		|folderName|Bookmarks Folder Name|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Bookmarks Page|
+	And BookmarksFolder goto PG
+		|folderName|Bookmarks Folder Name|
+	And Bookmark add PG
+		|bookmarkName|Bookmark Name|
+		|bookmarkURL|https://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Bookmarks Page|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Navigator goto Page
+		|pageName|Bookmarks Page|
+	And Notifications view Badge Count
+		|notificationCount|1|
+	And Notifications goto Notifications
+	And Notifications view New Content
+		|assetType|bookmarks entry|
+		|contentBody|Bookmark Name|
+		|user|userfn userln|
+	And Notifications navigate To Content
+		|contentBody|Bookmark Name|
+	And BookmarksFolder goto PG
+		|folderName|Bookmarks Folder Name|
+	And Bookmark view Entry
+		|bookmarkName|Bookmark Name|
+		|bookmarkURL|https://www.liferay.com|
+	Then Notifications view Badge Count
+		|notificationCount|0|
+Scenario: View Website Notification For Updated Bookmark In Folder
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Bookmarks Page|
+	When BookmarksFolder add PG
+		|folderDescription|Bookmarks Folder Description|
+		|folderName|Bookmarks Folder Name|
+	And BookmarksFolder subscribe PG
+		|folderDescription|Bookmarks Folder Description|
+		|folderName|Bookmarks Folder Name|
+	And Navigator goto Page
+		|pageName|Bookmarks Page|
+	And BookmarksFolder goto PG
+		|folderName|Bookmarks Folder Name|
+	And Bookmark add PG
+		|bookmarkName|Bookmark Name|
+		|bookmarkURL|https://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Bookmarks Page|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Bookmarks Page|
+	And BookmarksFolder goto PG
+		|folderName|Bookmarks Folder Name|
+	And Bookmark edit PG
+		|bookmarkName|Bookmark Name|
+		|bookmarkNameEdit|Bookmark Name Edit|
+		|bookmarkURL|https://www.liferay.com|
+		|bookmarkURLEdit|https://www.liferay.com|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Navigator goto Page
+		|pageName|Bookmarks Page|
+	And Notifications view Badge Count
+		|notificationCount|1|
+	And Notifications goto Notifications
+	And Notifications view Updated Content
+		|assetType|bookmarks entry|
+		|contentBody|Bookmark Name Edit|
+		|user|userfn userln|
+	And Notifications navigate To Content
+		|contentBody|Bookmark Name Edit|
+	And BookmarksFolder goto PG
+		|folderName|Bookmarks Folder Name|
+	And Bookmark view Entry
+		|bookmarkName|Bookmark Name Edit|
+		|bookmarkURL|https://www.liferay.com|
+	Then Notifications view Badge Count
+		|notificationCount|0|
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Bookmarks Page|
+	And Navigator goto Page
+		|pageName|Bookmarks Page|
+	And Portlet add PG
+		|portletName|Bookmarks|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	Then User assign Regular Role CP
+		|roleTitle|Administrator|
+		|userScreenName|usersn|
 
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Bookmarks Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Bookmarks Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Bookmarks" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="password" value="password" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#assignRegularRoleCP">
-			<var name="roleTitle" value="Administrator" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Bookmark#tearDownCP" />
-
-				<execute macro="BookmarksFolder#tearDownCP" />
-
-				<execute macro="Page#tearDownPG" />
-
-				<execute macro="User#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="ViewWebsiteNotificationForNewBookmarkInFolder" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Bookmarks Page" />
-		</execute>
-
-		<execute macro="BookmarksFolder#addPG">
-			<var name="folderDescription" value="Bookmarks Folder Description" />
-			<var name="folderName" value="Bookmarks Folder Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Bookmarks Page" />
-		</execute>
-
-		<execute macro="BookmarksFolder#subscribePG">
-			<var name="folderDescription" value="Bookmarks Folder Description" />
-			<var name="folderName" value="Bookmarks Folder Name" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Bookmarks Page" />
-		</execute>
-
-		<execute macro="BookmarksFolder#gotoPG">
-			<var name="folderName" value="Bookmarks Folder Name" />
-		</execute>
-
-		<execute macro="Bookmark#addPG">
-			<var name="bookmarkName" value="Bookmark Name" />
-			<var name="bookmarkURL" value="https://www.liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Bookmarks Page" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Bookmarks Page" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="1" />
-		</execute>
-
-		<execute macro="Notifications#gotoNotifications" />
-
-		<execute macro="Notifications#viewNewContent">
-			<var name="assetType" value="bookmarks entry" />
-			<var name="contentBody" value="Bookmark Name" />
-			<var name="user" value="userfn userln" />
-		</execute>
-
-		<execute macro="Notifications#navigateToContent">
-			<var name="contentBody" value="Bookmark Name" />
-		</execute>
-
-		<execute macro="BookmarksFolder#gotoPG">
-			<var name="folderName" value="Bookmarks Folder Name" />
-		</execute>
-
-		<execute macro="Bookmark#viewEntry">
-			<var name="bookmarkName" value="Bookmark Name" />
-			<var name="bookmarkURL" value="https://www.liferay.com" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-	</command>
-
-	<command name="ViewWebsiteNotificationForUpdatedBookmarkInFolder" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Bookmarks Page" />
-		</execute>
-
-		<execute macro="BookmarksFolder#addPG">
-			<var name="folderDescription" value="Bookmarks Folder Description" />
-			<var name="folderName" value="Bookmarks Folder Name" />
-		</execute>
-
-		<execute macro="BookmarksFolder#subscribePG">
-			<var name="folderDescription" value="Bookmarks Folder Description" />
-			<var name="folderName" value="Bookmarks Folder Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Bookmarks Page" />
-		</execute>
-
-		<execute macro="BookmarksFolder#gotoPG">
-			<var name="folderName" value="Bookmarks Folder Name" />
-		</execute>
-
-		<execute macro="Bookmark#addPG">
-			<var name="bookmarkName" value="Bookmark Name" />
-			<var name="bookmarkURL" value="https://www.liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Bookmarks Page" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Bookmarks Page" />
-		</execute>
-
-		<execute macro="BookmarksFolder#gotoPG">
-			<var name="folderName" value="Bookmarks Folder Name" />
-		</execute>
-
-		<execute macro="Bookmark#editPG">
-			<var name="bookmarkName" value="Bookmark Name" />
-			<var name="bookmarkNameEdit" value="Bookmark Name Edit" />
-			<var name="bookmarkURL" value="https://www.liferay.com" />
-			<var name="bookmarkURLEdit" value="https://www.liferay.com" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Bookmarks Page" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="1" />
-		</execute>
-
-		<execute macro="Notifications#gotoNotifications" />
-
-		<execute macro="Notifications#viewUpdatedContent">
-			<var name="assetType" value="bookmarks entry" />
-			<var name="contentBody" value="Bookmark Name Edit" />
-			<var name="user" value="userfn userln" />
-		</execute>
-
-		<execute macro="Notifications#navigateToContent">
-			<var name="contentBody" value="Bookmark Name Edit" />
-		</execute>
-
-		<execute macro="BookmarksFolder#gotoPG">
-			<var name="folderName" value="Bookmarks Folder Name" />
-		</execute>
-
-		<execute macro="Bookmark#viewEntry">
-			<var name="bookmarkName" value="Bookmark Name Edit" />
-			<var name="bookmarkURL" value="https://www.liferay.com" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View Website Notification For New Bookmark In Folder
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Bookmarks Page|
+	When BookmarksFolder add PG
+		|folderDescription|Bookmarks Folder Description|
+		|folderName|Bookmarks Folder Name|
+	And Navigator goto Page
+		|pageName|Bookmarks Page|
+	And BookmarksFolder subscribe PG
+		|folderDescription|Bookmarks Folder Description|
+		|folderName|Bookmarks Folder Name|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Bookmarks Page|
+	And BookmarksFolder goto PG
+		|folderName|Bookmarks Folder Name|
+	And Bookmark add PG
+		|bookmarkName|Bookmark Name|
+		|bookmarkURL|https://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Bookmarks Page|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Navigator goto Page
+		|pageName|Bookmarks Page|
+	And Notifications view Badge Count
+		|notificationCount|1|
+	And Notifications goto Notifications
+	And Notifications view New Content
+		|assetType|bookmarks entry|
+		|contentBody|Bookmark Name|
+		|user|userfn userln|
+	And Notifications navigate To Content
+		|contentBody|Bookmark Name|
+	And BookmarksFolder goto PG
+		|folderName|Bookmarks Folder Name|
+	And Bookmark view Entry
+		|bookmarkName|Bookmark Name|
+		|bookmarkURL|https://www.liferay.com|
+	Then Notifications view Badge Count
+		|notificationCount|0|
+Scenario: View Website Notification For Updated Bookmark In Folder
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Bookmarks Page|
+	When BookmarksFolder add PG
+		|folderDescription|Bookmarks Folder Description|
+		|folderName|Bookmarks Folder Name|
+	And BookmarksFolder subscribe PG
+		|folderDescription|Bookmarks Folder Description|
+		|folderName|Bookmarks Folder Name|
+	And Navigator goto Page
+		|pageName|Bookmarks Page|
+	And BookmarksFolder goto PG
+		|folderName|Bookmarks Folder Name|
+	And Bookmark add PG
+		|bookmarkName|Bookmark Name|
+		|bookmarkURL|https://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Bookmarks Page|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Bookmarks Page|
+	And BookmarksFolder goto PG
+		|folderName|Bookmarks Folder Name|
+	And Bookmark edit PG
+		|bookmarkName|Bookmark Name|
+		|bookmarkNameEdit|Bookmark Name Edit|
+		|bookmarkURL|https://www.liferay.com|
+		|bookmarkURLEdit|https://www.liferay.com|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Navigator goto Page
+		|pageName|Bookmarks Page|
+	And Notifications view Badge Count
+		|notificationCount|1|
+	And Notifications goto Notifications
+	And Notifications view Updated Content
+		|assetType|bookmarks entry|
+		|contentBody|Bookmark Name Edit|
+		|user|userfn userln|
+	And Notifications navigate To Content
+		|contentBody|Bookmark Name Edit|
+	And BookmarksFolder goto PG
+		|folderName|Bookmarks Folder Name|
+	And Bookmark view Entry
+		|bookmarkName|Bookmark Name Edit|
+		|bookmarkURL|https://www.liferay.com|
+	Then Notifications view Badge Count
+		|notificationCount|0|

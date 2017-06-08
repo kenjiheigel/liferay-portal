@@ -1,25 +1,25 @@
-<definition component-name="portal-plugins-osgi">
-	<property name="portal.release" value="false" />
-	<property name="portal.upstream" value="true" />
-	<property name="plugins.deployment.type" value="osgi" />
-	<property name="test.run.environment" value="CE" />
-	<property name="testray.main.component.name" value="Localization Hooks" />
+Feature:
 
-	<set-up>
-		<execute macro="User#firstLoginPG">
-			<var name="localization" value="JA" />
-		</execute>
-	</set-up>
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|false|
+		|portal.upstream|true|
+		|plugins.deployment.type|osgi|
+		|test.run.environment|CE|
+		|testray.main.component.name|Localization Hooks|
 
-	<command name="LocalizationJAHookSmoke" priority="4">
-		<property name="hook.plugins.includes" value="localization-ja-hook" />
+Setup: This executes before each scenario 
+	Given User first Login PG
+		|localization|JA|
 
-		<var name="appName" value="Japanese Localization" />
-		<var name="portletName" value="localization-ja-hook" />
-
-		<execute macro="OSGiSmoke#Smoke">
-			<var name="appName" value="${portletName}" />
-			<var name="portletName" value="${portletName}" />
-		</execute>
-	</command>
-</definition>
+Scenario: Localization JA Hook Smoke
+Priority: 4
+	Given these properties
+		|hook.plugins.includes|localization-ja-hook|
+	When these variables
+		|appName|Japanese Localization|
+	And these variables
+		|portletName|localization-ja-hook|
+	Then OSGiSmoke Smoke
+		|appName|${portletName}|
+		|portletName|${portletName}|

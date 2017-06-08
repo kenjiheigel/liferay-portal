@@ -1,35 +1,28 @@
-<definition component-name="portal-plugins-osgi">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="plugins.deployment.type" value="osgi" />
-	<property name="testray.component.names" value="Google" />
-	<property name="testray.main.component.name" value="Google" />
+Feature:
 
-	<set-up>
-		<execute macro="User#firstLoginPG" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|plugins.deployment.type|osgi|
+		|testray.component.names|Google|
+		|testray.main.component.name|Google|
 
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page" />
-		</execute>
-	</set-up>
+Setup: This executes before each scenario 
+	Given User first Login PG
+	When Page add
+		|pageName|Test Page|
 
-	<tear-down>
-		<execute macro="Page#tearDownPG" />
-	</tear-down>
-
-	<command name="GoogleAdSensePortletSmoke" priority="4">
-		<property name="portlet.plugins.includes" value="google-adsense-portlet" />
-
-		<var name="appName" value="Google AdSense" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Google AdSense" />
-		</execute>
-
-		<execute function="AntCommand#antCommand" locator1="build-test.xml" value1="remove-plugin -Dplugin.name=google-adsense-portlet" />
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given Page tear Down PG
+Scenario: Google Ad Sense Portlet Smoke
+Priority: 4
+	Given these properties
+		|portlet.plugins.includes|google-adsense-portlet|
+	When these variables
+		|appName|Google AdSense|
+	And Navigator goto Page
+		|pageName|Test Page|
+	And Portlet add PG
+		|portletName|Google AdSense|
+	Then AntCommand ant Command the value 'remove-plugin -Dplugin.name=google-adsense-portlet' at locator 'build-test.xml'

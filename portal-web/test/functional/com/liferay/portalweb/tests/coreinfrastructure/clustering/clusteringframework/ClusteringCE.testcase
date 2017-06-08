@@ -1,38 +1,27 @@
-<definition component-name="portal-performance-and-fault-tolerance-ce">
-	<property name="cluster.enabled" value="true" />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="test.run.environment" value="CE" />
-	<property name="testray.main.component.name" value="Clustering" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|cluster.enabled|true|
+		|portal.release|true|
+		|portal.upstream|true|
+		|test.run.environment|CE|
+		|testray.main.component.name|Clustering|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Page#tearDownPG" />
-
-				<execute macro="BlogsEntry#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="ClusteringSmoke" priority="5">
-		<property name="app.server.bundles.size" value="1" />
-		<property name="custom.properties" value="dl.store.impl=com.liferay.portal.store.db.DBStore" />
-		<property name="test.name.skip.portal.instance" value="ClusteringCE#ClusteringSmoke" />
-
-		<execute function="AssertConsoleTextNotPresent" value1="cluster=liferay-channel-control" />
-		<execute function="AssertConsoleTextNotPresent" value1="com.liferay.portal.cluster.multiple" />
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Clustering Smoke
+Priority: 5
+	Given these properties
+		|app.server.bundles.size|1|
+	When these properties
+		|custom.properties|dl.store.impl=com.liferay.portal.store.db.DBStore|
+	And these properties
+		|test.name.skip.portal.instance|ClusteringCE#ClusteringSmoke|
+	And AssertConsoleTextNotPresent the value 'cluster=liferay-channel-control'
+	Then AssertConsoleTextNotPresent the value 'com.liferay.portal.cluster.multiple'

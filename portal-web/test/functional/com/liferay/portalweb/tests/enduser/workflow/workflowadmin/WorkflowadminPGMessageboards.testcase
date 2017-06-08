@@ -1,204 +1,226 @@
-<definition component-name="portal-workflow">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Workflow" />
+Feature:
 
-	<var name="pageName" value="Message Boards Page" />
-	<var name="portletName" value="Message Boards" />
-	<var name="workflowAssetType" value="Message Boards Message" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Workflow|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Workflow|
+		|pageName|Message Boards Page|
+		|portletName|Message Boards|
+		|workflowAssetType|Message Boards Message|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Navigator open URL
+	And ProductMenu goto Sites Configuration
+		|portlet|Workflow Configuration|
+	And Workflow configure Workflow
+		|workflowDefinition|Single Approver (Version 1)|
+		|workflowResourceValue|Message Boards Message|
+	And Page add
+		|pageName|Message Boards Page|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	Then Portlet add PG
+		|portletName|Message Boards|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Approve Message Boards Thread PG
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Message Boards Page|
+	When MessageboardsThread add With Workflow PG
+		|threadBody|MB Thread Body|
+		|threadSubject|MB Thread Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread view With Workflow PG
+		|threadBody|MB Thread Body|
+		|threadSubject|MB Thread Subject|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|MB Thread Subject|
+		|workflowAssetType|Message Boards Message|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread view With Workflow PG
+		|pageName|Message Boards Page|
+		|threadBody|MB Thread Body|
+		|threadSubject|MB Thread Subject|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow approve Task By Actions
+		|workflowAssetTitle|MB Thread Subject|
+		|workflowAssetType|Message Boards Message|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Thread Body|
+		|threadSubject|MB Thread Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Thread Body|
+		|threadSubject|MB Thread Subject|
+	And Page goto My Account
+		|portletName|My Submissions|
+	And Workflow goto View Completed Asset Via My Submissions
+		|workflowAssetTitle|MB Thread Subject|
+	And MessageboardsThread view As Workflow Asset
+		|threadBody|MB Thread Body|
+		|threadSubject|MB Thread Subject|
+	And MessageboardsThread goto View In Context
+	Then MessageboardsThread view PG
+		|threadBody|MB Thread Body|
+		|threadSubject|MB Thread Subject|
+Scenario: Reject Message Boards Thread PG
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|WorkflowadminPGMessageboards#RejectMessageBoardsThreadPG|
+	When Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread add With Workflow PG
+		|pageName|Message Boards Page|
+		|threadBody|MB Thread Body|
+		|threadSubject|MB Thread Subject|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|MB Thread Subject|
+		|workflowAssetType|Message Boards Message|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow reject Task By Actions
+		|workflowAssetTitle|MB Thread Subject|
+		|workflowAssetType|Message Boards Message|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow view Rejected Task
+		|workflowAssetTitle|MB Thread Subject|
+		|workflowAssetType|Message Boards Message|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	Then MessageboardsThread view With Workflow PG
+		|pageName|Message Boards Page|
+		|threadBody|MB Thread Body|
+		|threadSubject|MB Thread Subject|
+		|workflowTask|Update|
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Navigator open URL
+	And ProductMenu goto Sites Configuration
+		|portlet|Workflow Configuration|
+	And Workflow configure Workflow
+		|workflowDefinition|Single Approver (Version 1)|
+		|workflowResourceValue|Message Boards Message|
+	And Page add
+		|pageName|Message Boards Page|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	Then Portlet add PG
+		|portletName|Message Boards|
 
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Workflow Configuration" />
-		</execute>
-
-		<execute macro="Workflow#configureWorkflow">
-			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowResourceValue" value="Message Boards Message" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="MessageboardsCategory#tearDownCP" />
-
-				<execute macro="MessageboardsThread#tearDownCP" />
-
-				<execute macro="MessageboardsPortlet#tearDownConfigurationGeneralCP" />
-
-				<execute macro="Page#tearDownPG" />
-
-				<execute macro="Workflow#tearDownPortalWorkflow" />
-
-				<execute macro="Workflow#tearDownSiteWorkflow" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="ApproveMessageBoardsThreadPG" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addWithWorkflowPG">
-			<var name="threadBody" value="MB Thread Body" />
-			<var name="threadSubject" value="MB Thread Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewWithWorkflowPG">
-			<var name="threadBody" value="MB Thread Body" />
-			<var name="threadSubject" value="MB Thread Subject" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="workflowAssetTitle" value="MB Thread Subject" />
-			<var name="workflowAssetType" value="Message Boards Message" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewWithWorkflowPG">
-			<var name="pageName" value="Message Boards Page" />
-			<var name="threadBody" value="MB Thread Body" />
-			<var name="threadSubject" value="MB Thread Subject" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#approveTaskByActions">
-			<var name="workflowAssetTitle" value="MB Thread Subject" />
-			<var name="workflowAssetType" value="Message Boards Message" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
-			<var name="threadBody" value="MB Thread Body" />
-			<var name="threadSubject" value="MB Thread Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewPG">
-			<var name="threadBody" value="MB Thread Body" />
-			<var name="threadSubject" value="MB Thread Subject" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Submissions" />
-		</execute>
-
-		<execute macro="Workflow#gotoViewCompletedAssetViaMySubmissions">
-			<var name="workflowAssetTitle" value="MB Thread Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewAsWorkflowAsset">
-			<var name="threadBody" value="MB Thread Body" />
-			<var name="threadSubject" value="MB Thread Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoViewInContext" />
-
-		<execute macro="MessageboardsThread#viewPG">
-			<var name="threadBody" value="MB Thread Body" />
-			<var name="threadSubject" value="MB Thread Subject" />
-		</execute>
-	</command>
-
-	<command name="RejectMessageBoardsThreadPG" priority="4">
-		<property name="test.name.skip.portal.instance" value="WorkflowadminPGMessageboards#RejectMessageBoardsThreadPG" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addWithWorkflowPG">
-			<var name="pageName" value="Message Boards Page" />
-			<var name="threadBody" value="MB Thread Body" />
-			<var name="threadSubject" value="MB Thread Subject" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="workflowAssetTitle" value="MB Thread Subject" />
-			<var name="workflowAssetType" value="Message Boards Message" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#rejectTaskByActions">
-			<var name="workflowAssetTitle" value="MB Thread Subject" />
-			<var name="workflowAssetType" value="Message Boards Message" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#viewRejectedTask">
-			<var name="workflowAssetTitle" value="MB Thread Subject" />
-			<var name="workflowAssetType" value="Message Boards Message" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewWithWorkflowPG">
-			<var name="pageName" value="Message Boards Page" />
-			<var name="threadBody" value="MB Thread Body" />
-			<var name="threadSubject" value="MB Thread Subject" />
-			<var name="workflowTask" value="Update" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Approve Message Boards Thread PG
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Message Boards Page|
+	When MessageboardsThread add With Workflow PG
+		|threadBody|MB Thread Body|
+		|threadSubject|MB Thread Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread view With Workflow PG
+		|threadBody|MB Thread Body|
+		|threadSubject|MB Thread Subject|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|MB Thread Subject|
+		|workflowAssetType|Message Boards Message|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread view With Workflow PG
+		|pageName|Message Boards Page|
+		|threadBody|MB Thread Body|
+		|threadSubject|MB Thread Subject|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow approve Task By Actions
+		|workflowAssetTitle|MB Thread Subject|
+		|workflowAssetType|Message Boards Message|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Thread Body|
+		|threadSubject|MB Thread Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Thread Body|
+		|threadSubject|MB Thread Subject|
+	And Page goto My Account
+		|portletName|My Submissions|
+	And Workflow goto View Completed Asset Via My Submissions
+		|workflowAssetTitle|MB Thread Subject|
+	And MessageboardsThread view As Workflow Asset
+		|threadBody|MB Thread Body|
+		|threadSubject|MB Thread Subject|
+	And MessageboardsThread goto View In Context
+	Then MessageboardsThread view PG
+		|threadBody|MB Thread Body|
+		|threadSubject|MB Thread Subject|
+Scenario: Reject Message Boards Thread PG
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|WorkflowadminPGMessageboards#RejectMessageBoardsThreadPG|
+	When Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread add With Workflow PG
+		|pageName|Message Boards Page|
+		|threadBody|MB Thread Body|
+		|threadSubject|MB Thread Subject|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|MB Thread Subject|
+		|workflowAssetType|Message Boards Message|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow reject Task By Actions
+		|workflowAssetTitle|MB Thread Subject|
+		|workflowAssetType|Message Boards Message|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow view Rejected Task
+		|workflowAssetTitle|MB Thread Subject|
+		|workflowAssetType|Message Boards Message|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	Then MessageboardsThread view With Workflow PG
+		|pageName|Message Boards Page|
+		|threadBody|MB Thread Body|
+		|threadSubject|MB Thread Subject|
+		|workflowTask|Update|

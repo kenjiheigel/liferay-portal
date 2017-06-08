@@ -1,141 +1,201 @@
-<definition component-name="portal-calendar">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles" />
-	<property name="testray.main.component.name" value="Calendar" />
+Feature:
 
-	<var name="pageName" value="Calendar Page" />
-	<var name="portletName" value="Calendar" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles|
+		|testray.main.component.name|Calendar|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles|
+		|testray.main.component.name|Calendar|
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Calendar Page|
+	Then Portlet add PG
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Edit Language Selector And View Event
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When these properties
+		|test.name.skip.portal.instance|CalendarLocalization#EditLanguageSelectorAndViewEvent|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Portlet add PG
+		|pageName|Calendar Page|
+		|portletName|Language|
+	And LanguagePortlet select Language PG
+		|language|Spanish (Spain)|
+	And CalendarScheduler add Localized Event
+		|eventTitle|Calendar Event Title|
+		|saveButton|Guardar|
+		|viewType|Week|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Alert view Success Message
+	And CalendarScheduler view Localized Event
+		|eventTitle|Calendar Event Title|
+		|viewTypeLocalized|Semana|
+	And LanguagePortlet select Language PG
+		|language|English (United States)|
+	Then CalendarScheduler view Day
+		|eventTitle|Calendar Event Title|
+Scenario: View Show More Localization
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event 1|
+		|eventType|All Day|
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event 2|
+		|eventType|All Day|
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event 3|
+		|eventType|All Day|
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event 4|
+		|eventType|All Day|
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event 5|
+		|eventType|All Day|
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event 6|
+		|eventType|All Day|
+		|pageName|Calendar Page|
+	And MyAccount configure Display Settings Language
+		|languageName|español (España)|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarScheduler view Show More Localized Via Day View
+		|messageLocalized|Mostrar 1 más|
+		|viewTypeLocalized|Día|
+	And CalendarScheduler view Show More Localized Via Week View
+		|messageLocalized|Mostrar 1 más|
+		|viewTypeLocalized|Semana|
+	And CalendarScheduler view Show More Localized Via Month View
+		|messageLocalized|Mostrar 4 más|
+		|viewTypeLocalized|Mes|
+	Then MyAccount configure Display Settings Language Localized
+		|category|Mi cuenta|
+		|languageName|English (United States)|
+		|portlet|Mi cuenta|
+		|saveButton|Guardar|
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Calendar Page|
+	Then Portlet add PG
+		|pageName|Calendar Page|
+		|portletName|Calendar|
 
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Calendar Page" />
-			<var name="portletName" value="Calendar" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Navigator#gotoPage">
-					<var name="pageName" value="Calendar Page" />
-				</execute>
-
-				<if>
-					<condition function="IsElementPresent" locator1="Calendar#SCHEDULER_EVENT_GENERIC" />
-					<then>
-						<execute macro="CalendarEvent#tearDown" />
-					</then>
-				</if>
-
-				<execute macro="Calendar#tearDown" />
-
-				<execute macro="CalendarConfiguration#tearDown" />
-
-				<execute macro="Page#tearDownPG" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="EditLanguageSelectorAndViewEvent" priority="3">
-		<description message="This is a use case for LPS-58649." />
-
-		<property name="test.name.skip.portal.instance" value="CalendarLocalization#EditLanguageSelectorAndViewEvent" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Calendar Page" />
-			<var name="portletName" value="Language" />
-		</execute>
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="Spanish (Spain)" />
-		</execute>
-
-		<execute macro="CalendarScheduler#addLocalizedEvent">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="saveButton" value="Guardar" />
-			<var name="viewType" value="Week" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Alert#viewSuccessMessage" />
-
-		<execute macro="CalendarScheduler#viewLocalizedEvent">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="viewTypeLocalized" value="Semana" />
-		</execute>
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="English (United States)" />
-		</execute>
-
-		<execute macro="CalendarScheduler#viewDay">
-			<var name="eventTitle" value="Calendar Event Title" />
-		</execute>
-	</command>
-
-	<command name="ViewShowMoreLocalization" priority="3">
-		<description message="This is a use case for LPS-54786." />
-
-		<for list="1,2,3,4,5,6" param="eventNumber">
-			<execute macro="CalendarNavigator#gotoAddEvent" />
-
-			<execute macro="CalendarEvent#add">
-				<var name="eventTitle" value="Calendar Event ${eventNumber}" />
-				<var name="eventType" value="All Day" />
-				<var name="pageName" value="Calendar Page" />
-			</execute>
-		</for>
-
-		<execute macro="MyAccount#configureDisplaySettingsLanguage">
-			<var name="languageName" value="español (España)" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarScheduler#viewShowMoreLocalizedViaDayView">
-			<var name="messageLocalized" value="Mostrar 1 más" />
-			<var name="viewTypeLocalized" value="Día" />
-		</execute>
-
-		<execute macro="CalendarScheduler#viewShowMoreLocalizedViaWeekView">
-			<var name="messageLocalized" value="Mostrar 1 más" />
-			<var name="viewTypeLocalized" value="Semana" />
-		</execute>
-
-		<execute macro="CalendarScheduler#viewShowMoreLocalizedViaMonthView">
-			<var name="messageLocalized" value="Mostrar 4 más" />
-			<var name="viewTypeLocalized" value="Mes" />
-		</execute>
-
-		<execute macro="MyAccount#configureDisplaySettingsLanguageLocalized">
-			<var name="category" value="Mi cuenta" />
-			<var name="languageName" value="English (United States)" />
-			<var name="portlet" value="Mi cuenta" />
-			<var name="saveButton" value="Guardar" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Edit Language Selector And View Event
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When these properties
+		|test.name.skip.portal.instance|CalendarLocalization#EditLanguageSelectorAndViewEvent|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Portlet add PG
+		|pageName|Calendar Page|
+		|portletName|Language|
+	And LanguagePortlet select Language PG
+		|language|Spanish (Spain)|
+	And CalendarScheduler add Localized Event
+		|eventTitle|Calendar Event Title|
+		|saveButton|Guardar|
+		|viewType|Week|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Alert view Success Message
+	And CalendarScheduler view Localized Event
+		|eventTitle|Calendar Event Title|
+		|viewTypeLocalized|Semana|
+	And LanguagePortlet select Language PG
+		|language|English (United States)|
+	Then CalendarScheduler view Day
+		|eventTitle|Calendar Event Title|
+Scenario: View Show More Localization
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event 1|
+		|eventType|All Day|
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event 2|
+		|eventType|All Day|
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event 3|
+		|eventType|All Day|
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event 4|
+		|eventType|All Day|
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event 5|
+		|eventType|All Day|
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event 6|
+		|eventType|All Day|
+		|pageName|Calendar Page|
+	And MyAccount configure Display Settings Language
+		|languageName|español (España)|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarScheduler view Show More Localized Via Day View
+		|messageLocalized|Mostrar 1 más|
+		|viewTypeLocalized|Día|
+	And CalendarScheduler view Show More Localized Via Week View
+		|messageLocalized|Mostrar 1 más|
+		|viewTypeLocalized|Semana|
+	And CalendarScheduler view Show More Localized Via Month View
+		|messageLocalized|Mostrar 4 más|
+		|viewTypeLocalized|Mes|
+	Then MyAccount configure Display Settings Language Localized
+		|category|Mi cuenta|
+		|languageName|English (United States)|
+		|portlet|Mi cuenta|
+		|saveButton|Guardar|

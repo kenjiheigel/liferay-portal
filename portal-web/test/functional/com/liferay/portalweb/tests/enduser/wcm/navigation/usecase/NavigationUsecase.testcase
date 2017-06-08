@@ -1,240 +1,146 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Navigation" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Navigation|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="User#tearDownCP" />
-
-				<execute macro="UserGroup#tearDownCP" />
-
-				<execute macro="Page#tearDownPG" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="AutomaticChangesToDisplayStyle" priority="3">
-		<property name="custom.properties" value="display.style.options=from-level-1-to-all-sublevels${line.separator}navigation.display.style[from-level-1-with-title]=root-layout,absolute,1,auto,true${line.separator}display.style.default=" />
-		<property name="testray.component.names" value="Navigation" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Navigation Display Test Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Navigation Menu" />
-		</execute>
-
-		<var name="key_pageName" value="Navigation Display Test Page" />
-
-		<execute function="AssertTextEquals" locator1="Navigation#BREADCRUMB_ENTRY" value1="Navigation Display Test Page" />
-	</command>
-
-	<command name="UserPersonalSiteUserGroupPrivatePage" priority="4">
-		<property name="custom.properties" value="layout.user.private.layouts.enabled=false${line.separator}layout.user.private.layouts.auto.create=false" />
-		<property name="testray.component.names" value="Navigation" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#assignRegRoleCP">
-			<var name="roleTitle" value="Power User" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="User Groups" />
-		</execute>
-
-		<execute macro="UserGroup#addCP">
-			<var name="userGroupName" value="UG UserGroup Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="User Groups" />
-		</execute>
-
-		<execute macro="UserGroup#addPageCP">
-			<var name="pageName" value="Test User Group Private Page" />
-			<var name="sitePagePrivacy" value="Private" />
-			<var name="userGroupName" value="UG UserGroup Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="User Groups" />
-		</execute>
-
-		<execute macro="UserGroup#assignMemberCP">
-			<var name="userGroupName" value="UG UserGroup Name" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="UserBar#gotoDashboard" />
-
-		<execute macro="SitePageNavigator#gotoPages" />
-
-		<var name="key_pageName" value="Test User Group Private Page" />
-
-		<execute function="AssertTextEquals" locator1="ProductMenu#PRIVATE_PAGE_LINK" value1="Test User Group Private Page" />
-
-		<execute macro="User#logoutUserPG" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-	</command>
-
-	<command name="ValidateReturnToDefaultStyle" priority="3">
-		<property name="custom.properties" value="display.style.default=from-level-1-with-title${line.separator}navigation.display.style[from-level-1-with-title]=root-layout,absolute,1,auto,true" />
-		<property name="testray.component.names" value="Navigation" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Navigation Display Test Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Navigation Menu" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Navigation Display Test Page" />
-		</execute>
-
-		<var name="key_pageName" value="Navigation Display Test Page" />
-
-		<execute function="AssertTextEquals" locator1="Navigation#BREADCRUMB_ENTRY" value1="Navigation Display Test Page" />
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Navigation Menu" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute function="SelectFrame" locator1="IFrame#CONFIGURATION" />
-
-		<execute function="Select" locator1="Select#DISPLAY_TEMPLATE" value1="Bar minimally styled" />
-		<execute macro="Button#clickSave" />
-		<execute macro="Alert#viewSuccessMessage" />
-		<execute function="SelectFrame" value1="relative=top" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Navigation Display Test Page" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="Navigation#BREADCRUMB_ENTRY" value1="Navigation Display Test Page" />
-	</command>
-
-	<command name="ViewNoAddPagePermissionsPG" priority="4">
-		<property name="testray.component.names" value="Navigation,Permissions" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Navigation Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Navigation Page" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoPagePG">
-			<var name="pageName" value="Navigation Page" />
-		</execute>
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionsList" value="CONTENT_PERMISSIONS_ADD_DISCUSSION_CHECKBOX,CONTENT_PERMISSIONS_CONFIGURE_APPLICATIONS_CHECKBOX,CONTENT_PERMISSIONS_CUSTOMIZE_CHECKBOX,CONTENT_PERMISSIONS_DELETE_CHECKBOX,CONTENT_PERMISSIONS_DELETE_DISCUSSION_CHECKBOX,CONTENT_PERMISSIONS_PERMISSIONS_CHECKBOX,CONTENT_PERMISSIONS_UPDATE_CHECKBOX,CONTENT_PERMISSIONS_UPDATE_DISCUSSION_CHECKBOX,CONTENT_PERMISSIONS_VIEW_CHECKBOX" />
-			<var name="roleTitle" value="Power User" />
-		</execute>
-
-		<execute macro="IFrame#selectTopFrame" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Navigation Page" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#assignRegRoleCP">
-			<var name="roleTitle" value="Power User" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Navigation Page" />
-		</execute>
-
-		<execute macro="Dockbar#viewAddTabsWithNoAddPagePermission" />
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG" />
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Automatic Changes To Display Style
+Priority: 3
+	Given these properties
+		|custom.properties|display.style.options=from-level-1-to-all-sublevels${line.separator}navigation.display.style[from-level-1-with-title]=root-layout,absolute,1,auto,true${line.separator}display.style.default=|
+	When these properties
+		|testray.component.names|Navigation|
+	And Page add
+		|pageName|Navigation Display Test Page|
+	And Portlet add PG
+		|portletName|Navigation Menu|
+	And these variables
+		|key_pageName|Navigation Display Test Page|
+	Then AssertTextEquals the value 'Navigation Display Test Page' at locator 'Navigation#BREADCRUMB_ENTRY'
+Scenario: User Personal Site User Group Private Page
+Priority: 4
+	Given these properties
+		|custom.properties|layout.user.private.layouts.enabled=false${line.separator}layout.user.private.layouts.auto.create=false|
+	When these properties
+		|testray.component.names|Navigation|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role assign Reg Role CP
+		|roleTitle|Power User|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|User Groups|
+	And UserGroup add CP
+		|userGroupName|UG UserGroup Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|User Groups|
+	And UserGroup add Page CP
+		|pageName|Test User Group Private Page|
+		|sitePagePrivacy|Private|
+		|userGroupName|UG UserGroup Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|User Groups|
+	And UserGroup assign Member CP
+		|userGroupName|UG UserGroup Name|
+		|userScreenName|usersn|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And UserBar goto Dashboard
+	And SitePageNavigator goto Pages
+	And these variables
+		|key_pageName|Test User Group Private Page|
+	And AssertTextEquals the value 'Test User Group Private Page' at locator 'ProductMenu#PRIVATE_PAGE_LINK'
+	And User logout User PG
+	Then User login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+Scenario: Validate Return To Default Style
+Priority: 3
+	Given these properties
+		|custom.properties|display.style.default=from-level-1-with-title${line.separator}navigation.display.style[from-level-1-with-title]=root-layout,absolute,1,auto,true|
+	When these properties
+		|testray.component.names|Navigation|
+	And Page add
+		|pageName|Navigation Display Test Page|
+	And Portlet add PG
+		|portletName|Navigation Menu|
+	And Navigator goto Page
+		|pageName|Navigation Display Test Page|
+	And these variables
+		|key_pageName|Navigation Display Test Page|
+	And AssertTextEquals the value 'Navigation Display Test Page' at locator 'Navigation#BREADCRUMB_ENTRY'
+	And Portlet goto Portlet Options
+		|portletName|Navigation Menu|
+		|portletOption|Configuration|
+	And SelectFrame at locator 'IFrame#CONFIGURATION'
+	And Select the value 'Bar minimally styled' at locator 'Select#DISPLAY_TEMPLATE'
+	And Button click Save
+	And Alert view Success Message
+	And SelectFrame the value 'relative=top'
+	And Navigator goto Page
+		|pageName|Navigation Display Test Page|
+	Then AssertTextEquals the value 'Navigation Display Test Page' at locator 'Navigation#BREADCRUMB_ENTRY'
+Scenario: View No Add Page Permissions PG
+Priority: 4
+	Given these properties
+		|testray.component.names|Navigation,Permissions|
+	When Page add
+		|pageName|Navigation Page|
+	And Navigator goto Page
+		|pageName|Navigation Page|
+	And PermissionsInline goto Page PG
+		|pageName|Navigation Page|
+	And Role define Permission PG
+		|permissionsList|CONTENT_PERMISSIONS_ADD_DISCUSSION_CHECKBOX,CONTENT_PERMISSIONS_CONFIGURE_APPLICATIONS_CHECKBOX,CONTENT_PERMISSIONS_CUSTOMIZE_CHECKBOX,CONTENT_PERMISSIONS_DELETE_CHECKBOX,CONTENT_PERMISSIONS_DELETE_DISCUSSION_CHECKBOX,CONTENT_PERMISSIONS_PERMISSIONS_CHECKBOX,CONTENT_PERMISSIONS_UPDATE_CHECKBOX,CONTENT_PERMISSIONS_UPDATE_DISCUSSION_CHECKBOX,CONTENT_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|Power User|
+	And IFrame select Top Frame
+	And Navigator goto Page
+		|pageName|Navigation Page|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role assign Reg Role CP
+		|roleTitle|Power User|
+		|userScreenName|usersn|
+	And User logout PG
+	And User login User PG
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Navigation Page|
+	And Dockbar view Add Tabs With No Add Page Permission
+	And User logout PG
+	Then User login User PG

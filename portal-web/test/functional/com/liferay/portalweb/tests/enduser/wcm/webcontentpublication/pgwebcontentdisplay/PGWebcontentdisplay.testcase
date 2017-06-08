@@ -1,1092 +1,1279 @@
-<definition component-name="portal-wcd">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Web Content Display" />
-
-	<var name="pageName" value="Web Content Display Page" />
-	<var name="portletName" value="Web Content Display" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Site#tearDownCP" />
-
-				<execute macro="WebContent#tearDownCP" />
-
-				<execute macro="Page#tearDownPG" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="AddDraftNotApproved" priority="4">
-		<property name="testray.component.names" value="Web Content Display" />
-
-		<execute macro="WebContent#addDraftPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="draft" value="true" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-	</command>
-
-	<command name="AddNewWebContentViaAddContentPanel" priority="4">
-		<property name="testray.component.names" value="Web Content Display" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Web Content Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Page" />
-		</execute>
-
-		<execute macro="Content#addNewPG">
-			<var name="assetType" value="Basic Web Content" />
-		</execute>
-
-		<execute macro="IFrame#selectEditAssetFrame" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#publishViaWCD" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Page" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-	</command>
-
-	<command name="AddPortletWCDSite" priority="4">
-		<property name="testray.component.names" value="Web Content Display" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-	</command>
-
-	<command name="AddWebContent" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="testray.component.names" value="Web Content Display" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-	</command>
-
-	<command name="AddWebContentPortalScopeCurrentPage" priority="3">
-		<property name="testray.component.names" value="Web Content Display" />
-
-		<for list="1,2,3" param="i">
-			<execute macro="Page#add">
-				<var name="pageName" value="Web Content Display Page${i}" />
-			</execute>
-
-			<execute macro="Portlet#addPG">
-				<var name="portletName" value="Web Content Display" />
-			</execute>
-		</for>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page1" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#configureScopePG">
-			<var name="scopeSelection" value="Web Content Display Page1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page1" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#viewConfigureScopePG">
-			<var name="scopeSelection" value="Web Content Display Page1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page2" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#configureScopePG">
-			<var name="scopeSelection" value="Web Content Display Page1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page2" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#viewConfigureScopePG">
-			<var name="scopeSelection" value="Web Content Display Page1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page3" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#configureScopePG">
-			<var name="scopeSelection" value="Web Content Display Page3" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page1" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page2" />
-		</execute>
-
-		<execute macro="WebContent#viewDefaultPGViaWCD" />
-
-		<execute macro="WebContentDisplayPortlet#selectWebContent">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page2" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page3" />
-		</execute>
-
-		<execute macro="WebContent#viewDefaultPGViaWCD" />
-
-		<execute macro="WebContent#viewSelectNoPGViaWCD">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-	</command>
-
-	<command name="AddWebContentViaAddContentPanel" priority="4">
-		<property name="testray.component.names" value="Web Content Display" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="WebContent#viewTitle">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="Content#addPG">
-			<var name="assetTitle" value="WC WebContent Title" />
-			<var name="pageName" value="Web Content Display Page" />
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-	</command>
-
-	<command name="AddWithStructure" priority="4">
-		<property name="testray.component.names" value="Web Content Display" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoManageStructures" />
-
-		<execute macro="WebContentStructures#addCP">
-			<var name="structureName" value="WC Structure Name" />
-		</execute>
-
-		<execute macro="DynamicDataMapping#addField">
-			<var name="field" value="Text" />
-			<var name="fieldFieldLabel" value="Text" />
-			<var name="fieldName" value="Text" />
-		</execute>
-
-		<execute macro="WebContentStructures#saveCP">
-			<var name="structureName" value="WC Structure Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoManageTemplates" />
-
-		<execute macro="WebContentTemplates#addCP">
-			<var name="templateFieldNames" value="Text" />
-			<var name="templateLanguage" value="ftl" />
-			<var name="templateName" value="WC Template Name" />
-		</execute>
-
-		<execute macro="WebContentTemplates#addStructure">
-			<var name="structureName" value="WC Structure Name" />
-			<var name="templateFieldNames" value="Text" />
-			<var name="templateLanguage" value="ftl" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContent#addStructuredPGViaWCD">
-			<var name="structureFieldName" value="Text" />
-			<var name="structureName" value="WC Structure Name" />
-			<var name="webContentText" value="WC WebContent Text" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-	</command>
-
-	<command name="AssertExpired" priority="4">
-		<property name="testray.component.names" value="Web Content Display" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContent#expireSpecificVersionCP">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="expiredContent" value="true" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-	</command>
-
-	<command name="ChangeTemplate" priority="4">
-		<property name="testray.component.names" value="Web Content Display" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Web Content Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Page" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoManageTemplates" />
-
-		<execute macro="WebContentTemplates#addCP">
-			<var name="templateFieldNames" value="Content,Content,Content" />
-			<var name="templateLanguage" value="ftl" />
-			<var name="templateName" value="Second Basic Template" />
-		</execute>
-
-		<execute macro="WebContentTemplates#addStructure">
-			<var name="structureName" value="Basic Web Content" />
-			<var name="templateFieldNames" value="Content,Content,Content" />
-			<var name="templateLanguage" value="ftl" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Page" />
-		</execute>
-
-		<execute macro="Content#addNewPG">
-			<var name="assetType" value="Basic Web Content" />
-		</execute>
-
-		<execute macro="IFrame#selectEditAssetFrame" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#selectTemplateCP">
-			<var name="structureName" value="Basic Web Content" />
-			<var name="templateName" value="Second Basic Template" />
-		</execute>
-
-		<execute macro="WebContent#publishViaWCD" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Page" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content WC WebContent Content WC WebContent Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditPGViaWCD" />
-
-		<execute macro="WebContent#selectTemplateCP">
-			<var name="structureName" value="Basic Web Content" />
-			<var name="templateName" value="Basic Web Content" />
-		</execute>
-
-		<execute macro="WebContent#publishViaWCD" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Page" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-	</command>
-
-	<command name="EditWebContent" priority="4">
-		<property name="testray.component.names" value="Web Content Display" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditPGViaWCD" />
-
-		<execute macro="WebContent#editPGViaWCD">
-			<var name="webContentContentEdit" value="WC WebContent Content Edit" />
-			<var name="webContentTitleEdit" value="WC WebContent Title Edit" />
-		</execute>
-	</command>
-
-	<command name="LocalizeWebContent" priority="4">
-		<property name="test.name.skip.portal.instance" value="PGWebcontentdisplay#LocalizeWebContent" />
-		<property name="testray.component.names" value="Localization,Web Content Display" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language Selector" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditPGViaWCD" />
-
-		<execute macro="WebContent#addLocale">
-			<var name="language" value="Chinese (China)" />
-			<var name="locale" value="zh-CN" />
-		</execute>
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="世界您好 Content" />
-			<var name="webContentTitle" value="世界您好 Title" />
-		</execute>
-
-		<execute macro="Button#clickPublish" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="Chinese (China)" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="世界您好 Content" />
-		</execute>
-
-		<execute macro="LanguagePortlet#tearDownLanguagePG" />
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-	</command>
-
-	<command name="RemoveWCDPortletSite" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="testray.component.names" value="Web Content Display" />
-
-		<execute macro="Portlet#deletePG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-	</command>
-
-	<command name="SearchWebContent" priority="4">
-		<property name="testray.component.names" value="Web Content Display" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="WebContent#viewTitle">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#searchWebContent">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#searchWebContentNo">
-			<var name="webContentTitle" value="WC2 WebContent2 Title2" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#searchWebContent">
-			<var name="webContentSearchValue" value="&quot;WC WebContent Title&quot;" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#searchWebContentNo">
-			<var name="webContentSearchValue" value="&quot;WC2 WebContent2 Title2&quot;" />
-			<var name="webContentTitle" value="WC2 WebContent2 Title2" />
-		</execute>
-	</command>
-
-	<command name="SelectWebContent" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="testray.component.names" value="Web Content Display" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="WebContent#viewTitle">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#selectWebContent">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-	</command>
-
-	<command name="SelectWebContentScopeGlobal" priority="3">
-		<property name="testray.component.names" value="Web Content Display" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Global" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="WebContent#viewTitle">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#configureScopePG">
-			<var name="scopeSelection" value="Global" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#viewConfigureScopePG">
-			<var name="scopeSelection" value="Global" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#selectWebContent">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-	</command>
-
-	<command name="ViewAllFileTypesEnabled" priority="4">
-		<property name="test.name.skip.portal.instance" value="PGWebcontentdisplay#ViewAllFileTypesEnabled" />
-		<property name="testray.component.names" value="Web Content Display" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="System Settings" />
-		</execute>
-
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Other" />
-		</execute>
-
-		<execute macro="SystemSettings#editConfiguration">
-			<var name="configurationName" value="OpenOffice Integration" />
-		</execute>
-
-		<execute macro="SystemSettings#enableSetting">
-			<var name="checkboxSetting" value="SERVER_ENABLED" />
-		</execute>
-
-		<execute macro="SystemSettings#saveConfiguration" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Web Content Display" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#configureSetupPG">
-			<var name="userToolNameList" value="DOC,ODT,PDF,TXT" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#saveConfiguration" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#viewEnabledFileTypesPGViaWCD">
-			<var name="fileTypes" value="DOC,ODT,PDF,TXT" />
-		</execute>
-	</command>
-
-	<command name="ViewAllSettingsEnabledWCDConfiguration" priority="4">
-		<property name="test.name.skip.portal.instance" value="PGWebcontentdisplay#ViewAllSettingsEnabledWCDConfiguration" />
-		<property name="testray.component.names" value="Web Content Display" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="Web Content Content 1" />
-			<var name="webContentTitle" value="Web Content Title 1" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="WebContent#viewTitle">
-			<var name="webContentTitle" value="Web Content Title 1" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="Web Content Content 2" />
-			<var name="webContentTitle" value="Web Content Title 2" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="WebContent#viewTitle">
-			<var name="webContentTitle" value="Web Content Title 2" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="Web Content Title 1" />
-		</execute>
-
-		<execute macro="WebContent#addExistingRelatedAssetCP">
-			<var name="assetTitle" value="Web Content Title 2" />
-			<var name="assetType" value="Basic Web Content" />
-			<var name="siteName" value="Liferay" />
-			<var name="webContentTitle" value="Web Content Title 1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#selectWebContent">
-			<var name="webContentTitle" value="Web Content Title 1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Web Content Display" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#configureSetupPG">
-			<var name="enableViewCountIncrement" value="true" />
-			<var name="metadataNameList" value="Related Assets,Comment Ratings,Comments,Ratings" />
-			<var name="userToolNameList" value="Print" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#saveConfiguration" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#viewAllSettingsEnabledPG">
-			<var name="relatedAssetTitle" value="Web Content Title 2" />
-			<var name="webContentContent" value="Web Content Content 1" />
-		</execute>
-	</command>
-
-	<command name="ViewArticleWithGuestViewPermission" priority="4">
-		<property name="testray.component.names" value="Permissions,Web Content Display" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoConfigurationPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="Role#viewPermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_VIEW_CHECKBOX" />
-			<var name="permissionFlagged" value="true" />
-			<var name="roleTitle" value="guest" />
-		</execute>
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_VIEW_CHECKBOX" />
-			<var name="roleTitle" value="guest" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#viewNoPermissionPG" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoConfigurationPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_VIEW_CHECKBOX" />
-			<var name="roleTitle" value="guest" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="LexiconEntry#gotoEntryMenuItem">
-			<var name="menuItem" value="Permissions" />
-			<var name="rowEntry" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="IFrame#selectPermissionsFrame" />
-
-		<execute macro="Role#viewPermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_VIEW_CHECKBOX" />
-			<var name="permissionFlagged" value="true" />
-			<var name="roleTitle" value="guest" />
-		</execute>
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_VIEW_CHECKBOX" />
-			<var name="roleTitle" value="guest" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-	</command>
-
-	<command name="ViewEditTemplate" priority="4">
-		<property name="testray.component.names" value="Web Content Display" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#editTemplate">
-			<var name="editTemplateButton" value="true" />
-			<var name="structureName" value="Basic Web Content" />
-			<var name="templateName" value="Template Edit" />
-			<var name="templateScript" value="Template Edited Extra Content" />
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-	</command>
-
-	<command name="ViewPortletWCDShowAvailableLocales" priority="4">
-		<property name="testray.component.names" value="Localization,Web Content Display" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditPGViaWCD" />
-
-		<execute macro="WebContent#addLocale">
-			<var name="language" value="Chinese (China)" />
-			<var name="locale" value="zh-CN" />
-		</execute>
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="世界您好 Content" />
-			<var name="webContentTitle" value="世界您好 Title" />
-		</execute>
-
-		<execute macro="Button#clickPublish" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Web Content Display" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#configureSetupPG">
-			<var name="userToolNameList" value="Translations" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#saveConfiguration" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute function="Click" locator1="Language#LANGUAGE_MENU_CHINESE" />
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="世界您好 Content" />
-		</execute>
-
-		<execute function="Click" locator1="Language#LANGUAGE_MENU_ENGLISH" />
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-	</command>
-
-	<command name="ViewWCDWithDeletedWCArticle" priority="4">
-		<property name="testray.component.names" value="Web Content Display" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContent#deleteCP">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#viewDeletedArticle" />
-	</command>
-
-	<command name="ViewWithPaginationScript" priority="4">
-		<property name="testray.component.names" value="Web Content Display" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="@page_break@ Welcome @page_break@" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPageBreak" />
-
-		<execute macro="WebContentDisplayPortlet#viewContentPageBreak">
-			<var name="webContentContent" value="Welcome" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Web Content Display|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Web Content Display|
+		|pageName|Web Content Display Page|
+		|portletName|Web Content Display|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Web Content Display Page|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then Portlet add PG
+		|portletName|Web Content Display|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Draft Not Approved
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When WebContent add Draft PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then WebContent view PG Via WCD
+		|draft|true|
+		|webContentTitle|WC WebContent Title|
+Scenario: Add New Web Content Via Add Content Panel
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Page add
+		|pageName|Web Content Page|
+	And Navigator goto Page
+		|pageName|Web Content Page|
+	And Content add New PG
+		|assetType|Basic Web Content|
+	And IFrame select Edit Asset Frame
+	And WebContent add CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent publish Via WCD
+	And Navigator goto Page
+		|pageName|Web Content Page|
+	Then WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+Scenario: Add Portlet WCD Site
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Site Name|
+	Then Portlet add PG
+		|portletName|Web Content Display|
+Scenario: Add Web Content
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|testray.component.names|Web Content Display|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	Then WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+Scenario: Add Web Content Portal Scope Current Page
+Priority: 3
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Page add
+		|pageName|Web Content Display Page1|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And Page add
+		|pageName|Web Content Display Page2|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And Page add
+		|pageName|Web Content Display Page3|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And Navigator goto Page
+		|pageName|Web Content Display Page1|
+	And WebContentDisplayPortlet configure Scope PG
+		|scopeSelection|Web Content Display Page1|
+	And Navigator goto Page
+		|pageName|Web Content Display Page1|
+	And WebContentDisplayPortlet view Configure Scope PG
+		|scopeSelection|Web Content Display Page1|
+	And Navigator goto Page
+		|pageName|Web Content Display Page2|
+	And WebContentDisplayPortlet configure Scope PG
+		|scopeSelection|Web Content Display Page1|
+	And Navigator goto Page
+		|pageName|Web Content Display Page2|
+	And WebContentDisplayPortlet view Configure Scope PG
+		|scopeSelection|Web Content Display Page1|
+	And Navigator goto Page
+		|pageName|Web Content Display Page3|
+	And WebContentDisplayPortlet configure Scope PG
+		|scopeSelection|Web Content Display Page3|
+	And Navigator goto Page
+		|pageName|Web Content Display Page1|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And Navigator goto Page
+		|pageName|Web Content Display Page2|
+	And WebContent view Default PG Via WCD
+	And WebContentDisplayPortlet select Web Content
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page2|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And Navigator goto Page
+		|pageName|Web Content Display Page3|
+	And WebContent view Default PG Via WCD
+	Then WebContent view Select No PG Via WCD
+		|webContentTitle|WC WebContent Title|
+Scenario: Add Web Content Via Add Content Panel
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Content add PG
+		|assetTitle|WC WebContent Title|
+		|pageName|Web Content Display Page|
+		|webContentContent|WC WebContent Content|
+	Then WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+Scenario: Add With Structure
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Manage Structures
+	And WebContentStructures add CP
+		|structureName|WC Structure Name|
+	And DynamicDataMapping add Field
+		|field|Text|
+		|fieldFieldLabel|Text|
+		|fieldName|Text|
+	And WebContentStructures save CP
+		|structureName|WC Structure Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Manage Templates
+	And WebContentTemplates add CP
+		|templateFieldNames|Text|
+		|templateLanguage|ftl|
+		|templateName|WC Template Name|
+	And WebContentTemplates add Structure
+		|structureName|WC Structure Name|
+		|templateFieldNames|Text|
+		|templateLanguage|ftl|
+	And PortletEntry save
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then WebContent add Structured PG Via WCD
+		|structureFieldName|Text|
+		|structureName|WC Structure Name|
+		|webContentText|WC WebContent Text|
+		|webContentTitle|WC WebContent Title|
+Scenario: Assert Expired
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContent expire Specific Version CP
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then WebContent view PG Via WCD
+		|expiredContent|true|
+		|webContentTitle|WC WebContent Title|
+Scenario: Change Template
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Navigator open URL
+	And Page add
+		|pageName|Web Content Page|
+	And Navigator goto Page
+		|pageName|Web Content Page|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Manage Templates
+	And WebContentTemplates add CP
+		|templateFieldNames|Content,Content,Content|
+		|templateLanguage|ftl|
+		|templateName|Second Basic Template|
+	And WebContentTemplates add Structure
+		|structureName|Basic Web Content|
+		|templateFieldNames|Content,Content,Content|
+		|templateLanguage|ftl|
+	And PortletEntry save
+	And Navigator goto Page
+		|pageName|Web Content Page|
+	And Content add New PG
+		|assetType|Basic Web Content|
+	And IFrame select Edit Asset Frame
+	And WebContent add CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent select Template CP
+		|structureName|Basic Web Content|
+		|templateName|Second Basic Template|
+	And WebContent publish Via WCD
+	And Navigator goto Page
+		|pageName|Web Content Page|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content WC WebContent Content WC WebContent Content|
+	And WebContentNavigator goto Edit PG Via WCD
+	And WebContent select Template CP
+		|structureName|Basic Web Content|
+		|templateName|Basic Web Content|
+	And WebContent publish Via WCD
+	And Navigator goto Page
+		|pageName|Web Content Page|
+	Then WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+Scenario: Edit Web Content
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And WebContentNavigator goto Edit PG Via WCD
+	Then WebContent edit PG Via WCD
+		|webContentContentEdit|WC WebContent Content Edit|
+		|webContentTitleEdit|WC WebContent Title Edit|
+Scenario: Localize Web Content
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|PGWebcontentdisplay#LocalizeWebContent|
+	When these properties
+		|testray.component.names|Localization,Web Content Display|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Portlet add PG
+		|portletName|Language Selector|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And WebContentNavigator goto Edit PG Via WCD
+	And WebContent add Locale
+		|language|Chinese (China)|
+		|locale|zh-CN|
+	And WebContent add CP
+		|webContentContent|世界您好 Content|
+		|webContentTitle|世界您好 Title|
+	And Button click Publish
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And LanguagePortlet select Language PG
+		|language|Chinese (China)|
+	And WebContent view PG Via WCD
+		|webContentContent|世界您好 Content|
+	And LanguagePortlet tear Down Language PG
+	Then WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+Scenario: Remove WCD Portlet Site
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|testray.component.names|Web Content Display|
+	Then Portlet delete PG
+		|portletName|Web Content Display|
+Scenario: Search Web Content
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentDisplayPortlet search Web Content
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentDisplayPortlet search Web Content No
+		|webContentTitle|WC2 WebContent2 Title2|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentDisplayPortlet search Web Content
+		|webContentSearchValue|"WC WebContent Title"|
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then WebContentDisplayPortlet search Web Content No
+		|webContentSearchValue|"WC2 WebContent2 Title2"|
+		|webContentTitle|WC2 WebContent2 Title2|
+Scenario: Select Web Content
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|testray.component.names|Web Content Display|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentDisplayPortlet select Web Content
+		|webContentTitle|WC WebContent Title|
+	Then WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+Scenario: Select Web Content Scope Global
+Priority: 3
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When ProductMenu goto Site
+		|site|Global|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentDisplayPortlet configure Scope PG
+		|scopeSelection|Global|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentDisplayPortlet view Configure Scope PG
+		|scopeSelection|Global|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentDisplayPortlet select Web Content
+		|webContentTitle|WC WebContent Title|
+	Then WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+Scenario: View All File Types Enabled
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|PGWebcontentdisplay#ViewAllFileTypesEnabled|
+	When these properties
+		|testray.component.names|Web Content Display|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|System Settings|
+	And Navigator goto Nav Item
+		|navItem|Other|
+	And SystemSettings edit Configuration
+		|configurationName|OpenOffice Integration|
+	And SystemSettings enable Setting
+		|checkboxSetting|SERVER_ENABLED|
+	And SystemSettings save Configuration
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Portlet goto Portlet Options
+		|portletName|Web Content Display|
+		|portletOption|Configuration|
+	And WebContentDisplayPortlet configure Setup PG
+		|userToolNameList|DOC,ODT,PDF,TXT|
+	And WebContentDisplayPortlet save Configuration
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then WebContentDisplayPortlet view Enabled File Types PG Via WCD
+		|fileTypes|DOC,ODT,PDF,TXT|
+Scenario: View All Settings Enabled WCD Configuration
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|PGWebcontentdisplay#ViewAllSettingsEnabledWCDConfiguration|
+	When these properties
+		|testray.component.names|Web Content Display|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|Web Content Content 1|
+		|webContentTitle|Web Content Title 1|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|Web Content Title 1|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|Web Content Content 2|
+		|webContentTitle|Web Content Title 2|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|Web Content Title 2|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Edit CP
+		|webContentTitle|Web Content Title 1|
+	And WebContent add Existing Related Asset CP
+		|assetTitle|Web Content Title 2|
+		|assetType|Basic Web Content|
+		|siteName|Liferay|
+		|webContentTitle|Web Content Title 1|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentDisplayPortlet select Web Content
+		|webContentTitle|Web Content Title 1|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Portlet goto Portlet Options
+		|portletName|Web Content Display|
+		|portletOption|Configuration|
+	And WebContentDisplayPortlet configure Setup PG
+		|enableViewCountIncrement|true|
+		|metadataNameList|Related Assets,Comment Ratings,Comments,Ratings|
+		|userToolNameList|Print|
+	And WebContentDisplayPortlet save Configuration
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then WebContentDisplayPortlet view All Settings Enabled PG
+		|relatedAssetTitle|Web Content Title 2|
+		|webContentContent|Web Content Content 1|
+Scenario: View Article With Guest View Permission
+Priority: 4
+	Given these properties
+		|testray.component.names|Permissions,Web Content Display|
+	When Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And User login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And PermissionsInline goto Configuration PG
+		|portletName|Web Content Display|
+	And Role view Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_VIEW_CHECKBOX|
+		|permissionFlagged|true|
+		|roleTitle|guest|
+	And Role remove Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|guest|
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentDisplayPortlet view No Permission PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And PermissionsInline goto Configuration PG
+		|portletName|Web Content Display|
+	And Role define Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|guest|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And LexiconEntry goto Entry Menu Item
+		|menuItem|Permissions|
+		|rowEntry|WC WebContent Title|
+	And IFrame select Permissions Frame
+	And Role view Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_VIEW_CHECKBOX|
+		|permissionFlagged|true|
+		|roleTitle|guest|
+	And Role remove Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|guest|
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	Then User login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+Scenario: View Edit Template
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	Then WebContentDisplayPortlet edit Template
+		|editTemplateButton|true|
+		|structureName|Basic Web Content|
+		|templateName|Template Edit|
+		|templateScript|Template Edited Extra Content|
+		|webContentContent|WC WebContent Content|
+Scenario: View Portlet WCD Show Available Locales
+Priority: 4
+	Given these properties
+		|testray.component.names|Localization,Web Content Display|
+	When Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And WebContentNavigator goto Edit PG Via WCD
+	And WebContent add Locale
+		|language|Chinese (China)|
+		|locale|zh-CN|
+	And WebContent add CP
+		|webContentContent|世界您好 Content|
+		|webContentTitle|世界您好 Title|
+	And Button click Publish
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Portlet goto Portlet Options
+		|portletName|Web Content Display|
+		|portletOption|Configuration|
+	And WebContentDisplayPortlet configure Setup PG
+		|userToolNameList|Translations|
+	And WebContentDisplayPortlet save Configuration
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Click at locator 'Language#LANGUAGE_MENU_CHINESE'
+	And WebContent view PG Via WCD
+		|webContentContent|世界您好 Content|
+	And Click at locator 'Language#LANGUAGE_MENU_ENGLISH'
+	Then WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+Scenario: View WCD With Deleted WC Article
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContent delete CP
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then WebContentDisplayPortlet view Deleted Article
+Scenario: View With Pagination Script
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent add PG Via WCD
+		|webContentContent|@page_break@ Welcome @page_break@|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view Page Break
+	Then WebContentDisplayPortlet view Content Page Break
+		|webContentContent|Welcome|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Web Content Display Page|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then Portlet add PG
+		|portletName|Web Content Display|
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Draft Not Approved
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When WebContent add Draft PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then WebContent view PG Via WCD
+		|draft|true|
+		|webContentTitle|WC WebContent Title|
+Scenario: Add New Web Content Via Add Content Panel
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Page add
+		|pageName|Web Content Page|
+	And Navigator goto Page
+		|pageName|Web Content Page|
+	And Content add New PG
+		|assetType|Basic Web Content|
+	And IFrame select Edit Asset Frame
+	And WebContent add CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent publish Via WCD
+	And Navigator goto Page
+		|pageName|Web Content Page|
+	Then WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+Scenario: Add Portlet WCD Site
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Site Name|
+	Then Portlet add PG
+		|portletName|Web Content Display|
+Scenario: Add Web Content
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|testray.component.names|Web Content Display|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	Then WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+Scenario: Add Web Content Portal Scope Current Page
+Priority: 3
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Page add
+		|pageName|Web Content Display Page1|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And Page add
+		|pageName|Web Content Display Page2|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And Page add
+		|pageName|Web Content Display Page3|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And Navigator goto Page
+		|pageName|Web Content Display Page1|
+	And WebContentDisplayPortlet configure Scope PG
+		|scopeSelection|Web Content Display Page1|
+	And Navigator goto Page
+		|pageName|Web Content Display Page1|
+	And WebContentDisplayPortlet view Configure Scope PG
+		|scopeSelection|Web Content Display Page1|
+	And Navigator goto Page
+		|pageName|Web Content Display Page2|
+	And WebContentDisplayPortlet configure Scope PG
+		|scopeSelection|Web Content Display Page1|
+	And Navigator goto Page
+		|pageName|Web Content Display Page2|
+	And WebContentDisplayPortlet view Configure Scope PG
+		|scopeSelection|Web Content Display Page1|
+	And Navigator goto Page
+		|pageName|Web Content Display Page3|
+	And WebContentDisplayPortlet configure Scope PG
+		|scopeSelection|Web Content Display Page3|
+	And Navigator goto Page
+		|pageName|Web Content Display Page1|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And Navigator goto Page
+		|pageName|Web Content Display Page2|
+	And WebContent view Default PG Via WCD
+	And WebContentDisplayPortlet select Web Content
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page2|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And Navigator goto Page
+		|pageName|Web Content Display Page3|
+	And WebContent view Default PG Via WCD
+	Then WebContent view Select No PG Via WCD
+		|webContentTitle|WC WebContent Title|
+Scenario: Add Web Content Via Add Content Panel
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Content add PG
+		|assetTitle|WC WebContent Title|
+		|pageName|Web Content Display Page|
+		|webContentContent|WC WebContent Content|
+	Then WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+Scenario: Add With Structure
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Manage Structures
+	And WebContentStructures add CP
+		|structureName|WC Structure Name|
+	And DynamicDataMapping add Field
+		|field|Text|
+		|fieldFieldLabel|Text|
+		|fieldName|Text|
+	And WebContentStructures save CP
+		|structureName|WC Structure Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Manage Templates
+	And WebContentTemplates add CP
+		|templateFieldNames|Text|
+		|templateLanguage|ftl|
+		|templateName|WC Template Name|
+	And WebContentTemplates add Structure
+		|structureName|WC Structure Name|
+		|templateFieldNames|Text|
+		|templateLanguage|ftl|
+	And PortletEntry save
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then WebContent add Structured PG Via WCD
+		|structureFieldName|Text|
+		|structureName|WC Structure Name|
+		|webContentText|WC WebContent Text|
+		|webContentTitle|WC WebContent Title|
+Scenario: Assert Expired
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContent expire Specific Version CP
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then WebContent view PG Via WCD
+		|expiredContent|true|
+		|webContentTitle|WC WebContent Title|
+Scenario: Change Template
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Navigator open URL
+	And Page add
+		|pageName|Web Content Page|
+	And Navigator goto Page
+		|pageName|Web Content Page|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Manage Templates
+	And WebContentTemplates add CP
+		|templateFieldNames|Content,Content,Content|
+		|templateLanguage|ftl|
+		|templateName|Second Basic Template|
+	And WebContentTemplates add Structure
+		|structureName|Basic Web Content|
+		|templateFieldNames|Content,Content,Content|
+		|templateLanguage|ftl|
+	And PortletEntry save
+	And Navigator goto Page
+		|pageName|Web Content Page|
+	And Content add New PG
+		|assetType|Basic Web Content|
+	And IFrame select Edit Asset Frame
+	And WebContent add CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent select Template CP
+		|structureName|Basic Web Content|
+		|templateName|Second Basic Template|
+	And WebContent publish Via WCD
+	And Navigator goto Page
+		|pageName|Web Content Page|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content WC WebContent Content WC WebContent Content|
+	And WebContentNavigator goto Edit PG Via WCD
+	And WebContent select Template CP
+		|structureName|Basic Web Content|
+		|templateName|Basic Web Content|
+	And WebContent publish Via WCD
+	And Navigator goto Page
+		|pageName|Web Content Page|
+	Then WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+Scenario: Edit Web Content
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And WebContentNavigator goto Edit PG Via WCD
+	Then WebContent edit PG Via WCD
+		|webContentContentEdit|WC WebContent Content Edit|
+		|webContentTitleEdit|WC WebContent Title Edit|
+Scenario: Localize Web Content
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|PGWebcontentdisplay#LocalizeWebContent|
+	When these properties
+		|testray.component.names|Localization,Web Content Display|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Portlet add PG
+		|portletName|Language Selector|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And WebContentNavigator goto Edit PG Via WCD
+	And WebContent add Locale
+		|language|Chinese (China)|
+		|locale|zh-CN|
+	And WebContent add CP
+		|webContentContent|世界您好 Content|
+		|webContentTitle|世界您好 Title|
+	And Button click Publish
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And LanguagePortlet select Language PG
+		|language|Chinese (China)|
+	And WebContent view PG Via WCD
+		|webContentContent|世界您好 Content|
+	And LanguagePortlet tear Down Language PG
+	Then WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+Scenario: Remove WCD Portlet Site
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|testray.component.names|Web Content Display|
+	Then Portlet delete PG
+		|portletName|Web Content Display|
+Scenario: Search Web Content
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentDisplayPortlet search Web Content
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentDisplayPortlet search Web Content No
+		|webContentTitle|WC2 WebContent2 Title2|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentDisplayPortlet search Web Content
+		|webContentSearchValue|"WC WebContent Title"|
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then WebContentDisplayPortlet search Web Content No
+		|webContentSearchValue|"WC2 WebContent2 Title2"|
+		|webContentTitle|WC2 WebContent2 Title2|
+Scenario: Select Web Content
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|testray.component.names|Web Content Display|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentDisplayPortlet select Web Content
+		|webContentTitle|WC WebContent Title|
+	Then WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+Scenario: Select Web Content Scope Global
+Priority: 3
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When ProductMenu goto Site
+		|site|Global|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentDisplayPortlet configure Scope PG
+		|scopeSelection|Global|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentDisplayPortlet view Configure Scope PG
+		|scopeSelection|Global|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentDisplayPortlet select Web Content
+		|webContentTitle|WC WebContent Title|
+	Then WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+Scenario: View All File Types Enabled
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|PGWebcontentdisplay#ViewAllFileTypesEnabled|
+	When these properties
+		|testray.component.names|Web Content Display|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|System Settings|
+	And Navigator goto Nav Item
+		|navItem|Other|
+	And SystemSettings edit Configuration
+		|configurationName|OpenOffice Integration|
+	And SystemSettings enable Setting
+		|checkboxSetting|SERVER_ENABLED|
+	And SystemSettings save Configuration
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Portlet goto Portlet Options
+		|portletName|Web Content Display|
+		|portletOption|Configuration|
+	And WebContentDisplayPortlet configure Setup PG
+		|userToolNameList|DOC,ODT,PDF,TXT|
+	And WebContentDisplayPortlet save Configuration
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then WebContentDisplayPortlet view Enabled File Types PG Via WCD
+		|fileTypes|DOC,ODT,PDF,TXT|
+Scenario: View All Settings Enabled WCD Configuration
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|PGWebcontentdisplay#ViewAllSettingsEnabledWCDConfiguration|
+	When these properties
+		|testray.component.names|Web Content Display|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|Web Content Content 1|
+		|webContentTitle|Web Content Title 1|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|Web Content Title 1|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|Web Content Content 2|
+		|webContentTitle|Web Content Title 2|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|Web Content Title 2|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Edit CP
+		|webContentTitle|Web Content Title 1|
+	And WebContent add Existing Related Asset CP
+		|assetTitle|Web Content Title 2|
+		|assetType|Basic Web Content|
+		|siteName|Liferay|
+		|webContentTitle|Web Content Title 1|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentDisplayPortlet select Web Content
+		|webContentTitle|Web Content Title 1|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Portlet goto Portlet Options
+		|portletName|Web Content Display|
+		|portletOption|Configuration|
+	And WebContentDisplayPortlet configure Setup PG
+		|enableViewCountIncrement|true|
+		|metadataNameList|Related Assets,Comment Ratings,Comments,Ratings|
+		|userToolNameList|Print|
+	And WebContentDisplayPortlet save Configuration
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then WebContentDisplayPortlet view All Settings Enabled PG
+		|relatedAssetTitle|Web Content Title 2|
+		|webContentContent|Web Content Content 1|
+Scenario: View Article With Guest View Permission
+Priority: 4
+	Given these properties
+		|testray.component.names|Permissions,Web Content Display|
+	When Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And User login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And PermissionsInline goto Configuration PG
+		|portletName|Web Content Display|
+	And Role view Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_VIEW_CHECKBOX|
+		|permissionFlagged|true|
+		|roleTitle|guest|
+	And Role remove Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|guest|
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentDisplayPortlet view No Permission PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And PermissionsInline goto Configuration PG
+		|portletName|Web Content Display|
+	And Role define Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|guest|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And LexiconEntry goto Entry Menu Item
+		|menuItem|Permissions|
+		|rowEntry|WC WebContent Title|
+	And IFrame select Permissions Frame
+	And Role view Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_VIEW_CHECKBOX|
+		|permissionFlagged|true|
+		|roleTitle|guest|
+	And Role remove Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|guest|
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	Then User login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+Scenario: View Edit Template
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	Then WebContentDisplayPortlet edit Template
+		|editTemplateButton|true|
+		|structureName|Basic Web Content|
+		|templateName|Template Edit|
+		|templateScript|Template Edited Extra Content|
+		|webContentContent|WC WebContent Content|
+Scenario: View Portlet WCD Show Available Locales
+Priority: 4
+	Given these properties
+		|testray.component.names|Localization,Web Content Display|
+	When Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And WebContentNavigator goto Edit PG Via WCD
+	And WebContent add Locale
+		|language|Chinese (China)|
+		|locale|zh-CN|
+	And WebContent add CP
+		|webContentContent|世界您好 Content|
+		|webContentTitle|世界您好 Title|
+	And Button click Publish
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Portlet goto Portlet Options
+		|portletName|Web Content Display|
+		|portletOption|Configuration|
+	And WebContentDisplayPortlet configure Setup PG
+		|userToolNameList|Translations|
+	And WebContentDisplayPortlet save Configuration
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Click at locator 'Language#LANGUAGE_MENU_CHINESE'
+	And WebContent view PG Via WCD
+		|webContentContent|世界您好 Content|
+	And Click at locator 'Language#LANGUAGE_MENU_ENGLISH'
+	Then WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+Scenario: View WCD With Deleted WC Article
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContent delete CP
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then WebContentDisplayPortlet view Deleted Article
+Scenario: View With Pagination Script
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Display|
+	When Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent add PG Via WCD
+		|webContentContent|@page_break@ Welcome @page_break@|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view Page Break
+	Then WebContentDisplayPortlet view Content Page Break
+		|webContentContent|Welcome|

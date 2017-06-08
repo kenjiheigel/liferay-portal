@@ -1,223 +1,187 @@
-<definition component-name="portal-collaboration">
-	<property name="custom.properties" value="default.layout.template.id=1_column" />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Social Bookmarks" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|custom.properties|default.layout.template.id=1_column|
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Social Bookmarks|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="BlogsEntry#tearDownCP" />
-
-				<execute macro="Blogs#tearDownConfigurationDisplaySettingsPG">
-					<var name="pageName" value="Blogs Page" />
-					<var name="portletName" value="Blogs" />
-				</execute>
-
-				<execute macro="KBArticle#tearDownCP" />
-
-				<execute macro="Page#tearDownPG" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="ChangeSocialBookmarkSitesForKBArticle" priority="4">
-		<property name="osgi.app.includes" value="social-bookmarks, knowledge-base" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Knowledge Base Display" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="KBArticle#configureKBSocialBookmarkSites">
-			<var name="enableSocialBookmarkSites" value="twitter,facebook,plusone,addthis,delicious,digg,evernote,linkedin,newsvine,reddit,slashdot,stumbleupon,tuenti" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute function="Click" locator1="Icon#SHARE" />
-
-		<for list="Twitter,Facebook,Google+,LinkedIn,Delicious,Digg,Evernote,Newsvine,Reddit,Slashdot,StumbleUpon,Tuenti" param="socialBookmarkSites" >
-			<execute macro="KBArticle#viewEnabledKBSocialBookmarkSites">
-				<var name="socialBookmarkSite" value="${socialBookmarkSites}" />
-			</execute>
-		</for>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="KBArticle#configureKBSocialBookmarkSites">
-			<var name="disableSocialBookmarkSites" value="twitter,newsvine,reddit,slashdot,stumbleupon,tuenti" />
-			<var name="enableSocialBookmarkSites" value="facebook,plusone,addthis,delicious,digg,evernote,linkedin" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<for list="Facebook,Google+,AddThis,LinkedIn,Delicious,Digg,Evernote" param="socialBookmarkSites" >
-			<execute macro="KBArticle#viewEnabledKBSocialBookmarkSites">
-				<var name="socialBookmarkSite" value="${socialBookmarkSites}" />
-			</execute>
-		</for>
-
-		<for list="Twitter,Newsvine,Reddit,Slashdot,StumbleUpon,Tuenti" param="socialBookmarkSites" >
-			<execute macro="KBArticle#viewDisabledKBSocialBookmarkSites">
-				<var name="socialBookmarkSite" value="${socialBookmarkSites}" />
-			</execute>
-		</for>
-	</command>
-
-	<command name="ViewBlogsEntryWithSocialBookmarksSites" priority="3">
-		<property name="osgi.app.includes" value="social-bookmarks" />
-		<property name="test.assert.warning.exceptions" value="true" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Blogs#enableSocialBookmarkSites">
-			<var name="socialBookmarkSites" value="twitter,facebook,plusone,addthis,delicious,digg,evernote,linkedin,newsvine,reddit,slashdot,stumbleupon,tuenti" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEnabledSocialBookmarkSites">
-			<var name="socialBookmarkSites" value="Twitter,Facebook,Google+,LinkedIn,Delicious,Digg,Evernote,Newsvine,Reddit,Slashdot,StumbleUpon,Tuenti" />
-		</execute>
-
-		<execute macro="Blogs#disableSocialBookmarkSites">
-			<var name="socialBookmarkSites" value="twitter,facebook,plusone,addthis,delicious,digg,evernote,linkedin,newsvine,reddit,slashdot,stumbleupon,tuenti" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewDisabledSocialBookmarkSites" />
-	</command>
-
-	<command name="ViewKBArticleWithAllSocialBookmarkSites" priority="3">
-		<property name="osgi.app.includes" value="social-bookmarks, knowledge-base" />
-
-		<var name="socialBookmarkSites" value="twitter,facebook,plusone,addthis,delicious,digg,evernote,linkedin,newsvine,reddit,slashdot,stumbleupon,tuenti" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Knowledge Base Display" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="KBArticle#configureKBSocialBookmarkSites">
-			<var name="enableSocialBookmarkSites" value="${socialBookmarkSites}" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<for list="Twitter,Facebook,Google+,AddThis,LinkedIn,Delicious,Digg,Evernote,Newsvine,Reddit,Slashdot,StumbleUpon,Tuenti" param="socialBookmarkSites" >
-			<execute macro="KBArticle#viewEnabledKBSocialBookmarkSites">
-				<var name="socialBookmarkSite" value="${socialBookmarkSites}" />
-			</execute>
-		</for>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Change Social Bookmark Sites For KB Article
+Priority: 4
+	Given these properties
+		|osgi.app.includes|social-bookmarks, knowledge-base|
+	When Page add
+		|pageName|Knowledge Base Display Page|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And Portlet add PG
+		|portletName|Knowledge Base Display|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And KBArticle configure KB Social Bookmark Sites
+		|enableSocialBookmarkSites|twitter,facebook,plusone,addthis,delicious,digg,evernote,linkedin,newsvine,reddit,slashdot,stumbleupon,tuenti|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And Click at locator 'Icon#SHARE'
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Twitter|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Facebook|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Google+|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|LinkedIn|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Delicious|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Digg|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Evernote|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Newsvine|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Reddit|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Slashdot|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|StumbleUpon|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Tuenti|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And KBArticle configure KB Social Bookmark Sites
+		|disableSocialBookmarkSites|twitter,newsvine,reddit,slashdot,stumbleupon,tuenti|
+		|enableSocialBookmarkSites|facebook,plusone,addthis,delicious,digg,evernote,linkedin|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Facebook|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Google+|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|AddThis|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|LinkedIn|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Delicious|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Digg|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Evernote|
+	And KBArticle view Disabled KB Social Bookmark Sites
+		|socialBookmarkSite|Twitter|
+	And KBArticle view Disabled KB Social Bookmark Sites
+		|socialBookmarkSite|Newsvine|
+	And KBArticle view Disabled KB Social Bookmark Sites
+		|socialBookmarkSite|Reddit|
+	And KBArticle view Disabled KB Social Bookmark Sites
+		|socialBookmarkSite|Slashdot|
+	And KBArticle view Disabled KB Social Bookmark Sites
+		|socialBookmarkSite|StumbleUpon|
+	Then KBArticle view Disabled KB Social Bookmark Sites
+		|socialBookmarkSite|Tuenti|
+Scenario: View Blogs Entry With Social Bookmarks Sites
+Priority: 3
+	Given these properties
+		|osgi.app.includes|social-bookmarks|
+	When these properties
+		|test.assert.warning.exceptions|true|
+	And Page add
+		|pageName|Blogs Page|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+	And Blogs enable Social Bookmark Sites
+		|socialBookmarkSites|twitter,facebook,plusone,addthis,delicious,digg,evernote,linkedin,newsvine,reddit,slashdot,stumbleupon,tuenti|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view Enabled Social Bookmark Sites
+		|socialBookmarkSites|Twitter,Facebook,Google+,LinkedIn,Delicious,Digg,Evernote,Newsvine,Reddit,Slashdot,StumbleUpon,Tuenti|
+	And Blogs disable Social Bookmark Sites
+		|socialBookmarkSites|twitter,facebook,plusone,addthis,delicious,digg,evernote,linkedin,newsvine,reddit,slashdot,stumbleupon,tuenti|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	Then BlogsEntry view Disabled Social Bookmark Sites
+Scenario: View KB Article With All Social Bookmark Sites
+Priority: 3
+	Given these properties
+		|osgi.app.includes|social-bookmarks, knowledge-base|
+	When these variables
+		|socialBookmarkSites|twitter,facebook,plusone,addthis,delicious,digg,evernote,linkedin,newsvine,reddit,slashdot,stumbleupon,tuenti|
+	And Page add
+		|pageName|Knowledge Base Display Page|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And Portlet add PG
+		|portletName|Knowledge Base Display|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And KBArticle configure KB Social Bookmark Sites
+		|enableSocialBookmarkSites|${socialBookmarkSites}|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Twitter|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Facebook|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Google+|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|AddThis|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|LinkedIn|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Delicious|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Digg|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Evernote|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Newsvine|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Reddit|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Slashdot|
+	And KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|StumbleUpon|
+	Then KBArticle view Enabled KB Social Bookmark Sites
+		|socialBookmarkSite|Tuenti|

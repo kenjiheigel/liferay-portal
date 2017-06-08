@@ -1,702 +1,509 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Site Pages Administration" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="BlogsEntry#tearDownCP" />
-				<execute macro="Page#tearDownPG" />
-				<execute macro="Site#tearDownCP" />
-				<execute macro="User#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="AddPageMultiplePagesToSite" priority="3">
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page 1" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page 2" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page 3" />
-		</execute>
-
-		<execute macro="Page#tearDownPG" />
-	</command>
-
-	<command name="AddPagesFullPageApplication" priority="4">
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<for list="Blogs,Documents and Media,Wiki,Media Gallery,Message Boards,Dynamic Data Lists Form,Hello Soy Portlet" param="portlet">
-			<execute macro="Page#add">
-				<var name="pageName" value="${portlet} Full Page Application" />
-				<var name="portlet" value="${portlet}" />
-				<var name="sitePageType" value="Full Page Application" />
-			</execute>
-
-			<if>
-				<equals arg1="${portlet}" arg2="Dynamic Data Lists Form" />
-				<then>
-					<execute function="AssertTextEquals" locator1="Home#PAGE_COLUMN_PORTLET_COLUMN_1_PORTLET_TITLE" value1="Form">
-						<var name="key_portletTitleName" value="Form" />
-					</execute>
-				</then>
-				<else>
-					<execute function="AssertTextEquals" locator1="Home#PAGE_COLUMN_PORTLET_COLUMN_1_PORTLET_TITLE" value1="${portlet}">
-						<var name="key_portletTitleName" value="${portlet}" />
-					</execute>
-				</else>
-			</if>
-
-			<execute function="AssertElementNotPresent" locator1="ControlMenu#ADD" />
-			<execute function="AssertElementNotPresent" locator1="ControlMenu#EDIT_COG" />
-		</for>
-	</command>
-
-	<command name="AddPageViaNavigationMenu" priority="4">
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="NavigationMenu#gotoAddPage" />
-
-		<execute macro="PortletEntry#inputName">
-			<var name="name" value="Test Page Name" />
-		</execute>
-
-		<execute macro="Page#saveAddPage" />
-
-		<execute function="AssertLocation" value1="${portalURL}/web/guest/test-page-name" />
-	</command>
-
-	<command name="AddPageWithEscapeCharacter" priority="3">
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Tester&apos;s Page" />
-		</execute>
-	</command>
-
-	<command name="AddPageWithMultipleChildPagesToSite" priority="3">
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<for list="Site Child Page 1,Site Child Page 2,Site Child Page 3" param="childPageName" >
-			<execute macro="ProductMenu#gotoControlPanelSites">
-				<var name="portlet" value="Sites" />
-			</execute>
-
-			<execute macro="Page#addChild">
-				<var name="page" value="Public Pages" />
-				<var name="pageName" value="Site Page" />
-				<var name="siteChildPageName" value="${childPageName}" />
-				<var name="siteName" value="Site Name" />
-			</execute>
-		</for>
-
-		<for list="Site Child Page 1,Site Child Page 2,Site Child Page 3" param="childPageName" >
-			<execute macro="Navigator#gotoSitePage">
-				<var name="pageName" value="Site Page" />
-				<var name="siteName" value="Site Name" />
-			</execute>
-
-			<execute macro="Page#viewChildPage">
-				<var name="pageName" value="${childPageName}" />
-			</execute>
-		</for>
-	</command>
-
-	<command name="AddSitePrivateChildPage" priority="4">
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-			<var name="sitePagePrivacy" value="Private" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#addChild">
-			<var name="page" value="Private Pages" />
-			<var name="pageName" value="Site Page" />
-			<var name="siteChildPageName" value="Site Child Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSpecificURLPage">
-			<var name="pageName" value="Site Page" />
-			<var name="url" value="${portalURL}/group/site-name/site-child-page" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoPrivatePages" />
-
-		<execute macro="Page#viewChildPage">
-			<var name="pageName" value="Site Child Page" />
-		</execute>
-	</command>
-
-	<command name="AddSitePrivatePage" priority="4">
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-			<var name="sitePagePrivacy" value="Private" />
-		</execute>
-
-		<execute macro="Navigator#gotoSpecificURLPage">
-			<var name="pageName" value="Site Page" />
-			<var name="url" value="${portalURL}/group/site-name/site-page" />
-		</execute>
-
-		<execute macro="Page#view">
-			<var name="pageName" value="Site Page" />
-		</execute>
-	</command>
-
-	<command name="AddSitePrivatePagePortlet" priority="4">
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-			<var name="sitePagePrivacy" value="Private" />
-		</execute>
-
-		<execute macro="Navigator#gotoSpecificURLPage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="url" value="${portalURL}/group/site-name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageAccess" value="Private" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteURL" value="true" />
-		</execute>
-	</command>
-
-	<command name="AddSitePublicChildPage" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#addChild">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Site Page" />
-			<var name="siteChildPageName" value="Site Child Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="Navigator#gotoSpecificURLPage">
-			<var name="pageName" value="Site Page" />
-			<var name="url" value="${portalURL}/web/site-name/site-child-page" />
-		</execute>
-
-		<execute macro="Page#viewChildPage">
-			<var name="pageName" value="Site Child Page" />
-		</execute>
-	</command>
-
-	<command name="AddSitePublicPage" priority="4">
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="Navigator#gotoSpecificURLPage">
-			<var name="pageName" value="Site Page" />
-			<var name="url" value="${portalURL}/web/site-name/site-page" />
-		</execute>
-
-		<execute macro="Page#view">
-			<var name="pageName" value="Site Page" />
-		</execute>
-	</command>
-
-	<command name="AddSitePublicPagePortlet" priority="4">
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-	</command>
-
-	<command name="ChangePageLayout" priority="3">
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="Page#viewPageLayout">
-			<var name="pageLayout" value="2 Column (30/70)" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Site Page Name" />
-		</execute>
-
-		<execute macro="Page#editPageTypeLayout">
-			<var name="columnName" value="1 Column" />
-		</execute>
-
-		<execute macro="Page#viewPageLayout">
-			<var name="pageLayout" value="1 Column" />
-		</execute>
-	</command>
-
-	<command name="CopyApplicationsFromPageToPage" priority="4">
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Blog Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blog Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Blog Page" />
-		</execute>
-
-		<execute macro="Page#copyApplicationsFromPageToPage">
-			<var name="pageName" value="Blog Page" />
-			<var name="pageNameCopy" value="Site Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blog Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#viewNoSpecificPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-	</command>
-
-	<command name="DeleteSitePages" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<for list="Site Page 1,Site Page 2,Site Page 3" param="pageName">
-			<execute macro="Navigator#openURL" />
-
-			<execute macro="ProductMenu#gotoControlPanelSites">
-				<var name="portlet" value="Sites" />
-			</execute>
-
-			<execute macro="Page#add">
-				<var name="page" value="Public Pages" />
-				<var name="pageName" value="${pageName}" />
-				<var name="siteName" value="Site Name" />
-			</execute>
-		</for>
-
-		<execute macro="Page#deletePG">
-			<var name="pageName" value="Site Page 2" />
-		</execute>
-	</command>
-
-	<command name="EditSitePage" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="testray.component.names" value="Site Pages Administration,Training" />
-
-		<execute macro="SitePageNavigator#gotoPages" >
-			<var name="page" value="Public Pages" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Site Page" />
-		</execute>
-
-		<execute macro="Page#editName">
-			<var name="pageNameEdit" value="Site Page Edit" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoPages" >
-			<var name="page" value="Public Pages" />
-		</execute>
-
-		<execute macro="Page#view">
-			<var name="pageName" value="Site Page Edit" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Welcome" />
-		</execute>
-
-		<execute macro="Page#viewSelectedLayoutColumn">
-			<var name="columnName" value="1 Column" />
-		</execute>
-
-		<execute macro="Page#editName">
-			<var name="pageNameEdit" value="Home" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-		</execute>
-
-		<execute macro="Page#view">
-			<var name="pageName" value="Home" />
-		</execute>
-	</command>
-
-	<command name="SaveEmbeddedPageType" priority="4">
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Site Page" />
-		</execute>
-
-		<execute macro="Page#editSelectPageType">
-			<var name="page" value="Site Page" />
-			<var name="pageType" value="Embedded" />
-		</execute>
-
-		<execute macro="Navigator#gotoSpecificURLPage">
-			<var name="pageName" value="Site Page" />
-			<var name="url" value="${portalURL}/web/site-name" />
-		</execute>
-
-		<execute macro="Page#viewEmbeddedPagePG" />
-	</command>
-
-	<command name="SavePortletPageType" priority="4">
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="pageTemplateName" value="Blog" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Blogs#viewControlsPG" />
-	</command>
-
-	<command name="ViewNoInfoMessageWhenChangingSiteTemplateAsUser" priority="3">
-		<property name="testray.component.names" value="Site and Page Templates,Site Pages Administration" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addCommunityCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#viewDefaultSiteTemplatePagesPG">
-			<var name="pageName" value="Home" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteTemplate" value="Community" />
-			<var name="siteURL" value="true" />
-		</execute>
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Home" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Home" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="SiteTemplates#viewNoInfoMessage" />
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Site Pages Administration|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Page Multiple Pages To Site
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Pages Administration|
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And Navigator open URL
+	And Page add
+		|pageName|Site Page 1|
+	And Page add
+		|pageName|Site Page 2|
+	And Page add
+		|pageName|Site Page 3|
+	Then Page tear Down PG
+Scenario: Add Pages Full Page Application
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Pages Administration|
+	When Page add
+		|pageName|Blogs Full Page Application|
+		|portlet|Blogs|
+		|sitePageType|Full Page Application|
+	And AssertTextEquals the value 'Blogs' at locator 'Home#PAGE_COLUMN_PORTLET_COLUMN_1_PORTLET_TITLE'
+		|key_portletTitleName|Blogs|
+	And AssertElementNotPresent at locator 'ControlMenu#ADD'
+	And AssertElementNotPresent at locator 'ControlMenu#EDIT_COG'
+	And Page add
+		|pageName|Documents and Media Full Page Application|
+		|portlet|Documents and Media|
+		|sitePageType|Full Page Application|
+	And AssertTextEquals the value 'Documents and Media' at locator 'Home#PAGE_COLUMN_PORTLET_COLUMN_1_PORTLET_TITLE'
+		|key_portletTitleName|Documents and Media|
+	And AssertElementNotPresent at locator 'ControlMenu#ADD'
+	And AssertElementNotPresent at locator 'ControlMenu#EDIT_COG'
+	And Page add
+		|pageName|Wiki Full Page Application|
+		|portlet|Wiki|
+		|sitePageType|Full Page Application|
+	And AssertTextEquals the value 'Wiki' at locator 'Home#PAGE_COLUMN_PORTLET_COLUMN_1_PORTLET_TITLE'
+		|key_portletTitleName|Wiki|
+	And AssertElementNotPresent at locator 'ControlMenu#ADD'
+	And AssertElementNotPresent at locator 'ControlMenu#EDIT_COG'
+	And Page add
+		|pageName|Media Gallery Full Page Application|
+		|portlet|Media Gallery|
+		|sitePageType|Full Page Application|
+	And AssertTextEquals the value 'Media Gallery' at locator 'Home#PAGE_COLUMN_PORTLET_COLUMN_1_PORTLET_TITLE'
+		|key_portletTitleName|Media Gallery|
+	And AssertElementNotPresent at locator 'ControlMenu#ADD'
+	And AssertElementNotPresent at locator 'ControlMenu#EDIT_COG'
+	And Page add
+		|pageName|Message Boards Full Page Application|
+		|portlet|Message Boards|
+		|sitePageType|Full Page Application|
+	And AssertTextEquals the value 'Message Boards' at locator 'Home#PAGE_COLUMN_PORTLET_COLUMN_1_PORTLET_TITLE'
+		|key_portletTitleName|Message Boards|
+	And AssertElementNotPresent at locator 'ControlMenu#ADD'
+	And AssertElementNotPresent at locator 'ControlMenu#EDIT_COG'
+	And Page add
+		|pageName|Dynamic Data Lists Form Full Page Application|
+		|portlet|Dynamic Data Lists Form|
+		|sitePageType|Full Page Application|
+	And AssertTextEquals the value 'Form' at locator 'Home#PAGE_COLUMN_PORTLET_COLUMN_1_PORTLET_TITLE'
+		|key_portletTitleName|Form|
+	And AssertElementNotPresent at locator 'ControlMenu#ADD'
+	And AssertElementNotPresent at locator 'ControlMenu#EDIT_COG'
+	And Page add
+		|pageName|Hello Soy Portlet Full Page Application|
+		|portlet|Hello Soy Portlet|
+		|sitePageType|Full Page Application|
+	And AssertTextEquals the value 'Hello Soy Portlet' at locator 'Home#PAGE_COLUMN_PORTLET_COLUMN_1_PORTLET_TITLE'
+		|key_portletTitleName|Hello Soy Portlet|
+	And AssertElementNotPresent at locator 'ControlMenu#ADD'
+	Then AssertElementNotPresent at locator 'ControlMenu#EDIT_COG'
+Scenario: Add Page Via Navigation Menu
+Priority: 4
+	Given these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	When NavigationMenu goto Add Page
+	And PortletEntry input Name
+		|name|Test Page Name|
+	And Page save Add Page
+	Then AssertLocation the value '${portalURL}/web/guest/test-page-name'
+Scenario: Add Page With Escape Character
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Pages Administration|
+	When Page add
+		|pageName|Tester's Page|
+Scenario: Add Page With Multiple Child Pages To Site
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Pages Administration|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add Child
+		|page|Public Pages|
+		|pageName|Site Page|
+		|siteChildPageName|Site Child Page 1|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add Child
+		|page|Public Pages|
+		|pageName|Site Page|
+		|siteChildPageName|Site Child Page 2|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add Child
+		|page|Public Pages|
+		|pageName|Site Page|
+		|siteChildPageName|Site Child Page 3|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And Page view Child Page
+		|pageName|Site Child Page 1|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And Page view Child Page
+		|pageName|Site Child Page 2|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Site Name|
+	Then Page view Child Page
+		|pageName|Site Child Page 3|
+Scenario: Add Site Private Child Page
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Pages Administration|
+	When these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Site Name|
+		|sitePagePrivacy|Private|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add Child
+		|page|Private Pages|
+		|pageName|Site Page|
+		|siteChildPageName|Site Child Page|
+		|siteName|Site Name|
+	And Navigator goto Specific URL Page
+		|pageName|Site Page|
+		|url|${portalURL}/group/site-name/site-child-page|
+	And ProductMenu goto Private Pages
+	Then Page view Child Page
+		|pageName|Site Child Page|
+Scenario: Add Site Private Page
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Pages Administration|
+	When these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Site Name|
+		|sitePagePrivacy|Private|
+	And Navigator goto Specific URL Page
+		|pageName|Site Page|
+		|url|${portalURL}/group/site-name/site-page|
+	Then Page view
+		|pageName|Site Page|
+Scenario: Add Site Private Page Portlet
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Pages Administration|
+	When these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+		|sitePagePrivacy|Private|
+	And Navigator goto Specific URL Page
+		|pageName|Blogs Page|
+		|url|${portalURL}/group/site-name|
+	Then Portlet add PG
+		|pageAccess|Private|
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|siteName|Site Name|
+		|siteURL|true|
+Scenario: Add Site Public Child Page
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|testray.component.names|Site Pages Administration|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add Child
+		|page|Public Pages|
+		|pageName|Site Page|
+		|siteChildPageName|Site Child Page|
+		|siteName|Site Name|
+	And these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And Navigator goto Specific URL Page
+		|pageName|Site Page|
+		|url|${portalURL}/web/site-name/site-child-page|
+	Then Page view Child Page
+		|pageName|Site Child Page|
+Scenario: Add Site Public Page
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Pages Administration|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And Navigator goto Specific URL Page
+		|pageName|Site Page|
+		|url|${portalURL}/web/site-name/site-page|
+	Then Page view
+		|pageName|Site Page|
+Scenario: Add Site Public Page Portlet
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Pages Administration|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	Then Portlet add PG
+		|portletName|Blogs|
+Scenario: Change Page Layout
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Pages Administration|
+	When Page add
+		|pageName|Site Page Name|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And Page view Page Layout
+		|pageLayout|2 Column (30/70)|
+	And SitePageNavigator goto Edit Page
+		|page|Site Page Name|
+	And Page edit Page Type Layout
+		|columnName|1 Column|
+	Then Page view Page Layout
+		|pageLayout|1 Column|
+Scenario: Copy Applications From Page To Page
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Pages Administration|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Blog Page|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Blog Page|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Blogs|
+	And SitePageNavigator goto Edit Page
+		|page|Blog Page|
+	And Page copy Applications From Page To Page
+		|pageName|Blog Page|
+		|pageNameCopy|Site Page|
+	And Navigator goto Site Page
+		|pageName|Blog Page|
+		|siteName|Site Name|
+	Then Portlet view No Specific PG
+		|portletName|Blogs|
+Scenario: Delete Site Pages
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|testray.component.names|Site Pages Administration|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And Navigator open URL
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|page|Public Pages|
+		|pageName|Site Page 1|
+		|siteName|Site Name|
+	And Navigator open URL
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|page|Public Pages|
+		|pageName|Site Page 2|
+		|siteName|Site Name|
+	And Navigator open URL
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|page|Public Pages|
+		|pageName|Site Page 3|
+		|siteName|Site Name|
+	Then Page delete PG
+		|pageName|Site Page 2|
+Scenario: Edit Site Page
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|testray.component.names|Site Pages Administration,Training|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+	And Page add
+		|pageName|Site Page|
+	And SitePageNavigator goto Edit Page
+		|page|Site Page|
+	And Page edit Name
+		|pageNameEdit|Site Page Edit|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+	And Page view
+		|pageName|Site Page Edit|
+	And SitePageNavigator goto Edit Page
+		|page|Welcome|
+	And Page view Selected Layout Column
+		|columnName|1 Column|
+	And Page edit Name
+		|pageNameEdit|Home|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+	Then Page view
+		|pageName|Home|
+Scenario: Save Embedded Page Type
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Pages Administration|
+	When these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And SitePageNavigator goto Edit Page
+		|page|Site Page|
+	And Page edit Select Page Type
+		|page|Site Page|
+		|pageType|Embedded|
+	And Navigator goto Specific URL Page
+		|pageName|Site Page|
+		|url|${portalURL}/web/site-name|
+	Then Page view Embedded Page PG
+Scenario: Save Portlet Page Type
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Pages Administration|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page|
+		|pageTemplateName|Blog|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Site Name|
+	Then Blogs view Controls PG
+Scenario: View No Info Message When Changing Site Template As User
+Priority: 3
+	Given these properties
+		|testray.component.names|Site and Page Templates,Site Pages Administration|
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Community CP
+		|siteName|Site Name|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Page view Default Site Template Pages PG
+		|pageName|Home|
+		|siteName|Site Name|
+		|siteTemplate|Community|
+		|siteURL|true|
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Navigator goto Site Page
+		|pageName|Home|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Blogs|
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Site Page
+		|pageName|Home|
+		|siteName|Site Name|
+	And SiteTemplates view No Info Message
+	Then User first Login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|

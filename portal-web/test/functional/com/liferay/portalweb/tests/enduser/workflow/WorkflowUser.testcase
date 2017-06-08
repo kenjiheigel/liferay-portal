@@ -1,144 +1,89 @@
-<definition component-name="portal-workflow">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Workflow" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Workflow|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Workflow#tearDownPortalWorkflow" />
-
-				<execute macro="User#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="CreateNewUserAccount" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Workflow Configuration" />
-		</execute>
-
-		<execute macro="Workflow#configureWorkflow">
-			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowResourceValue" value="User" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="WorkflowAsset#createNewUserAccount">
-			<var name="userEmailAddress" value="user@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-			<var name="workflow" value="true" />
-		</execute>
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#searchCP">
-			<var name="searchTerm" value="usersn" />
-		</execute>
-
-		<execute macro="User#viewNoUsersFoundCP" />
-
-		<execute macro="ProductMenu#gotoUserMyAccount">
-			<var name="portlet" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="workflowAssetTitle" value="userfn userln" />
-			<var name="workflowAssetType" value="User" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Workflow#approveTaskByActions">
-			<var name="workflowAssetTitle" value="userfn userln" />
-			<var name="workflowAssetType" value="User" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="user@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="user@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-	</command>
-
-	<command name="ViewUserPreview" priority="4">
-		<description message="This is a use case for LPS-69190." />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Workflow Configuration" />
-		</execute>
-
-		<execute macro="Workflow#configureWorkflow">
-			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowResourceValue" value="User" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="WorkflowAsset#createNewUserAccount">
-			<var name="userEmailAddress" value="user@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="WorkflowAsset#gotoViaNotification">
-			<var name="assetType" value="User" />
-		</execute>
-
-		<execute macro="WorkflowAsset#viewUserDetails">
-			<var name="userEmailAddress" value="user@liferay.com" />
-		</execute>
-
-		<execute macro="Workflow#gotoPreviewView" />
-
-		<execute macro="WorkflowAsset#viewUserDetails">
-			<var name="userEmailAddress" value="user@liferay.com" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Create New User Account
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Navigator open URL
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Workflow Configuration|
+	And Workflow configure Workflow
+		|workflowDefinition|Single Approver (Version 1)|
+		|workflowResourceValue|User|
+	And User logout PG
+	And WorkflowAsset create New User Account
+		|userEmailAddress|user@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+		|workflow|true|
+	And User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User search CP
+		|searchTerm|usersn|
+	And User view No Users Found CP
+	And ProductMenu goto User My Account
+		|portlet|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|userfn userln|
+		|workflowAssetType|User|
+		|workflowTask|Review|
+	And Workflow approve Task By Actions
+		|workflowAssetTitle|userfn userln|
+		|workflowAssetType|User|
+		|workflowTask|Review|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|user@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	Then User logout And Login PG
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|user@liferay.com|
+		|userScreenName|usersn|
+Scenario: View User Preview
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When Navigator open URL
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Workflow Configuration|
+	And Workflow configure Workflow
+		|workflowDefinition|Single Approver (Version 1)|
+		|workflowResourceValue|User|
+	And User logout PG
+	And WorkflowAsset create New User Account
+		|userEmailAddress|user@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And WorkflowAsset goto Via Notification
+		|assetType|User|
+	And WorkflowAsset view User Details
+		|userEmailAddress|user@liferay.com|
+	And Workflow goto Preview View
+	Then WorkflowAsset view User Details
+		|userEmailAddress|user@liferay.com|

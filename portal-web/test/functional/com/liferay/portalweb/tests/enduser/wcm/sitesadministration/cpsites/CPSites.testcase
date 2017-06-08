@@ -1,926 +1,524 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.component.names" value="Site Administration" />
-	<property name="testray.main.component.name" value="Site Administration" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Site#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="ActivateSite" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="System Settings" />
-		</execute>
-
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Foundation" />
-		</execute>
-
-		<execute macro="SystemSettings#editConfiguration">
-			<var name="configurationName" value="Inactive Request Handler" />
-		</execute>
-
-		<execute macro="SystemSettings#enableSetting">
-			<var name="checkboxSetting" value="SHOW_INACTIVE_REQUEST_MESSAGE" />
-		</execute>
-
-		<execute macro="SystemSettings#saveConfiguration" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#inactivateCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#viewInactiveRequestMessage">
-			<var name="resource" value="site" />
-		</execute>
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#activateInactive">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute function="AssertTextNotPresent" value1="This site is inactive. Please contact the administrator." />
-	</command>
-
-	<command name="AddChildChildSite" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="parentSiteName" value="Site Name" />
-			<var name="siteName" value="Child SiteName" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="parentSiteName" value="Child SiteName" />
-			<var name="siteName" value="Child Child SiteName" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#viewChildCP">
-			<var name="childSiteName" value="Child SiteName" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Site#viewChildCP">
-			<var name="childSiteName" value="Child Child SiteName" />
-			<var name="siteName" value="Child SiteName" />
-		</execute>
-	</command>
-
-	<command name="AddChildSite" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="parentSiteName" value="Site Name" />
-			<var name="siteName" value="Child SiteName" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#viewChildCP">
-			<var name="childSiteName" value="Child SiteName" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-	</command>
-
-	<command name="AddPublicVirtualHostsSiteURL" priority="3">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Public Page" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#addVirtualHostsURLCP">
-			<var name="publicPageVirtualHostURL" value="www.able.com" />
-			<var name="publicVirtualHosts" value="true" />
-		</execute>
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="http://www.able.com:8080/test-public-page" />
-		</execute>
-
-		<execute macro="Site#viewVirtualHostsURLPG">
-			<var name="pageName" value="Test Public Page" />
-			<var name="siteName" value="Site Name" />
-			<var name="sitePageURL" value="http://www.able.com:8080/test-public-page" />
-		</execute>
-	</command>
-
-	<command description="Ensure that the super admin can add a Blank Site" name="AddSite" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#viewCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-	</command>
-
-	<command name="AddSitesMultiple" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site1 Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#viewCP">
-			<var name="siteName" value="Site1 Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addCommunityCP">
-			<var name="siteName" value="Site2 Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#viewCP">
-			<var name="siteName" value="Site2 Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addIntranetCP">
-			<var name="siteName" value="Site3 Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#viewCP">
-			<var name="siteName" value="Site3 Name" />
-		</execute>
-	</command>
-
-	<command name="AddSiteWithCommaInName" priority="3">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name," />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#viewCP">
-			<var name="siteName" value="Site Name," />
-		</execute>
-	</command>
-
-	<command name="AddSiteWithInvalidDuplicateName" priority="3">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#viewCannotAdd">
-			<var name="siteName" value="Site Name" />
-			<var name="siteNameInvalid" value="Duplicate" />
-		</execute>
-	</command>
-
-	<command name="AddSiteWithInvalidName" priority="3">
-		<for list="Site Name*,22222" param="siteName" >
-			<execute macro="ProductMenu#gotoControlPanelSites">
-				<var name="portlet" value="Sites" />
-			</execute>
-
-			<execute macro="Site#viewCannotAdd">
-				<var name="siteName" value="${siteName}" />
-				<var name="siteNameInvalid" value="Invalid" />
-			</execute>
-		</for>
-	</command>
-
-	<command name="AddSiteWithNullName" priority="3">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#viewCannotAdd">
-			<var name="siteName" value=" " />
-			<var name="siteNameInvalid" value="Null" />
-		</execute>
-	</command>
-
-	<command name="DeleteSite" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#deleteCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-	</command>
-
-	<command name="EditSite" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#editCP">
-			<var name="siteName" value="Site Name" />
-			<var name="siteNameEdit" value="Site Name Edit" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#viewCP">
-			<var name="siteName" value="Site Name Edit" />
-		</execute>
-	</command>
-
-	<command name="EditSiteFriendlyURL" priority="4">
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Public Page" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Private Page" />
-			<var name="siteName" value="Site Name" />
-			<var name="sitePagePrivacy" value="Private" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#editFriendlyURLCP">
-			<var name="siteFriendlyURLEdit" value="alpha" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="alpha" />
-		</execute>
-
-		<execute macro="Site#viewSiteFriendlyURLPG">
-			<var name="pageName" value="Public Page" />
-			<var name="siteName" value="Site Name" />
-			<var name="sitePageURL" value="${portalURL}/web/alpha" />
-		</execute>
-
-		<execute macro="Navigator#openPrivateSiteURL">
-			<var name="siteName" value="alpha" />
-		</execute>
-
-		<execute macro="Site#viewSiteFriendlyURLPG">
-			<var name="pageName" value="Private Page" />
-			<var name="siteName" value="Site Name" />
-			<var name="sitePageURL" value="${portalURL}/group/alpha" />
-		</execute>
-	</command>
-
-	<command name="EditSiteFriendlyURLInvalid" priority="3">
-		<property name="test.name.skip.portal.instance" value="CPSites#EditSiteFriendlyURLInvalid" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#editFriendlyURLCP">
-			<var name="friendlyURLInvalid" value="true" />
-			<var name="siteFriendlyURL" value="/site-name" />
-			<var name="siteFriendlyURLEdit" value="/alpha/alpha" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-		</execute>
-
-		<execute macro="Page#viewFriendlyURL">
-			<var name="pageName" value="Site Page" />
-			<var name="siteFriendlyURL" value="/site-name" />
-		</execute>
-	</command>
-
-	<command name="SearchSite" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#searchCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-	</command>
-
-	<command name="SiteCannotBeItsOwnParent" priority="3">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addCommunityCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#selectParentSite">
-			<var name="chooseButtonAvailable" value="false" />
-			<var name="parentSiteName" value="Site Name" />
-		</execute>
-	</command>
-
-	<command name="SiteCannotBeItsOwnParentStaging" priority="3">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addCommunityCP">
-			<var name="siteName" value="Site Name" />
-			<var name="uncheckPropagation" value="true" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#activateStagingCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Home" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#viewStagingLocalLivePG" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#selectParentSite">
-			<var name="chooseButtonAvailable" value="false" />
-			<var name="parentSiteName" value="Site Name" />
-		</execute>
-	</command>
-
-	<command name="ViewDisplayParentSiteViaSitesDirectory" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="parentSiteName" value="Site Name" />
-			<var name="siteName" value="Child SiteName" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#searchInputCP">
-			<var name="siteName" value="Child SiteName" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Child SiteName" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="parentSiteName" value="Child SiteName" />
-			<var name="siteName" value="Child ChildSiteName" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#searchInputCP">
-			<var name="siteName" value="Child ChildSiteName" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Child ChildSiteName" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#viewChildCP">
-			<var name="childSiteName" value="Child SiteName" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Site#viewChildCP">
-			<var name="childSiteName" value="Child ChildSiteName" />
-			<var name="siteName" value="Child SiteName" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Child SiteName" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Sites Directory" />
-		</execute>
-
-		<execute macro="SitesDirectory#configureSetupPG">
-			<var name="directorySites" value="Parent Level" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Child SiteName" />
-		</execute>
-
-		<execute macro="SitesDirectory#viewDescriptivePG">
-			<var name="siteName" value="Site Name" />
-		</execute>
-	</command>
-
-	<command name="ViewSiteHierarchiesViaSitesDirectory" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="parentSiteName" value="Site Name" />
-			<var name="siteName" value="Child Site1Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#searchInputCP">
-			<var name="siteName" value="Child Site1Name" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Child Site1Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="parentSiteName" value="Child Site1Name" />
-			<var name="siteName" value="Child ChildSite1Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#searchInputCP">
-			<var name="siteName" value="Child ChildSite1Name" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Child ChildSite1Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="parentSiteName" value="Child Site1Name" />
-			<var name="siteName" value="Child ChildSite2Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#searchInputCP">
-			<var name="siteName" value="Child ChildSite2Name" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Child ChildSite2Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="parentSiteName" value="Site Name" />
-			<var name="siteName" value="Child Site2Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#searchInputCP">
-			<var name="siteName" value="Child Site2Name" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Child Site2Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Child Site1Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Sites Directory" />
-		</execute>
-
-		<execute macro="SitesDirectory#configureSetupPG">
-			<var name="directorySites" value="Top Level" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Child Site1Name" />
-		</execute>
-
-		<execute macro="SitesDirectory#viewDescriptivePG">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="SitesDirectory#configureSetupPG">
-			<var name="directorySites" value="Parent Level" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Child Site1Name" />
-		</execute>
-
-		<execute macro="SitesDirectory#viewDescriptivePG">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="SitesDirectory#configureSetupPG">
-			<var name="directorySites" value="Siblings" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Child Site1Name" />
-		</execute>
-
-		<execute macro="SitesDirectory#viewDescriptivePG">
-			<var name="siteName" value="Child Site1Name" />
-		</execute>
-
-		<execute macro="SitesDirectory#viewDescriptivePG">
-			<var name="siteName" value="Child Site2Name" />
-		</execute>
-
-		<execute macro="SitesDirectory#configureSetupPG">
-			<var name="directorySites" value="Children" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Child Site1Name" />
-		</execute>
-
-		<execute macro="SitesDirectory#viewDescriptivePG">
-			<var name="siteName" value="Child ChildSite1Name" />
-		</execute>
-
-		<execute macro="SitesDirectory#viewDescriptivePG">
-			<var name="siteName" value="Child ChildSite2Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Child ChildSite1Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Sites Directory" />
-		</execute>
-
-		<execute macro="SitesDirectory#configureSetupPG">
-			<var name="directorySites" value="Top Level" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Child ChildSite1Name" />
-		</execute>
-
-		<execute macro="SitesDirectory#viewDescriptivePG">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="SitesDirectory#configureSetupPG">
-			<var name="directorySites" value="Parent Level" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Child ChildSite1Name" />
-		</execute>
-
-		<execute macro="SitesDirectory#viewDescriptivePG">
-			<var name="siteName" value="Child Site1Name" />
-		</execute>
-
-		<execute macro="SitesDirectory#viewDescriptivePG">
-			<var name="siteName" value="Child Site2Name" />
-		</execute>
-
-		<execute macro="SitesDirectory#configureSetupPG">
-			<var name="directorySites" value="Siblings" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Child ChildSite1Name" />
-		</execute>
-
-		<execute macro="SitesDirectory#viewDescriptivePG">
-			<var name="siteName" value="Child ChildSite1Name" />
-		</execute>
-
-		<execute macro="SitesDirectory#viewDescriptivePG">
-			<var name="siteName" value="Child ChildSite2Name" />
-		</execute>
-
-		<execute macro="SitesDirectory#configureSetupPG">
-			<var name="directorySites" value="Children" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Child ChildSite1Name" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="No sites were found." />
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.component.names|Site Administration|
+		|testray.main.component.name|Site Administration|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Activate Site
+Priority: 4
+	Given ProductMenu goto Control Panel Configuration
+		|portlet|System Settings|
+	When Navigator goto Nav Item
+		|navItem|Foundation|
+	And SystemSettings edit Configuration
+		|configurationName|Inactive Request Handler|
+	And SystemSettings enable Setting
+		|checkboxSetting|SHOW_INACTIVE_REQUEST_MESSAGE|
+	And SystemSettings save Configuration
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Site inactivate CP
+		|siteName|Site Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Page view Inactive Request Message
+		|resource|site|
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site activate Inactive
+		|siteName|Site Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	Then AssertTextNotPresent the value 'This site is inactive. Please contact the administrator.'
+Scenario: Add Child Child Site
+Priority: 4
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|parentSiteName|Site Name|
+		|siteName|Child SiteName|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|parentSiteName|Child SiteName|
+		|siteName|Child Child SiteName|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site view Child CP
+		|childSiteName|Child SiteName|
+		|siteName|Site Name|
+	Then Site view Child CP
+		|childSiteName|Child Child SiteName|
+		|siteName|Child SiteName|
+Scenario: Add Child Site
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|parentSiteName|Site Name|
+		|siteName|Child SiteName|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	Then Site view Child CP
+		|childSiteName|Child SiteName|
+		|siteName|Site Name|
+Scenario: Add Public Virtual Hosts Site URL
+Priority: 3
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Blank CP
+		|siteName|Site Name|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+	And Page add
+		|pageName|Test Public Page|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Site add Virtual Hosts URLCP
+		|publicPageVirtualHostURL|www.able.com|
+		|publicVirtualHosts|true|
+	And Navigator open Specific URL
+		|url|http://www.able.com:8080/test-public-page|
+	Then Site view Virtual Hosts URLPG
+		|pageName|Test Public Page|
+		|siteName|Site Name|
+		|sitePageURL|http://www.able.com:8080/test-public-page|
+Scenario: Add Site
+Description: Ensure that the super admin can add a Blank Site
+Priority: 4
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	Then Site view CP
+		|siteName|Site Name|
+Scenario: Add Sites Multiple
+Priority: 4
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Blank CP
+		|siteName|Site1 Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site view CP
+		|siteName|Site1 Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Community CP
+		|siteName|Site2 Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site view CP
+		|siteName|Site2 Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Intranet CP
+		|siteName|Site3 Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	Then Site view CP
+		|siteName|Site3 Name|
+Scenario: Add Site With Comma In Name
+Priority: 3
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Blank CP
+		|siteName|Site Name,|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	Then Site view CP
+		|siteName|Site Name,|
+Scenario: Add Site With Invalid Duplicate Name
+Priority: 3
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	Then Site view Cannot Add
+		|siteName|Site Name|
+		|siteNameInvalid|Duplicate|
+Scenario: Add Site With Invalid Name
+Priority: 3
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site view Cannot Add
+		|siteName|Site Name*|
+		|siteNameInvalid|Invalid|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	Then Site view Cannot Add
+		|siteName|22222|
+		|siteNameInvalid|Invalid|
+Scenario: Add Site With Null Name
+Priority: 3
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site view Cannot Add
+		|siteName| |
+		|siteNameInvalid|Null|
+Scenario: Delete Site
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	Then Site delete CP
+		|siteName|Site Name|
+Scenario: Edit Site
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Site edit CP
+		|siteName|Site Name|
+		|siteNameEdit|Site Name Edit|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	Then Site view CP
+		|siteName|Site Name Edit|
+Scenario: Edit Site Friendly URL
+Priority: 4
+	Given these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+	And Page add
+		|pageName|Test Public Page|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Test Private Page|
+		|siteName|Site Name|
+		|sitePagePrivacy|Private|
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Site edit Friendly URLCP
+		|siteFriendlyURLEdit|alpha|
+	And Navigator open Site URL
+		|siteName|alpha|
+	And Site view Site Friendly URLPG
+		|pageName|Public Page|
+		|siteName|Site Name|
+		|sitePageURL|${portalURL}/web/alpha|
+	And Navigator open Private Site URL
+		|siteName|alpha|
+	Then Site view Site Friendly URLPG
+		|pageName|Private Page|
+		|siteName|Site Name|
+		|sitePageURL|${portalURL}/group/alpha|
+Scenario: Edit Site Friendly URL Invalid
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|CPSites#EditSiteFriendlyURLInvalid|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+	And Page add
+		|pageName|Site Page|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Site edit Friendly URLCP
+		|friendlyURLInvalid|true|
+		|siteFriendlyURL|/site-name|
+		|siteFriendlyURLEdit|/alpha/alpha|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+	Then Page view Friendly URL
+		|pageName|Site Page|
+		|siteFriendlyURL|/site-name|
+Scenario: Search Site
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	Then Site search CP
+		|siteName|Site Name|
+Scenario: Site Cannot Be Its Own Parent
+Priority: 3
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Community CP
+		|siteName|Site Name|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	Then Site select Parent Site
+		|chooseButtonAvailable|false|
+		|parentSiteName|Site Name|
+Scenario: Site Cannot Be Its Own Parent Staging
+Priority: 3
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Community CP
+		|siteName|Site Name|
+		|uncheckPropagation|true|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging activate Staging CP
+		|siteName|Site Name|
+	And Navigator goto Staged Site Page
+		|pageName|Home|
+		|siteName|Site Name|
+	And Staging view Staging Local Live PG
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	Then Site select Parent Site
+		|chooseButtonAvailable|false|
+		|parentSiteName|Site Name|
+Scenario: View Display Parent Site Via Sites Directory
+Priority: 4
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|parentSiteName|Site Name|
+		|siteName|Child SiteName|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site search Input CP
+		|siteName|Child SiteName|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Child SiteName|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|parentSiteName|Child SiteName|
+		|siteName|Child ChildSiteName|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site search Input CP
+		|siteName|Child ChildSiteName|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Child ChildSiteName|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site view Child CP
+		|childSiteName|Child SiteName|
+		|siteName|Site Name|
+	And Site view Child CP
+		|childSiteName|Child ChildSiteName|
+		|siteName|Child SiteName|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Child SiteName|
+	And Portlet add PG
+		|portletName|Sites Directory|
+	And SitesDirectory configure Setup PG
+		|directorySites|Parent Level|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Child SiteName|
+	Then SitesDirectory view Descriptive PG
+		|siteName|Site Name|
+Scenario: View Site Hierarchies Via Sites Directory
+Priority: 4
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|parentSiteName|Site Name|
+		|siteName|Child Site1Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site search Input CP
+		|siteName|Child Site1Name|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Child Site1Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|parentSiteName|Child Site1Name|
+		|siteName|Child ChildSite1Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site search Input CP
+		|siteName|Child ChildSite1Name|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Child ChildSite1Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|parentSiteName|Child Site1Name|
+		|siteName|Child ChildSite2Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site search Input CP
+		|siteName|Child ChildSite2Name|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Child ChildSite2Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|parentSiteName|Site Name|
+		|siteName|Child Site2Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site search Input CP
+		|siteName|Child Site2Name|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Child Site2Name|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Child Site1Name|
+	And Portlet add PG
+		|portletName|Sites Directory|
+	And SitesDirectory configure Setup PG
+		|directorySites|Top Level|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Child Site1Name|
+	And SitesDirectory view Descriptive PG
+		|siteName|Site Name|
+	And SitesDirectory configure Setup PG
+		|directorySites|Parent Level|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Child Site1Name|
+	And SitesDirectory view Descriptive PG
+		|siteName|Site Name|
+	And SitesDirectory configure Setup PG
+		|directorySites|Siblings|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Child Site1Name|
+	And SitesDirectory view Descriptive PG
+		|siteName|Child Site1Name|
+	And SitesDirectory view Descriptive PG
+		|siteName|Child Site2Name|
+	And SitesDirectory configure Setup PG
+		|directorySites|Children|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Child Site1Name|
+	And SitesDirectory view Descriptive PG
+		|siteName|Child ChildSite1Name|
+	And SitesDirectory view Descriptive PG
+		|siteName|Child ChildSite2Name|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Child ChildSite1Name|
+	And Portlet add PG
+		|portletName|Sites Directory|
+	And SitesDirectory configure Setup PG
+		|directorySites|Top Level|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Child ChildSite1Name|
+	And SitesDirectory view Descriptive PG
+		|siteName|Site Name|
+	And SitesDirectory configure Setup PG
+		|directorySites|Parent Level|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Child ChildSite1Name|
+	And SitesDirectory view Descriptive PG
+		|siteName|Child Site1Name|
+	And SitesDirectory view Descriptive PG
+		|siteName|Child Site2Name|
+	And SitesDirectory configure Setup PG
+		|directorySites|Siblings|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Child ChildSite1Name|
+	And SitesDirectory view Descriptive PG
+		|siteName|Child ChildSite1Name|
+	And SitesDirectory view Descriptive PG
+		|siteName|Child ChildSite2Name|
+	And SitesDirectory configure Setup PG
+		|directorySites|Children|
+	And Navigator goto Site Page
+		|pageName|Site Page|
+		|siteName|Child ChildSite1Name|
+	Then AssertTextEquals the value 'No sites were found.' at locator 'Message#EMPTY_INFO'

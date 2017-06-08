@@ -1,186 +1,221 @@
-<definition component-name="portal-calendar">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles" />
-	<property name="testray.main.component.name" value="Calendar" />
+Feature:
 
-	<var name="pageName" value="Calendar Page" />
-	<var name="portletName" value="Calendar" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles|
+		|testray.main.component.name|Calendar|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles|
+		|testray.main.component.name|Calendar|
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Calendar Page|
+	Then Portlet add PG
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Export User Calendar As ICS
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|calendarName|Test Test|
+		|eventTitle|Event For Export|
+		|eventType|Regular|
+		|pageName|Calendar Page|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto My Calendars Manage
+	And Calendar export Calendar File
+		|calendarName|Test Test|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view
+		|eventTitle|Event For Export|
+Scenario: Import Calendar And View Event Comment
+Priority: 5
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When Calendar enable Comments
+		|calendarName|${siteName}|
+		|calendarType|Current Site Calendars|
+		|site|${siteName}|
+		|user|Test Test|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|calendarName|${siteName}|
+		|eventComment|Calendar Event Regular Comment|
+		|eventCommentEnabled|true|
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|pageName|Calendar Page|
+		|site|${siteName}|
+		|user|Test Test|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view Comment
+		|calendarName|${siteName}|
+		|eventComment|Calendar Event Regular Comment|
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|site|${siteName}|
+		|user|Test Test|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And LAR export Portlet
+		|larFileName|calendar_calendar_with_comments.portlet.lar|
+		|portletName|Calendar|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent tear Down
+	And Calendar tear Down
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And LAR import Portlet
+		|larFileName|calendar_calendar_with_comments.portlet.lar|
+		|portletName|Calendar|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view
+		|eventTitle|Calendar Event Regular Title|
+	Then CalendarEvent view Comment
+		|calendarName|${siteName}|
+		|eventComment|Calendar Event Regular Comment|
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|user|Test Test|
+Scenario: Import Microsoft Outlook Calendar ICS
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And CalendarNavigator goto Current Site Calendars Manage
+	Then Calendar import Calendar File
+		|calendarFile|calendar_microsoft_outlook_calendar.ics|
+		|calendarName|${siteName}|
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Calendar Page|
+	Then Portlet add PG
+		|pageName|Calendar Page|
+		|portletName|Calendar|
 
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Calendar Page" />
-			<var name="portletName" value="Calendar" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Navigator#gotoPage">
-					<var name="pageName" value="Calendar Page" />
-				</execute>
-
-				<if>
-					<condition function="IsElementPresent" locator1="Calendar#SCHEDULER_EVENT_GENERIC" />
-					<then>
-						<execute macro="CalendarEvent#tearDown" />
-					</then>
-				</if>
-
-				<execute macro="Calendar#tearDown" />
-
-				<execute macro="CalendarConfiguration#tearDown" />
-
-				<execute macro="Page#tearDownPG" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="ExportUserCalendarAsICS" priority="4">
-		<description message="This is a use case for LPS-57992." />
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="calendarName" value="Test Test" />
-			<var name="eventTitle" value="Event For Export" />
-			<var name="eventType" value="Regular" />
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoMyCalendarsManage" />
-
-		<execute macro="Calendar#exportCalendarFile">
-			<var name="calendarName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#view">
-			<var name="eventTitle" value="Event For Export" />
-		</execute>
-	</command>
-
-	<command name="ImportCalendarAndViewEventComment" priority="5">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Calendar#enableComments">
-			<var name="calendarName" value="${siteName}" />
-			<var name="calendarType" value="Current Site Calendars" />
-			<var name="site" value="${siteName}" />
-			<var name="user" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="calendarName" value="${siteName}" />
-			<var name="eventComment" value="Calendar Event Regular Comment" />
-			<var name="eventCommentEnabled" value="true" />
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-			<var name="eventType" value="Regular" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="site" value="${siteName}" />
-			<var name="user" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewComment">
-			<var name="calendarName" value="${siteName}" />
-			<var name="eventComment" value="Calendar Event Regular Comment" />
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-			<var name="eventType" value="Regular" />
-			<var name="site" value="${siteName}" />
-			<var name="user" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="LAR#exportPortlet">
-			<var name="larFileName" value="calendar_calendar_with_comments.portlet.lar" />
-			<var name="portletName" value="Calendar" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#tearDown" />
-
-		<execute macro="Calendar#tearDown" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="LAR#importPortlet">
-			<var name="larFileName" value="calendar_calendar_with_comments.portlet.lar" />
-			<var name="portletName" value="Calendar" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#view">
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewComment">
-			<var name="calendarName" value="${siteName}" />
-			<var name="eventComment" value="Calendar Event Regular Comment" />
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-			<var name="eventType" value="Regular" />
-			<var name="user" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="ImportMicrosoftOutlookCalendarICS" priority="4">
-		<description message="This is a use case for LPS-53072." />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoCurrentSiteCalendarsManage" />
-
-		<execute macro="Calendar#importCalendarFile">
-			<var name="calendarFile" value="calendar_microsoft_outlook_calendar.ics" />
-			<var name="calendarName" value="${siteName}" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Export User Calendar As ICS
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|calendarName|Test Test|
+		|eventTitle|Event For Export|
+		|eventType|Regular|
+		|pageName|Calendar Page|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto My Calendars Manage
+	And Calendar export Calendar File
+		|calendarName|Test Test|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view
+		|eventTitle|Event For Export|
+Scenario: Import Calendar And View Event Comment
+Priority: 5
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When Calendar enable Comments
+		|calendarName|${siteName}|
+		|calendarType|Current Site Calendars|
+		|site|${siteName}|
+		|user|Test Test|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|calendarName|${siteName}|
+		|eventComment|Calendar Event Regular Comment|
+		|eventCommentEnabled|true|
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|pageName|Calendar Page|
+		|site|${siteName}|
+		|user|Test Test|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view Comment
+		|calendarName|${siteName}|
+		|eventComment|Calendar Event Regular Comment|
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|site|${siteName}|
+		|user|Test Test|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And LAR export Portlet
+		|larFileName|calendar_calendar_with_comments.portlet.lar|
+		|portletName|Calendar|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent tear Down
+	And Calendar tear Down
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And LAR import Portlet
+		|larFileName|calendar_calendar_with_comments.portlet.lar|
+		|portletName|Calendar|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view
+		|eventTitle|Calendar Event Regular Title|
+	Then CalendarEvent view Comment
+		|calendarName|${siteName}|
+		|eventComment|Calendar Event Regular Comment|
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|user|Test Test|
+Scenario: Import Microsoft Outlook Calendar ICS
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And CalendarNavigator goto Current Site Calendars Manage
+	Then Calendar import Calendar File
+		|calendarFile|calendar_microsoft_outlook_calendar.ics|
+		|calendarName|${siteName}|

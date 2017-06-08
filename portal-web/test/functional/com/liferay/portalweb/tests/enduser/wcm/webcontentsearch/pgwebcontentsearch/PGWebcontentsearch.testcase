@@ -1,699 +1,753 @@
-<definition component-name="portal-search">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Web Content Administration" />
-
-	<var name="webContentSearchPageName" value="Web Content Search Page" />
-	<var name="webContentSearchPortletName" value="Web Content Search" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Web Content Search Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Search Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Search" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="WebContent#tearDownCP" />
-
-				<execute macro="Vocabulary#tearDownCP" />
-
-				<execute macro="Tag#tearDownCP" />
-
-				<execute macro="Page#tearDownPG" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="SearchWebContent" priority="4">
-		<property name="testray.component.names" value="Categories,Web Content Search" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Search Page" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="WC" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="WebContent" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="Content" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="WC1" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm" value="WC1" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="WebContent1" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm" value="WebContent1" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="Title1" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm" value="Title1" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="Content1" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm" value="Content1" />
-		</execute>
-	</command>
-
-	<command name="SearchWebContentCategory" priority="4">
-		<property name="testray.component.names" value="Categories,Web Content Search" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditPGViaWCD" />
-
-		<execute macro="WebContent#selectCategory">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Button#clickPublish" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Search Page" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="Category Name" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="Category" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="Name" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="Category1" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm" value="Category1" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="Name1" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm" value="Name1" />
-		</execute>
-	</command>
-
-	<command name="SearchWebContentCategoryQuotes" priority="3">
-		<property name="testray.component.names" value="Categories,Web Content Search" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditPGViaWCD" />
-
-		<execute macro="WebContent#selectCategory">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Button#clickPublish" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Search Page" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"Category Name"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"Category"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"Name"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"Category Name1"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm">"Category Name1"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"Category1"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm">"Category1"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"Name1"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm">"Name1"</var>
-		</execute>
-	</command>
-
-	<command name="SearchWebContentQuotes" priority="3">
-		<property name="testray.component.names" value="Web Content Search" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Search Page" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"WC WebContent Title"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"WC WebContent Content"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"WC"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"WebContent"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"Title"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"Content"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"WC WebContent"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"WebContent Title"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"WebContent Content"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"WC1"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm">"WC1"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"WebContent1"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm">"WebContent1"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"Title1"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm">"Title1"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"Content1"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm">"Content1"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"WC WebContent Title1"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm">"WC WebContent Title1"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"WC WebContent Content1"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm">"WC WebContent Content1"</var>
-		</execute>
-	</command>
-
-	<command name="SearchWebContentTag" priority="4">
-		<property name="testray.component.names" value="Tags,Web Content Search" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditPGViaWCD" />
-
-		<execute macro="WebContent#addTagPGViaWCD">
-			<var name="tagName" value="tag name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Search Page" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="tag name" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="tag" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="name" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="tag1" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm" value="tag1" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm" value="name1" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm" value="name1" />
-		</execute>
-	</command>
-
-	<command name="SearchWebContentTagQuotes" priority="3">
-		<property name="testray.component.names" value="Web Content Search" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditPGViaWCD" />
-
-		<execute macro="WebContent#addTagPGViaWCD">
-			<var name="tagName" value="tag name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Search Page" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"tag name"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"tag"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"name"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewResultsEntry">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"tag name1"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm">"tag name1"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"tag1"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm">"tag1"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#search">
-			<var name="webContentSearchTerm">"name1"</var>
-		</execute>
-
-		<execute macro="WebContentSearchPortlet#viewNoResults">
-			<var name="webContentSearchTerm">"name1"</var>
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Web Content Administration|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Web Content Administration|
+		|webContentSearchPageName|Web Content Search Page|
+		|webContentSearchPortletName|Web Content Search|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Web Content Search Page|
+	And Navigator goto Page
+		|pageName|Web Content Search Page|
+	Then Portlet add PG
+		|portletName|Web Content Search|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Search Web Content
+Priority: 4
+	Given these properties
+		|testray.component.names|Categories,Web Content Search|
+	When Page add
+		|pageName|Web Content Display Page|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And Navigator goto Page
+		|pageName|Web Content Search Page|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|WC WebContent Title|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|WC WebContent Content|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|WC|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|WebContent|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|Title|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|Content|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|WC1|
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm|WC1|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|WebContent1|
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm|WebContent1|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|Title1|
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm|Title1|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|Content1|
+	Then WebContentSearchPortlet view No Results
+		|webContentSearchTerm|Content1|
+Scenario: Search Web Content Category
+Priority: 4
+	Given these properties
+		|testray.component.names|Categories,Web Content Search|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyName|Vocabulary Name|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Page add
+		|pageName|Web Content Display Page|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentNavigator goto Edit PG Via WCD
+	And WebContent select Category
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Button click Publish
+	And Navigator goto Page
+		|pageName|Web Content Search Page|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|Category Name|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|Category|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|Name|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|Category1|
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm|Category1|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|Name1|
+	Then WebContentSearchPortlet view No Results
+		|webContentSearchTerm|Name1|
+Scenario: Search Web Content Category Quotes
+Priority: 3
+	Given these properties
+		|testray.component.names|Categories,Web Content Search|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyName|Vocabulary Name|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Page add
+		|pageName|Web Content Display Page|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentNavigator goto Edit PG Via WCD
+	And WebContent select Category
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Button click Publish
+	And Navigator goto Page
+		|pageName|Web Content Search Page|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	Then WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+Scenario: Search Web Content Quotes
+Priority: 3
+	Given these properties
+		|testray.component.names|Web Content Search|
+	When Page add
+		|pageName|Web Content Display Page|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And Navigator goto Page
+		|pageName|Web Content Search Page|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	Then WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+Scenario: Search Web Content Tag
+Priority: 4
+	Given these properties
+		|testray.component.names|Tags,Web Content Search|
+	When Page add
+		|pageName|Web Content Display Page|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentNavigator goto Edit PG Via WCD
+	And WebContent add Tag PG Via WCD
+		|tagName|tag name|
+	And Navigator goto Page
+		|pageName|Web Content Search Page|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|tag name|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|tag|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|name|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|tag1|
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm|tag1|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|name1|
+	Then WebContentSearchPortlet view No Results
+		|webContentSearchTerm|name1|
+Scenario: Search Web Content Tag Quotes
+Priority: 3
+	Given these properties
+		|testray.component.names|Web Content Search|
+	When Page add
+		|pageName|Web Content Display Page|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentNavigator goto Edit PG Via WCD
+	And WebContent add Tag PG Via WCD
+		|tagName|tag name|
+	And Navigator goto Page
+		|pageName|Web Content Search Page|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	Then WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Web Content Search Page|
+	And Navigator goto Page
+		|pageName|Web Content Search Page|
+	Then Portlet add PG
+		|portletName|Web Content Search|
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Search Web Content
+Priority: 4
+	Given these properties
+		|testray.component.names|Categories,Web Content Search|
+	When Page add
+		|pageName|Web Content Display Page|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And Navigator goto Page
+		|pageName|Web Content Search Page|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|WC WebContent Title|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|WC WebContent Content|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|WC|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|WebContent|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|Title|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|Content|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|WC1|
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm|WC1|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|WebContent1|
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm|WebContent1|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|Title1|
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm|Title1|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|Content1|
+	Then WebContentSearchPortlet view No Results
+		|webContentSearchTerm|Content1|
+Scenario: Search Web Content Category
+Priority: 4
+	Given these properties
+		|testray.component.names|Categories,Web Content Search|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyName|Vocabulary Name|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Page add
+		|pageName|Web Content Display Page|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentNavigator goto Edit PG Via WCD
+	And WebContent select Category
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Button click Publish
+	And Navigator goto Page
+		|pageName|Web Content Search Page|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|Category Name|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|Category|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|Name|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|Category1|
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm|Category1|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|Name1|
+	Then WebContentSearchPortlet view No Results
+		|webContentSearchTerm|Name1|
+Scenario: Search Web Content Category Quotes
+Priority: 3
+	Given these properties
+		|testray.component.names|Categories,Web Content Search|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyName|Vocabulary Name|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Page add
+		|pageName|Web Content Display Page|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentNavigator goto Edit PG Via WCD
+	And WebContent select Category
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Button click Publish
+	And Navigator goto Page
+		|pageName|Web Content Search Page|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	Then WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+Scenario: Search Web Content Quotes
+Priority: 3
+	Given these properties
+		|testray.component.names|Web Content Search|
+	When Page add
+		|pageName|Web Content Display Page|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And Navigator goto Page
+		|pageName|Web Content Search Page|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	Then WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+Scenario: Search Web Content Tag
+Priority: 4
+	Given these properties
+		|testray.component.names|Tags,Web Content Search|
+	When Page add
+		|pageName|Web Content Display Page|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentNavigator goto Edit PG Via WCD
+	And WebContent add Tag PG Via WCD
+		|tagName|tag name|
+	And Navigator goto Page
+		|pageName|Web Content Search Page|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|tag name|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|tag|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|name|
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|tag1|
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm|tag1|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm|name1|
+	Then WebContentSearchPortlet view No Results
+		|webContentSearchTerm|name1|
+Scenario: Search Web Content Tag Quotes
+Priority: 3
+	Given these properties
+		|testray.component.names|Web Content Search|
+	When Page add
+		|pageName|Web Content Display Page|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContentNavigator goto Edit PG Via WCD
+	And WebContent add Tag PG Via WCD
+		|tagName|tag name|
+	And Navigator goto Page
+		|pageName|Web Content Search Page|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view Results Entry
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	And WebContentSearchPortlet view No Results
+		|webContentSearchTerm||
+	And WebContentSearchPortlet search
+		|webContentSearchTerm||
+	Then WebContentSearchPortlet view No Results
+		|webContentSearchTerm||

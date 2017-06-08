@@ -1,1315 +1,812 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Site Pages Administration" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="User#logoutAndLoginPG">
-					<var name="userLoginEmailAddress" value="test@liferay.com" />
-					<var name="userLoginFullName" value="test test" />
-				</execute>
-
-				<execute macro="Site#tearDownCP" />
-
-				<execute macro="WebContent#tearDownCP" />
-
-				<execute macro="BlogsEntry#tearDownCP" />
-
-				<execute macro="MessageboardsThread#tearDownCP" />
-
-				<execute macro="Page#tearDownPG" />
-
-				<execute macro="User#tearDownCP" />
-
-				<execute macro="Role#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="AddSitePageXSS" priority="3">
-		<property name="testray.component.names" value="Site Pages Administration,XSS" />
-
-		<var name="sitePage3Name"><![CDATA[<script>alert("Site Page 3")</script> />]]></var>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page 1" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page 2" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="${sitePage3Name}" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Site Page 2" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${sitePage3Name}" />
-		</execute>
-
-		<var name="key_pageName" value="${sitePage3Name}" />
-
-		<execute function="AssertTextEquals" locator1="Home#PAGE" value1="${sitePage3Name}" />
-	</command>
-
-	<command name="CannotDeleteLastPublicPageOnLiferay" priority="3">
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-		</execute>
-
-		<execute macro="Page#assertCannotDeleteOnlyPage">
-			<var name="pageName" value="Welcome" />
-		</execute>
-	</command>
-
-	<command name="ChangingPageTypeLayoutToLinkToAPageOfThisSiteHidesChildPages" priority="3">
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page1 Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page2 Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#addChild">
-			<var name="childSitepageName" value="true" />
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Site Page2 Name" />
-			<var name="siteChildPageName" value="Child Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-		</execute>
-
-		<execute macro="Page#editSelectPageType">
-			<var name="page" value="Site Page2 Name" />
-			<var name="pageLinkName" value="Site Page1 Name" />
-			<var name="pageType" value="Link to a Page of This Site" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page1 Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-		</execute>
-
-		<execute macro="Page#viewChildPage">
-			<var name="pageName" value="Child Page Name" />
-		</execute>
-	</command>
-
-	<command name="DefaultLanguageWithEmptyFriendlyURLThrowsErrorExceptions" priority="3">
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Page Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Page Name" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Page Name" />
-		</execute>
-
-		<execute macro="Page#addFriendlyURLLocalizedPG">
-			<var name="friendlyUrlLocalized" value="de_DE" />
-			<var name="localizedFriendlyURL" value="/german" />
-		</execute>
-
-		<execute macro="Page#deleteFriendlyURLPG" >
-			<var name="friendlyUrlLocalized" value="en_US" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Page Name" />
-		</execute>
-
-		<execute function="AssertConsoleTextNotPresent" value1="java.lang.StringIndexOutOfBoundsException: String index out of range: -1" />
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Page Name" />
-		</execute>
-
-		<execute macro="Page#viewPageFriendlyURLPG">
-			<var name="pageName" value="page-name" />
-		</execute>
-	</command>
-
-	<command name="LoadMoreResultsLinkAreMissingAtAllLevelsInTreeView" priority="3">
-		<property name="custom.properties" value="layout.manage.pages.initial.children=3" />
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<for list="Page1 Name,Page2 Name,Page3 Name,Page4 Name" param="pageName">
-			<execute macro="Page#add">
-				<var name="pageName" value="${pageName}" />
-			</execute>
-		</for>
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-		</execute>
-
-		<execute macro="Page#viewLoadMoreResultsPages">
-			<var name="siteChildPages" value="false" />
-		</execute>
-
-		<for list="Child Page1 Name,Child Page2 Name,Child Page3 Name,Child Page4 Name, Child Page5 Name" param="siteChildPageName">
-			<execute macro="Page#addChild">
-				<var name="page" value="Public Pages" />
-				<var name="pageName" value="Welcome" />
-				<var name="siteChildPageName" value="${siteChildPageName}" />
-				<var name="siteScopeSelected" value="true" />
-			</execute>
-		</for>
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-		</execute>
-
-		<execute macro="Page#viewLoadMoreResultsPages">
-			<var name="siteChildPages" value="true" />
-		</execute>
-	</command>
-
-	<command name="SitesPanelLayout" priority="3">
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#assignRegRoleCP">
-			<var name="roleTitle" value="Power User" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="UserBar#gotoProfile" />
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="My Profile" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Page Name" />
-		</execute>
-
-		<execute function="Open" locator1="${portalURL}/web/usersn/page-name?p_p_id=com_liferay_portal_settings_web_portlet_PortalSettingsPortlet&amp;p_p_state=maximized" />
-
-		<execute function="AssertTextEquals" locator1="Message#ERROR" value1="You do not have the roles required to access this portlet." />
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-	</command>
-
-	<command name="SitesPrivatePagesPermissions" priority="4">
-		<property name="testray.component.names" value="Permissions,Roles,Site Pages Administration" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addCommunityCP">
-			<var name="membershipType" value="Private" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-			<var name="sitePagePrivacy" value="Private" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#add">
-			<var name="roleTitle" value="Roles Regrole Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editUserSiteCP">
-			<var name="siteName" value="Site Name" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#assignRegularRoleCP">
-			<var name="roleTitle" value="Roles Regrole Name" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Home" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoPrivatePages" />
-
-		<execute macro="PermissionsInline#gotoSitepageCP">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_VIEW_CHECKBOX" />
-			<var name="roleTitle" value="Site Member" />
-		</execute>
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_VIEW_CHECKBOX" />
-			<var name="roleTitle" value="Roles Regrole Name" />
-		</execute>
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#openPrivateSitePageURL">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute function="AssertTextNotPresent" locator1="Home#ERROR_MESSAGE_ALERT_ERROR" value1="Not Found" />
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Home" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoPrivatePages" />
-
-		<execute macro="PermissionsInline#gotoSitepageCP">
-			<var name="page" value="Private" />
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_VIEW_CHECKBOX" />
-			<var name="roleTitle" value="Roles Regrole Name" />
-		</execute>
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#openPrivateSitePageURL">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="Home#ERROR_MESSAGE_ALERT_ERROR" value1="Not Found" />
-
-		<execute function="AssertTextNotPresent" locator1="Home#BREADCRUMB_2" value1="Site Page" />
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-	</command>
-
-	<command name="ViewSecureContentAndPageAsGuest" priority="3">
-		<property name="test.name.skip.portal.instance" value="SitepagesUsecase#ViewSecureContentAndPageAsGuest" />
-		<property name="testray.component.names" value="Message Boards,Site Pages Administration" />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Server Administration" />
-		</execute>
-
-		<execute macro="ServerAdministration#configureMailServerSettings">
-			<var method="TestPropsUtil#get('email.address.1')" name="userName" />
-			<var method="TestPropsUtil#get('email.password.1')" name="userPassword" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Server Administration" />
-		</execute>
-
-		<execute macro="ServerAdministration#executeServerResourcesActions">
-			<var name="actionsDescription" value="Reindex all search indexes." />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var method="TestPropsUtil#get('email.address.2')" name="userEmailAddress" />
-			<var name="userFirstName" value="userfn1" />
-			<var name="userLastName" value="userln1" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#assignRegRoleCP">
-			<var name="roleTitle" value="Administrator" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var method="TestPropsUtil#get('email.address.2')" name="userEmailAddress" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Private Page" />
-			<var name="siteName" value="${siteName}" />
-			<var name="sitePagePrivacy" value="Private" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var method="TestPropsUtil#get('email.address.2')" name="userLoginEmailAddress" />
-			<var name="userLoginFullName" value="userfn1 userln1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="Blogs#subscribePG" />
-
-		<execute macro="MessageboardsPortlet#subscribePG" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="test test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="Blogs#addEntryWithPermissions">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title GMB1" />
-			<var name="viewableBy" value="Site Members" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPGWithPermissions">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject GMMB2" />
-			<var name="viewableBySelection" value="Site Members" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute function="Pause" locator1="30000" />
-
-		<execute macro="Gmail#login">
-			<var method="TestPropsUtil#get('email.address.2')" name="userEmailAddress" />
-			<var method="TestPropsUtil#get('email.password.2')" name="userPassword" />
-		</execute>
-
-		<execute macro="Gmail#gotoHtmlMode" />
-
-		<execute macro="Gmail#viewMail">
-			<var name="emailFromUserName" value="Joe Bloggs" />
-			<var name="gmailAssetType" value="GMB1" />
-			<var name="gmailMessageBody" value="Blogs Entry Title GMB1" />
-			<var name="gmailMessageTitle" value="Test Test Published &quot;Blogs Entry Title GMB1&quot; on ${siteName} Blogs" />
-		</execute>
-
-		<execute macro="Gmail#openMessageContinueReadingButton">
-			<var name="contentTitle" value="Blogs Entry Title GMB1" />
-			<var name="pageName" value="Blog and Message Board Page" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<var method="selenium#getLocation()" name="blogEntryURL" />
-
-		<execute function="Close" />
-
-		<execute function="SelectWindow" locator1="null" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="Gmail#gotoHtmlMode" />
-
-		<execute macro="Gmail#viewMail">
-			<var name="emailFromUserName" value="Test Test" />
-			<var name="gmailAssetType" value="GMMB2" />
-			<var name="gmailMessageBody" value="MB Thread Message Body" />
-			<var name="gmailMessageTitle" value="Message Boards Home - ${siteName} New Message: MB Thread Message Subject GMMB2" />
-		</execute>
-
-		<execute macro="Gmail#openMessageLink">
-			<var name="contentTitle" value="MB Thread Message Subject GMMB2" />
-			<var name="gmailAssetType" value="Message Boards" />
-			<var name="pageName" value="Blog and Message Board Page" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<var method="selenium#getLocation()" name="messageBoardsThreadURL" />
-
-		<execute function="Close" />
-
-		<execute function="SelectWindow" locator1="null" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="Gmail#gotoHtmlMode" />
-
-		<execute macro="Gmail#deleteSpecificMail">
-			<var name="gmailMessageTitleList" value="Test Test Published &quot;Blogs Entry Title GMB1&quot; on ${siteName} Blogs,Message Boards Home - ${siteName} New Message: MB Thread Message Subject GMMB2,Your New Account,Your New Password,GMB1,GMMB2" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="Navigator#openPrivateURL" />
-
-		<execute macro="User#viewLoginPG" />
-		<execute function="AssertElementNotPresent" locator1="Message#ERROR" />
-		<execute function="AssertElementNotPresent" locator1="Home#ERROR_MESSAGE_ALERT_ERROR" />
-
-		<execute function="Open" locator1="${blogEntryURL}" />
-
-		<execute macro="Alert#viewRequestFailedToComplete" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="You do not have the required permissions." />
-
-		<execute function="Open" locator1="${messageBoardsThreadURL}" />
-
-		<execute macro="Alert#viewRequestFailedToComplete" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="You do not have the required permissions." />
-	</command>
-
-	<command name="ViewSecureContentAndPageAsSiteMember" priority="3">
-		<property name="test.name.skip.portal.instance" value="SitepagesUsecase#ViewSecureContentAndPageAsSiteMember" />
-		<property name="testray.component.names" value="Message Boards,Site Pages Administration" />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Server Administration" />
-		</execute>
-
-		<execute macro="ServerAdministration#configureMailServerSettings">
-			<var method="TestPropsUtil#get('email.address.1')" name="userName" />
-			<var method="TestPropsUtil#get('email.password.1')" name="userPassword" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var method="TestPropsUtil#get('email.address.2')" name="userEmailAddress" />
-			<var name="userFirstName" value="userfn1" />
-			<var name="userLastName" value="userln1" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea2@liferay.com" />
-			<var name="userFirstName" value="userfn2" />
-			<var name="userLastName" value="userln2" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#assignRegRoleCP">
-			<var name="roleTitle" value="Administrator" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Site#assignUserSitesCP">
-			<var name="siteName" value="${siteName}" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var method="TestPropsUtil#get('email.address.2')" name="userEmailAddress" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea2@liferay.com" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Private Page" />
-			<var name="siteName" value="${siteName}" />
-			<var name="sitePagePrivacy" value="Private" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var method="TestPropsUtil#get('email.address.2')" name="userLoginEmailAddress" />
-			<var name="userLoginFullName" value="userfn1 userln1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="Blogs#subscribePG" />
-
-		<execute macro="MessageboardsPortlet#subscribePG" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="test test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="Blogs#addEntryWithPermissions">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title GMB2" />
-			<var name="viewableBy" value="Site Members" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPGWithPermissions">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject GMMB3" />
-			<var name="viewableBySelection" value="Site Members" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute function="Pause" locator1="30000" />
-
-		<execute macro="Gmail#login">
-			<var method="TestPropsUtil#get('email.address.2')" name="userEmailAddress" />
-			<var method="TestPropsUtil#get('email.password.2')" name="userPassword" />
-		</execute>
-
-		<execute macro="Gmail#gotoHtmlMode" />
-
-		<execute macro="Gmail#viewMail">
-			<var name="emailFromUserName" value="Joe Bloggs" />
-			<var name="gmailAssetType" value="GMB2" />
-			<var name="gmailMessageBody" value="Blogs Entry Title GMB2" />
-			<var name="gmailMessageTitle" value="Test Test Published &quot;Blogs Entry Title GMB2&quot; on ${siteName} Blogs" />
-		</execute>
-
-		<execute macro="Gmail#openMessageContinueReadingButton">
-			<var name="contentTitle" value="Blogs Entry Title GMB2" />
-			<var name="pageName" value="Blog and Message Board Page" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<var method="selenium#getLocation()" name="blogEntryURL" />
-
-		<execute function="Close" />
-
-		<execute function="SelectWindow" locator1="null" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="Gmail#gotoHtmlMode" />
-
-		<execute macro="Gmail#viewMail">
-			<var name="emailFromUserName" value="Test Test" />
-			<var name="gmailAssetType" value="GMMB3" />
-			<var name="gmailMessageBody" value="MB Thread Message Body" />
-			<var name="gmailMessageTitle" value="Message Boards Home - ${siteName} New Message: MB Thread Message Subject GMMB3" />
-		</execute>
-
-		<execute macro="Gmail#openMessageLink">
-			<var name="contentTitle" value="MB Thread Message Subject GMMB3" />
-			<var name="gmailAssetType" value="Message Boards" />
-			<var name="pageName" value="Blog and Message Board Page" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<var method="selenium#getLocation()" name="messageBoardsThreadURL" />
-
-		<execute function="Close" />
-
-		<execute function="SelectWindow" locator1="null" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="Gmail#gotoHtmlMode" />
-
-		<execute macro="Gmail#deleteSpecificMail">
-			<var name="gmailMessageTitleList" value="Test Test Published &quot;Blogs Entry Title GMB2&quot; on ${siteName} Blogs,Message Boards Home - ${siteName} New Message: MB Thread Message Subject GMMB3,Your New Account,Your New Password,GMB2,GMMB3" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea2@liferay.com" />
-			<var name="userLoginFullName" value="userfn2 userln2" />
-		</execute>
-
-		<execute macro="Navigator#openPrivateURL" />
-
-		<execute macro="Page#viewSpecificPG">
-			<var name="pageNameList" value="Test Private Page" />
-		</execute>
-
-		<execute function="AssertElementNotPresent" locator1="Message#ERROR" />
-		<execute function="AssertElementNotPresent" locator1="Home#ERROR_MESSAGE_ALERT_ERROR" />
-
-		<execute function="Open" locator1="${blogEntryURL}" />
-
-		<execute macro="BlogsNavigator#gotoPG">
-			<var name="blogEntryURL" value="${blogEntryURL}" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title GMB2" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute function="Open" locator1="${messageBoardsThreadURL}" />
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="messageBoardsThreadURL" value="${messageBoardsThreadURL}" />
-			<var name="postCount" value="1" />
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject GMMB3" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewPG">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject GMMB3" />
-		</execute>
-	</command>
-
-	<command name="ViewSecureContentAndPageAsUser" priority="3">
-		<property name="test.name.skip.portal.instance" value="SitepagesUsecase#ViewSecureContentAndPageAsUser" />
-		<property name="testray.component.names" value="Message Boards,Site Pages Administration" />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Server Administration" />
-		</execute>
-
-		<execute macro="ServerAdministration#configureMailServerSettings">
-			<var method="TestPropsUtil#get('email.address.1')" name="userName" />
-			<var method="TestPropsUtil#get('email.password.1')" name="userPassword" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var method="TestPropsUtil#get('email.address.2')" name="userEmailAddress" />
-			<var name="userFirstName" value="userfn1" />
-			<var name="userLastName" value="userln1" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea2@liferay.com" />
-			<var name="userFirstName" value="userfn2" />
-			<var name="userLastName" value="userln2" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#assignRegRoleCP">
-			<var name="roleTitle" value="Administrator" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var method="TestPropsUtil#get('email.address.2')" name="userEmailAddress" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea2@liferay.com" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Private Page" />
-			<var name="siteName" value="${siteName}" />
-			<var name="sitePagePrivacy" value="Private Pages" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var method="TestPropsUtil#get('email.address.2')" name="userLoginEmailAddress" />
-			<var name="userLoginFullName" value="userfn1 userln1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="Blogs#subscribePG" />
-
-		<execute macro="MessageboardsPortlet#subscribePG" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="test test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="Blogs#addEntryWithPermissions">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title GMB3" />
-			<var name="viewableBy" value="Site Members" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPGWithPermissions">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject GMMB4" />
-			<var name="viewableBySelection" value="Site Members" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute function="Pause" locator1="30000" />
-
-		<execute macro="Gmail#login">
-			<var method="TestPropsUtil#get('email.address.2')" name="userEmailAddress" />
-			<var method="TestPropsUtil#get('email.password.2')" name="userPassword" />
-		</execute>
-
-		<execute macro="Gmail#gotoHtmlMode" />
-
-		<execute macro="Gmail#viewMail">
-			<var name="emailFromUserName" value="Joe Bloggs" />
-			<var name="gmailAssetType" value="GMB3" />
-			<var name="gmailMessageBody" value="Blogs Entry Title GMB3" />
-			<var name="gmailMessageTitle" value="Test Test Published &quot;Blogs Entry Title GMB3&quot; on ${siteName} Blogs" />
-		</execute>
-
-		<execute macro="Gmail#openMessageContinueReadingButton">
-			<var name="contentTitle" value="Blogs Entry Title GMB3" />
-			<var name="pageName" value="Blog and Message Board Page" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<var method="selenium#getLocation()" name="blogEntryURL" />
-
-		<execute function="Close" />
-
-		<execute function="SelectWindow" locator1="null" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="Gmail#gotoHtmlMode" />
-
-		<execute macro="Gmail#viewMail">
-			<var name="emailFromUserName" value="Test Test" />
-			<var name="gmailAssetType" value="GMMB4" />
-			<var name="gmailMessageBody" value="MB Thread Message Body" />
-			<var name="gmailMessageTitle" value="Message Boards Home - ${siteName} New Message: MB Thread Message Subject GMMB4" />
-		</execute>
-
-		<execute macro="Gmail#openMessageLink">
-			<var name="contentTitle" value="MB Thread Message Subject GMMB4" />
-			<var name="gmailAssetType" value="Message Boards" />
-			<var name="pageName" value="Blog and Message Board Page" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<var method="selenium#getLocation()" name="messageBoardsThreadURL" />
-
-		<execute function="Close" />
-
-		<execute function="SelectWindow" locator1="null" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute macro="Gmail#gotoHtmlMode" />
-
-		<execute macro="Gmail#deleteSpecificMail">
-			<var name="gmailMessageTitleList" value="Test Test Published &quot;Blogs Entry Title GMB3&quot; on ${siteName} Blogs,Message Boards Home - ${siteName} New Message: MB Thread Message Subject GMMB4,Your New Account,Your New Password,GMB3,GMMB4" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea2@liferay.com" />
-			<var name="userLoginFullName" value="userfn2 userln2" />
-		</execute>
-
-		<execute macro="Navigator#openPrivateURL" />
-
-		<execute function="AssertTextEquals" locator1="Home#ERROR_MESSAGE_ALERT_ERROR" value1="Not Found" />
-
-		<execute function="Open" locator1="${blogEntryURL}" />
-
-		<execute macro="Alert#viewRequestFailedToComplete" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="You do not have the required permissions." />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blog and Message Board Page" />
-		</execute>
-
-		<execute function="Open" locator1="${messageBoardsThreadURL}" />
-
-		<execute macro="Alert#viewRequestFailedToComplete" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="You do not have the required permissions." />
-	</command>
-
-	<command name="WebContentAdministrationSitesPagesPanel" priority="3">
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<execute macro="Page#add">
-			<var name="componentName" value="Collaboration" />
-			<var name="pageName" value="Panel Test Page" />
-			<var name="portletNameList" value="Blogs,Message Boards" />
-			<var name="sitePageType" value="Panel" />
-		</execute>
-
-		<execute macro="Page#viewPanelPortletListPG">
-			<var name="componentName" value="Collaboration" />
-			<var name="pageName" value="Panel Test Page" />
-			<var name="portletNameList" value="Blogs,Message Boards" />
-		</execute>
-
-		<execute macro="Page#gotoPagePanelPortlet">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="This is Blog Post 1 Content" />
-			<var name="entryTitle" value="Blog Post 1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Panel Test Page" />
-		</execute>
-
-		<execute macro="Page#gotoPagePanelPortlet">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="This is Blog Post 1 Content" />
-			<var name="entryTitle" value="Blog Post 1" />
-		</execute>
-
-		<execute macro="Page#gotoPagePanelPortlet">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="This is Message Boards Thread 1" />
-			<var name="threadSubject" value="Thread 1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Panel Test Page" />
-		</execute>
-
-		<execute macro="Page#gotoPagePanelPortlet">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
-			<var name="threadBody" value="This is Message Boards Thread 1" />
-			<var name="threadSubject" value="Thread 1" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewPG">
-			<var name="postCount" value="1" />
-			<var name="threadBody" value="This is Message Boards Thread 1" />
-			<var name="threadSubject" value="Thread 1" />
-			<var name="userName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="WebContentAdministrationSitesPageTypes" priority="3">
-		<property name="testray.component.names" value="Site Pages Administration" />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Page Type Test Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Blank Page" />
-			<var name="siteName" value="Page Type Test Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Link to URL Page" />
-			<var name="pageTypeURL" value="https://www.google.com/" />
-			<var name="siteName" value="Page Type Test Site Name" />
-			<var name="sitePageType" value="Link to URL" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blank Page" />
-			<var name="siteName" value="Page Type Test Site Name" />
-		</execute>
-
-		<execute macro="Page#firstPageCanNotBeOfTypeLinkToURL">
-			<var name="pageName" value="Blank Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blank Page" />
-			<var name="siteName" value="Page Type Test Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Embedded Page" />
-			<var name="pageTypeURL" value="http://iscaliforniaonfire.com/" />
-			<var name="siteName" value="Page Type Test Site Name" />
-			<var name="sitePageType" value="Embedded" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="componentName" value="Community" />
-			<var name="pageName" value="Panel Page" />
-			<var name="siteName" value="Page Type Test Site Name" />
-			<var name="sitePageType" value="Panel" />
-		</execute>
-
-		<execute macro="Page#viewPanelPortletListCP">
-			<var name="componentName" value="Community" />
-			<var name="pageName" value="Panel Page" />
-			<var name="portletNameList" value="Bookmarks,Friends Directory,My Sites,My Sites Directory,Page Comments,Page Flags,Page Ratings,Portal Directory,Site Members Directory" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Page Type Test Site Name" />
-		</execute>
-
-		<execute function="AssertClick" locator1="Home#PAGE" value1="Link to URL Page">
-			<var name="key_pageName" value="Link to URL Page" />
-		</execute>
-
-		<execute function="AssertLocation" value1="https://www.google.com/" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Embedded Page" />
-			<var name="siteName" value="Page Type Test Site Name" />
-		</execute>
-
-		<execute function="AssertLocation" value1="${portalURL}/web/page-type-test-site-name/embedded-page" />
-
-		<execute function="SelectFrame" locator1="IFrame#EMBEDDED_IFRAME" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Embedded#EMBEDDED_TEXT_YES" value1="Yes" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Embedded#EMBEDDED_TEXT_UPDATED" value1="updated" />
-		<execute function="SelectFrameTop" value1="relative=top" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Panel Page" />
-			<var name="siteName" value="Page Type Test Site Name" />
-		</execute>
-
-		<execute macro="Page#viewPanelPortletListPG">
-			<var name="componentName" value="Community" />
-			<var name="pageName" value="Panel Page" />
-			<var name="portletNameList" value="Bookmarks,Friends Directory,My Sites,My Sites Directory,Page Comments,Page Flags,Page Ratings,Portal Directory,Site Members Directory" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Site Pages Administration|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Site Page XSS
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Pages Administration,XSS|
+	When these variables
+		|sitePage3Name||
+	And Page add
+		|pageName|Site Page 1|
+	And Page add
+		|pageName|Site Page 2|
+	And Page add
+		|pageName|${sitePage3Name}|
+	And Navigator goto Page
+		|pageName|Site Page 2|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And Navigator goto Page
+		|pageName|${sitePage3Name}|
+	And these variables
+		|key_pageName|${sitePage3Name}|
+	Then AssertTextEquals the value '${sitePage3Name}' at locator 'Home#PAGE'
+Scenario: Cannot Delete Last Public Page On Liferay
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Pages Administration|
+	When SitePageNavigator goto Pages
+		|page|Public Pages|
+	Then Page assert Cannot Delete Only Page
+		|pageName|Welcome|
+Scenario: Changing Page Type Layout To Link To A Page Of This Site Hides Child Pages
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Pages Administration|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page1 Name|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page2 Name|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add Child
+		|childSitepageName|true|
+		|page|Public Pages|
+		|pageName|Site Page2 Name|
+		|siteChildPageName|Child Page Name|
+		|siteName|Site Name|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+	And Page edit Select Page Type
+		|page|Site Page2 Name|
+		|pageLinkName|Site Page1 Name|
+		|pageType|Link to a Page of This Site|
+	And Navigator goto Site Page
+		|pageName|Site Page1 Name|
+		|siteName|Site Name|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+	Then Page view Child Page
+		|pageName|Child Page Name|
+Scenario: Default Language With Empty Friendly URL Throws Error Exceptions
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Pages Administration|
+	When Page add
+		|pageName|Page Name|
+	And Navigator goto Page
+		|pageName|Page Name|
+	And SitePageNavigator goto Edit Page
+		|page|Page Name|
+	And Page add Friendly URL Localized PG
+		|friendlyUrlLocalized|de_DE|
+		|localizedFriendlyURL|/german|
+	And Page delete Friendly URLPG
+		|friendlyUrlLocalized|en_US|
+	And Navigator goto Page
+		|pageName|Page Name|
+	And AssertConsoleTextNotPresent the value 'java.lang.StringIndexOutOfBoundsException: String index out of range: -1'
+	And SitePageNavigator goto Edit Page
+		|page|Page Name|
+	Then Page view Page Friendly URLPG
+		|pageName|page-name|
+Scenario: Load More Results Link Are Missing At All Levels In Tree View
+Priority: 3
+	Given these properties
+		|custom.properties|layout.manage.pages.initial.children=3|
+	When these properties
+		|testray.component.names|Site Pages Administration|
+	And Page add
+		|pageName|Page1 Name|
+	And Page add
+		|pageName|Page2 Name|
+	And Page add
+		|pageName|Page3 Name|
+	And Page add
+		|pageName|Page4 Name|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+	And Page view Load More Results Pages
+		|siteChildPages|false|
+	And Page add Child
+		|page|Public Pages|
+		|pageName|Welcome|
+		|siteChildPageName|Child Page1 Name|
+		|siteScopeSelected|true|
+	And Page add Child
+		|page|Public Pages|
+		|pageName|Welcome|
+		|siteChildPageName|Child Page2 Name|
+		|siteScopeSelected|true|
+	And Page add Child
+		|page|Public Pages|
+		|pageName|Welcome|
+		|siteChildPageName|Child Page3 Name|
+		|siteScopeSelected|true|
+	And Page add Child
+		|page|Public Pages|
+		|pageName|Welcome|
+		|siteChildPageName|Child Page4 Name|
+		|siteScopeSelected|true|
+	And Page add Child
+		|page|Public Pages|
+		|pageName|Welcome|
+		|siteChildPageName| Child Page5 Name|
+		|siteScopeSelected|true|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+	Then Page view Load More Results Pages
+		|siteChildPages|true|
+Scenario: Sites Panel Layout
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Pages Administration|
+	When these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role assign Reg Role CP
+		|roleTitle|Power User|
+		|userScreenName|usersn|
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And UserBar goto Profile
+	And SitePageNavigator goto Pages
+		|page|My Profile|
+	And Page add
+		|pageName|Page Name|
+	And Open at locator '${portalURL}/web/usersn/page-name?p_p_id=com_liferay_portal_settings_web_portlet_PortalSettingsPortlet&p_p_state=maximized'
+	And AssertTextEquals the value 'You do not have the roles required to access this portlet.' at locator 'Message#ERROR'
+	Then User first Login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+Scenario: Sites Private Pages Permissions
+Priority: 4
+	Given these properties
+		|testray.component.names|Permissions,Roles,Site Pages Administration|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Community CP
+		|membershipType|Private|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Site Name|
+		|sitePagePrivacy|Private|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role add
+		|roleTitle|Roles Regrole Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit User Site CP
+		|siteName|Site Name|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User assign Regular Role CP
+		|roleTitle|Roles Regrole Name|
+		|userScreenName|usersn|
+	And Navigator goto Site Page
+		|pageName|Home|
+		|siteName|Site Name|
+	And ProductMenu goto Private Pages
+	And PermissionsInline goto Sitepage CP
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And Role remove Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|Site Member|
+	And Role define Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|Roles Regrole Name|
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator open Private Site Page URL
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And AssertTextNotPresent the value 'Not Found' at locator 'Home#ERROR_MESSAGE_ALERT_ERROR'
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Navigator goto Site Page
+		|pageName|Home|
+		|siteName|Site Name|
+	And ProductMenu goto Private Pages
+	And PermissionsInline goto Sitepage CP
+		|page|Private|
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And Role remove Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|Roles Regrole Name|
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator open Private Site Page URL
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And AssertTextEquals the value 'Not Found' at locator 'Home#ERROR_MESSAGE_ALERT_ERROR'
+	And AssertTextNotPresent the value 'Site Page' at locator 'Home#BREADCRUMB_2'
+	Then User first Login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+Scenario: View Secure Content And Page As Guest
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|SitepagesUsecase#ViewSecureContentAndPageAsGuest|
+	When these properties
+		|testray.component.names|Message Boards,Site Pages Administration|
+	And TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Server Administration|
+	And ServerAdministration configure Mail Server Settings
+		|userName|TestPropsUtil#get('email.address.1')|
+		|userPassword|TestPropsUtil#get('email.password.1')|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Server Administration|
+	And ServerAdministration execute Server Resources Actions
+		|actionsDescription|Reindex all search indexes.|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|TestPropsUtil#get('email.address.2')|
+		|userFirstName|userfn1|
+		|userLastName|userln1|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role assign Reg Role CP
+		|roleTitle|Administrator|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|TestPropsUtil#get('email.address.2')|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Test Private Page|
+		|siteName|${siteName}|
+		|sitePagePrivacy|Private|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Blog and Message Board Page|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And User logout And Login PG
+		|userLoginEmailAddress|TestPropsUtil#get('email.address.2')|
+		|userLoginFullName|userfn1 userln1|
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And Blogs subscribe PG
+	And MessageboardsPortlet subscribe PG
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|test test|
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And Blogs add Entry With Permissions
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title GMB1|
+		|viewableBy|Site Members|
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And MessageboardsThread add PG With Permissions
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject GMMB2|
+		|viewableBySelection|Site Members|
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And Pause at locator '30000'
+	And Gmail login
+		|userEmailAddress|TestPropsUtil#get('email.address.2')|
+		|userPassword|TestPropsUtil#get('email.password.2')|
+	And Gmail goto Html Mode
+	And Gmail view Mail
+		|emailFromUserName|Joe Bloggs|
+		|gmailAssetType|GMB1|
+		|gmailMessageBody|Blogs Entry Title GMB1|
+		|gmailMessageTitle|Test Test Published "Blogs Entry Title GMB1" on ${siteName} Blogs|
+	And Gmail open Message Continue Reading Button
+		|contentTitle|Blogs Entry Title GMB1|
+		|pageName|Blog and Message Board Page|
+		|siteName|${siteName}|
+	And these variables
+		|blogEntryURL|selenium#getLocation()|
+	And Close
+	And SelectWindow at locator 'null'
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And Gmail goto Html Mode
+	And Gmail view Mail
+		|emailFromUserName|Test Test|
+		|gmailAssetType|GMMB2|
+		|gmailMessageBody|MB Thread Message Body|
+		|gmailMessageTitle|Message Boards Home - ${siteName} New Message: MB Thread Message Subject GMMB2|
+	And Gmail open Message Link
+		|contentTitle|MB Thread Message Subject GMMB2|
+		|gmailAssetType|Message Boards|
+		|pageName|Blog and Message Board Page|
+		|siteName|${siteName}|
+	And these variables
+		|messageBoardsThreadURL|selenium#getLocation()|
+	And Close
+	And SelectWindow at locator 'null'
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And Gmail goto Html Mode
+	And Gmail delete Specific Mail
+		|gmailMessageTitleList|Test Test Published "Blogs Entry Title GMB1" on ${siteName} Blogs,Message Boards Home - ${siteName} New Message: MB Thread Message Subject GMMB2,Your New Account,Your New Password,GMB1,GMMB2|
+	And User logout PG
+	And Navigator open Private URL
+	And User view Login PG
+	And AssertElementNotPresent at locator 'Message#ERROR'
+	And AssertElementNotPresent at locator 'Home#ERROR_MESSAGE_ALERT_ERROR'
+	And Open at locator '${blogEntryURL}'
+	And Alert view Request Failed To Complete
+	And AssertTextEquals assert Partial Text the value 'You do not have the required permissions.' at locator 'Message#ERROR_2'
+	And Open at locator '${messageBoardsThreadURL}'
+	And Alert view Request Failed To Complete
+	Then AssertTextEquals assert Partial Text the value 'You do not have the required permissions.' at locator 'Message#ERROR_2'
+Scenario: View Secure Content And Page As Site Member
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|SitepagesUsecase#ViewSecureContentAndPageAsSiteMember|
+	When these properties
+		|testray.component.names|Message Boards,Site Pages Administration|
+	And TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Server Administration|
+	And ServerAdministration configure Mail Server Settings
+		|userName|TestPropsUtil#get('email.address.1')|
+		|userPassword|TestPropsUtil#get('email.password.1')|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|TestPropsUtil#get('email.address.2')|
+		|userFirstName|userfn1|
+		|userLastName|userln1|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea2@liferay.com|
+		|userFirstName|userfn2|
+		|userLastName|userln2|
+		|userScreenName|usersn2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role assign Reg Role CP
+		|roleTitle|Administrator|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Site assign User Sites CP
+		|siteName|${siteName}|
+		|userScreenName|usersn2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|TestPropsUtil#get('email.address.2')|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea2@liferay.com|
+		|userScreenName|usersn2|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Test Private Page|
+		|siteName|${siteName}|
+		|sitePagePrivacy|Private|
+	And Page add
+		|pageName|Blog and Message Board Page|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And User logout And Login PG
+		|userLoginEmailAddress|TestPropsUtil#get('email.address.2')|
+		|userLoginFullName|userfn1 userln1|
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And Blogs subscribe PG
+	And MessageboardsPortlet subscribe PG
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|test test|
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And Blogs add Entry With Permissions
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title GMB2|
+		|viewableBy|Site Members|
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And MessageboardsThread add PG With Permissions
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject GMMB3|
+		|viewableBySelection|Site Members|
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And Pause at locator '30000'
+	And Gmail login
+		|userEmailAddress|TestPropsUtil#get('email.address.2')|
+		|userPassword|TestPropsUtil#get('email.password.2')|
+	And Gmail goto Html Mode
+	And Gmail view Mail
+		|emailFromUserName|Joe Bloggs|
+		|gmailAssetType|GMB2|
+		|gmailMessageBody|Blogs Entry Title GMB2|
+		|gmailMessageTitle|Test Test Published "Blogs Entry Title GMB2" on ${siteName} Blogs|
+	And Gmail open Message Continue Reading Button
+		|contentTitle|Blogs Entry Title GMB2|
+		|pageName|Blog and Message Board Page|
+		|siteName|${siteName}|
+	And these variables
+		|blogEntryURL|selenium#getLocation()|
+	And Close
+	And SelectWindow at locator 'null'
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And Gmail goto Html Mode
+	And Gmail view Mail
+		|emailFromUserName|Test Test|
+		|gmailAssetType|GMMB3|
+		|gmailMessageBody|MB Thread Message Body|
+		|gmailMessageTitle|Message Boards Home - ${siteName} New Message: MB Thread Message Subject GMMB3|
+	And Gmail open Message Link
+		|contentTitle|MB Thread Message Subject GMMB3|
+		|gmailAssetType|Message Boards|
+		|pageName|Blog and Message Board Page|
+		|siteName|${siteName}|
+	And these variables
+		|messageBoardsThreadURL|selenium#getLocation()|
+	And Close
+	And SelectWindow at locator 'null'
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And Gmail goto Html Mode
+	And Gmail delete Specific Mail
+		|gmailMessageTitleList|Test Test Published "Blogs Entry Title GMB2" on ${siteName} Blogs,Message Boards Home - ${siteName} New Message: MB Thread Message Subject GMMB3,Your New Account,Your New Password,GMB2,GMMB3|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea2@liferay.com|
+		|userLoginFullName|userfn2 userln2|
+	And Navigator open Private URL
+	And Page view Specific PG
+		|pageNameList|Test Private Page|
+	And AssertElementNotPresent at locator 'Message#ERROR'
+	And AssertElementNotPresent at locator 'Home#ERROR_MESSAGE_ALERT_ERROR'
+	And Open at locator '${blogEntryURL}'
+	And BlogsNavigator goto PG
+		|blogEntryURL|${blogEntryURL}|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title GMB2|
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And Open at locator '${messageBoardsThreadURL}'
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|messageBoardsThreadURL|${messageBoardsThreadURL}|
+		|postCount|1|
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject GMMB3|
+	Then MessageboardsThread view PG
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject GMMB3|
+Scenario: View Secure Content And Page As User
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|SitepagesUsecase#ViewSecureContentAndPageAsUser|
+	When these properties
+		|testray.component.names|Message Boards,Site Pages Administration|
+	And TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Server Administration|
+	And ServerAdministration configure Mail Server Settings
+		|userName|TestPropsUtil#get('email.address.1')|
+		|userPassword|TestPropsUtil#get('email.password.1')|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|TestPropsUtil#get('email.address.2')|
+		|userFirstName|userfn1|
+		|userLastName|userln1|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea2@liferay.com|
+		|userFirstName|userfn2|
+		|userLastName|userln2|
+		|userScreenName|usersn2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role assign Reg Role CP
+		|roleTitle|Administrator|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|TestPropsUtil#get('email.address.2')|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea2@liferay.com|
+		|userScreenName|usersn2|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Test Private Page|
+		|siteName|${siteName}|
+		|sitePagePrivacy|Private Pages|
+	And Page add
+		|pageName|Blog and Message Board Page|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And User logout And Login PG
+		|userLoginEmailAddress|TestPropsUtil#get('email.address.2')|
+		|userLoginFullName|userfn1 userln1|
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And Blogs subscribe PG
+	And MessageboardsPortlet subscribe PG
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|test test|
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And Blogs add Entry With Permissions
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title GMB3|
+		|viewableBy|Site Members|
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And MessageboardsThread add PG With Permissions
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject GMMB4|
+		|viewableBySelection|Site Members|
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And Pause at locator '30000'
+	And Gmail login
+		|userEmailAddress|TestPropsUtil#get('email.address.2')|
+		|userPassword|TestPropsUtil#get('email.password.2')|
+	And Gmail goto Html Mode
+	And Gmail view Mail
+		|emailFromUserName|Joe Bloggs|
+		|gmailAssetType|GMB3|
+		|gmailMessageBody|Blogs Entry Title GMB3|
+		|gmailMessageTitle|Test Test Published "Blogs Entry Title GMB3" on ${siteName} Blogs|
+	And Gmail open Message Continue Reading Button
+		|contentTitle|Blogs Entry Title GMB3|
+		|pageName|Blog and Message Board Page|
+		|siteName|${siteName}|
+	And these variables
+		|blogEntryURL|selenium#getLocation()|
+	And Close
+	And SelectWindow at locator 'null'
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And Gmail goto Html Mode
+	And Gmail view Mail
+		|emailFromUserName|Test Test|
+		|gmailAssetType|GMMB4|
+		|gmailMessageBody|MB Thread Message Body|
+		|gmailMessageTitle|Message Boards Home - ${siteName} New Message: MB Thread Message Subject GMMB4|
+	And Gmail open Message Link
+		|contentTitle|MB Thread Message Subject GMMB4|
+		|gmailAssetType|Message Boards|
+		|pageName|Blog and Message Board Page|
+		|siteName|${siteName}|
+	And these variables
+		|messageBoardsThreadURL|selenium#getLocation()|
+	And Close
+	And SelectWindow at locator 'null'
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And Gmail goto Html Mode
+	And Gmail delete Specific Mail
+		|gmailMessageTitleList|Test Test Published "Blogs Entry Title GMB3" on ${siteName} Blogs,Message Boards Home - ${siteName} New Message: MB Thread Message Subject GMMB4,Your New Account,Your New Password,GMB3,GMMB4|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea2@liferay.com|
+		|userLoginFullName|userfn2 userln2|
+	And Navigator open Private URL
+	And AssertTextEquals the value 'Not Found' at locator 'Home#ERROR_MESSAGE_ALERT_ERROR'
+	And Open at locator '${blogEntryURL}'
+	And Alert view Request Failed To Complete
+	And AssertTextEquals assert Partial Text the value 'You do not have the required permissions.' at locator 'Message#ERROR_2'
+	And Navigator goto Page
+		|pageName|Blog and Message Board Page|
+	And Open at locator '${messageBoardsThreadURL}'
+	And Alert view Request Failed To Complete
+	Then AssertTextEquals assert Partial Text the value 'You do not have the required permissions.' at locator 'Message#ERROR_2'
+Scenario: Web Content Administration Sites Pages Panel
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Pages Administration|
+	When Page add
+		|componentName|Collaboration|
+		|pageName|Panel Test Page|
+		|portletNameList|Blogs,Message Boards|
+		|sitePageType|Panel|
+	And Page view Panel Portlet List PG
+		|componentName|Collaboration|
+		|pageName|Panel Test Page|
+		|portletNameList|Blogs,Message Boards|
+	And Page goto Page Panel Portlet
+		|portletName|Blogs|
+	And Blogs add Entry
+		|entryContent|This is Blog Post 1 Content|
+		|entryTitle|Blog Post 1|
+	And Navigator goto Page
+		|pageName|Panel Test Page|
+	And Page goto Page Panel Portlet
+		|portletName|Blogs|
+	And BlogsEntry view PG
+		|entryContent|This is Blog Post 1 Content|
+		|entryTitle|Blog Post 1|
+	And Page goto Page Panel Portlet
+		|portletName|Message Boards|
+	And MessageboardsThread add PG
+		|threadBody|This is Message Boards Thread 1|
+		|threadSubject|Thread 1|
+	And Navigator goto Page
+		|pageName|Panel Test Page|
+	And Page goto Page Panel Portlet
+		|portletName|Message Boards|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|This is Message Boards Thread 1|
+		|threadSubject|Thread 1|
+	Then MessageboardsThread view PG
+		|postCount|1|
+		|threadBody|This is Message Boards Thread 1|
+		|threadSubject|Thread 1|
+		|userName|Test Test|
+Scenario: Web Content Administration Sites Page Types
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Pages Administration|
+	When these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Page Type Test Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Blank Page|
+		|siteName|Page Type Test Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Link to URL Page|
+		|pageTypeURL|https://www.google.com/|
+		|siteName|Page Type Test Site Name|
+		|sitePageType|Link to URL|
+	And Navigator goto Site Page
+		|pageName|Blank Page|
+		|siteName|Page Type Test Site Name|
+	And Page first Page Can Not Be Of Type Link To URL
+		|pageName|Blank Page|
+	And Navigator goto Site Page
+		|pageName|Blank Page|
+		|siteName|Page Type Test Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Embedded Page|
+		|pageTypeURL|http://iscaliforniaonfire.com/|
+		|siteName|Page Type Test Site Name|
+		|sitePageType|Embedded|
+	And Page add
+		|componentName|Community|
+		|pageName|Panel Page|
+		|siteName|Page Type Test Site Name|
+		|sitePageType|Panel|
+	And Page view Panel Portlet List CP
+		|componentName|Community|
+		|pageName|Panel Page|
+		|portletNameList|Bookmarks,Friends Directory,My Sites,My Sites Directory,Page Comments,Page Flags,Page Ratings,Portal Directory,Site Members Directory|
+	And Navigator open Site URL
+		|siteName|Page Type Test Site Name|
+	And AssertClick the value 'Link to URL Page' at locator 'Home#PAGE'
+		|key_pageName|Link to URL Page|
+	And AssertLocation the value 'https://www.google.com/'
+	And Navigator goto Site Page
+		|pageName|Embedded Page|
+		|siteName|Page Type Test Site Name|
+	And AssertLocation the value '${portalURL}/web/page-type-test-site-name/embedded-page'
+	And SelectFrame at locator 'IFrame#EMBEDDED_IFRAME'
+	And AssertTextEquals assert Partial Text the value 'Yes' at locator 'Embedded#EMBEDDED_TEXT_YES'
+	And AssertTextEquals assert Partial Text the value 'updated' at locator 'Embedded#EMBEDDED_TEXT_UPDATED'
+	And SelectFrameTop the value 'relative=top'
+	And Navigator goto Site Page
+		|pageName|Panel Page|
+		|siteName|Page Type Test Site Name|
+	Then Page view Panel Portlet List PG
+		|componentName|Community|
+		|pageName|Panel Page|
+		|portletNameList|Bookmarks,Friends Directory,My Sites,My Sites Directory,Page Comments,Page Flags,Page Ratings,Portal Directory,Site Members Directory|

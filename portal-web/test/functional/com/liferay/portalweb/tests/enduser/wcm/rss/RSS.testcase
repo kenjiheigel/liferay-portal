@@ -1,816 +1,500 @@
-<definition component-name="portal-rss">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="RSS" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page Name" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Page#tearDownPG">
-					<var name="site" value="Liferay" />
-				</execute>
-
-				<execute macro="Site#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="AddFeedBetweenFeeds" priority="3">
-		<property name="testray.component.names" value="RSS" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="RSS Publisher" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="RSS#addFeed">
-			<var name="feedRowIndexNumber" value="0" />
-			<var name="feedTitle" value="Technology" />
-			<var name="feedUrlLink" value="http://rss.nytimes.com/services/xml/rss/nyt/Technology.xml" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="RSS#addFeed">
-			<var name="buttonRowIndexNumber" value="1" />
-			<var name="feedRowIndexNumber" value="2" />
-			<var name="feedTitle" value="Latimes > Technology News" />
-			<var name="feedUrlLink" value="http://www.latimes.com/business/technology/rss2.0.xml" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="RSS#addFeed">
-			<var name="buttonRowIndexNumber" value="1" />
-			<var name="feedRowIndexNumber" value="3" />
-			<var name="feedTitle" value="Reuters > Sports News" />
-			<var name="feedUrlLink" value="http://feeds.reuters.com/reuters/sportsNews" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<for list="Technology,Reuters > Sports News,Latimes > Technology News" param="feedTitle" >
-			<execute macro="RSS#viewDisplayFeedTitle">
-				<var name="feedTitle" value="${feedTitle}" />
-			</execute>
-		</for>
-	</command>
-
-	<command name="AddFeedWithWrongUrl" priority="4">
-		<property name="testray.component.names" value="RSS" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="RSS Publisher" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="RSS#addFeed">
-			<var name="feedRowIndexNumber" value="0" />
-			<var name="feedTitle" value="General Announcement" />
-			<var name="feedUrlLink" value="www.theverge.com/rss/index.xml" />
-		</execute>
-
-		<execute macro="RSS#viewWarningMessageDisplay">
-			<var name="errorMessage" value="The following are invalid URLs: www.theverge.com/rss/index.xml." />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="RSS#viewDeleteFeed">
-			<var name="feedTitle" value="General Announcement" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="RSS#addFeed">
-			<var name="feedRowIndexNumber" value="0" />
-			<var name="feedTitle" value="General Announcement" />
-			<var name="feedUrlLink" value="http://www.theverge.com/rss/index.xml" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="RSS#viewDisplayFeedTitle">
-			<var name="feedTitle" value="General Announcement" />
-		</execute>
-	</command>
-
-	<command name="AddRSSFeed" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="testray.component.names" value="RSS" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="RSS Publisher" />
-		</execute>
-
-		<execute macro="RSS#viewPortletConfigurationInfo" />
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="RSS#addFeed">
-			<var name="feedRowIndexNumber" value="0" />
-			<var name="feedTitle" value="Latimes > Technology News" />
-			<var name="feedUrlLink" value="http://www.latimes.com/business/technology/rss2.0.xml" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="RSS#viewDisplayFeedTitle">
-			<var name="feedTitle" value="Latimes > Technology News" />
-		</execute>
-	</command>
-
-	<command name="AddWebContentFeed" priority="3">
-		<property name="testray.component.names" value="Asset Publisher,RSS" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="Web Content Content" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddFeed" />
-
-		<execute macro="WebContent#addFeed">
-			<var name="description" value="WC Feed Description" />
-			<var name="feedContent" value="Content(ddm-text-html)" />
-			<var name="feedTitle" value="WC Feed Title" />
-			<var name="feedType" value="RSS 2.0" />
-			<var name="structureName" value="Basic Web Content" />
-			<var name="targetFriendlyUrl" value="/web/guest/home" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditFeed">
-			<var name="feedName" value="WC Feed Title" />
-		</execute>
-
-		<var attribute="value" locator="//input[contains(@id,'JournalPortlet_url') and contains(@value,'journal/rss')]" name="rssFeedUrl" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="RSS Publisher" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="RSS#addFeed">
-			<var name="feedRowIndexNumber" value="0" />
-			<var name="feedTitle" value="Web Content Feed Title" />
-			<var name="feedUrlLink" value="${rssFeedUrl}" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="RSS#viewDisplayFeedTitle">
-			<var name="feedTitle" value="Web Content Feed Title" />
-		</execute>
-
-		<execute macro="RSS#viewFeedContent">
-			<var name="feedEntryContent" value="Web Content Content" />
-			<var name="feedEntryTitle" value="Web Content Title" />
-		</execute>
-	</command>
-
-	<command name="ChangeDefaultToNavigationDisplay" priority="3">
-		<property name="testray.component.names" value="RSS" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="RSS Publisher" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="RSS#addFeed">
-			<var name="feedRowIndexNumber" value="0" />
-			<var name="feedTitle" value="Technology" />
-			<var name="feedUrlLink" value="http://rss.nytimes.com/services/xml/rss/nyt/Technology.xml" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="RSS#configureFeedDisplayStyle">
-			<var name="feedDisplayStyle" value="Navigation" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="RSS#viewNavigationDisplayFeedTitle">
-			<var name="feedTitle" value="Technology" />
-		</execute>
-	</command>
-
-	<command name="ChangeOrderOfRSSFeeds" priority="3">
-		<property name="testray.component.names" value="RSS" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="RSS Publisher" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="RSS#addFeed">
-			<var name="feedRowIndexNumber" value="0" />
-			<var name="feedTitle" value="Technology" />
-			<var name="feedUrlLink" value="http://rss.nytimes.com/services/xml/rss/nyt/Technology.xml" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="RSS#addFeed">
-			<var name="buttonRowIndexNumber" value="1" />
-			<var name="feedRowIndexNumber" value="2" />
-			<var name="feedTitle" value="NBA" />
-			<var name="feedUrlLink" value="http://sports.espn.go.com/espn/rss/nba/news" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="RSS#viewPG">
-			<var name="feedRowIndexNumber" value="0" />
-			<var name="feedUrlLink" value="http://rss.nytimes.com/services/xml/rss/nyt/Technology.xml" />
-			<var name="rowIndexNumber" value="1" />
-		</execute>
-
-		<execute macro="RSS#viewPG">
-			<var name="feedRowIndexNumber" value="1" />
-			<var name="feedUrlLink" value="http://sports.espn.go.com/espn/rss/nba/news" />
-			<var name="rowIndexNumber" value="2" />
-		</execute>
-
-		<execute macro="RSS#changeFeedsOrder">
-			<var name="fromRowNumber" value="1" />
-			<var name="rowLocation" value="Title" />
-			<var name="toRowNumber" value="2" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="RSS#viewPG">
-			<var name="feedRowIndexNumber" value="0" />
-			<var name="feedUrlLink" value="http://sports.espn.go.com/espn/rss/nba/news" />
-			<var name="rowIndexNumber" value="1" />
-		</execute>
-
-		<execute macro="RSS#viewPG">
-			<var name="feedRowIndexNumber" value="1" />
-			<var name="feedUrlLink" value="http://rss.nytimes.com/services/xml/rss/nyt/Technology.xml" />
-			<var name="rowIndexNumber" value="2" />
-		</execute>
-	</command>
-
-	<command name="DeleteFeedFromRSS" priority="4">
-		<property name="testray.component.names" value="RSS" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Welcome" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Page Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="RSS Publisher" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="RSS#addFeed">
-			<var name="feedRowIndexNumber" value="0" />
-			<var name="feedTitle" value="Latimes > Technology News" />
-			<var name="feedUrlLink" value="http://www.latimes.com/business/technology/rss2.0.xml" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Page Name" />
-		</execute>
-
-		<execute macro="RSS#viewDisplayFeedTitle">
-			<var name="feedTitle" value="Latimes > Technology News" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="RSS#deleteFeed">
-			<var name="buttonRowIndexNumber" value="1" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Page Name" />
-		</execute>
-
-		<execute macro="RSS#viewDeleteFeed">
-			<var name="feedTitle" value="Latimes > Technology News" />
-		</execute>
-	</command>
-
-	<command name="DisabledFeedTitle" priority="3">
-		<property name="testray.component.names" value="RSS" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="RSS Publisher" />
-		</execute>
-
-		<execute macro="Portlet#viewSpecificPG">
-			<var name="portletName" value="RSS Publisher" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="RSS#addFeed">
-			<var name="feedRowIndexNumber" value="0" />
-			<var name="feedTitle" value="Technology" />
-			<var name="feedUrlLink" value="http://rss.nytimes.com/services/xml/rss/nyt/Technology.xml" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="RSS#viewDisplayFeedTitle">
-			<var name="feedTitle" value="Technology" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="RSS#disableShowFeedTitle" />
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="RSS#viewNoFeedTitle">
-			<var name="feedTitle" value="Technology" />
-		</execute>
-	</command>
-
-	<command name="EnableRSSFeedFromAssetpublisher" priority="3">
-		<property name="testray.component.names" value="Asset Publisher,RSS" />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page Name 2" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="RSS Publisher" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name 2" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaAP">
-			<var name="webContentContent" value="This is the web content test for rss feed" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Asset Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#enableRSSSubscription" />
-
-		<execute macro="Button#clickSave" />
-
-		<execute macro="IFrame#selectTopFrame" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name 2" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<var attribute="href" locator="//div[@class='subscribe-action']/span/a[contains(@href,'asset_publisher')]" name="rssFeedUrl" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="RSS#addFeed">
-			<var name="feedRowIndexNumber" value="0" />
-			<var name="feedTitle" value="Web Asset Publisher" />
-			<var name="feedUrlLink" value="${rssFeedUrl}" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="RSS#viewDisplayFeedTitle">
-			<var name="feedTitle" value="Web Asset Publisher" />
-		</execute>
-
-		<execute macro="RSS#openFeed">
-			<var name="feedTitle" value="Asset Publisher" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewAssetPG">
-			<var name="assetContent" value="This is the web content test for rss feed" />
-			<var name="assetTitle" value="Web Content Title" />
-		</execute>
-	</command>
-
-	<command name="RemoveRSSPortlet" priority="4">
-		<property name="testray.component.names" value="RSS" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Welcome" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Page Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="RSS Publisher" />
-		</execute>
-
-		<execute macro="Portlet#viewSpecificPG">
-			<var name="portletName" value="RSS Publisher" />
-		</execute>
-
-		<execute macro="RSS#viewPortletConfigurationInfo" />
-
-		<execute macro="Portlet#deletePG">
-			<var name="portletName" value="RSS Publisher" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Page Name" />
-		</execute>
-
-		<execute macro="Portlet#viewNoSpecificPG">
-			<var name="portletName" value="RSS Publisher" />
-		</execute>
-	</command>
-
-	<command name="UpdateRSSFeedViaAssetpublisher" priority="4">
-		<property name="test.name.skip.portal.instance" value="RSS#UpdateRSSFeedViaAssetpublisher" />
-		<property name="testray.component.names" value="Asset Publisher,RSS" />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="System Settings" />
-		</execute>
-
-		<execute macro="SystemSettings#gotoCategory">
-			<var name="category" value="Web Experience" />
-		</execute>
-
-		<execute macro="SystemSettings#editConfiguration">
-			<var name="configurationName" value="RSS Cache" />
-		</execute>
-
-		<execute macro="RSS#updateFeedTime">
-			<var name="feedTime" value="1" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="RSS Publisher" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Asset Publisher Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaAP">
-			<var name="webContentContent" value="This is the web content test for rss feed" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Asset Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#enableRSSSubscription" />
-
-		<execute macro="Button#clickSave" />
-
-		<execute macro="IFrame#selectTopFrame" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Asset Publisher Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<var attribute="href" locator="//div[@class='subscribe-action']/span/a[contains(@href,'asset_publisher')]" name="rssFeedUrl" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="RSS Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="RSS#addFeed">
-			<var name="feedRowIndexNumber" value="0" />
-			<var name="feedTitle" value="Web Asset Publisher" />
-			<var name="feedUrlLink" value="${rssFeedUrl}" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="RSS#viewDisplayFeedTitle">
-			<var name="feedTitle" value="Web Asset Publisher" />
-		</execute>
-
-		<execute macro="RSS#viewUpdateFeedTitle">
-			<var name="feedHeading" value="Web Content Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Asset Publisher Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="WebContent#editPGViaAP">
-			<var name="assetTitle" value="Web Content Title" />
-			<var name="webContentContentEdit" value="This is the updated version of web content test for rss feed" />
-			<var name="webContentTitleEdit" value="Web Content Title Updated Feed" />
-		</execute>
-
-		<execute macro="RSS#viewUpdateFeedTitle">
-			<var name="feedHeading" value="Web Content Title Updated Feed" />
-			<var name="pageName" value="Site Page Name" />
-			<var name="updateFeed" value="true" />
-		</execute>
-
-		<execute macro="RSS#viewDisplayFeedTitle">
-			<var name="feedTitle" value="Web Asset Publisher" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|RSS|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+	Then Page add
+		|pageName|Site Page Name|
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Feed Between Feeds
+Priority: 3
+	Given these properties
+		|testray.component.names|RSS|
+	When Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|RSS Publisher|
+	And Portlet goto Portlet Options
+		|portletName|RSS Publisher|
+		|portletOption|Configuration|
+	And RSS add Feed
+		|feedRowIndexNumber|0|
+		|feedTitle|Technology|
+		|feedUrlLink|http://rss.nytimes.com/services/xml/rss/nyt/Technology.xml|
+	And PortletEntry save
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Portlet goto Portlet Options
+		|portletName|RSS Publisher|
+		|portletOption|Configuration|
+	And RSS add Feed
+		|buttonRowIndexNumber|1|
+		|feedRowIndexNumber|2|
+		|feedTitle|Latimes > Technology News|
+		|feedUrlLink|http://www.latimes.com/business/technology/rss2.0.xml|
+	And PortletEntry save
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Portlet goto Portlet Options
+		|portletName|RSS Publisher|
+		|portletOption|Configuration|
+	And RSS add Feed
+		|buttonRowIndexNumber|1|
+		|feedRowIndexNumber|3|
+		|feedTitle|Reuters > Sports News|
+		|feedUrlLink|http://feeds.reuters.com/reuters/sportsNews|
+	And PortletEntry save
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And RSS view Display Feed Title
+		|feedTitle|Technology|
+	And RSS view Display Feed Title
+		|feedTitle|Reuters > Sports News|
+	Then RSS view Display Feed Title
+		|feedTitle|Latimes > Technology News|
+Scenario: Add Feed With Wrong Url
+Priority: 4
+	Given these properties
+		|testray.component.names|RSS|
+	When Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|RSS Publisher|
+	And Portlet goto Portlet Options
+		|portletName|RSS Publisher|
+		|portletOption|Configuration|
+	And RSS add Feed
+		|feedRowIndexNumber|0|
+		|feedTitle|General Announcement|
+		|feedUrlLink|www.theverge.com/rss/index.xml|
+	And RSS view Warning Message Display
+		|errorMessage|The following are invalid URLs: www.theverge.com/rss/index.xml.|
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And RSS view Delete Feed
+		|feedTitle|General Announcement|
+	And Portlet goto Portlet Options
+		|portletName|RSS Publisher|
+		|portletOption|Configuration|
+	And RSS add Feed
+		|feedRowIndexNumber|0|
+		|feedTitle|General Announcement|
+		|feedUrlLink|http://www.theverge.com/rss/index.xml|
+	And PortletEntry save
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	Then RSS view Display Feed Title
+		|feedTitle|General Announcement|
+Scenario: Add RSS Feed
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|testray.component.names|RSS|
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|RSS Publisher|
+	And RSS view Portlet Configuration Info
+	And Portlet goto Portlet Options
+		|portletName|RSS Publisher|
+		|portletOption|Configuration|
+	And RSS add Feed
+		|feedRowIndexNumber|0|
+		|feedTitle|Latimes > Technology News|
+		|feedUrlLink|http://www.latimes.com/business/technology/rss2.0.xml|
+	And PortletEntry save
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	Then RSS view Display Feed Title
+		|feedTitle|Latimes > Technology News|
+Scenario: Add Web Content Feed
+Priority: 3
+	Given these properties
+		|testray.component.names|Asset Publisher,RSS|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|Web Content Content|
+		|webContentTitle|Web Content Title|
+	And PortletEntry publish
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add Feed
+	And WebContent add Feed
+		|description|WC Feed Description|
+		|feedContent|Content(ddm-text-html)|
+		|feedTitle|WC Feed Title|
+		|feedType|RSS 2.0|
+		|structureName|Basic Web Content|
+		|targetFriendlyUrl|/web/guest/home|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Edit Feed
+		|feedName|WC Feed Title|
+	And these variables
+		|rssFeedUrl||
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|RSS Publisher|
+	And Portlet goto Portlet Options
+		|portletName|RSS Publisher|
+		|portletOption|Configuration|
+	And RSS add Feed
+		|feedRowIndexNumber|0|
+		|feedTitle|Web Content Feed Title|
+		|feedUrlLink|${rssFeedUrl}|
+	And PortletEntry save
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And RSS view Display Feed Title
+		|feedTitle|Web Content Feed Title|
+	Then RSS view Feed Content
+		|feedEntryContent|Web Content Content|
+		|feedEntryTitle|Web Content Title|
+Scenario: Change Default To Navigation Display
+Priority: 3
+	Given these properties
+		|testray.component.names|RSS|
+	When Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|RSS Publisher|
+	And Portlet goto Portlet Options
+		|portletName|RSS Publisher|
+		|portletOption|Configuration|
+	And RSS add Feed
+		|feedRowIndexNumber|0|
+		|feedTitle|Technology|
+		|feedUrlLink|http://rss.nytimes.com/services/xml/rss/nyt/Technology.xml|
+	And PortletEntry save
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Portlet goto Portlet Options
+		|portletName|RSS Publisher|
+		|portletOption|Configuration|
+	And RSS configure Feed Display Style
+		|feedDisplayStyle|Navigation|
+	And PortletEntry save
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	Then RSS view Navigation Display Feed Title
+		|feedTitle|Technology|
+Scenario: Change Order Of RSS Feeds
+Priority: 3
+	Given these properties
+		|testray.component.names|RSS|
+	When Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|RSS Publisher|
+	And Portlet goto Portlet Options
+		|portletName|RSS Publisher|
+		|portletOption|Configuration|
+	And RSS add Feed
+		|feedRowIndexNumber|0|
+		|feedTitle|Technology|
+		|feedUrlLink|http://rss.nytimes.com/services/xml/rss/nyt/Technology.xml|
+	And PortletEntry save
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Portlet goto Portlet Options
+		|portletName|RSS Publisher|
+		|portletOption|Configuration|
+	And RSS add Feed
+		|buttonRowIndexNumber|1|
+		|feedRowIndexNumber|2|
+		|feedTitle|NBA|
+		|feedUrlLink|http://sports.espn.go.com/espn/rss/nba/news|
+	And PortletEntry save
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Portlet goto Portlet Options
+		|portletName|RSS Publisher|
+		|portletOption|Configuration|
+	And RSS view PG
+		|feedRowIndexNumber|0|
+		|feedUrlLink|http://rss.nytimes.com/services/xml/rss/nyt/Technology.xml|
+		|rowIndexNumber|1|
+	And RSS view PG
+		|feedRowIndexNumber|1|
+		|feedUrlLink|http://sports.espn.go.com/espn/rss/nba/news|
+		|rowIndexNumber|2|
+	And RSS change Feeds Order
+		|fromRowNumber|1|
+		|rowLocation|Title|
+		|toRowNumber|2|
+	And PortletEntry save
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Portlet goto Portlet Options
+		|portletName|RSS Publisher|
+		|portletOption|Configuration|
+	And RSS view PG
+		|feedRowIndexNumber|0|
+		|feedUrlLink|http://sports.espn.go.com/espn/rss/nba/news|
+		|rowIndexNumber|1|
+	Then RSS view PG
+		|feedRowIndexNumber|1|
+		|feedUrlLink|http://rss.nytimes.com/services/xml/rss/nyt/Technology.xml|
+		|rowIndexNumber|2|
+Scenario: Delete Feed From RSS
+Priority: 4
+	Given these properties
+		|testray.component.names|RSS|
+	When Navigator goto Page
+		|pageName|Welcome|
+	And Page add
+		|pageName|Page Name|
+	And Portlet add PG
+		|portletName|RSS Publisher|
+	And Portlet goto Portlet Options
+		|portletName|RSS Publisher|
+		|portletOption|Configuration|
+	And RSS add Feed
+		|feedRowIndexNumber|0|
+		|feedTitle|Latimes > Technology News|
+		|feedUrlLink|http://www.latimes.com/business/technology/rss2.0.xml|
+	And PortletEntry save
+	And Navigator goto Page
+		|pageName|Page Name|
+	And RSS view Display Feed Title
+		|feedTitle|Latimes > Technology News|
+	And Portlet goto Portlet Options
+		|portletName|RSS Publisher|
+		|portletOption|Configuration|
+	And RSS delete Feed
+		|buttonRowIndexNumber|1|
+	And PortletEntry save
+	And Navigator goto Page
+		|pageName|Page Name|
+	Then RSS view Delete Feed
+		|feedTitle|Latimes > Technology News|
+Scenario: Disabled Feed Title
+Priority: 3
+	Given these properties
+		|testray.component.names|RSS|
+	When Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|RSS Publisher|
+	And Portlet view Specific PG
+		|portletName|RSS Publisher|
+	And Portlet goto Portlet Options
+		|portletName|RSS Publisher|
+		|portletOption|Configuration|
+	And RSS add Feed
+		|feedRowIndexNumber|0|
+		|feedTitle|Technology|
+		|feedUrlLink|http://rss.nytimes.com/services/xml/rss/nyt/Technology.xml|
+	And PortletEntry save
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And RSS view Display Feed Title
+		|feedTitle|Technology|
+	And Portlet goto Portlet Options
+		|portletName|RSS Publisher|
+		|portletOption|Configuration|
+	And RSS disable Show Feed Title
+	And PortletEntry save
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	Then RSS view No Feed Title
+		|feedTitle|Technology|
+Scenario: Enable RSS Feed From Assetpublisher
+Priority: 3
+	Given these properties
+		|testray.component.names|Asset Publisher,RSS|
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+		|site|Site Name|
+	And Page add
+		|pageName|Site Page Name 2|
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|RSS Publisher|
+	And Navigator goto Site Page
+		|pageName|Site Page Name 2|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Asset Publisher|
+	And WebContent add PG Via AP
+		|webContentContent|This is the web content test for rss feed|
+		|webContentTitle|Web Content Title|
+	And Portlet goto Portlet Options
+		|portletName|Asset Publisher|
+		|portletOption|Configuration|
+	And AssetPublisherPortlet enable RSS Subscription
+	And Button click Save
+	And IFrame select Top Frame
+	And Navigator goto Site Page
+		|pageName|Site Page Name 2|
+		|siteName|Site Name|
+	And these variables
+		|rssFeedUrl||
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Portlet goto Portlet Options
+		|portletName|RSS Publisher|
+		|portletOption|Configuration|
+	And RSS add Feed
+		|feedRowIndexNumber|0|
+		|feedTitle|Web Asset Publisher|
+		|feedUrlLink|${rssFeedUrl}|
+	And PortletEntry save
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And RSS view Display Feed Title
+		|feedTitle|Web Asset Publisher|
+	And RSS open Feed
+		|feedTitle|Asset Publisher|
+		|siteName|${siteName}|
+	Then AssetPublisherPortlet view Asset PG
+		|assetContent|This is the web content test for rss feed|
+		|assetTitle|Web Content Title|
+Scenario: Remove RSS Portlet
+Priority: 4
+	Given these properties
+		|testray.component.names|RSS|
+	When Navigator goto Page
+		|pageName|Welcome|
+	And Page add
+		|pageName|Page Name|
+	And Portlet add PG
+		|portletName|RSS Publisher|
+	And Portlet view Specific PG
+		|portletName|RSS Publisher|
+	And RSS view Portlet Configuration Info
+	And Portlet delete PG
+		|portletName|RSS Publisher|
+	And Navigator goto Page
+		|pageName|Page Name|
+	Then Portlet view No Specific PG
+		|portletName|RSS Publisher|
+Scenario: Update RSS Feed Via Assetpublisher
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|RSS#UpdateRSSFeedViaAssetpublisher|
+	When these properties
+		|testray.component.names|Asset Publisher,RSS|
+	And TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|System Settings|
+	And SystemSettings goto Category
+		|category|Web Experience|
+	And SystemSettings edit Configuration
+		|configurationName|RSS Cache|
+	And RSS update Feed Time
+		|feedTime|1|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+		|site|Site Name|
+	And Page add
+		|pageName|Asset Publisher Page|
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|RSS Publisher|
+	And Navigator goto Site Page
+		|pageName|Asset Publisher Page|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Asset Publisher|
+	And WebContent add PG Via AP
+		|webContentContent|This is the web content test for rss feed|
+		|webContentTitle|Web Content Title|
+	And Portlet goto Portlet Options
+		|portletName|Asset Publisher|
+		|portletOption|Configuration|
+	And AssetPublisherPortlet enable RSS Subscription
+	And Button click Save
+	And IFrame select Top Frame
+	And Navigator goto Site Page
+		|pageName|Asset Publisher Page|
+		|siteName|Site Name|
+	And these variables
+		|rssFeedUrl||
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Portlet goto Portlet Options
+		|portletName|RSS Publisher|
+		|portletOption|Configuration|
+	And RSS add Feed
+		|feedRowIndexNumber|0|
+		|feedTitle|Web Asset Publisher|
+		|feedUrlLink|${rssFeedUrl}|
+	And PortletEntry save
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And RSS view Display Feed Title
+		|feedTitle|Web Asset Publisher|
+	And RSS view Update Feed Title
+		|feedHeading|Web Content Title|
+	And Navigator goto Site Page
+		|pageName|Asset Publisher Page|
+		|siteName|Site Name|
+	And WebContent edit PG Via AP
+		|assetTitle|Web Content Title|
+		|webContentContentEdit|This is the updated version of web content test for rss feed|
+		|webContentTitleEdit|Web Content Title Updated Feed|
+	And RSS view Update Feed Title
+		|feedHeading|Web Content Title Updated Feed|
+		|pageName|Site Page Name|
+		|updateFeed|true|
+	Then RSS view Display Feed Title
+		|feedTitle|Web Asset Publisher|

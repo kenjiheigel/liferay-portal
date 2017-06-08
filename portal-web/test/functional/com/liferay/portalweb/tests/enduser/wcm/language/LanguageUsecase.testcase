@@ -1,500 +1,295 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Localization" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Site#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="AddWCWithMultipleTranslations" priority="4">
-		<property name="test.name.skip.portal.instance" value="LanguageUsecase#AddWCWithMultipleTranslations" />
-		<property name="testray.component.names" value="Localization,Web Content Administration" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addWithThreeTranslations" />
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#selectWebContent">
-			<var name="webContentTitle" value="WC Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language Selector" />
-		</execute>
-
-		<execute function="Refresh" />
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="Spanish (Spain)" />
-		</execute>
-
-		<execute function="Refresh" />
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC Contenido" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Visor de contenido web" />
-			<var name="portletOption" value="Editar contenido web" />
-		</execute>
-
-		<execute macro="IFrame#selectEditAssetFrame" />
-
-		<execute macro="WebContent#selectLocale">
-			<var name="locale" value="es-ES" />
-		</execute>
-
-		<execute macro="WebContent#viewCP">
-			<var name="webContentContent" value="WC Contenido" />
-			<var name="webContentTitle" value="WC Titulo" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute function="Refresh" />
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="German (Germany)" />
-		</execute>
-
-		<execute function="Refresh" />
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC Inhalt" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Webcontentanzeige" />
-			<var name="portletOption" value="Webcontent bearbeiten" />
-		</execute>
-
-		<execute macro="IFrame#selectEditAssetFrame" />
-
-		<execute macro="WebContent#selectLocale">
-			<var name="locale" value="de-DE" />
-		</execute>
-
-		<execute macro="WebContent#viewCP">
-			<var name="webContentContent" value="WC Inhalt" />
-			<var name="webContentTitle" value="WC Titel" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute function="Refresh" />
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="Finnish (Finland)" />
-		</execute>
-
-		<execute function="Refresh" />
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC Pitoisuus" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Web-sisällön esitys" />
-			<var name="portletOption" value="Muokkaa web-sisältöä" />
-		</execute>
-
-		<execute macro="IFrame#selectEditAssetFrame" />
-
-		<execute macro="WebContent#selectLocale">
-			<var name="locale" value="fi-FI" />
-		</execute>
-
-		<execute macro="WebContent#viewCP">
-			<var name="webContentContent" value="WC Pitoisuus" />
-			<var name="webContentTitle" value="WC Otsikko" />
-		</execute>
-	</command>
-
-	<command name="AddWCWithTranslation" priority="5">
-		<property name="portal.acceptance" value="quarantine" />
-		<property name="test.name.skip.portal.instance" value="LanguageUsecase#AddWCWithTranslation" />
-		<property name="testray.component.names" value="Localization,Web Content Administration" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC Content" />
-			<var name="webContentTitle" value="WC Title" />
-		</execute>
-
-		<execute macro="WebContent#addLocale">
-			<var name="language" value="Spanish (Spain)" />
-			<var name="locale" value="es-ES" />
-		</execute>
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC Contenido" />
-			<var name="webContentTitle" value="WC Titulo" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Content#addPG">
-			<var name="assetTitle" value="WC Title" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language Selector" />
-		</execute>
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="Spanish (Spain)" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC Contenido" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Visor de contenido web" />
-			<var name="portletOption" value="Editar contenido web" />
-		</execute>
-
-		<execute macro="IFrame#selectEditAssetFrame" />
-
-		<execute macro="WebContent#selectLocale">
-			<var name="locale" value="es-ES" />
-		</execute>
-
-		<execute macro="WebContent#viewCP">
-			<var name="webContentContent" value="WC Contenido" />
-			<var name="webContentTitle" value="WC Titulo" />
-		</execute>
-	</command>
-
-	<command name="MoveCurrentLanguagesToAvailable" priority="4">
-		<property name="test.name.skip.portal.instance" value="LanguageUsecase#MoveCurrentLanguagesToAvailable" />
-		<property name="testray.component.names" value="Localization" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language Selector" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="LanguagePortlet#moveLanguagesToAvailable" />
-
-		<execute macro="LanguagePortlet#moveLanguagesToCurrent">
-			<var name="currentLanguages" value="English (United States),German (Germany),Spanish (Spain)" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewLanguagesAbsent">
-			<var name="missingLanguages" value="ARABIC,CHINESE,FRENCH,HUNGARIAN,JAPANESE,PORTUGUESE" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewLanguagesPresent">
-			<var name="currentLanguages" value="ENGLISH,GERMAN,SPANISH" />
-		</execute>
-	</command>
-
-	<command name="ViewChangedDefaultPortalLanguageViaWebContent" priority="4">
-		<property name="test.name.skip.portal.instance" value="LanguageUsecase#ViewChangedDefaultPortalLanguageViaWebContent" />
-		<property name="testray.component.names" value="Localization" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="PortalSettings#configureCurrentLanguagesCP">
-			<var name="defaultPortalLanguage" value="Spanish (Spain)" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#viewDefaultLanguage">
-			<var name="locale" value="es-ES" />
-		</execute>
-	</command>
-
-	<command name="ViewDisplayOptionsViaLanguagePortlet" priority="4">
-		<property name="test.name.skip.portal.instance" value="LanguageUsecase#ViewDisplayOptionsViaLanguagePortlet" />
-		<property name="testray.component.names" value="Localization" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language Selector" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="LanguagePortlet#toggleDisplayTemplate">
-			<var name="displayStyle" value="Icon Menu" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewDisplayTemplateIconMenu">
-			<var name="language" value="Deutsch" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="LanguagePortlet#toggleDisplayTemplate">
-			<var name="displayStyle" value="Long Text" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewDisplayTemplateLongText">
-			<var name="language" value="suomi" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="LanguagePortlet#toggleDisplayTemplate">
-			<var name="displayStyle" value="Select Box" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewDisplayTemplateSelectBox">
-			<var name="language" value="English" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="LanguagePortlet#toggleDisplayTemplate">
-			<var name="displayStyle" value="Short Text" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewDisplayTemplateShortText">
-			<var name="languageKey" value="HU" />
-		</execute>
-	</command>
-
-	<command name="ViewRemovedCurrentPortalLanguagesViaLanguagePortlet" priority="4">
-		<property name="test.name.skip.portal.instance" value="LanguageUsecase#ViewRemovedCurrentPortalLanguagesViaLanguagePortlet" />
-		<property name="testray.component.names" value="Localization" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language Selector" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="PortalSettings#configureCurrentLanguagesCP">
-			<var name="currentPortalLanguages" value="Chinese (China),English (United States),French (France)" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewLanguagesAbsent">
-			<var name="missingLanguages" value="ARABIC,GERMAN,HUNGARIAN,JAPANESE,PORTUGUESE,SPANISH" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewLanguagesPresent">
-			<var name="currentLanguages" value="CHINESE,FRENCH,ENGLISH" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="LanguagePortlet#configureViewCurrentLanguages">
-			<var name="currentLanguages" value="Chinese (China),French (France),English (United States)" />
-		</execute>
-	</command>
-
-	<command name="ViewRemovedCurrentSiteLanguagesViaLanguagePortlet" priority="4">
-		<property name="test.name.skip.portal.instance" value="LanguageUsecase#ViewRemovedCurrentSiteLanguageViaLanguagePortlet" />
-		<property name="testray.component.names" value="Localization" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language Selector" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#configureCurrentLanguagesCP">
-			<var name="currentSiteLanguages" value="English (United States),German (Germany),Spanish (Spain)" />
-			<var name="defaultSiteLanguage" value="English (United States)" />
-			<var name="displaySettings" value="Display Settings" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewLanguagesAbsent">
-			<var name="missingLanguages" value="CHINESE,FRENCH,HUNGARIAN,JAPANESE,PORTUGUESE" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewLanguagesPresent">
-			<var name="currentLanguages" value="ENGLISH,GERMAN,SPANISH" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="LanguagePortlet#configureViewCurrentLanguages">
-			<var name="currentLanguages" value="English (United States),German (Germany),Spanish (Spain)" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Localization|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	Then Page add
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add WC With Multiple Translations
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|LanguageUsecase#AddWCWithMultipleTranslations|
+	When these properties
+		|testray.component.names|Localization,Web Content Administration|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Three Translations
+	And PortletEntry publish
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And WebContentDisplayPortlet select Web Content
+		|webContentTitle|WC Title|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Language Selector|
+	And Refresh
+	And LanguagePortlet select Language PG
+		|language|Spanish (Spain)|
+	And Refresh
+	And WebContent view PG Via WCD
+		|webContentContent|WC Contenido|
+	And Portlet goto Portlet Options
+		|portletName|Visor de contenido web|
+		|portletOption|Editar contenido web|
+	And IFrame select Edit Asset Frame
+	And WebContent select Locale
+		|locale|es-ES|
+	And WebContent view CP
+		|webContentContent|WC Contenido|
+		|webContentTitle|WC Titulo|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And Refresh
+	And LanguagePortlet select Language PG
+		|language|German (Germany)|
+	And Refresh
+	And WebContent view PG Via WCD
+		|webContentContent|WC Inhalt|
+	And Portlet goto Portlet Options
+		|portletName|Webcontentanzeige|
+		|portletOption|Webcontent bearbeiten|
+	And IFrame select Edit Asset Frame
+	And WebContent select Locale
+		|locale|de-DE|
+	And WebContent view CP
+		|webContentContent|WC Inhalt|
+		|webContentTitle|WC Titel|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And Refresh
+	And LanguagePortlet select Language PG
+		|language|Finnish (Finland)|
+	And Refresh
+	And WebContent view PG Via WCD
+		|webContentContent|WC Pitoisuus|
+	And Portlet goto Portlet Options
+		|portletName|Web-sisällön esitys|
+		|portletOption|Muokkaa web-sisältöä|
+	And IFrame select Edit Asset Frame
+	And WebContent select Locale
+		|locale|fi-FI|
+	Then WebContent view CP
+		|webContentContent|WC Pitoisuus|
+		|webContentTitle|WC Otsikko|
+Scenario: Add WC With Translation
+Priority: 5
+	Given these properties
+		|portal.acceptance|quarantine|
+	When these properties
+		|test.name.skip.portal.instance|LanguageUsecase#AddWCWithTranslation|
+	And these properties
+		|testray.component.names|Localization,Web Content Administration|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|WC Content|
+		|webContentTitle|WC Title|
+	And WebContent add Locale
+		|language|Spanish (Spain)|
+		|locale|es-ES|
+	And WebContent add CP
+		|webContentContent|WC Contenido|
+		|webContentTitle|WC Titulo|
+	And PortletEntry publish
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And Content add PG
+		|assetTitle|WC Title|
+	And Portlet add PG
+		|portletName|Language Selector|
+	And LanguagePortlet select Language PG
+		|language|Spanish (Spain)|
+	And WebContent view PG Via WCD
+		|webContentContent|WC Contenido|
+	And Portlet goto Portlet Options
+		|portletName|Visor de contenido web|
+		|portletOption|Editar contenido web|
+	And IFrame select Edit Asset Frame
+	And WebContent select Locale
+		|locale|es-ES|
+	Then WebContent view CP
+		|webContentContent|WC Contenido|
+		|webContentTitle|WC Titulo|
+Scenario: Move Current Languages To Available
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|LanguageUsecase#MoveCurrentLanguagesToAvailable|
+	When these properties
+		|testray.component.names|Localization|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Language Selector|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And LanguagePortlet move Languages To Available
+	And LanguagePortlet move Languages To Current
+		|currentLanguages|English (United States),German (Germany),Spanish (Spain)|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And LanguagePortlet view Languages Absent
+		|missingLanguages|ARABIC,CHINESE,FRENCH,HUNGARIAN,JAPANESE,PORTUGUESE|
+	Then LanguagePortlet view Languages Present
+		|currentLanguages|ENGLISH,GERMAN,SPANISH|
+Scenario: View Changed Default Portal Language Via Web Content
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|LanguageUsecase#ViewChangedDefaultPortalLanguageViaWebContent|
+	When these properties
+		|testray.component.names|Localization|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	And PortalSettings configure Current Languages CP
+		|defaultPortalLanguage|Spanish (Spain)|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	Then WebContent view Default Language
+		|locale|es-ES|
+Scenario: View Display Options Via Language Portlet
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|LanguageUsecase#ViewDisplayOptionsViaLanguagePortlet|
+	When these properties
+		|testray.component.names|Localization|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Language Selector|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And LanguagePortlet toggle Display Template
+		|displayStyle|Icon Menu|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And LanguagePortlet view Display Template Icon Menu
+		|language|Deutsch|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And LanguagePortlet toggle Display Template
+		|displayStyle|Long Text|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And LanguagePortlet view Display Template Long Text
+		|language|suomi|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And LanguagePortlet toggle Display Template
+		|displayStyle|Select Box|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And LanguagePortlet view Display Template Select Box
+		|language|English|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And LanguagePortlet toggle Display Template
+		|displayStyle|Short Text|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	Then LanguagePortlet view Display Template Short Text
+		|languageKey|HU|
+Scenario: View Removed Current Portal Languages Via Language Portlet
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|LanguageUsecase#ViewRemovedCurrentPortalLanguagesViaLanguagePortlet|
+	When these properties
+		|testray.component.names|Localization|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Language Selector|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	And PortalSettings configure Current Languages CP
+		|currentPortalLanguages|Chinese (China),English (United States),French (France)|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And LanguagePortlet view Languages Absent
+		|missingLanguages|ARABIC,GERMAN,HUNGARIAN,JAPANESE,PORTUGUESE,SPANISH|
+	And LanguagePortlet view Languages Present
+		|currentLanguages|CHINESE,FRENCH,ENGLISH|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	Then LanguagePortlet configure View Current Languages
+		|currentLanguages|Chinese (China),French (France),English (United States)|
+Scenario: View Removed Current Site Languages Via Language Portlet
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|LanguageUsecase#ViewRemovedCurrentSiteLanguageViaLanguagePortlet|
+	When these properties
+		|testray.component.names|Localization|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Language Selector|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Site configure Current Languages CP
+		|currentSiteLanguages|English (United States),German (Germany),Spanish (Spain)|
+		|defaultSiteLanguage|English (United States)|
+		|displaySettings|Display Settings|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And LanguagePortlet view Languages Absent
+		|missingLanguages|CHINESE,FRENCH,HUNGARIAN,JAPANESE,PORTUGUESE|
+	And LanguagePortlet view Languages Present
+		|currentLanguages|ENGLISH,GERMAN,SPANISH|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	Then LanguagePortlet configure View Current Languages
+		|currentLanguages|English (United States),German (Germany),Spanish (Spain)|

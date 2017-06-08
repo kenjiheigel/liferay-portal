@@ -1,170 +1,223 @@
-<definition component-name="portal-calendar">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles" />
-	<property name="testray.main.component.name" value="Calendar" />
+Feature:
 
-	<var name="pageName" value="Calendar Page" />
-	<var name="portletName" value="Calendar" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles|
+		|testray.main.component.name|Calendar|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles|
+		|testray.main.component.name|Calendar|
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Calendar Page|
+	And Portlet add PG
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+	And TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And Calendar enable Comments
+		|calendarName|${siteName}|
+		|calendarType|Current Site Calendars|
+		|site|${siteName}|
+		|user|Test Test|
+	Then Navigator goto Page
+		|pageName|Calendar Page|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add To Event All Day
+Priority: 3
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|calendarName|${siteName}|
+		|eventComment|Calendar Event All Day Comment|
+		|eventCommentEnabled|true|
+		|eventTitle|Calendar Event All Day Title|
+		|eventType|All Day|
+		|pageName|Calendar Page|
+		|site|${siteName}|
+		|user|Test Test|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view Comment
+		|calendarName|${siteName}|
+		|eventComment|Calendar Event All Day Comment|
+		|eventTitle|Calendar Event All Day Title|
+		|eventType|All Day|
+		|site|${siteName}|
+		|user|Test Test|
+Scenario: Add To Event Regular
+Priority: 4
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|calendarName|${siteName}|
+		|eventComment|Calendar Event Regular Comment|
+		|eventCommentEnabled|true|
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|pageName|Calendar Page|
+		|site|${siteName}|
+		|user|Test Test|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view Comment
+		|calendarName|${siteName}|
+		|eventComment|Calendar Event Regular Comment|
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|site|${siteName}|
+		|user|Test Test|
+Scenario: Add To Event Repeating
+Priority: 3
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|calendarName|${siteName}|
+		|eventComment|Calendar Event Repeating Comment|
+		|eventCommentEnabled|true|
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Daily|
+		|numberOfOccurrences|1|
+		|pageName|Calendar Page|
+		|site|${siteName}|
+		|user|Test Test|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view Comment
+		|calendarName|${siteName}|
+		|eventComment|Calendar Event Repeating Comment|
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|site|${siteName}|
+		|user|Test Test|
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Calendar Page|
+	And Portlet add PG
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+	And TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And Calendar enable Comments
+		|calendarName|${siteName}|
+		|calendarType|Current Site Calendars|
+		|site|${siteName}|
+		|user|Test Test|
+	Then Navigator goto Page
+		|pageName|Calendar Page|
 
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Calendar Page" />
-			<var name="portletName" value="Calendar" />
-		</execute>
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Calendar#enableComments">
-			<var name="calendarName" value="${siteName}" />
-			<var name="calendarType" value="Current Site Calendars" />
-			<var name="site" value="${siteName}" />
-			<var name="user" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Navigator#gotoPage">
-					<var name="pageName" value="Calendar Page" />
-				</execute>
-
-				<if>
-					<condition function="IsElementPresent" locator1="Calendar#SCHEDULER_EVENT_GENERIC" />
-					<then>
-						<execute macro="CalendarEvent#tearDown" />
-					</then>
-				</if>
-
-				<execute macro="Calendar#tearDown" />
-
-				<execute macro="CalendarConfiguration#tearDown" />
-
-				<execute macro="Page#tearDownPG" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="AddToEventAllDay" priority="3">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="calendarName" value="${siteName}" />
-			<var name="eventComment" value="Calendar Event All Day Comment" />
-			<var name="eventCommentEnabled" value="true" />
-			<var name="eventTitle" value="Calendar Event All Day Title" />
-			<var name="eventType" value="All Day" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="site" value="${siteName}" />
-			<var name="user" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewComment">
-			<var name="calendarName" value="${siteName}" />
-			<var name="eventComment" value="Calendar Event All Day Comment" />
-			<var name="eventTitle" value="Calendar Event All Day Title" />
-			<var name="eventType" value="All Day" />
-			<var name="site" value="${siteName}" />
-			<var name="user" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="AddToEventRegular" priority="4">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="calendarName" value="${siteName}" />
-			<var name="eventComment" value="Calendar Event Regular Comment" />
-			<var name="eventCommentEnabled" value="true" />
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-			<var name="eventType" value="Regular" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="site" value="${siteName}" />
-			<var name="user" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewComment">
-			<var name="calendarName" value="${siteName}" />
-			<var name="eventComment" value="Calendar Event Regular Comment" />
-			<var name="eventTitle" value="Calendar Event Regular Title" />
-			<var name="eventType" value="Regular" />
-			<var name="site" value="${siteName}" />
-			<var name="user" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="AddToEventRepeating" priority="3">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="calendarName" value="${siteName}" />
-			<var name="eventComment" value="Calendar Event Repeating Comment" />
-			<var name="eventCommentEnabled" value="true" />
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="eventType" value="Repeating" />
-			<var name="frequency" value="Daily" />
-			<var name="numberOfOccurrences" value="1" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="site" value="${siteName}" />
-			<var name="user" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewComment">
-			<var name="calendarName" value="${siteName}" />
-			<var name="eventComment" value="Calendar Event Repeating Comment" />
-			<var name="eventTitle" value="Calendar Event Repeating Title" />
-			<var name="eventType" value="Repeating" />
-			<var name="site" value="${siteName}" />
-			<var name="user" value="Test Test" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add To Event All Day
+Priority: 3
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|calendarName|${siteName}|
+		|eventComment|Calendar Event All Day Comment|
+		|eventCommentEnabled|true|
+		|eventTitle|Calendar Event All Day Title|
+		|eventType|All Day|
+		|pageName|Calendar Page|
+		|site|${siteName}|
+		|user|Test Test|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view Comment
+		|calendarName|${siteName}|
+		|eventComment|Calendar Event All Day Comment|
+		|eventTitle|Calendar Event All Day Title|
+		|eventType|All Day|
+		|site|${siteName}|
+		|user|Test Test|
+Scenario: Add To Event Regular
+Priority: 4
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|calendarName|${siteName}|
+		|eventComment|Calendar Event Regular Comment|
+		|eventCommentEnabled|true|
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|pageName|Calendar Page|
+		|site|${siteName}|
+		|user|Test Test|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view Comment
+		|calendarName|${siteName}|
+		|eventComment|Calendar Event Regular Comment|
+		|eventTitle|Calendar Event Regular Title|
+		|eventType|Regular|
+		|site|${siteName}|
+		|user|Test Test|
+Scenario: Add To Event Repeating
+Priority: 3
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|calendarName|${siteName}|
+		|eventComment|Calendar Event Repeating Comment|
+		|eventCommentEnabled|true|
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|frequency|Daily|
+		|numberOfOccurrences|1|
+		|pageName|Calendar Page|
+		|site|${siteName}|
+		|user|Test Test|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view Comment
+		|calendarName|${siteName}|
+		|eventComment|Calendar Event Repeating Comment|
+		|eventTitle|Calendar Event Repeating Title|
+		|eventType|Repeating|
+		|site|${siteName}|
+		|user|Test Test|

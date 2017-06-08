@@ -1,220 +1,122 @@
-<definition component-name="portal-collaboration">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column" />
-	<property name="testray.main.component.name" value="Notifications" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Notifications|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Site#tearDownCP" />
-
-				<execute macro="BlogsEntry#tearDownCP" />
-
-				<execute macro="Page#tearDownPG" />
-
-				<execute macro="User#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="MarkNotificationAsReadAndAcceptRequest" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="password" value="password" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#assignRegularRoleCP">
-			<var name="roleTitle" value="Administrator" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addCP">
-			<var name="siteName" value="Community Site Name" />
-			<var name="siteType" value="Community" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Home" />
-			<var name="siteName" value="Community Site Name" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Blank Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Home" />
-			<var name="siteName" value="Community Site Name" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Invite Members Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Invite Members Page" />
-			<var name="siteName" value="Community Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Invite Members" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Invite Members Page" />
-			<var name="siteName" value="Community Site Name" />
-		</execute>
-
-		<execute macro="InviteMembers#inviteMembers">
-			<var name="inviteUserFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Blogs#subscribePG" />
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="2" />
-		</execute>
-
-		<execute macro="Notifications#gotoNotifications" />
-
-		<execute macro="Notifications#viewNewContent">
-			<var name="assetType" value="Blogs Entry" />
-			<var name="contentBody" value="Blogs Entry Title" />
-			<var name="user" value="Test Test" />
-		</execute>
-
-		<execute macro="Notifications#viewRequest">
-			<var name="requestsTitle" value="Test Test invited you to join Community Site Name." />
-		</execute>
-
-		<execute macro="Notifications#acceptRequest" >
-			<var name="requestsTitle" value="Test Test invited you to join Community Site Name." />
-		</execute>
-
-		<execute function="Refresh" />
-
-		<execute macro="Notifications#viewNoRequest" />
-
-		<execute macro="Notifications#viewNoNotifications" />
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-	</command>
-
-	<command name="ViewDefaultNotificationsPortletDeliveryOptions" priority="3">
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="Notifications" />
-		</execute>
-
-		<execute macro="NotificationsPortlet#gotoNotificationDelivery" />
-
-		<execute macro="IFrame#selectConfigurationFrame" />
-
-		<execute macro="NotificationsPortlet#viewDefaultNotificationDeliveries" />
-	</command>
-
-	<command name="ViewNoNotification" priority="5">
-		<execute macro="Notifications#viewNoNotifications">
-			<var name="activePanel" value="Profile" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoUserMyAccount">
-			<var name="portlet" value="Notifications" />
-		</execute>
-
-		<execute macro="Notifications#viewNoRequest" />
-
-		<execute macro="Notifications#viewNoNotificationEntry" />
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Mark Notification As Read And Accept Request
+Priority: 4
+	Given ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	When User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User assign Regular Role CP
+		|roleTitle|Administrator|
+		|userScreenName|usersn|
+	And Page add
+		|pageName|Blogs Page|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add CP
+		|siteName|Community Site Name|
+		|siteType|Community|
+	And Navigator goto Site Page
+		|pageName|Home|
+		|siteName|Community Site Name|
+	And Page add
+		|pageName|Blank Page|
+	And Navigator goto Site Page
+		|pageName|Home|
+		|siteName|Community Site Name|
+	And Page add
+		|pageName|Invite Members Page|
+	And Navigator goto Site Page
+		|pageName|Invite Members Page|
+		|siteName|Community Site Name|
+	And Portlet add PG
+		|portletName|Invite Members|
+	And Navigator goto Site Page
+		|pageName|Invite Members Page|
+		|siteName|Community Site Name|
+	And InviteMembers invite Members
+		|inviteUserFullName|userfn userln|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Blogs subscribe PG
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Notifications view Badge Count
+		|notificationCount|2|
+	And Notifications goto Notifications
+	And Notifications view New Content
+		|assetType|Blogs Entry|
+		|contentBody|Blogs Entry Title|
+		|user|Test Test|
+	And Notifications view Request
+		|requestsTitle|Test Test invited you to join Community Site Name.|
+	And Notifications accept Request
+		|requestsTitle|Test Test invited you to join Community Site Name.|
+	And Refresh
+	And Notifications view No Request
+	And Notifications view No Notifications
+	And User logout PG
+	Then User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+Scenario: View Default Notifications Portlet Delivery Options
+Priority: 3
+	Given Page goto My Account
+		|portletName|Notifications|
+	When NotificationsPortlet goto Notification Delivery
+	And IFrame select Configuration Frame
+	Then NotificationsPortlet view Default Notification Deliveries
+Scenario: View No Notification
+Priority: 5
+	Given Notifications view No Notifications
+		|activePanel|Profile|
+	When ProductMenu goto User My Account
+		|portlet|Notifications|
+	And Notifications view No Request
+	Then Notifications view No Notification Entry

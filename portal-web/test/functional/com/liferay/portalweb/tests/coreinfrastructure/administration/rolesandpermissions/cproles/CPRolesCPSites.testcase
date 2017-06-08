@@ -1,583 +1,364 @@
-<definition component-name="portal-permissions">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Permissions" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="User#logoutAndLoginPG">
-					<var name="userLoginEmailAddress" value="test@liferay.com" />
-					<var name="userLoginFullName" value="Test Test" />
-				</execute>
-
-				<execute macro="User#tearDownCP" />
-
-				<execute macro="Role#tearDownCP" />
-
-				<execute macro="Site#tearDownCP" />
-
-				<execute macro="PortalSettings#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="AddSiteRegRole" priority="4">
-		<execute macro="Permissions#setUpRegRoleLoginUserCP">
-			<var name="page" value="Public Pages" />
-			<var name="portletName" value="Sites" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#definePermissionCP">
-			<var name="permissionDefinitionKey" value="CONTROL_PANEL_SITES_SITES_GENERAL_PERMISSIONS_ACCESS_IN_CONTROL_PANEL_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Access in Control Panel" />
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#definePermissionCP">
-			<var name="permissionDefinitionKey" value="CONTROL_PANEL_USERS_ROLES_GENERAL_PERMISSIONS_ACCESS_IN_CONTROL_PANEL_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Access in Control Panel" />
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute function="AssertElementNotPresent" locator1="Button#ADD" />
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="CONTROL_PANEL_GENERAL_PERMISSIONS_ADD_SITE_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Add Site" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="singleSiteTypePermission" value="true" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Permissions#removePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="CONTROL_PANEL_GENERAL_PERMISSIONS_ADD_SITE_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Add Site" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute function="AssertElementNotPresent" locator1="Button#ADD" />
-	</command>
-
-	<command name="SearchPermissions" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#add">
-			<var name="roleTitle" value="Roles Regrole Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#definePermissionCP">
-			<var name="permissionDefinitionKey" value="CONTROL_PANEL_GENERAL_PERMISSIONS_GO_TO_CONTROL_PANEL_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="View Control Panel Menu" />
-			<var name="roleTitle" value="Roles Regrole Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#assignRegRoleCP">
-			<var name="roleTitle" value="Roles Regrole Name" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Parent Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="parentSiteName" value="Parent Site Name" />
-			<var name="siteName" value="Child SiteName" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Parent Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Parent Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignSiteRoleCP">
-			<var name="resourceName" value="userfn userln" />
-			<var name="roleTitle" value="Site Administrator" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Child SiteName" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Child SiteName" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignSiteRoleCP">
-			<var name="resourceName" value="userfn userln" />
-			<var name="roleTitle" value="Site Administrator" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<var name="key_siteName" value="Parent Site Name" />
-
-		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="Parent" />
-
-		<execute function="Click" locator1="Button#SUBMIT" />
-
-		<execute macro="ProductMenuHelper#closeProductMenu" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Sites#SITE_TABLE_NAME" value1="Parent Site Name" />
-		<execute function="AssertTextNotPresent" value1="Child SiteName" />
-
-		<var name="key_siteName" value="Child SiteName" />
-
-		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="Child" />
-
-		<execute function="KeyPress" locator1="NavBar#BASIC_SEARCH_FIELD" value1="\RETURN" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Sites#SITE_TABLE_NAME" value1="Child SiteName" />
-		<execute function="AssertTextNotPresent" value1="Parent Site Name" />
-
-		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="Site" />
-
-		<execute function="Click" locator1="Button#SUBMIT" />
-
-		<var name="key_siteName" value="Parent Site Name" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Sites#SITE_TABLE_NAME" value1="Parent Site Name" />
-
-		<var name="key_siteName" value="Child SiteName" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Sites#SITE_TABLE_NAME" value1="Child SiteName" />
-
-		<execute macro="Site#viewSiteAdminPermissionsCP">
-			<var name="siteName" value="Parent Site Name" />
-		</execute>
-
-		<execute macro="Site#viewSiteAdminPermissionsCP">
-			<var name="siteName" value="Child SiteName" />
-		</execute>
-	</command>
-
-	<command name="ViewSiteManageChildSiteSiteRole" priority="4">
-		<execute macro="Permissions#setUpSiteRoleLoginUserCP">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Site Page" />
-			<var name="portletName" value="Sites" />
-			<var name="roleTitle" value="Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="siteName" value="Site Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="parentSiteName" value="Site Name" />
-			<var name="siteName" value="Child SiteName1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Child SiteName1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#add">
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#assignRegRoleCP">
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="CONTROL_PANEL_SITES_SITES_GENERAL_PERMISSIONS_ACCESS_IN_CONTROL_PANEL_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Access in Control Panel" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_SITE_ADD_SITE_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Add Site" />
-			<var name="roleTitle" value="Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_SITE_UPDATE_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Update" />
-			<var name="roleTitle" value="Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<var name="key_siteName" value="Site Name" />
-
-		<execute function="Click#waitForMenuToggleJSClick" locator1="Sites#SITE_TABLE_ACTIONS" />
-
-		<execute function="AssertClick" locator1="MenuItem#ADD_CHILD_SITE" value1="Add Child Site" />
-
-		<execute macro="PortletEntry#inputName">
-			<var name="name" value="Child SiteName2" />
-		</execute>
-
-		<execute function="Click" locator1="Button#SAVE" value1="Save" />
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<var name="key_siteName" value="Child SiteName1" />
-
-		<execute function="Click#waitForMenuToggleJSClick" locator1="Sites#SITE_TABLE_ACTIONS" />
-
-		<execute function="AssertElementNotPresent" locator1="MenuItem#ADD_CHILD_SITE" value1="Add Child Site" />
-		<execute function="AssertElementNotPresent" locator1="MenuItem#DELETE" value1="Delete" />
-
-		<var name="key_site" value="Child SiteName2" />
-
-		<execute function="AssertClick#assertPartialTextClickAt" locator1="ContentRow#ENTRY_CONTENT_ROW_TD_1_SITE_LINK" value1="Child SiteName2" />
-
-		<execute function="AssertTextEquals" locator1="ControlMenu#HEADER_TITLE" value1="Public Pages" />
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_SITE_MANAGE_SUBSITES_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Manage Subsites" />
-			<var name="roleTitle" value="Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<var name="key_site" value="Child SiteName1" />
-
-		<execute function="AssertClick#assertPartialTextClickAt" locator1="ContentRow#ENTRY_CONTENT_ROW_TD_1_SITE_LINK" value1="Child SiteName1" />
-
-		<execute function="AssertTextEquals" locator1="ControlMenu#HEADER_TITLE" value1="Public Pages" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<var name="key_site" value="Child SiteName2" />
-
-		<execute function="AssertClick#assertPartialTextClickAt" locator1="ContentRow#ENTRY_CONTENT_ROW_TD_1_SITE_LINK" value1="Child SiteName2" />
-
-		<execute function="AssertTextEquals" locator1="ControlMenu#HEADER_TITLE" value1="Public Pages" />
-
-		<execute macro="Permissions#removePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_SITE_MANAGE_SUBSITES_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Manage Subsites" />
-			<var name="roleTitle" value="Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<var name="key_siteName" value="Child SiteName1" />
-
-		<execute function="Click#waitForMenuToggleJSClick" locator1="Sites#SITE_TABLE_ACTIONS" />
-
-		<execute function="AssertElementNotPresent" locator1="MenuItem#ADD_CHILD_SITE" value1="Add Child Site" />
-		<execute function="AssertElementNotPresent" locator1="MenuItem#DELETE" value1="Delete" />
-
-		<var name="key_site" value="Child SiteName2" />
-
-		<execute function="AssertClick#assertPartialTextClickAt" locator1="ContentRow#ENTRY_CONTENT_ROW_TD_1_SITE_LINK" value1="Child SiteName2" />
-
-		<execute function="AssertTextEquals" locator1="ControlMenu#HEADER_TITLE" value1="Public Pages" />
-	</command>
-
-	<command name="ViewSiteManagePagesRegRole" priority="4">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Permissions#setUpRegRoleLoginUserCP">
-			<var name="portletName" value="Sites" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="CONTROL_PANEL_SITES_SITES_GENERAL_PERMISSIONS_ACCESS_IN_CONTROL_PANEL_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Access in Control Panel" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="No sites were found." />
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="CONTROL_PANEL_SITES_SITES_RESOURCE_PERMISSIONS_SITE_MANAGE_PAGES_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Manage Pages" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="CONTROL_PANEL_SITES_SITES_RESOURCE_PERMISSIONS_SITE_VIEW_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="View" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<var name="key_site" value="${siteName}" />
-
-		<execute function="AssertClick#assertPartialTextClickAt" locator1="ContentRow#ENTRY_CONTENT_ROW_TD_1_SITE_LINK" value1="${siteName}" />
-
-		<var name="key_siteName" value="${siteName}" />
-
-		<execute function="AssertElementPresent" locator1="SitePages#SITE_NAME" value1="${siteName}" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<var name="key_site" value="Site Name" />
-
-		<execute function="AssertClick#assertPartialTextClickAt" locator1="ContentRow#ENTRY_CONTENT_ROW_TD_1_SITE_LINK" value1="Site Name" />
-
-		<var name="key_siteName" value="Site Name" />
-
-		<execute function="AssertElementPresent" locator1="SitePages#SITE_NAME" value1="Site Name" />
-
-		<execute macro="Permissions#removePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="CONTROL_PANEL_SITES_SITES_RESOURCE_PERMISSIONS_SITE_MANAGE_PAGES_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Manage Pages" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Permissions#removePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="CONTROL_PANEL_SITES_SITES_RESOURCE_PERMISSIONS_SITE_VIEW_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="View" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="No sites were found." />
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Permissions|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Site Reg Role
+Priority: 4
+	Given Permissions set Up Reg Role Login User CP
+		|page|Public Pages|
+		|portletName|Sites|
+		|roleTitle|Regrole Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+		|userScreenName|usersn|
+	When User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permission CP
+		|permissionDefinitionKey|CONTROL_PANEL_SITES_SITES_GENERAL_PERMISSIONS_ACCESS_IN_CONTROL_PANEL_CHECKBOX|
+		|permissionDefinitionValue|Access in Control Panel|
+		|roleTitle|Regrole Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permission CP
+		|permissionDefinitionKey|CONTROL_PANEL_USERS_ROLES_GENERAL_PERMISSIONS_ACCESS_IN_CONTROL_PANEL_CHECKBOX|
+		|permissionDefinitionValue|Access in Control Panel|
+		|roleTitle|Regrole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And AssertElementNotPresent at locator 'Button#ADD'
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|CONTROL_PANEL_GENERAL_PERMISSIONS_ADD_SITE_CHECKBOX|
+		|permissionDefinitionValue|Add Site|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|singleSiteTypePermission|true|
+		|siteName|Site Name|
+	And Permissions remove Permission Login User CP
+		|permissionDefinitionKey|CONTROL_PANEL_GENERAL_PERMISSIONS_ADD_SITE_CHECKBOX|
+		|permissionDefinitionValue|Add Site|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	Then AssertElementNotPresent at locator 'Button#ADD'
+Scenario: Search Permissions
+Priority: 4
+	Given ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	When Role add
+		|roleTitle|Roles Regrole Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permission CP
+		|permissionDefinitionKey|CONTROL_PANEL_GENERAL_PERMISSIONS_GO_TO_CONTROL_PANEL_CHECKBOX|
+		|permissionDefinitionValue|View Control Panel Menu|
+		|roleTitle|Roles Regrole Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role assign Reg Role CP
+		|roleTitle|Roles Regrole Name|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Parent Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|parentSiteName|Parent Site Name|
+		|siteName|Child SiteName|
+	And ProductMenu goto Site
+		|site|Parent Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|Parent Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign Site Role CP
+		|resourceName|userfn userln|
+		|roleTitle|Site Administrator|
+	And ProductMenu goto Site
+		|site|Child SiteName|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|Child SiteName|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign Site Role CP
+		|resourceName|userfn userln|
+		|roleTitle|Site Administrator|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And these variables
+		|key_siteName|Parent Site Name|
+	And Type the value 'Parent' at locator 'NavBar#BASIC_SEARCH_FIELD'
+	And Click at locator 'Button#SUBMIT'
+	And ProductMenuHelper close Product Menu
+	And AssertTextEquals assert Partial Text the value 'Parent Site Name' at locator 'Sites#SITE_TABLE_NAME'
+	And AssertTextNotPresent the value 'Child SiteName'
+	And these variables
+		|key_siteName|Child SiteName|
+	And Type the value 'Child' at locator 'NavBar#BASIC_SEARCH_FIELD'
+	And KeyPress the value '\RETURN' at locator 'NavBar#BASIC_SEARCH_FIELD'
+	And AssertTextEquals assert Partial Text the value 'Child SiteName' at locator 'Sites#SITE_TABLE_NAME'
+	And AssertTextNotPresent the value 'Parent Site Name'
+	And Type the value 'Site' at locator 'NavBar#BASIC_SEARCH_FIELD'
+	And Click at locator 'Button#SUBMIT'
+	And these variables
+		|key_siteName|Parent Site Name|
+	And AssertTextEquals assert Partial Text the value 'Parent Site Name' at locator 'Sites#SITE_TABLE_NAME'
+	And these variables
+		|key_siteName|Child SiteName|
+	And AssertTextEquals assert Partial Text the value 'Child SiteName' at locator 'Sites#SITE_TABLE_NAME'
+	And Site view Site Admin Permissions CP
+		|siteName|Parent Site Name|
+	Then Site view Site Admin Permissions CP
+		|siteName|Child SiteName|
+Scenario: View Site Manage Child Site Site Role
+Priority: 4
+	Given Permissions set Up Site Role Login User CP
+		|page|Public Pages|
+		|pageName|Site Page|
+		|portletName|Sites|
+		|roleTitle|Siterole Name|
+		|roleType|Site|
+		|siteName|Site Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+		|userScreenName|usersn|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|parentSiteName|Site Name|
+		|siteName|Child SiteName1|
+	And ProductMenu goto Site
+		|site|Child SiteName1|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role add
+		|roleTitle|Regrole Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role assign Reg Role CP
+		|roleTitle|Regrole Name|
+		|userScreenName|usersn|
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|CONTROL_PANEL_SITES_SITES_GENERAL_PERMISSIONS_ACCESS_IN_CONTROL_PANEL_CHECKBOX|
+		|permissionDefinitionValue|Access in Control Panel|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_SITE_ADD_SITE_CHECKBOX|
+		|permissionDefinitionValue|Add Site|
+		|roleTitle|Siterole Name|
+		|roleType|Site|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_SITE_UPDATE_CHECKBOX|
+		|permissionDefinitionValue|Update|
+		|roleTitle|Siterole Name|
+		|roleType|Site|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator open URL
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And these variables
+		|key_siteName|Site Name|
+	And Click wait For Menu Toggle JS Click at locator 'Sites#SITE_TABLE_ACTIONS'
+	And AssertClick the value 'Add Child Site' at locator 'MenuItem#ADD_CHILD_SITE'
+	And PortletEntry input Name
+		|name|Child SiteName2|
+	And Click the value 'Save' at locator 'Button#SAVE'
+	And PortletEntry save
+	And Navigator open URL
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And these variables
+		|key_siteName|Child SiteName1|
+	And Click wait For Menu Toggle JS Click at locator 'Sites#SITE_TABLE_ACTIONS'
+	And AssertElementNotPresent the value 'Add Child Site' at locator 'MenuItem#ADD_CHILD_SITE'
+	And AssertElementNotPresent the value 'Delete' at locator 'MenuItem#DELETE'
+	And these variables
+		|key_site|Child SiteName2|
+	And AssertClick assert Partial Text Click At the value 'Child SiteName2' at locator 'ContentRow#ENTRY_CONTENT_ROW_TD_1_SITE_LINK'
+	And AssertTextEquals the value 'Public Pages' at locator 'ControlMenu#HEADER_TITLE'
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_SITE_MANAGE_SUBSITES_CHECKBOX|
+		|permissionDefinitionValue|Manage Subsites|
+		|roleTitle|Siterole Name|
+		|roleType|Site|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator open URL
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And these variables
+		|key_site|Child SiteName1|
+	And AssertClick assert Partial Text Click At the value 'Child SiteName1' at locator 'ContentRow#ENTRY_CONTENT_ROW_TD_1_SITE_LINK'
+	And AssertTextEquals the value 'Public Pages' at locator 'ControlMenu#HEADER_TITLE'
+	And Navigator open URL
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And these variables
+		|key_site|Child SiteName2|
+	And AssertClick assert Partial Text Click At the value 'Child SiteName2' at locator 'ContentRow#ENTRY_CONTENT_ROW_TD_1_SITE_LINK'
+	And AssertTextEquals the value 'Public Pages' at locator 'ControlMenu#HEADER_TITLE'
+	And Permissions remove Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_SITE_MANAGE_SUBSITES_CHECKBOX|
+		|permissionDefinitionValue|Manage Subsites|
+		|roleTitle|Siterole Name|
+		|roleType|Site|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator open URL
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And these variables
+		|key_siteName|Child SiteName1|
+	And Click wait For Menu Toggle JS Click at locator 'Sites#SITE_TABLE_ACTIONS'
+	And AssertElementNotPresent the value 'Add Child Site' at locator 'MenuItem#ADD_CHILD_SITE'
+	And AssertElementNotPresent the value 'Delete' at locator 'MenuItem#DELETE'
+	And these variables
+		|key_site|Child SiteName2|
+	And AssertClick assert Partial Text Click At the value 'Child SiteName2' at locator 'ContentRow#ENTRY_CONTENT_ROW_TD_1_SITE_LINK'
+	Then AssertTextEquals the value 'Public Pages' at locator 'ControlMenu#HEADER_TITLE'
+Scenario: View Site Manage Pages Reg Role
+Priority: 4
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When Permissions set Up Reg Role Login User CP
+		|portletName|Sites|
+		|roleTitle|Regrole Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Site Name|
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|CONTROL_PANEL_SITES_SITES_GENERAL_PERMISSIONS_ACCESS_IN_CONTROL_PANEL_CHECKBOX|
+		|permissionDefinitionValue|Access in Control Panel|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator open URL
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And AssertTextEquals the value 'No sites were found.' at locator 'Message#EMPTY_INFO'
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|CONTROL_PANEL_SITES_SITES_RESOURCE_PERMISSIONS_SITE_MANAGE_PAGES_CHECKBOX|
+		|permissionDefinitionValue|Manage Pages|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|CONTROL_PANEL_SITES_SITES_RESOURCE_PERMISSIONS_SITE_VIEW_CHECKBOX|
+		|permissionDefinitionValue|View|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator open URL
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And these variables
+		|key_site|${siteName}|
+	And AssertClick assert Partial Text Click At the value '${siteName}' at locator 'ContentRow#ENTRY_CONTENT_ROW_TD_1_SITE_LINK'
+	And these variables
+		|key_siteName|${siteName}|
+	And AssertElementPresent the value '${siteName}' at locator 'SitePages#SITE_NAME'
+	And Navigator open URL
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And these variables
+		|key_site|Site Name|
+	And AssertClick assert Partial Text Click At the value 'Site Name' at locator 'ContentRow#ENTRY_CONTENT_ROW_TD_1_SITE_LINK'
+	And these variables
+		|key_siteName|Site Name|
+	And AssertElementPresent the value 'Site Name' at locator 'SitePages#SITE_NAME'
+	And Permissions remove Permission Login User CP
+		|permissionDefinitionKey|CONTROL_PANEL_SITES_SITES_RESOURCE_PERMISSIONS_SITE_MANAGE_PAGES_CHECKBOX|
+		|permissionDefinitionValue|Manage Pages|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Permissions remove Permission Login User CP
+		|permissionDefinitionKey|CONTROL_PANEL_SITES_SITES_RESOURCE_PERMISSIONS_SITE_VIEW_CHECKBOX|
+		|permissionDefinitionValue|View|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator open URL
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	Then AssertTextEquals the value 'No sites were found.' at locator 'Message#EMPTY_INFO'
