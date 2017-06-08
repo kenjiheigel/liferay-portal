@@ -1,688 +1,400 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.component.names" value="Asset Publisher,Web Content Administration" />
-	<property name="testray.main.component.name" value="Asset Publisher" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="AddWebContentPGViaAP" priority="4">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaAP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC Webcontent Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaAP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC Webcontent Title" />
-		</execute>
-	</command>
-
-	<command name="AddWebContentWithGlobalScopeViaCPToLiferayAP" priority="4">
-		<property name="test.name.skip.portal.instance" value="PGAssetpublisherWebcontent#AddWebContentWithGlobalScopeViaCPToLiferayAP" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Global" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="WebContent#viewTitle">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page 1" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#configureSiteScopePG">
-			<var name="siteName" value="Global" />
-			<var name="siteScopeType" value="Global" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page 1" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#configureSiteScopeRemoveSitePG">
-			<var name="siteName" value="Liferay" />
-			<var name="siteScopeType" value="Current Site" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page 1" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewAssetPG">
-			<var name="assetContent" value="WC WebContent Content" />
-			<var name="assetTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Global" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#editCP">
-			<var name="webContentContentEdit" value="WC WebContent Content Edit" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-			<var name="webContentTitleEdit" value="WC WebContent Title Edit" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page 1" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewAssetPG">
-			<var name="assetContent" value="WC WebContent Content Edit" />
-			<var name="assetTitle" value="WC WebContent Title Edit" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Global" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContent#deleteCP" >
-			<var name="siteScopeName" value="Global" />
-			<var name="webContentTitle" value="WC WebContent Title Edit" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page 1" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewAssetNotPresentPG">
-			<var name="assetContent" value="WC WebContent Content" />
-			<var name="assetTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewAssetNotPresentPG">
-			<var name="assetContent" value="WC WebContent Content Edit" />
-			<var name="assetTitle" value="WC WebContent Title Edit" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewReadMoreLinkNotPresentPG" />
-	</command>
-
-	<command name="AddWebContentWithGlobalScopeViaCPToSiteAP" priority="4">
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Global" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="WebContent#viewTitle">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Global" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Test Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Test Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#configureSiteScopePG">
-			<var name="siteName" value="Global" />
-			<var name="siteScopeType" value="Global" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Test Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#configureSiteScopeRemoveSitePG">
-			<var name="siteName" value="Site Name" />
-			<var name="siteScopeType" value="Current Site" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Test Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewAssetPG">
-			<var name="assetContent" value="WC WebContent Content" />
-			<var name="assetTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Global" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#editCP">
-			<var name="webContentContentEdit" value="WC WebContent Content Edit" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-			<var name="webContentTitleEdit" value="WC WebContent Title Edit" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Test Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewAssetPG">
-			<var name="assetContent" value="WC WebContent Content Edit" />
-			<var name="assetTitle" value="WC WebContent Title Edit" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Global" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContent#deleteCP" >
-			<var name="siteScopeName" value="Global" />
-			<var name="webContentTitle" value="WC WebContent Title Edit" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Test Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewAssetNotPresentPG">
-			<var name="assetContent" value="WC WebContent Content" />
-			<var name="assetTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewAssetNotPresentPG">
-			<var name="assetContent" value="WC WebContent Content Edit" />
-			<var name="assetTitle" value="WC WebContent Title Edit" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewReadMoreLinkNotPresentPG" />
-	</command>
-
-	<command name="AddWebContentWithStructureAndGlobalScopeViaCPToLiferayAP" priority="3">
-		<property name="test.name.skip.portal.instance" value="PGAssetpublisherWebcontent#AddWebContentWithStructureAndGlobalScopeViaCPToLiferayAP" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Global" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoManageStructures" />
-
-		<execute macro="WebContentStructures#addCP">
-			<var name="structureDescription" value="WC Structure Description" />
-			<var name="structureName" value="WC Structure Name" />
-		</execute>
-
-		<execute macro="DynamicDataMapping#addField">
-			<var name="field" value="Text" />
-			<var name="fieldFieldLabel" value="Text" />
-			<var name="fieldName" value="Text" />
-		</execute>
-
-		<execute macro="WebContentStructures#saveCP">
-			<var name="structureName" value="WC Structure Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Global" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoManageTemplates" />
-
-		<execute macro="WebContentTemplates#addCP">
-			<var name="structureName" value="WC Structure Name" />
-			<var name="templateDescription" value="WC Template Description" />
-			<var name="templateFieldNames" value="Text" />
-			<var name="templateLanguage" value="ftl" />
-			<var name="templateName" value="WC Template Name" />
-		</execute>
-
-		<execute macro="WebContentTemplates#addStructure">
-			<var name="structureName" value="WC Structure Name" />
-			<var name="templateFieldNames" value="Text" />
-			<var name="templateLanguage" value="ftl" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Global" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddWithStructureCP">
-			<var name="structureName" value="WC Structure Name" />
-		</execute>
-
-		<execute macro="WebContent#addWithStructureCP">
-			<var name="structureName" value="WC Structure Name" />
-			<var name="templateName" value="WC Template Name" />
-			<var name="webContentText" value="WC WebContent Text" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="WebContent#viewTitle">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Global" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContent#viewWithStructureCP">
-			<var name="webContentText" value="WC WebContent Text" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page 1" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#configureSiteScopePG">
-			<var name="siteName" value="Global" />
-			<var name="siteScopeType" value="Global" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page 1" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#configureSiteScopeRemoveSitePG">
-			<var name="siteName" value="Liferay" />
-			<var name="siteScopeType" value="Current Site" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page 1" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewAssetPG">
-			<var name="assetContent" value="WC WebContent Text" />
-			<var name="assetTitle" value="WC WebContent Title" />
-		</execute>
-	</command>
-
-	<command name="AddWebContentWithStructureAndGlobalScopeViaCPToSiteAP" priority="3">
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Global" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoManageStructures" />
-
-		<execute macro="WebContentStructures#addCP">
-			<var name="structureDescription" value="WC Structure Description" />
-			<var name="structureName" value="WC Structure Name" />
-		</execute>
-
-		<execute macro="DynamicDataMapping#addField">
-			<var name="field" value="Text" />
-			<var name="fieldFieldLabel" value="Text" />
-			<var name="fieldName" value="Text" />
-		</execute>
-
-		<execute macro="WebContentStructures#saveCP">
-			<var name="structureName" value="WC Structure Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Global" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoManageTemplates" />
-
-		<execute macro="WebContentTemplates#addCP">
-			<var name="structureName" value="WC Structure Name" />
-			<var name="templateDescription" value="WC Template Description" />
-			<var name="templateFieldNames" value="Text" />
-			<var name="templateLanguage" value="ftl" />
-			<var name="templateName" value="WC Template Name" />
-		</execute>
-
-		<execute macro="WebContentTemplates#addStructure">
-			<var name="structureName" value="WC Structure Name" />
-			<var name="templateFieldNames" value="Text" />
-			<var name="templateLanguage" value="ftl" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Global" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddWithStructureCP">
-			<var name="structureName" value="WC Structure Name" />
-		</execute>
-
-		<execute macro="WebContent#addWithStructureCP">
-			<var name="structureName" value="WC Structure Name" />
-			<var name="templateName" value="WC Template Name" />
-			<var name="webContentText" value="WC WebContent Text" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="WebContent#viewTitle">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Global" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContent#viewWithStructureCP">
-			<var name="webContentText" value="WC WebContent Text" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Test Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Test Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#configureSiteScopePG">
-			<var name="siteName" value="Global" />
-			<var name="siteScopeType" value="Global" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Test Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#configureSiteScopeRemoveSitePG">
-			<var name="siteName" value="Site Name" />
-			<var name="siteScopeType" value="Current Site" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Test Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewAssetPG">
-			<var name="assetContent" value="WC WebContent Text" />
-			<var name="assetTitle" value="WC WebContent Title" />
-		</execute>
-	</command>
-
-	<command name="DisplayWebContentTagViaAP" priority="4">
-		<execute macro="Page#add">
-			<var name="pageName" value="Tags Navigation Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Tags Navigation Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Tags Navigation" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Tags Navigation Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#configureShowMetadataFieldsPG">
-			<var name="addMetadata" value="true" />
-			<var name="metadataFieldList" value="Tags" />
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Tags" />
-		</execute>
-
-		<execute macro="Tag#addCP">
-			<var name="tagName" value="tag name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addWithTagCP">
-			<var name="tagNameList" value="tag name" />
-			<var name="webContentContent" value="Web Content Content" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Tags Navigation Page" />
-		</execute>
-
-		<execute macro="TagsNavigationPortlet#viewDefaultPG">
-			<var name="tagNameList" value="tag name" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewPG">
-			<var name="assetContent" value="Web Content Content" />
-			<var name="assetTitle" value="Web Content Title" />
-			<var name="tagName" value="tag name" />
-		</execute>
-	</command>
-
-	<command name="SaveAsDraftWebContentPGViaAP" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="WebContent#addDraftPGViaAP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC Webcontent Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoViewStatus">
-			<var name="webContentStatus" value="Draft" />
-			<var name="webContentTitle" value="WC Webcontent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewStatus">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentStatus" value="Draft" />
-			<var name="webContentTitle" value="WC Webcontent Title" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.component.names|Asset Publisher,Web Content Administration|
+		|testray.main.component.name|Asset Publisher|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Asset Publisher Page|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	Then Portlet add PG
+		|portletName|Asset Publisher|
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Web Content PG Via AP
+Priority: 4
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When ProductMenu goto Site
+		|site|${siteName}|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And WebContent add PG Via AP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC Webcontent Title|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	Then WebContent view PG Via AP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC Webcontent Title|
+Scenario: Add Web Content With Global Scope Via CP To Liferay AP
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|PGAssetpublisherWebcontent#AddWebContentWithGlobalScopeViaCPToLiferayAP|
+	When ProductMenu goto Site
+		|site|Global|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|WC WebContent Title|
+	And Navigator open URL
+	And Page add
+		|pageName|Test Page 1|
+	And Portlet add PG
+		|portletName|Asset Publisher|
+	And AssetPublisherPortlet configure Site Scope PG
+		|siteName|Global|
+		|siteScopeType|Global|
+	And Navigator goto Page
+		|pageName|Test Page 1|
+	And AssetPublisherPortlet configure Site Scope Remove Site PG
+		|siteName|Liferay|
+		|siteScopeType|Current Site|
+	And Navigator goto Page
+		|pageName|Test Page 1|
+	And AssetPublisherPortlet view Asset PG
+		|assetContent|WC WebContent Content|
+		|assetTitle|WC WebContent Title|
+	And ProductMenu goto Site
+		|site|Global|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Edit CP
+		|webContentTitle|WC WebContent Title|
+	And WebContent edit CP
+		|webContentContentEdit|WC WebContent Content Edit|
+		|webContentTitle|WC WebContent Title|
+		|webContentTitleEdit|WC WebContent Title Edit|
+	And Navigator goto Page
+		|pageName|Test Page 1|
+	And AssetPublisherPortlet view Asset PG
+		|assetContent|WC WebContent Content Edit|
+		|assetTitle|WC WebContent Title Edit|
+	And ProductMenu goto Site
+		|site|Global|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContent delete CP
+		|siteScopeName|Global|
+		|webContentTitle|WC WebContent Title Edit|
+	And Navigator goto Page
+		|pageName|Test Page 1|
+	And AssetPublisherPortlet view Asset Not Present PG
+		|assetContent|WC WebContent Content|
+		|assetTitle|WC WebContent Title|
+	And AssetPublisherPortlet view Asset Not Present PG
+		|assetContent|WC WebContent Content Edit|
+		|assetTitle|WC WebContent Title Edit|
+	Then AssetPublisherPortlet view Read More Link Not Present PG
+Scenario: Add Web Content With Global Scope Via CP To Site AP
+Priority: 4
+	Given ProductMenu goto Site
+		|site|Global|
+	When ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|WC WebContent Title|
+	And ProductMenu goto Site
+		|site|Global|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Edit CP
+		|webContentTitle|WC WebContent Title|
+	And WebContent view CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Test Page 1|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Site Test Page 1|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Asset Publisher|
+	And AssetPublisherPortlet configure Site Scope PG
+		|siteName|Global|
+		|siteScopeType|Global|
+	And Navigator goto Site Page
+		|pageName|Site Test Page 1|
+		|siteName|Site Name|
+	And AssetPublisherPortlet configure Site Scope Remove Site PG
+		|siteName|Site Name|
+		|siteScopeType|Current Site|
+	And Navigator goto Site Page
+		|pageName|Site Test Page 1|
+		|siteName|Site Name|
+	And AssetPublisherPortlet view Asset PG
+		|assetContent|WC WebContent Content|
+		|assetTitle|WC WebContent Title|
+	And ProductMenu goto Site
+		|site|Global|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Edit CP
+		|webContentTitle|WC WebContent Title|
+	And WebContent edit CP
+		|webContentContentEdit|WC WebContent Content Edit|
+		|webContentTitle|WC WebContent Title|
+		|webContentTitleEdit|WC WebContent Title Edit|
+	And Navigator goto Site Page
+		|pageName|Site Test Page 1|
+		|siteName|Site Name|
+	And AssetPublisherPortlet view Asset PG
+		|assetContent|WC WebContent Content Edit|
+		|assetTitle|WC WebContent Title Edit|
+	And ProductMenu goto Site
+		|site|Global|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContent delete CP
+		|siteScopeName|Global|
+		|webContentTitle|WC WebContent Title Edit|
+	And Navigator goto Site Page
+		|pageName|Site Test Page 1|
+		|siteName|Site Name|
+	And AssetPublisherPortlet view Asset Not Present PG
+		|assetContent|WC WebContent Content|
+		|assetTitle|WC WebContent Title|
+	And AssetPublisherPortlet view Asset Not Present PG
+		|assetContent|WC WebContent Content Edit|
+		|assetTitle|WC WebContent Title Edit|
+	Then AssetPublisherPortlet view Read More Link Not Present PG
+Scenario: Add Web Content With Structure And Global Scope Via CP To Liferay AP
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|PGAssetpublisherWebcontent#AddWebContentWithStructureAndGlobalScopeViaCPToLiferayAP|
+	When ProductMenu goto Site
+		|site|Global|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Manage Structures
+	And WebContentStructures add CP
+		|structureDescription|WC Structure Description|
+		|structureName|WC Structure Name|
+	And DynamicDataMapping add Field
+		|field|Text|
+		|fieldFieldLabel|Text|
+		|fieldName|Text|
+	And WebContentStructures save CP
+		|structureName|WC Structure Name|
+	And ProductMenu goto Site
+		|site|Global|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Manage Templates
+	And WebContentTemplates add CP
+		|structureName|WC Structure Name|
+		|templateDescription|WC Template Description|
+		|templateFieldNames|Text|
+		|templateLanguage|ftl|
+		|templateName|WC Template Name|
+	And WebContentTemplates add Structure
+		|structureName|WC Structure Name|
+		|templateFieldNames|Text|
+		|templateLanguage|ftl|
+	And PortletEntry save
+	And Navigator open URL
+	And ProductMenu goto Site
+		|site|Global|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add With Structure CP
+		|structureName|WC Structure Name|
+	And WebContent add With Structure CP
+		|structureName|WC Structure Name|
+		|templateName|WC Template Name|
+		|webContentText|WC WebContent Text|
+		|webContentTitle|WC WebContent Title|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|WC WebContent Title|
+	And ProductMenu goto Site
+		|site|Global|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContent view With Structure CP
+		|webContentText|WC WebContent Text|
+		|webContentTitle|WC WebContent Title|
+	And Navigator open URL
+	And Page add
+		|pageName|Test Page 1|
+	And Portlet add PG
+		|portletName|Asset Publisher|
+	And AssetPublisherPortlet configure Site Scope PG
+		|siteName|Global|
+		|siteScopeType|Global|
+	And Navigator goto Page
+		|pageName|Test Page 1|
+	And AssetPublisherPortlet configure Site Scope Remove Site PG
+		|siteName|Liferay|
+		|siteScopeType|Current Site|
+	And Navigator goto Page
+		|pageName|Test Page 1|
+	Then AssetPublisherPortlet view Asset PG
+		|assetContent|WC WebContent Text|
+		|assetTitle|WC WebContent Title|
+Scenario: Add Web Content With Structure And Global Scope Via CP To Site AP
+Priority: 3
+	Given ProductMenu goto Site
+		|site|Global|
+	When ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Manage Structures
+	And WebContentStructures add CP
+		|structureDescription|WC Structure Description|
+		|structureName|WC Structure Name|
+	And DynamicDataMapping add Field
+		|field|Text|
+		|fieldFieldLabel|Text|
+		|fieldName|Text|
+	And WebContentStructures save CP
+		|structureName|WC Structure Name|
+	And ProductMenu goto Site
+		|site|Global|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Manage Templates
+	And WebContentTemplates add CP
+		|structureName|WC Structure Name|
+		|templateDescription|WC Template Description|
+		|templateFieldNames|Text|
+		|templateLanguage|ftl|
+		|templateName|WC Template Name|
+	And WebContentTemplates add Structure
+		|structureName|WC Structure Name|
+		|templateFieldNames|Text|
+		|templateLanguage|ftl|
+	And PortletEntry save
+	And Navigator open URL
+	And ProductMenu goto Site
+		|site|Global|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add With Structure CP
+		|structureName|WC Structure Name|
+	And WebContent add With Structure CP
+		|structureName|WC Structure Name|
+		|templateName|WC Template Name|
+		|webContentText|WC WebContent Text|
+		|webContentTitle|WC WebContent Title|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|WC WebContent Title|
+	And ProductMenu goto Site
+		|site|Global|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContent view With Structure CP
+		|webContentText|WC WebContent Text|
+		|webContentTitle|WC WebContent Title|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Test Page 1|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Site Test Page 1|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Asset Publisher|
+	And AssetPublisherPortlet configure Site Scope PG
+		|siteName|Global|
+		|siteScopeType|Global|
+	And Navigator goto Site Page
+		|pageName|Site Test Page 1|
+		|siteName|Site Name|
+	And AssetPublisherPortlet configure Site Scope Remove Site PG
+		|siteName|Site Name|
+		|siteScopeType|Current Site|
+	And Navigator goto Site Page
+		|pageName|Site Test Page 1|
+		|siteName|Site Name|
+	Then AssetPublisherPortlet view Asset PG
+		|assetContent|WC WebContent Text|
+		|assetTitle|WC WebContent Title|
+Scenario: Display Web Content Tag Via AP
+Priority: 4
+	Given Page add
+		|pageName|Tags Navigation Page|
+	When Navigator goto Page
+		|pageName|Tags Navigation Page|
+	And Portlet add PG
+		|portletName|Tags Navigation|
+	And Navigator goto Page
+		|pageName|Tags Navigation Page|
+	And Portlet add PG
+		|portletName|Asset Publisher|
+	And AssetPublisherPortlet configure Show Metadata Fields PG
+		|addMetadata|true|
+		|metadataFieldList|Tags|
+		|portletName|Asset Publisher|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Tags|
+	And Tag add CP
+		|tagName|tag name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Tag CP
+		|tagNameList|tag name|
+		|webContentContent|Web Content Content|
+		|webContentTitle|Web Content Title|
+	And Navigator goto Page
+		|pageName|Tags Navigation Page|
+	And TagsNavigationPortlet view Default PG
+		|tagNameList|tag name|
+	Then AssetPublisherPortlet view PG
+		|assetContent|Web Content Content|
+		|assetTitle|Web Content Title|
+		|tagName|tag name|
+Scenario: Save As Draft Web Content PG Via AP
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Asset Publisher Page|
+	When WebContent add Draft PG Via AP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC Webcontent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto View Status
+		|webContentStatus|Draft|
+		|webContentTitle|WC Webcontent Title|
+	Then WebContent view Status
+		|webContentContent|WC WebContent Content|
+		|webContentStatus|Draft|
+		|webContentTitle|WC Webcontent Title|

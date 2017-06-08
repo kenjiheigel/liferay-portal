@@ -1,26 +1,24 @@
-<definition component-name="portal-smoke">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Smoke" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Smoke|
 
-		<execute macro="SignIn#signInTestSetup" />
-	</set-up>
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When SignIn sign In Test Setup
 
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command description="Ensure that the super admin can add pages, add portlets, navigate to the product menu, use the WYSIWYG editor, and view alert messages." name="Smoke" priority="5">
-		<property name="portal.smoke" value="true" />
-		<property name="test.assert.warning.exceptions" value="true" />
-
-		<execute macro="Smoke#viewWelcomePage" />
-
-		<execute macro="Smoke#runSmoke" />
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Smoke
+Description: Ensure that the super admin can add pages, add portlets, navigate to the product menu, use the WYSIWYG editor, and view alert messages.
+Priority: 5
+	Given these properties
+		|portal.smoke|true|
+	When these properties
+		|test.assert.warning.exceptions|true|
+	And Smoke view Welcome Page
+	Then Smoke run Smoke

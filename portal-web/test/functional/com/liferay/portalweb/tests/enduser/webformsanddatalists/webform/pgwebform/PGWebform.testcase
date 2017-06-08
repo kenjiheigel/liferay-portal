@@ -1,946 +1,1089 @@
-<definition component-name="portal-web-forms-and-data-lists">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Web Form" />
-
-	<property name="osgi.app.includes" value="web-form" />
-
-	<var name="pageName" value="Web Form Test Page" />
-	<var name="portletName" value="Web Form" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="${portletName}" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="EditAndSendWebFormWithRequiredCheckbox" priority="4">
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebFormPortlet#configureSetupFormFieldsPG">
-			<var name="wfInformationDescription" value="Please let us know what you think!" />
-			<var name="wfInformationTitle" value="Feed Back" />
-		</execute>
-
-		<execute macro="WebFormPortlet#editField">
-			<var name="wfFieldName" value="Name" />
-			<var name="wfNewFieldName" value="Your Name" />
-		</execute>
-
-		<execute macro="WebFormPortlet#editField">
-			<var name="wfFieldName" value="Rating" />
-			<var name="wfFieldType" value="Check Box" />
-			<var name="wfNewFieldName" value="Rate Us!" />
-		</execute>
-
-		<execute macro="WebFormPortlet#editField">
-			<var name="wfFieldName" value="Comments" />
-			<var name="wfNewFieldName" value="Additional Comments" />
-		</execute>
-
-		<execute macro="WebFormPortlet#saveConfiguration" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Please let us know what you think!" />
-			<var name="wfInformationTitle" value="Feed Back" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldText">
-			<var name="wfFieldName" value="Your Name" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldCheckBox">
-			<var name="wfFieldName" value="Rate Us!" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldTextBox">
-			<var name="wfFieldName" value="Additional Comments" />
-		</execute>
-
-		<execute macro="WebForm#populateFieldText">
-			<var name="wfFieldName" value="Your Name" />
-			<var name="wfFieldValue" value="New Name" />
-		</execute>
-
-		<execute macro="WebForm#populateFieldCheckBox">
-			<var name="wfFieldName" value="Rate Us!" />
-			<var name="wfFieldValue" value="true" />
-		</execute>
-
-		<execute macro="WebForm#populateFieldTextBox">
-			<var name="wfFieldName" value="Additional Comments" />
-			<var name="wfFieldValue" value="Page Objects + Hashi = Poshi" />
-		</execute>
-
-		<execute macro="WebForm#sendPG" />
-	</command>
-
-	<command name="EditWebForm" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldText">
-			<var name="wfFieldName" value="Name" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldOptions">
-			<var name="wfFieldName" value="Rating" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldTextBox">
-			<var name="wfFieldName" value="Comments" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebFormPortlet#configureSetupFormFieldsPG">
-			<var name="wfInformationDescription" value="Please let us know what you think!" />
-			<var name="wfInformationTitle" value="Feed Back" />
-		</execute>
-
-		<execute macro="WebFormPortlet#editField">
-			<var name="wfFieldName" value="Name" />
-			<var name="wfNewFieldName" value="Your Name" />
-		</execute>
-
-		<execute macro="WebFormPortlet#editField">
-			<var name="wfFieldName" value="Rating" />
-			<var name="wfFieldType" value="Check Box" />
-			<var name="wfNewFieldName" value="Rate Us!" />
-		</execute>
-
-		<execute macro="WebFormPortlet#editField">
-			<var name="wfFieldName" value="Comments" />
-			<var name="wfNewFieldName" value="Additional Comments" />
-		</execute>
-
-		<execute macro="WebFormPortlet#saveConfiguration" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Please let us know what you think!" />
-			<var name="wfInformationTitle" value="Feed Back" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldText">
-			<var name="wfFieldName" value="Your Name" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldCheckBox">
-			<var name="wfFieldName" value="Rate Us!" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldTextBox">
-			<var name="wfFieldName" value="Additional Comments" />
-			<var name="wfFieldType" value="Text Box" />
-		</execute>
-	</command>
-
-	<command name="EditWebFormAndViewMultipleFields" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldText">
-			<var name="wfFieldName" value="Name" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldOptions">
-			<var name="wfFieldName" value="Rating" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldTextBox">
-			<var name="wfFieldName" value="Comments" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebFormPortlet#configureSetupFormFieldsPG">
-			<var name="wfInformationDescription" value="Please let us know what you think!" />
-			<var name="wfInformationTitle" value="Feed Back" />
-		</execute>
-
-		<execute macro="WebFormPortlet#editField">
-			<var name="wfFieldName" value="Name" />
-			<var name="wfNewFieldName" value="Test 1" />
-		</execute>
-
-		<execute macro="WebFormPortlet#addField">
-			<var name="wfFieldName" value="Name" />
-			<var name="wfNewFieldName" value="Test 2" />
-			<var name="wfPreviousFieldName" value="Test 1" />
-		</execute>
-
-		<execute macro="WebFormPortlet#editField">
-			<var name="wfFieldName" value="Rating" />
-			<var name="wfFieldType" value="Check Box" />
-			<var name="wfNewFieldName" value="Rate Us!" />
-		</execute>
-
-		<execute macro="WebFormPortlet#editField">
-			<var name="wfFieldName" value="Comments" />
-			<var name="wfNewFieldName" value="Additional Comments" />
-		</execute>
-
-		<execute macro="WebFormPortlet#saveConfiguration" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Please let us know what you think!" />
-			<var name="wfInformationTitle" value="Feed Back" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="xpath=(//div[contains(@class,'form-group')]/label[contains(@for,'WebFormPortlet')])[1]" value1="Test 1" />
-		<execute function="AssertElementPresent" locator1="xpath=(//fieldset/div/div[contains(@class,'form-group')]/input[@type='text'])[1]" />
-		<execute function="AssertTextEquals" locator1="xpath=(//div[contains(@class,'form-group')]/label[contains(@for,'WebFormPortlet')])[2]" value1="Test 2" />
-		<execute function="AssertElementPresent" locator1="xpath=(//fieldset/div/div[contains(@class,'form-group')]/input[@type='text'])[2]" />
-		<execute function="AssertTextEquals" locator1="xpath=(//div[contains(@class,'form-group')]/label[contains(@for,'WebFormPortlet')])[3]" value1="Rate Us!" />
-		<execute function="AssertElementPresent" locator1="//div[contains(@class,'checkbox')]//input[@type='checkbox']" />
-		<execute function="AssertTextEquals" locator1="xpath=(//div[contains(@class,'form-group')]/label[contains(@for,'WebFormPortlet')])[4]" value1="Additional Comments" />
-		<execute function="AssertElementPresent" locator1="//fieldset/div/div[contains(@class,'form-group')]/textarea" />
-	</command>
-
-	<command name="EditWebFormAndViewOptionalCheckBoxField" priority="3">
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebFormPortlet#configureSetupFormFieldsPG" />
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Name" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Rating" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Comments" />
-		</execute>
-
-		<execute macro="WebFormPortlet#editField">
-			<var name="optional" value="true" />
-			<var name="wfFieldName" value="New Item" />
-			<var name="wfFieldType" value="Check Box" />
-			<var name="wfNewFieldName" value="Test Check Box Field" />
-		</execute>
-
-		<execute macro="WebFormPortlet#saveConfiguration" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldCheckBox">
-			<var name="wfFieldName" value="Test Check Box Field" />
-		</execute>
-
-		<execute macro="WebForm#sendPG" />
-	</command>
-
-	<command name="EditWebFormAndViewOptionalOptionsField" priority="4">
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebFormPortlet#configureSetupFormFieldsPG" />
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Name" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Rating" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Comments" />
-		</execute>
-
-		<execute macro="WebFormPortlet#editField">
-			<var name="optional" value="true" />
-			<var name="wfFieldName" value="New Item" />
-			<var name="wfFieldType" value="Options" />
-			<var name="wfNewFieldName" value="Test Options Field" />
-		</execute>
-
-		<execute macro="WebFormPortlet#saveConfiguration" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldOptions">
-			<var name="wfFieldName" value="Test Options Field" />
-		</execute>
-
-		<execute macro="WebForm#sendPG" />
-	</command>
-
-	<command name="EditWebFormAndViewOptionalRadioField" priority="4">
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebFormPortlet#configureSetupFormFieldsPG" />
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Name" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Rating" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Comments" />
-		</execute>
-
-		<execute macro="WebFormPortlet#editField">
-			<var name="optional" value="true" />
-			<var name="optionsList" value="1,2,3" />
-			<var name="wfFieldName" value="New Item" />
-			<var name="wfFieldType" value="Radio Buttons" />
-			<var name="wfNewFieldName" value="Test Radio Field" />
-		</execute>
-
-		<execute macro="WebFormPortlet#saveConfiguration" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldRadio">
-			<var name="optionsList" value="1,2,3" />
-			<var name="wfFieldName" value="Test Radio Field" />
-		</execute>
-
-		<execute macro="WebForm#sendPG" />
-	</command>
-
-	<command name="EditWebFormAndViewOptionalTextBoxField" priority="3">
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebFormPortlet#configureSetupFormFieldsPG" />
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Name" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Rating" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Comments" />
-		</execute>
-
-		<execute macro="WebFormPortlet#editField">
-			<var name="optional" value="true" />
-			<var name="wfFieldName" value="New Item" />
-			<var name="wfFieldType" value="Text Box" />
-			<var name="wfNewFieldName" value="Test Text Box Field" />
-		</execute>
-
-		<execute macro="WebFormPortlet#saveConfiguration" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldTextBox">
-			<var name="wfFieldName" value="Test Text Box Field" />
-		</execute>
-
-		<execute macro="WebForm#sendPG" />
-	</command>
-
-	<command name="EditWebFormAndViewOptionalTextField" priority="4">
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebFormPortlet#configureSetupFormFieldsPG" />
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Name" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Rating" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Comments" />
-		</execute>
-
-		<execute macro="WebFormPortlet#editField">
-			<var name="optional" value="true" />
-			<var name="wfFieldName" value="New Item" />
-			<var name="wfFieldType" value="Text" />
-			<var name="wfNewFieldName" value="Test Text Field" />
-		</execute>
-
-		<execute macro="WebFormPortlet#saveConfiguration" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldText">
-			<var name="wfFieldName" value="Test Text Field" />
-		</execute>
-
-		<execute macro="WebForm#sendPG" />
-	</command>
-
-	<command name="EditWebFormAndViewParagraphField" priority="4">
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebFormPortlet#configureSetupFormFieldsPG" />
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Name" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Rating" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Comments" />
-		</execute>
-
-		<execute macro="WebFormPortlet#editField">
-			<var name="wfFieldName" value="New Item" />
-			<var name="wfFieldType" value="Paragraph" />
-			<var name="wfNewFieldName" value="Test Paragraph Field" />
-		</execute>
-
-		<execute macro="WebFormPortlet#editParagraphField">
-			<var name="wfNewFieldName" value="Test Paragraph Field" />
-			<var name="wfParagraphFieldText" value="Hello Liferay. This is the Test Paragraph Field." />
-		</execute>
-
-		<execute macro="WebFormPortlet#addField">
-			<var name="wfFieldType" value="Text" />
-			<var name="wfNewFieldName" value="Test Text Field" />
-			<var name="wfPreviousFieldName" value="Test Paragraph Field" />
-		</execute>
-
-		<execute macro="WebFormPortlet#saveConfiguration" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldParagraph">
-			<var name="wfParagraphFieldText" value="Hello Liferay. This is the Test Paragraph Field." />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldText">
-			<var name="wfFieldName" value="Test Text Field" />
-		</execute>
-
-		<execute macro="WebForm#populateFieldText">
-			<var name="wfFieldName" value="Test Text Field" />
-			<var name="wfFieldValue" value="Welcome to Liferay." />
-		</execute>
-
-		<execute macro="WebForm#sendPG" />
-	</command>
-
-	<command name="EditWebFormAndViewRequiredCheckBoxField" priority="3">
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebFormPortlet#configureSetupFormFieldsPG" />
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Name" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Rating" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Comments" />
-		</execute>
-
-		<execute macro="WebFormPortlet#editField">
-			<var name="wfFieldName" value="New Item" />
-			<var name="wfFieldType" value="Check Box" />
-			<var name="wfNewFieldName" value="Test Check Box Field" />
-		</execute>
-
-		<execute macro="WebFormPortlet#saveConfiguration" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldCheckBox">
-			<var name="wfFieldName" value="Test Check Box Field" />
-		</execute>
-
-		<execute macro="WebForm#sendBlankPG" />
-
-		<execute macro="WebForm#populateFieldCheckBox">
-			<var name="wfFieldName" value="Test Check Box Field" />
-			<var name="wfFieldValue" value="true" />
-		</execute>
-
-		<execute macro="WebForm#sendPG" />
-	</command>
-
-	<command name="EditWebFormAndViewRequiredOptionsField" priority="4">
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebFormPortlet#configureSetupFormFieldsPG" />
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Name" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Rating" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Comments" />
-		</execute>
-
-		<execute macro="WebFormPortlet#editField">
-			<var name="wfFieldName" value="New Item" />
-			<var name="wfFieldType" value="Options" />
-			<var name="wfNewFieldName" value="Test Options Field" />
-		</execute>
-
-		<execute macro="WebFormPortlet#saveConfiguration" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldOptions">
-			<var name="wfFieldName" value="Test Options Field" />
-		</execute>
-
-		<execute macro="WebForm#sendBlankPG" />
-
-		<execute macro="WebFormPortlet#configureSetupFormFieldsPG" />
-
-		<execute macro="WebFormPortlet#editField">
-			<var name="optionsList" value="1,2,3" />
-			<var name="wfFieldName" value="Test Options Field" />
-			<var name="wfFieldType" value="Options" />
-			<var name="wfNewFieldName" value="Test Options Field" />
-		</execute>
-
-		<execute macro="WebFormPortlet#saveConfiguration" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldOptions">
-			<var name="wfFieldName" value="Test Options Field" />
-		</execute>
-
-		<execute macro="WebForm#sendPG" />
-	</command>
-
-	<command name="EditWebFormAndViewRequiredRadioField" priority="3">
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebFormPortlet#configureSetupFormFieldsPG" />
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Name" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Rating" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Comments" />
-		</execute>
-
-		<execute macro="WebFormPortlet#editField">
-			<var name="optionsList" value="1,2,3" />
-			<var name="wfFieldName" value="New Item" />
-			<var name="wfFieldType" value="Radio Buttons" />
-			<var name="wfNewFieldName" value="Test Radio Field" />
-		</execute>
-
-		<execute macro="WebFormPortlet#saveConfiguration" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldRadio">
-			<var name="optionsList" value="1,2,3" />
-			<var name="wfFieldName" value="Test Radio Field" />
-		</execute>
-
-		<execute macro="WebForm#sendBlankPG" />
-
-		<execute macro="WebForm#populateFieldRadio">
-			<var name="wfFieldName" value="Test Radio Field" />
-			<var name="wfFieldValue" value="2" />
-		</execute>
-
-		<execute macro="WebForm#sendPG" />
-	</command>
-
-	<command name="EditWebFormAndViewRequiredTextBoxField" priority="3">
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebFormPortlet#configureSetupFormFieldsPG" />
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Name" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Rating" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Comments" />
-		</execute>
-
-		<execute macro="WebFormPortlet#editField">
-			<var name="wfFieldName" value="New Item" />
-			<var name="wfFieldType" value="Text Box" />
-			<var name="wfNewFieldName" value="Test Text Box Field" />
-		</execute>
-
-		<execute macro="WebFormPortlet#saveConfiguration" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldTextBox">
-			<var name="wfFieldName" value="Test Text Box Field" />
-		</execute>
-
-		<execute macro="WebForm#sendBlankPG" />
-
-		<execute macro="WebForm#populateFieldTextBox">
-			<var name="wfFieldName" value="Test Text Box Field" />
-			<var name="wfFieldValue" value="Page Objects + Hashi = Poshi" />
-		</execute>
-
-		<execute macro="WebForm#sendPG" />
-	</command>
-
-	<command name="EditWebFormAndViewRequiredTextField" priority="4">
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebFormPortlet#configureSetupFormFieldsPG" />
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Name" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Rating" />
-		</execute>
-
-		<execute macro="WebFormPortlet#deleteEditableField">
-			<var name="wfFieldName" value="Comments" />
-		</execute>
-
-		<execute macro="WebFormPortlet#editField">
-			<var name="wfFieldName" value="New Item" />
-			<var name="wfFieldType" value="Text" />
-			<var name="wfNewFieldName" value="Test Text Field" />
-		</execute>
-
-		<execute macro="WebFormPortlet#saveConfiguration" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebForm#viewPG">
-			<var name="wfInformationDescription" value="Your input is valuable to us. Please send us your suggestions." />
-			<var name="wfInformationTitle" value="Suggestions" />
-		</execute>
-
-		<execute macro="WebForm#viewFormFieldText">
-			<var name="wfFieldName" value="Test Text Field" />
-		</execute>
-
-		<execute macro="WebForm#sendBlankPG" />
-
-		<execute macro="WebForm#populateFieldText">
-			<var name="wfFieldName" value="Test Text Field" />
-			<var name="wfFieldValue" value="Hello" />
-		</execute>
-
-		<execute macro="WebForm#sendPG" />
-	</command>
-
-	<command name="SendWebForm" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute function="SelectFrame" locator1="WebFormConfiguration#CONFIGURATION_IFRAME" />
-
-		<execute macro="WebFormPortlet#viewEditableField">
-			<var name="wfFieldName" value="Name" />
-		</execute>
-
-		<execute macro="WebFormPortlet#viewEditableField">
-			<var name="wfFieldName" value="Rating" />
-		</execute>
-
-		<execute macro="WebFormPortlet#viewEditableField">
-			<var name="wfFieldName" value="Comments" />
-		</execute>
-
-		<execute function="SelectFrameTop" value1="relative=top" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WebForm#populateFieldText">
-			<var name="wfFieldName" value="Name" />
-			<var name="wfFieldValue" value="Test Test" />
-		</execute>
-
-		<execute macro="WebForm#populateFieldOptions">
-			<var name="wfFieldName" value="Rating" />
-			<var name="wfFieldValue" value="Excellent" />
-		</execute>
-
-		<execute macro="WebForm#populateFieldTextBox">
-			<var name="wfFieldName" value="Comments" />
-			<var name="wfFieldValue" value="Page Objects + Hashi = Poshi" />
-		</execute>
-
-		<execute macro="WebForm#sendPG" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute function="SelectFrame" locator1="WebFormConfiguration#CONFIGURATION_IFRAME" />
-		<execute function="AssertTextEquals" locator1="WebFormConfiguration#SETUP_FORM_FIELDS_INFO_MESSAGE" value1="There is existing form data. Please export and delete it before making changes to the fields." />
-
-		<execute macro="WebFormPortlet#viewEditableFieldNotPresent">
-			<var name="wfFieldName" value="Name" />
-		</execute>
-
-		<execute macro="WebFormPortlet#viewSubmittedField">
-			<var name="wfFieldName" value="Name" />
-			<var name="wfFieldType" value="Text" />
-		</execute>
-
-		<execute macro="WebFormPortlet#viewEditableFieldNotPresent">
-			<var name="wfFieldName" value="Rating" />
-		</execute>
-
-		<execute macro="WebFormPortlet#viewSubmittedField">
-			<var name="optionsList" value="Excellent,Good,Satisfactory,Poor" />
-			<var name="wfFieldName" value="Rating" />
-			<var name="wfFieldType" value="Options" />
-		</execute>
-
-		<execute macro="WebFormPortlet#viewEditableFieldNotPresent">
-			<var name="wfFieldName" value="Comments" />
-		</execute>
-
-		<execute macro="WebFormPortlet#viewSubmittedField">
-			<var name="wfFieldName" value="Comments" />
-			<var name="wfFieldType" value="Text Box" />
-		</execute>
-
-		<execute function="SelectFrameTop" value1="relative=top" />
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Web Form|
+		|osgi.app.includes|web-form|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Web Form|
+		|osgi.app.includes|web-form|
+		|pageName|Web Form Test Page|
+		|portletName|Web Form|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|${pageName}|
+	And Navigator goto Page
+		|pageName|${pageName}|
+	Then Portlet add PG
+		|portletName|${portletName}|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Edit And Send Web Form With Required Checkbox
+Priority: 4
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+		|wfInformationDescription|Please let us know what you think!|
+		|wfInformationTitle|Feed Back|
+	And WebFormPortlet edit Field
+		|wfFieldName|Name|
+		|wfNewFieldName|Your Name|
+	And WebFormPortlet edit Field
+		|wfFieldName|Rating|
+		|wfFieldType|Check Box|
+		|wfNewFieldName|Rate Us!|
+	And WebFormPortlet edit Field
+		|wfFieldName|Comments|
+		|wfNewFieldName|Additional Comments|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Please let us know what you think!|
+		|wfInformationTitle|Feed Back|
+	And WebForm view Form Field Text
+		|wfFieldName|Your Name|
+	And WebForm view Form Field Check Box
+		|wfFieldName|Rate Us!|
+	And WebForm view Form Field Text Box
+		|wfFieldName|Additional Comments|
+	And WebForm populate Field Text
+		|wfFieldName|Your Name|
+		|wfFieldValue|New Name|
+	And WebForm populate Field Check Box
+		|wfFieldName|Rate Us!|
+		|wfFieldValue|true|
+	And WebForm populate Field Text Box
+		|wfFieldName|Additional Comments|
+		|wfFieldValue|Page Objects + Hashi = Poshi|
+	Then WebForm send PG
+Scenario: Edit Web Form
+Priority: 4
+	Given Navigator goto Page
+		|pageName|${pageName}|
+	When WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Text
+		|wfFieldName|Name|
+	And WebForm view Form Field Options
+		|wfFieldName|Rating|
+	And WebForm view Form Field Text Box
+		|wfFieldName|Comments|
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+		|wfInformationDescription|Please let us know what you think!|
+		|wfInformationTitle|Feed Back|
+	And WebFormPortlet edit Field
+		|wfFieldName|Name|
+		|wfNewFieldName|Your Name|
+	And WebFormPortlet edit Field
+		|wfFieldName|Rating|
+		|wfFieldType|Check Box|
+		|wfNewFieldName|Rate Us!|
+	And WebFormPortlet edit Field
+		|wfFieldName|Comments|
+		|wfNewFieldName|Additional Comments|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Please let us know what you think!|
+		|wfInformationTitle|Feed Back|
+	And WebForm view Form Field Text
+		|wfFieldName|Your Name|
+	And WebForm view Form Field Check Box
+		|wfFieldName|Rate Us!|
+	Then WebForm view Form Field Text Box
+		|wfFieldName|Additional Comments|
+		|wfFieldType|Text Box|
+Scenario: Edit Web Form And View Multiple Fields
+Priority: 4
+	Given Navigator goto Page
+		|pageName|${pageName}|
+	When WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Text
+		|wfFieldName|Name|
+	And WebForm view Form Field Options
+		|wfFieldName|Rating|
+	And WebForm view Form Field Text Box
+		|wfFieldName|Comments|
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+		|wfInformationDescription|Please let us know what you think!|
+		|wfInformationTitle|Feed Back|
+	And WebFormPortlet edit Field
+		|wfFieldName|Name|
+		|wfNewFieldName|Test 1|
+	And WebFormPortlet add Field
+		|wfFieldName|Name|
+		|wfNewFieldName|Test 2|
+		|wfPreviousFieldName|Test 1|
+	And WebFormPortlet edit Field
+		|wfFieldName|Rating|
+		|wfFieldType|Check Box|
+		|wfNewFieldName|Rate Us!|
+	And WebFormPortlet edit Field
+		|wfFieldName|Comments|
+		|wfNewFieldName|Additional Comments|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Please let us know what you think!|
+		|wfInformationTitle|Feed Back|
+	And AssertTextEquals the value 'Test 1' at locator 'xpath=(//div[contains(@class,'form-group')]/label[contains(@for,'WebFormPortlet')])[1]'
+	And AssertElementPresent at locator 'xpath=(//fieldset/div/div[contains(@class,'form-group')]/input[@type='text'])[1]'
+	And AssertTextEquals the value 'Test 2' at locator 'xpath=(//div[contains(@class,'form-group')]/label[contains(@for,'WebFormPortlet')])[2]'
+	And AssertElementPresent at locator 'xpath=(//fieldset/div/div[contains(@class,'form-group')]/input[@type='text'])[2]'
+	And AssertTextEquals the value 'Rate Us!' at locator 'xpath=(//div[contains(@class,'form-group')]/label[contains(@for,'WebFormPortlet')])[3]'
+	And AssertElementPresent at locator '//div[contains(@class,'checkbox')]//input[@type='checkbox']'
+	And AssertTextEquals the value 'Additional Comments' at locator 'xpath=(//div[contains(@class,'form-group')]/label[contains(@for,'WebFormPortlet')])[4]'
+	Then AssertElementPresent at locator '//fieldset/div/div[contains(@class,'form-group')]/textarea'
+Scenario: Edit Web Form And View Optional Check Box Field
+Priority: 3
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|optional|true|
+		|wfFieldName|New Item|
+		|wfFieldType|Check Box|
+		|wfNewFieldName|Test Check Box Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Check Box
+		|wfFieldName|Test Check Box Field|
+	Then WebForm send PG
+Scenario: Edit Web Form And View Optional Options Field
+Priority: 4
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|optional|true|
+		|wfFieldName|New Item|
+		|wfFieldType|Options|
+		|wfNewFieldName|Test Options Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Options
+		|wfFieldName|Test Options Field|
+	Then WebForm send PG
+Scenario: Edit Web Form And View Optional Radio Field
+Priority: 4
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|optional|true|
+		|optionsList|1,2,3|
+		|wfFieldName|New Item|
+		|wfFieldType|Radio Buttons|
+		|wfNewFieldName|Test Radio Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Radio
+		|optionsList|1,2,3|
+		|wfFieldName|Test Radio Field|
+	Then WebForm send PG
+Scenario: Edit Web Form And View Optional Text Box Field
+Priority: 3
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|optional|true|
+		|wfFieldName|New Item|
+		|wfFieldType|Text Box|
+		|wfNewFieldName|Test Text Box Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Text Box
+		|wfFieldName|Test Text Box Field|
+	Then WebForm send PG
+Scenario: Edit Web Form And View Optional Text Field
+Priority: 4
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|optional|true|
+		|wfFieldName|New Item|
+		|wfFieldType|Text|
+		|wfNewFieldName|Test Text Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Text
+		|wfFieldName|Test Text Field|
+	Then WebForm send PG
+Scenario: Edit Web Form And View Paragraph Field
+Priority: 4
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|wfFieldName|New Item|
+		|wfFieldType|Paragraph|
+		|wfNewFieldName|Test Paragraph Field|
+	And WebFormPortlet edit Paragraph Field
+		|wfNewFieldName|Test Paragraph Field|
+		|wfParagraphFieldText|Hello Liferay. This is the Test Paragraph Field.|
+	And WebFormPortlet add Field
+		|wfFieldType|Text|
+		|wfNewFieldName|Test Text Field|
+		|wfPreviousFieldName|Test Paragraph Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Paragraph
+		|wfParagraphFieldText|Hello Liferay. This is the Test Paragraph Field.|
+	And WebForm view Form Field Text
+		|wfFieldName|Test Text Field|
+	And WebForm populate Field Text
+		|wfFieldName|Test Text Field|
+		|wfFieldValue|Welcome to Liferay.|
+	Then WebForm send PG
+Scenario: Edit Web Form And View Required Check Box Field
+Priority: 3
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|wfFieldName|New Item|
+		|wfFieldType|Check Box|
+		|wfNewFieldName|Test Check Box Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Check Box
+		|wfFieldName|Test Check Box Field|
+	And WebForm send Blank PG
+	And WebForm populate Field Check Box
+		|wfFieldName|Test Check Box Field|
+		|wfFieldValue|true|
+	Then WebForm send PG
+Scenario: Edit Web Form And View Required Options Field
+Priority: 4
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|wfFieldName|New Item|
+		|wfFieldType|Options|
+		|wfNewFieldName|Test Options Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Options
+		|wfFieldName|Test Options Field|
+	And WebForm send Blank PG
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet edit Field
+		|optionsList|1,2,3|
+		|wfFieldName|Test Options Field|
+		|wfFieldType|Options|
+		|wfNewFieldName|Test Options Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view Form Field Options
+		|wfFieldName|Test Options Field|
+	Then WebForm send PG
+Scenario: Edit Web Form And View Required Radio Field
+Priority: 3
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|optionsList|1,2,3|
+		|wfFieldName|New Item|
+		|wfFieldType|Radio Buttons|
+		|wfNewFieldName|Test Radio Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Radio
+		|optionsList|1,2,3|
+		|wfFieldName|Test Radio Field|
+	And WebForm send Blank PG
+	And WebForm populate Field Radio
+		|wfFieldName|Test Radio Field|
+		|wfFieldValue|2|
+	Then WebForm send PG
+Scenario: Edit Web Form And View Required Text Box Field
+Priority: 3
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|wfFieldName|New Item|
+		|wfFieldType|Text Box|
+		|wfNewFieldName|Test Text Box Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Text Box
+		|wfFieldName|Test Text Box Field|
+	And WebForm send Blank PG
+	And WebForm populate Field Text Box
+		|wfFieldName|Test Text Box Field|
+		|wfFieldValue|Page Objects + Hashi = Poshi|
+	Then WebForm send PG
+Scenario: Edit Web Form And View Required Text Field
+Priority: 4
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|wfFieldName|New Item|
+		|wfFieldType|Text|
+		|wfNewFieldName|Test Text Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Text
+		|wfFieldName|Test Text Field|
+	And WebForm send Blank PG
+	And WebForm populate Field Text
+		|wfFieldName|Test Text Field|
+		|wfFieldValue|Hello|
+	Then WebForm send PG
+Scenario: Send Web Form
+Priority: 4
+	Given Navigator goto Page
+		|pageName|${pageName}|
+	When Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And SelectFrame at locator 'WebFormConfiguration#CONFIGURATION_IFRAME'
+	And WebFormPortlet view Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet view Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet view Editable Field
+		|wfFieldName|Comments|
+	And SelectFrameTop the value 'relative=top'
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm populate Field Text
+		|wfFieldName|Name|
+		|wfFieldValue|Test Test|
+	And WebForm populate Field Options
+		|wfFieldName|Rating|
+		|wfFieldValue|Excellent|
+	And WebForm populate Field Text Box
+		|wfFieldName|Comments|
+		|wfFieldValue|Page Objects + Hashi = Poshi|
+	And WebForm send PG
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And SelectFrame at locator 'WebFormConfiguration#CONFIGURATION_IFRAME'
+	And AssertTextEquals the value 'There is existing form data. Please export and delete it before making changes to the fields.' at locator 'WebFormConfiguration#SETUP_FORM_FIELDS_INFO_MESSAGE'
+	And WebFormPortlet view Editable Field Not Present
+		|wfFieldName|Name|
+	And WebFormPortlet view Submitted Field
+		|wfFieldName|Name|
+		|wfFieldType|Text|
+	And WebFormPortlet view Editable Field Not Present
+		|wfFieldName|Rating|
+	And WebFormPortlet view Submitted Field
+		|optionsList|Excellent,Good,Satisfactory,Poor|
+		|wfFieldName|Rating|
+		|wfFieldType|Options|
+	And WebFormPortlet view Editable Field Not Present
+		|wfFieldName|Comments|
+	And WebFormPortlet view Submitted Field
+		|wfFieldName|Comments|
+		|wfFieldType|Text Box|
+	Then SelectFrameTop the value 'relative=top'
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|${pageName}|
+	And Navigator goto Page
+		|pageName|${pageName}|
+	Then Portlet add PG
+		|portletName|${portletName}|
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Edit And Send Web Form With Required Checkbox
+Priority: 4
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+		|wfInformationDescription|Please let us know what you think!|
+		|wfInformationTitle|Feed Back|
+	And WebFormPortlet edit Field
+		|wfFieldName|Name|
+		|wfNewFieldName|Your Name|
+	And WebFormPortlet edit Field
+		|wfFieldName|Rating|
+		|wfFieldType|Check Box|
+		|wfNewFieldName|Rate Us!|
+	And WebFormPortlet edit Field
+		|wfFieldName|Comments|
+		|wfNewFieldName|Additional Comments|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Please let us know what you think!|
+		|wfInformationTitle|Feed Back|
+	And WebForm view Form Field Text
+		|wfFieldName|Your Name|
+	And WebForm view Form Field Check Box
+		|wfFieldName|Rate Us!|
+	And WebForm view Form Field Text Box
+		|wfFieldName|Additional Comments|
+	And WebForm populate Field Text
+		|wfFieldName|Your Name|
+		|wfFieldValue|New Name|
+	And WebForm populate Field Check Box
+		|wfFieldName|Rate Us!|
+		|wfFieldValue|true|
+	And WebForm populate Field Text Box
+		|wfFieldName|Additional Comments|
+		|wfFieldValue|Page Objects + Hashi = Poshi|
+	Then WebForm send PG
+Scenario: Edit Web Form
+Priority: 4
+	Given Navigator goto Page
+		|pageName|${pageName}|
+	When WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Text
+		|wfFieldName|Name|
+	And WebForm view Form Field Options
+		|wfFieldName|Rating|
+	And WebForm view Form Field Text Box
+		|wfFieldName|Comments|
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+		|wfInformationDescription|Please let us know what you think!|
+		|wfInformationTitle|Feed Back|
+	And WebFormPortlet edit Field
+		|wfFieldName|Name|
+		|wfNewFieldName|Your Name|
+	And WebFormPortlet edit Field
+		|wfFieldName|Rating|
+		|wfFieldType|Check Box|
+		|wfNewFieldName|Rate Us!|
+	And WebFormPortlet edit Field
+		|wfFieldName|Comments|
+		|wfNewFieldName|Additional Comments|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Please let us know what you think!|
+		|wfInformationTitle|Feed Back|
+	And WebForm view Form Field Text
+		|wfFieldName|Your Name|
+	And WebForm view Form Field Check Box
+		|wfFieldName|Rate Us!|
+	Then WebForm view Form Field Text Box
+		|wfFieldName|Additional Comments|
+		|wfFieldType|Text Box|
+Scenario: Edit Web Form And View Multiple Fields
+Priority: 4
+	Given Navigator goto Page
+		|pageName|${pageName}|
+	When WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Text
+		|wfFieldName|Name|
+	And WebForm view Form Field Options
+		|wfFieldName|Rating|
+	And WebForm view Form Field Text Box
+		|wfFieldName|Comments|
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+		|wfInformationDescription|Please let us know what you think!|
+		|wfInformationTitle|Feed Back|
+	And WebFormPortlet edit Field
+		|wfFieldName|Name|
+		|wfNewFieldName|Test 1|
+	And WebFormPortlet add Field
+		|wfFieldName|Name|
+		|wfNewFieldName|Test 2|
+		|wfPreviousFieldName|Test 1|
+	And WebFormPortlet edit Field
+		|wfFieldName|Rating|
+		|wfFieldType|Check Box|
+		|wfNewFieldName|Rate Us!|
+	And WebFormPortlet edit Field
+		|wfFieldName|Comments|
+		|wfNewFieldName|Additional Comments|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Please let us know what you think!|
+		|wfInformationTitle|Feed Back|
+	And AssertTextEquals the value 'Test 1' at locator 'xpath=(//div[contains(@class,'form-group')]/label[contains(@for,'WebFormPortlet')])[1]'
+	And AssertElementPresent at locator 'xpath=(//fieldset/div/div[contains(@class,'form-group')]/input[@type='text'])[1]'
+	And AssertTextEquals the value 'Test 2' at locator 'xpath=(//div[contains(@class,'form-group')]/label[contains(@for,'WebFormPortlet')])[2]'
+	And AssertElementPresent at locator 'xpath=(//fieldset/div/div[contains(@class,'form-group')]/input[@type='text'])[2]'
+	And AssertTextEquals the value 'Rate Us!' at locator 'xpath=(//div[contains(@class,'form-group')]/label[contains(@for,'WebFormPortlet')])[3]'
+	And AssertElementPresent at locator '//div[contains(@class,'checkbox')]//input[@type='checkbox']'
+	And AssertTextEquals the value 'Additional Comments' at locator 'xpath=(//div[contains(@class,'form-group')]/label[contains(@for,'WebFormPortlet')])[4]'
+	Then AssertElementPresent at locator '//fieldset/div/div[contains(@class,'form-group')]/textarea'
+Scenario: Edit Web Form And View Optional Check Box Field
+Priority: 3
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|optional|true|
+		|wfFieldName|New Item|
+		|wfFieldType|Check Box|
+		|wfNewFieldName|Test Check Box Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Check Box
+		|wfFieldName|Test Check Box Field|
+	Then WebForm send PG
+Scenario: Edit Web Form And View Optional Options Field
+Priority: 4
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|optional|true|
+		|wfFieldName|New Item|
+		|wfFieldType|Options|
+		|wfNewFieldName|Test Options Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Options
+		|wfFieldName|Test Options Field|
+	Then WebForm send PG
+Scenario: Edit Web Form And View Optional Radio Field
+Priority: 4
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|optional|true|
+		|optionsList|1,2,3|
+		|wfFieldName|New Item|
+		|wfFieldType|Radio Buttons|
+		|wfNewFieldName|Test Radio Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Radio
+		|optionsList|1,2,3|
+		|wfFieldName|Test Radio Field|
+	Then WebForm send PG
+Scenario: Edit Web Form And View Optional Text Box Field
+Priority: 3
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|optional|true|
+		|wfFieldName|New Item|
+		|wfFieldType|Text Box|
+		|wfNewFieldName|Test Text Box Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Text Box
+		|wfFieldName|Test Text Box Field|
+	Then WebForm send PG
+Scenario: Edit Web Form And View Optional Text Field
+Priority: 4
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|optional|true|
+		|wfFieldName|New Item|
+		|wfFieldType|Text|
+		|wfNewFieldName|Test Text Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Text
+		|wfFieldName|Test Text Field|
+	Then WebForm send PG
+Scenario: Edit Web Form And View Paragraph Field
+Priority: 4
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|wfFieldName|New Item|
+		|wfFieldType|Paragraph|
+		|wfNewFieldName|Test Paragraph Field|
+	And WebFormPortlet edit Paragraph Field
+		|wfNewFieldName|Test Paragraph Field|
+		|wfParagraphFieldText|Hello Liferay. This is the Test Paragraph Field.|
+	And WebFormPortlet add Field
+		|wfFieldType|Text|
+		|wfNewFieldName|Test Text Field|
+		|wfPreviousFieldName|Test Paragraph Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Paragraph
+		|wfParagraphFieldText|Hello Liferay. This is the Test Paragraph Field.|
+	And WebForm view Form Field Text
+		|wfFieldName|Test Text Field|
+	And WebForm populate Field Text
+		|wfFieldName|Test Text Field|
+		|wfFieldValue|Welcome to Liferay.|
+	Then WebForm send PG
+Scenario: Edit Web Form And View Required Check Box Field
+Priority: 3
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|wfFieldName|New Item|
+		|wfFieldType|Check Box|
+		|wfNewFieldName|Test Check Box Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Check Box
+		|wfFieldName|Test Check Box Field|
+	And WebForm send Blank PG
+	And WebForm populate Field Check Box
+		|wfFieldName|Test Check Box Field|
+		|wfFieldValue|true|
+	Then WebForm send PG
+Scenario: Edit Web Form And View Required Options Field
+Priority: 4
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|wfFieldName|New Item|
+		|wfFieldType|Options|
+		|wfNewFieldName|Test Options Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Options
+		|wfFieldName|Test Options Field|
+	And WebForm send Blank PG
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet edit Field
+		|optionsList|1,2,3|
+		|wfFieldName|Test Options Field|
+		|wfFieldType|Options|
+		|wfNewFieldName|Test Options Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view Form Field Options
+		|wfFieldName|Test Options Field|
+	Then WebForm send PG
+Scenario: Edit Web Form And View Required Radio Field
+Priority: 3
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|optionsList|1,2,3|
+		|wfFieldName|New Item|
+		|wfFieldType|Radio Buttons|
+		|wfNewFieldName|Test Radio Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Radio
+		|optionsList|1,2,3|
+		|wfFieldName|Test Radio Field|
+	And WebForm send Blank PG
+	And WebForm populate Field Radio
+		|wfFieldName|Test Radio Field|
+		|wfFieldValue|2|
+	Then WebForm send PG
+Scenario: Edit Web Form And View Required Text Box Field
+Priority: 3
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|wfFieldName|New Item|
+		|wfFieldType|Text Box|
+		|wfNewFieldName|Test Text Box Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Text Box
+		|wfFieldName|Test Text Box Field|
+	And WebForm send Blank PG
+	And WebForm populate Field Text Box
+		|wfFieldName|Test Text Box Field|
+		|wfFieldValue|Page Objects + Hashi = Poshi|
+	Then WebForm send PG
+Scenario: Edit Web Form And View Required Text Field
+Priority: 4
+	Given WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	When Navigator goto Page
+		|pageName|${pageName}|
+	And WebFormPortlet configure Setup Form Fields PG
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet delete Editable Field
+		|wfFieldName|Comments|
+	And WebFormPortlet edit Field
+		|wfFieldName|New Item|
+		|wfFieldType|Text|
+		|wfNewFieldName|Test Text Field|
+	And WebFormPortlet save Configuration
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm view PG
+		|wfInformationDescription|Your input is valuable to us. Please send us your suggestions.|
+		|wfInformationTitle|Suggestions|
+	And WebForm view Form Field Text
+		|wfFieldName|Test Text Field|
+	And WebForm send Blank PG
+	And WebForm populate Field Text
+		|wfFieldName|Test Text Field|
+		|wfFieldValue|Hello|
+	Then WebForm send PG
+Scenario: Send Web Form
+Priority: 4
+	Given Navigator goto Page
+		|pageName|${pageName}|
+	When Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And SelectFrame at locator 'WebFormConfiguration#CONFIGURATION_IFRAME'
+	And WebFormPortlet view Editable Field
+		|wfFieldName|Name|
+	And WebFormPortlet view Editable Field
+		|wfFieldName|Rating|
+	And WebFormPortlet view Editable Field
+		|wfFieldName|Comments|
+	And SelectFrameTop the value 'relative=top'
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WebForm populate Field Text
+		|wfFieldName|Name|
+		|wfFieldValue|Test Test|
+	And WebForm populate Field Options
+		|wfFieldName|Rating|
+		|wfFieldValue|Excellent|
+	And WebForm populate Field Text Box
+		|wfFieldName|Comments|
+		|wfFieldValue|Page Objects + Hashi = Poshi|
+	And WebForm send PG
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And SelectFrame at locator 'WebFormConfiguration#CONFIGURATION_IFRAME'
+	And AssertTextEquals the value 'There is existing form data. Please export and delete it before making changes to the fields.' at locator 'WebFormConfiguration#SETUP_FORM_FIELDS_INFO_MESSAGE'
+	And WebFormPortlet view Editable Field Not Present
+		|wfFieldName|Name|
+	And WebFormPortlet view Submitted Field
+		|wfFieldName|Name|
+		|wfFieldType|Text|
+	And WebFormPortlet view Editable Field Not Present
+		|wfFieldName|Rating|
+	And WebFormPortlet view Submitted Field
+		|optionsList|Excellent,Good,Satisfactory,Poor|
+		|wfFieldName|Rating|
+		|wfFieldType|Options|
+	And WebFormPortlet view Editable Field Not Present
+		|wfFieldName|Comments|
+	And WebFormPortlet view Submitted Field
+		|wfFieldName|Comments|
+		|wfFieldType|Text Box|
+	Then SelectFrameTop the value 'relative=top'

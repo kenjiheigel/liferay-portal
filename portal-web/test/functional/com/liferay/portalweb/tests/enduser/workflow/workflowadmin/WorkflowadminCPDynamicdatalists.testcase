@@ -1,279 +1,364 @@
-<definition component-name="portal-workflow">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.component.names" value="Dynamic Data Lists,Workflow" />
-	<property name="testray.main.component.name" value="Workflow" />
-
-	<var name="workflowAssetType" value="Dynamic Data Lists Record" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="EditDDLRecordViaMyWorkflowTasks" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<description message="This is a use case for LPS-61212." />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Dynamic Data Lists" />
-		</execute>
-
-		<execute macro="DDLDataDefinition#addCP">
-			<var name="ddlDataDefinitionName" value="Data Definition Name" />
-		</execute>
-
-		<execute macro="DynamicDataMapping#addField">
-			<var name="field" value="Text" />
-			<var name="fieldFieldLabel" value="Text" />
-			<var name="fieldName" value="Text" />
-		</execute>
-
-		<execute macro="DDLDataDefinition#save" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Dynamic Data Lists" />
-		</execute>
-
-		<execute macro="DDLList#addCP">
-			<var name="ddlListName" value="DDL List Name" />
-			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-		</execute>
-
-		<execute macro="DDLDataDefinition#selectCP">
-			<var name="ddlDataDefinitionName" value="Data Definition Name" />
-		</execute>
-
-		<execute macro="DDLList#save" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Dynamic Data Lists" />
-		</execute>
-
-		<execute macro="DDLRecord#addCP">
-			<var name="ddlDataDefinitionName" value="Data Definition Name" />
-			<var name="ddlListName" value="DDL List Name" />
-		</execute>
-
-		<execute macro="DDLRecord#populateFieldText">
-			<var name="ddlRecordFieldData" value="DDL Record 1" />
-			<var name="field" value="Text" />
-			<var name="fieldFieldLabel" value="Text" />
-			<var name="fieldName" value="Text" />
-		</execute>
-
-		<execute macro="DDLRecord#submitForPublication" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Dynamic Data Lists" />
-		</execute>
-
-		<execute macro="DDLRecord#addCP">
-			<var name="ddlDataDefinitionName" value="Data Definition Name" />
-			<var name="ddlListName" value="DDL List Name" />
-		</execute>
-
-		<execute macro="DDLRecord#populateFieldText">
-			<var name="ddlRecordFieldData" value="DDL Record 2" />
-			<var name="field" value="Text" />
-			<var name="fieldFieldLabel" value="Text" />
-			<var name="fieldName" value="Text" />
-		</execute>
-
-		<execute macro="DDLRecord#submitForPublication" />
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="ddlDataDefinitionName" value="Data Definition Name" />
-			<var name="workflowAssetTitle" value="New Data Definition Name for List: DDL List Name" />
-			<var name="workflowAssetType" value="Dynamic Data Lists Record" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Workflow#viewTaskAssignedToMeDetails">
-			<var name="ddlDataDefinitionName" value="Data Definition Name" />
-			<var name="workflowAssetContent" value="DDL Record" />
-			<var name="workflowAssetTitle" value="New Data Definition Name for List: DDL List Name" />
-			<var name="workflowAssetType" value="Dynamic Data Lists Record" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Workflow#gotoPreviewEdit" />
-
-		<execute macro="DDLRecord#populateFieldText">
-			<var name="ddlRecordFieldData" value="DDL Record Edit" />
-			<var name="fieldName" value="Text" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="DDLRecord#viewEditPreview">
-			<var name="ddlRecordFieldDataEdit" value="DDL Record Edit" />
-			<var name="fieldFieldLabel" value="Text" />
-			<var name="fieldName" value="Text" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#viewTaskAssignedToMeDetails">
-			<var name="ddlDataDefinitionName" value="Data Definition Name" />
-			<var name="workflowAssetContent" value="DDL Record Edit" />
-			<var name="workflowAssetTitle" value="New Data Definition Name for List: DDL List Name" />
-			<var name="workflowAssetType" value="Dynamic Data Lists Record" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-	</command>
-
-	<command name="RejectDynamicdatalistCP" priority="4">
-		<var name="ddlDataDefinitionName" value="DDL Definition" />
-		<var name="ddlListName" value="DDL List" />
-		<var name="ddlRecordFieldData" value="Record Text" />
-		<var name="field" value="Text" />
-		<var name="fieldFieldLabel" value="Text Label" />
-		<var name="fieldName" value="TextName" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Dynamic Data Lists" />
-		</execute>
-
-		<execute macro="DDLDataDefinition#addCP">
-			<var name="ddlDataDefinitionDescription" value="DDL Definition Description" />
-			<var name="ddlDataDefinitionName" value="DDL Definition" />
-		</execute>
-
-		<execute macro="DynamicDataMapping#addField">
-			<var name="field" value="Text" />
-			<var name="fieldFieldLabel" value="Text Label" />
-			<var name="fieldName" value="TextName" />
-		</execute>
-
-		<execute macro="DDLDataDefinition#save" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Dynamic Data Lists" />
-		</execute>
-
-		<execute macro="DDLList#addCP">
-			<var name="ddlListDescription" value="DDL List Description" />
-			<var name="ddlListName" value="DDL List" />
-			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-		</execute>
-
-		<execute macro="DDLDataDefinition#selectCP">
-			<var name="ddlDataDefinitionName" value="DDL Definition" />
-		</execute>
-
-		<execute macro="DDLList#save" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Dynamic Data Lists" />
-		</execute>
-
-		<execute macro="DDLRecord#addCP">
-			<var name="ddlDataDefinitionName" value="DDL Definition" />
-			<var name="ddlListName" value="DDL List" />
-		</execute>
-
-		<execute macro="DDLRecord#populateFieldText">
-			<var name="ddlRecordFieldData" value="Record Text" />
-			<var name="field" value="Text" />
-			<var name="fieldFieldLabel" value="Text Label" />
-			<var name="fieldName" value="TextName" />
-		</execute>
-
-		<execute macro="DDLRecord#submitForPublication" />
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="ddlDataDefinitionName" value="DDL Definition" />
-			<var name="workflowAssetTitle" value="DDL List" />
-			<var name="workflowAssetType" value="Dynamic Data Lists Record" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Dynamic Data Lists" />
-		</execute>
-
-		<execute macro="DDLNavigator#gotoListRecords">
-			<var name="ddlListName" value="DDL List" />
-		</execute>
-
-		<execute macro="DDLRecord#viewFirstFieldCP">
-			<var name="ddlRecordFieldData" value="Record Text" />
-			<var name="field" value="Text" />
-			<var name="fieldFieldLabel" value="Text Label" />
-			<var name="fieldName" value="TextName" />
-			<var name="workflowStatus" value="Review" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#rejectTaskByActions">
-			<var name="ddlDataDefinitionName" value="DDL Definition" />
-			<var name="workflowAssetTitle" value="DDL List" />
-			<var name="workflowAssetType" value="Dynamic Data Lists Record" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#viewRejectedTask">
-			<var name="ddlDataDefinitionName" value="DDL Definition" />
-			<var name="workflowAssetTitle" value="DDL List" />
-			<var name="workflowAssetType" value="Dynamic Data Lists Record" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Dynamic Data Lists" />
-		</execute>
-
-		<execute macro="DDLNavigator#gotoListRecords">
-			<var name="ddlListName" value="DDL List" />
-		</execute>
-
-		<execute macro="DDLRecord#viewFirstFieldCP">
-			<var name="ddlRecordFieldData" value="Record Text" />
-			<var name="field" value="Text" />
-			<var name="fieldFieldLabel" value="Text Label" />
-			<var name="fieldName" value="TextName" />
-			<var name="workflowStatus" value="Update" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.component.names|Dynamic Data Lists,Workflow|
+		|testray.main.component.name|Workflow|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.component.names|Dynamic Data Lists,Workflow|
+		|testray.main.component.name|Workflow|
+		|workflowAssetType|Dynamic Data Lists Record|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Edit DDL Record Via My Workflow Tasks
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Dynamic Data Lists|
+	And DDLDataDefinition add CP
+		|ddlDataDefinitionName|Data Definition Name|
+	And DynamicDataMapping add Field
+		|field|Text|
+		|fieldFieldLabel|Text|
+		|fieldName|Text|
+	And DDLDataDefinition save
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Dynamic Data Lists|
+	And DDLList add CP
+		|ddlListName|DDL List Name|
+		|workflowDefinition|Single Approver (Version 1)|
+	And DDLDataDefinition select CP
+		|ddlDataDefinitionName|Data Definition Name|
+	And DDLList save
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Dynamic Data Lists|
+	And DDLRecord add CP
+		|ddlDataDefinitionName|Data Definition Name|
+		|ddlListName|DDL List Name|
+	And DDLRecord populate Field Text
+		|ddlRecordFieldData|DDL Record 1|
+		|field|Text|
+		|fieldFieldLabel|Text|
+		|fieldName|Text|
+	And DDLRecord submit For Publication
+	And ProductMenu goto Sites Content
+		|portlet|Dynamic Data Lists|
+	And DDLRecord add CP
+		|ddlDataDefinitionName|Data Definition Name|
+		|ddlListName|DDL List Name|
+	And DDLRecord populate Field Text
+		|ddlRecordFieldData|DDL Record 2|
+		|field|Text|
+		|fieldFieldLabel|Text|
+		|fieldName|Text|
+	And DDLRecord submit For Publication
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|ddlDataDefinitionName|Data Definition Name|
+		|workflowAssetTitle|New Data Definition Name for List: DDL List Name|
+		|workflowAssetType|Dynamic Data Lists Record|
+		|workflowTask|Review|
+	And Workflow view Task Assigned To Me Details
+		|ddlDataDefinitionName|Data Definition Name|
+		|workflowAssetContent|DDL Record|
+		|workflowAssetTitle|New Data Definition Name for List: DDL List Name|
+		|workflowAssetType|Dynamic Data Lists Record|
+		|workflowTask|Review|
+	And Workflow goto Preview Edit
+	And DDLRecord populate Field Text
+		|ddlRecordFieldData|DDL Record Edit|
+		|fieldName|Text|
+	And PortletEntry save
+	And DDLRecord view Edit Preview
+		|ddlRecordFieldDataEdit|DDL Record Edit|
+		|fieldFieldLabel|Text|
+		|fieldName|Text|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	Then Workflow view Task Assigned To Me Details
+		|ddlDataDefinitionName|Data Definition Name|
+		|workflowAssetContent|DDL Record Edit|
+		|workflowAssetTitle|New Data Definition Name for List: DDL List Name|
+		|workflowAssetType|Dynamic Data Lists Record|
+		|workflowTask|Review|
+Scenario: Reject Dynamicdatalist CP
+Priority: 4
+	Given these variables
+		|ddlDataDefinitionName|DDL Definition|
+	When these variables
+		|ddlListName|DDL List|
+	And these variables
+		|ddlRecordFieldData|Record Text|
+	And these variables
+		|field|Text|
+	And these variables
+		|fieldFieldLabel|Text Label|
+	And these variables
+		|fieldName|TextName|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Dynamic Data Lists|
+	And DDLDataDefinition add CP
+		|ddlDataDefinitionDescription|DDL Definition Description|
+		|ddlDataDefinitionName|DDL Definition|
+	And DynamicDataMapping add Field
+		|field|Text|
+		|fieldFieldLabel|Text Label|
+		|fieldName|TextName|
+	And DDLDataDefinition save
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Dynamic Data Lists|
+	And DDLList add CP
+		|ddlListDescription|DDL List Description|
+		|ddlListName|DDL List|
+		|workflowDefinition|Single Approver (Version 1)|
+	And DDLDataDefinition select CP
+		|ddlDataDefinitionName|DDL Definition|
+	And DDLList save
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Dynamic Data Lists|
+	And DDLRecord add CP
+		|ddlDataDefinitionName|DDL Definition|
+		|ddlListName|DDL List|
+	And DDLRecord populate Field Text
+		|ddlRecordFieldData|Record Text|
+		|field|Text|
+		|fieldFieldLabel|Text Label|
+		|fieldName|TextName|
+	And DDLRecord submit For Publication
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|ddlDataDefinitionName|DDL Definition|
+		|workflowAssetTitle|DDL List|
+		|workflowAssetType|Dynamic Data Lists Record|
+		|workflowTask|Review|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Dynamic Data Lists|
+	And DDLNavigator goto List Records
+		|ddlListName|DDL List|
+	And DDLRecord view First Field CP
+		|ddlRecordFieldData|Record Text|
+		|field|Text|
+		|fieldFieldLabel|Text Label|
+		|fieldName|TextName|
+		|workflowStatus|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow reject Task By Actions
+		|ddlDataDefinitionName|DDL Definition|
+		|workflowAssetTitle|DDL List|
+		|workflowAssetType|Dynamic Data Lists Record|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow view Rejected Task
+		|ddlDataDefinitionName|DDL Definition|
+		|workflowAssetTitle|DDL List|
+		|workflowAssetType|Dynamic Data Lists Record|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Dynamic Data Lists|
+	And DDLNavigator goto List Records
+		|ddlListName|DDL List|
+	Then DDLRecord view First Field CP
+		|ddlRecordFieldData|Record Text|
+		|field|Text|
+		|fieldFieldLabel|Text Label|
+		|fieldName|TextName|
+		|workflowStatus|Update|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Edit DDL Record Via My Workflow Tasks
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Dynamic Data Lists|
+	And DDLDataDefinition add CP
+		|ddlDataDefinitionName|Data Definition Name|
+	And DynamicDataMapping add Field
+		|field|Text|
+		|fieldFieldLabel|Text|
+		|fieldName|Text|
+	And DDLDataDefinition save
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Dynamic Data Lists|
+	And DDLList add CP
+		|ddlListName|DDL List Name|
+		|workflowDefinition|Single Approver (Version 1)|
+	And DDLDataDefinition select CP
+		|ddlDataDefinitionName|Data Definition Name|
+	And DDLList save
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Dynamic Data Lists|
+	And DDLRecord add CP
+		|ddlDataDefinitionName|Data Definition Name|
+		|ddlListName|DDL List Name|
+	And DDLRecord populate Field Text
+		|ddlRecordFieldData|DDL Record 1|
+		|field|Text|
+		|fieldFieldLabel|Text|
+		|fieldName|Text|
+	And DDLRecord submit For Publication
+	And ProductMenu goto Sites Content
+		|portlet|Dynamic Data Lists|
+	And DDLRecord add CP
+		|ddlDataDefinitionName|Data Definition Name|
+		|ddlListName|DDL List Name|
+	And DDLRecord populate Field Text
+		|ddlRecordFieldData|DDL Record 2|
+		|field|Text|
+		|fieldFieldLabel|Text|
+		|fieldName|Text|
+	And DDLRecord submit For Publication
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|ddlDataDefinitionName|Data Definition Name|
+		|workflowAssetTitle|New Data Definition Name for List: DDL List Name|
+		|workflowAssetType|Dynamic Data Lists Record|
+		|workflowTask|Review|
+	And Workflow view Task Assigned To Me Details
+		|ddlDataDefinitionName|Data Definition Name|
+		|workflowAssetContent|DDL Record|
+		|workflowAssetTitle|New Data Definition Name for List: DDL List Name|
+		|workflowAssetType|Dynamic Data Lists Record|
+		|workflowTask|Review|
+	And Workflow goto Preview Edit
+	And DDLRecord populate Field Text
+		|ddlRecordFieldData|DDL Record Edit|
+		|fieldName|Text|
+	And PortletEntry save
+	And DDLRecord view Edit Preview
+		|ddlRecordFieldDataEdit|DDL Record Edit|
+		|fieldFieldLabel|Text|
+		|fieldName|Text|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	Then Workflow view Task Assigned To Me Details
+		|ddlDataDefinitionName|Data Definition Name|
+		|workflowAssetContent|DDL Record Edit|
+		|workflowAssetTitle|New Data Definition Name for List: DDL List Name|
+		|workflowAssetType|Dynamic Data Lists Record|
+		|workflowTask|Review|
+Scenario: Reject Dynamicdatalist CP
+Priority: 4
+	Given these variables
+		|ddlDataDefinitionName|DDL Definition|
+	When these variables
+		|ddlListName|DDL List|
+	And these variables
+		|ddlRecordFieldData|Record Text|
+	And these variables
+		|field|Text|
+	And these variables
+		|fieldFieldLabel|Text Label|
+	And these variables
+		|fieldName|TextName|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Dynamic Data Lists|
+	And DDLDataDefinition add CP
+		|ddlDataDefinitionDescription|DDL Definition Description|
+		|ddlDataDefinitionName|DDL Definition|
+	And DynamicDataMapping add Field
+		|field|Text|
+		|fieldFieldLabel|Text Label|
+		|fieldName|TextName|
+	And DDLDataDefinition save
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Dynamic Data Lists|
+	And DDLList add CP
+		|ddlListDescription|DDL List Description|
+		|ddlListName|DDL List|
+		|workflowDefinition|Single Approver (Version 1)|
+	And DDLDataDefinition select CP
+		|ddlDataDefinitionName|DDL Definition|
+	And DDLList save
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Dynamic Data Lists|
+	And DDLRecord add CP
+		|ddlDataDefinitionName|DDL Definition|
+		|ddlListName|DDL List|
+	And DDLRecord populate Field Text
+		|ddlRecordFieldData|Record Text|
+		|field|Text|
+		|fieldFieldLabel|Text Label|
+		|fieldName|TextName|
+	And DDLRecord submit For Publication
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|ddlDataDefinitionName|DDL Definition|
+		|workflowAssetTitle|DDL List|
+		|workflowAssetType|Dynamic Data Lists Record|
+		|workflowTask|Review|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Dynamic Data Lists|
+	And DDLNavigator goto List Records
+		|ddlListName|DDL List|
+	And DDLRecord view First Field CP
+		|ddlRecordFieldData|Record Text|
+		|field|Text|
+		|fieldFieldLabel|Text Label|
+		|fieldName|TextName|
+		|workflowStatus|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow reject Task By Actions
+		|ddlDataDefinitionName|DDL Definition|
+		|workflowAssetTitle|DDL List|
+		|workflowAssetType|Dynamic Data Lists Record|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow view Rejected Task
+		|ddlDataDefinitionName|DDL Definition|
+		|workflowAssetTitle|DDL List|
+		|workflowAssetType|Dynamic Data Lists Record|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Dynamic Data Lists|
+	And DDLNavigator goto List Records
+		|ddlListName|DDL List|
+	Then DDLRecord view First Field CP
+		|ddlRecordFieldData|Record Text|
+		|field|Text|
+		|fieldFieldLabel|Text Label|
+		|fieldName|TextName|
+		|workflowStatus|Update|

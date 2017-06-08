@@ -1,40 +1,26 @@
-<definition component-name="portal-test-plugins">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Test Plugins" />
-	<property name="portlet.plugins.includes" value="test-opensocial-pubsub-portlet" />
+Feature:
 
-	<set-up>
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Test Plugins|
+		|portlet.plugins.includes|test-opensocial-pubsub-portlet|
 
-	<tear-down>
-		<execute macro="Page#tearDownPG" />
-	</tear-down>
+Setup: This executes before each scenario 
+	Given User first Login PG
 
-	<command name="ViewPublisherSubscriber" priority="4">
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Publisher Subscriber Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Publisher Portlet" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Publisher Subscriber Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Subscriber Portlet" />
-		</execute>
-
-		<execute function="Click" locator1="TestSubscriber#SUBSCRIBER_PORTLET_SUBSCRIBE_BUTTON" />
-		<execute function="Click" locator1="TestPublisher#PUBLISHER_PORTLET_PUBLISH_BUTTON" />
-
-	<!--<var name="randomNumber" path="TestPublisher" locator="PUBLISHER_PORTLET_MESSAGE" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="TestPublisher#PUBLISHER_PORTLET_MESSAGE" value1="${randomNumber}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1=" TestSubscriber#SUBSCRIBER_PORTLET_MESSAGE" value1="${randomNumber}"/>-->
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given Page tear Down PG
+Scenario: View Publisher Subscriber
+Priority: 4
+	Given Page add
+		|pageName|Test Publisher Subscriber Page|
+	When Portlet add PG
+		|portletName|Publisher Portlet|
+	And Navigator goto Page
+		|pageName|Test Publisher Subscriber Page|
+	And Portlet add PG
+		|portletName|Subscriber Portlet|
+	And Click at locator 'TestSubscriber#SUBSCRIBER_PORTLET_SUBSCRIBE_BUTTON'
+	Then Click at locator 'TestPublisher#PUBLISHER_PORTLET_PUBLISH_BUTTON'

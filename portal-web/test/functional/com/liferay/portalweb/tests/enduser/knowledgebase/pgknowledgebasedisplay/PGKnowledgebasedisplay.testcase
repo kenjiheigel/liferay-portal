@@ -1,1224 +1,1443 @@
-<definition component-name="portal-knowledge-base">
-	<property name="custom.properties" value="default.layout.template.id=1_column" />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Knowledge Base" />
-
-	<var name="pageName" value="Knowledge Base Display Page" />
-	<var name="portletName" value="Knowledge Base Display" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
-			<var name="columnName" value="1 Column" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Knowledge Base Display" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="AddChildArticle" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#addChildPGViaKBDisplay">
-			<var name="kbArticleContent" value="Child Article Content" />
-			<var name="kbArticleTitle" value="Child Article Title" />
-		</execute>
-
-		<execute function="Pause" locator1="5000" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewChildArticlePG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-			<var name="kbChildArticleContent" value="Child Article Content" />
-			<var name="kbChildArticleTitle" value="Child Article Title" />
-		</execute>
-	</command>
-
-	<command name="AddKBArticleContentNull" priority="3">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="" />
-			<var name="kbArticleInvalidContent" value="true" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewNoPGViaKBDisplay">
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-	</command>
-
-	<command name="AddKBArticleSuggestion" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="KBArticleSuggestion#addPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-			<var name="kbSuggestionBody" value="Knowledge Base Article Suggestion" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticleSuggestion#viewPG">
-			<var name="kbSuggestionBody" value="Knowledge Base Article Suggestion" />
-			<var name="kbSuggestionUserName" value="Test Test" />
-			<var name="status" value="New" />
-		</execute>
-	</command>
-
-	<command name="AddKBArticleTitleNull" priority="3">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCPWithInvalidTitle">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewNoPGViaKBDisplay">
-			<var name="kbArticleTitle" value="Knowledge Base Article Content" />
-		</execute>
-	</command>
-
-	<command name="AddMultipleKBArticleSuggestions" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article1 Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article1 Title" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article2 Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article2 Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#gotoKBArticleViaKBDisplayHierarchyNavigationPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article1 Title" />
-		</execute>
-
-		<execute macro="KBArticleSuggestion#addPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article1 Title" />
-			<var name="kbSuggestionBody" value="Knowledge Base Article1 Suggestion1" />
-		</execute>
-
-		<execute macro="KBArticleSuggestion#addPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article1 Title" />
-			<var name="kbSuggestionBody" value="Knowledge Base Article1 Suggestion2" />
-		</execute>
-
-		<execute macro="KBArticleSuggestion#addPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article1 Title" />
-			<var name="kbSuggestionBody" value="Knowledge Base Article1 Suggestion3" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="KnowledgeBase#LINK_THERE_ARE_SUGGESTIONS" value1="There are 3 suggestions. (3 Pending)" />
-
-		<execute macro="KBArticleSuggestion#viewPG">
-			<var name="kbSuggestionBody" value="Knowledge Base Article1 Suggestion1" />
-			<var name="kbSuggestionUserName" value="Test Test" />
-			<var name="status" value="New" />
-		</execute>
-
-		<execute macro="KBArticleSuggestion#viewPG">
-			<var name="kbSuggestionBody" value="Knowledge Base Article1 Suggestion2" />
-			<var name="kbSuggestionUserName" value="Test Test" />
-			<var name="status" value="New" />
-		</execute>
-
-		<execute macro="KBArticleSuggestion#viewPG">
-			<var name="kbSuggestionBody" value="Knowledge Base Article1 Suggestion3" />
-			<var name="kbSuggestionUserName" value="Test Test" />
-			<var name="status" value="New" />
-		</execute>
-	</command>
-
-	<command name="CancelAddChildArticle" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#addChildPGViaKBDisplay">
-			<var name="cancel" value="true" />
-			<var name="kbArticleContent" value="Child Article Content" />
-			<var name="kbArticleTitle" value="Child Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute function="AssertElementNotPresent" locator1="KnowledgeBase#HIERARCHY_NAVIGATION_CHILD" />
-	</command>
-
-	<command name="CannotViewDuplicateBreadcrumbsWhenAddingParentArticle" priority="3">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content Parent" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title Parent" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content Child" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title Child" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#gotoKBArticleViaKBDisplayHierarchyNavigationPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Title Child" />
-		</execute>
-
-		<execute macro="KBArticle#moveArticleViaKBDisplayPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Title Child" />
-		</execute>
-
-		<execute function="SelectFrame" locator1="KnowledgeBaseSelectParent#IFRAME" />
-		<execute function="AssertElementPresent" locator1="KnowledgeBaseSelectParent#BREADCRUMB_HOME" />
-		<execute function="AssertElementNotPresent" locator1="//ul[contains(@class,'breadcrumb')]//a[contains(.,'Home')]/following-sibling::ul[contains(@class,'breadcrumb')]" />
-	</command>
-
-	<command name="DeleteChildArticle" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#addChildPGViaKBDisplay">
-			<var name="kbArticleContent" value="Child Article Content" />
-			<var name="kbArticleTitle" value="Child Article Title" />
-		</execute>
-
-		<execute function="Pause" locator1="5000" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewChildArticlePG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-			<var name="kbChildArticleContent" value="Child Article Content" />
-			<var name="kbChildArticleTitle" value="Child Article Title" />
-		</execute>
-
-		<execute macro="KBArticle#deletePG" />
-	</command>
-
-	<command name="DeleteKBArticleViaKBDisplay" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#deletePG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="KBArticle#viewDefaultViaKBDisplayPG" />
-	</command>
-
-	<command name="EditChildArticle" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Parent Content 1" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1" />
-		</execute>
-
-		<execute macro="KBArticle#addChildArticleViaKBAdmin">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1" />
-			<var name="kbChildArticleContent" value="Knowledge Base Article Parent Title 1 Child Content 1" />
-			<var name="kbChildArticleTitle" value="Knowledge Base Article Parent Title 1 Child 1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewParentArticleHierarchyViaKBDisplayPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title" />
-		</execute>
-
-		<execute macro="KBArticle#viewChildArticleHierarchyViaKBDisplayPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#editPGViaKBDisplay">
-			<var name="kbArticleContentEdit" value="Knowledge Base Article Parent Content Edited 1" />
-			<var name="kbArticleTitleEdit" value="Knowledge Base Article Parent Title Edited 1" />
-		</execute>
-
-		<execute function="Pause" locator1="5000" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#gotoKBChildArticleViaKBDisplayHierarchyNavigationPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title Edited 1" />
-			<var name="kbChildArticleTitle" value="Knowledge Base Article Parent Title 1 Child 1" />
-		</execute>
-
-		<execute macro="KBArticle#editPGViaKBDisplay">
-			<var name="kbArticleContentEdit" value="Knowledge Base Child Article Content Edited 1" />
-			<var name="kbArticleTitleEdit" value="Knowledge Base Article Parent Title Edited 1 Child 1" />
-		</execute>
-
-		<execute function="Pause" locator1="5000" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewParentArticleHierarchyViaKBDisplayPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title Edited" />
-		</execute>
-
-		<execute macro="KBArticle#viewChildArticleHierarchyViaKBDisplayPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title Edited 1" />
-		</execute>
-	</command>
-
-	<command name="EditKBArticle" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#editPGViaKBDisplay">
-			<var name="kbArticleContentEdit" value="Knowledge Base Article Content Edit" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-			<var name="kbArticleTitleEdit" value="Knowledge Base Article Title Edit" />
-		</execute>
-
-		<execute function="Pause" locator1="5000" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Content Edit" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title Edit" />
-		</execute>
-	</command>
-
-	<command name="EditKBArticleDisplaySettingsViaKBDisplayConfiguration" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewDefaultKBDisplaySettingsPG" />
-
-		<execute macro="KBArticle#configureKBDisplaySettingsPG">
-			<var name="history" value="false" />
-			<var name="print" value="false" />
-			<var name="subscribe" value="false" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewKBDisplayPG">
-			<var name="history" value="false" />
-			<var name="print" value="false" />
-			<var name="subscribe" value="false" />
-		</execute>
-	</command>
-
-	<command name="RateKBArticleWithoutSuggestions" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#rateArticlePG">
-			<var name="articleVoteCount" value="1" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-			<var name="rateUp" value="true" />
-		</execute>
-	</command>
-
-	<command name="SelectParentArticleViaKBDisplay" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Parent Content 1" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Parent Content 1 Child 1" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1 Child 1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#gotoKBArticleViaKBDisplayHierarchyNavigationPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1 Child 1" />
-		</execute>
-
-		<execute macro="KBArticle#moveArticleViaKBDisplayPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1 Child 1" />
-		</execute>
-
-		<execute macro="KBArticle#selectParentViaKBDisplayPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1" />
-		</execute>
-
-		<execute macro="KBArticle#viewParentArticleHierarchyViaKBDisplayPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title" />
-		</execute>
-
-		<execute macro="KBArticle#viewChildArticleHierarchyViaKBDisplayPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1" />
-		</execute>
-	</command>
-
-	<command name="ViewEditedKBArticleTitleHistory" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="KB Article Content" />
-			<var name="kbArticleTitle" value="KB Article Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#editCP">
-			<var name="kbArticleContentEdit" value="KB Article Content Edit" />
-			<var name="kbArticleTitle" value="KB Article Title" />
-			<var name="kbArticleTitleEdit" value="KB Article Title Edit" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewArticleHistoryPG">
-			<var name="kbArticleContent" value="KB Article Content Edit" />
-			<var name="kbArticleContentAddedDiff" value="Edit" />
-			<var name="kbArticleVersionNew" value="2" />
-			<var name="kbArticleVersionOld" value="1" />
-			<var name="viewNoXMLInTitle" value="true" />
-		</execute>
-	</command>
-
-	<command name="ViewKBArticleSuggestionsWorkflow" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article1 Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article1 Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticleSuggestion#addPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article1 Title" />
-			<var name="kbSuggestionBody" value="Knowledge Base Article1 Suggestion" />
-		</execute>
-
-		<execute macro="KBArticle#gotoSuggestionsNavigationPG" />
-
-		<execute macro="KBArticleSuggestion#gotoSuggestionStatusNew">
-			<var name="kbSuggestionBody" value="Knowledge Base Article1 Suggestion" />
-			<var name="suggestionCount" value="1" />
-		</execute>
-
-		<execute macro="KBArticleSuggestion#viewPG">
-			<var name="kbSuggestionBody" value="Knowledge Base Article1 Suggestion" />
-			<var name="kbSuggestionUserName" value="Test Test" />
-			<var name="status" value="New" />
-		</execute>
-
-		<execute macro="KBArticleSuggestion#moveToInProgressStatus">
-			<var name="kbArticleTitle" value="Knowledge Base Article1 Title" />
-			<var name="kbSuggestionBody" value="Knowledge Base Article1 Suggestion" />
-		</execute>
-
-		<execute macro="KBArticleSuggestion#viewPG">
-			<var name="kbSuggestionBody" value="Knowledge Base Article1 Suggestion" />
-			<var name="kbSuggestionUserName" value="Test Test" />
-			<var name="status" value="In Progress" />
-		</execute>
-
-		<execute macro="KBArticleSuggestion#moveToResolvedStatus">
-			<var name="kbArticleTitle" value="Knowledge Base Article1 Title" />
-			<var name="kbSuggestionBody" value="Knowledge Base Article1 Suggestion" />
-		</execute>
-
-		<execute macro="KBArticleSuggestion#viewPG">
-			<var name="kbSuggestionBody" value="Knowledge Base Article1 Suggestion" />
-			<var name="kbSuggestionUserName" value="Test Test" />
-			<var name="status" value="Resolved" />
-		</execute>
-	</command>
-
-	<command name="ViewKBArticleViaDefaultFriendlyURL" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article2 Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article2 Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<var attribute="href" locator="//div[@class='kbarticle-navigation']/ul/li/a[contains(.,'Knowledge Base Article2 Title')]" name="kbAricleFriendlyURL" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Welcome" />
-		</execute>
-
-		<execute function="Open" locator1="${kbAricleFriendlyURL}" />
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article2 Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article2 Title" />
-		</execute>
-	</command>
-
-	<command name="ViewKBArticleViaNavigationLinks" priority="3">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content 1" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title 1" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content 2" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title 2" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content 3" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title 3" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Content 1" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title 1" />
-		</execute>
-
-		<execute macro="KBArticle#viewNavigationLinksPG">
-			<var name="next" value="true" />
-			<var name="previous" value="false" />
-		</execute>
-
-		<execute function="Click" locator1="KnowledgeBaseArticle#NEXT" />
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Content 2" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title 2" />
-		</execute>
-
-		<execute macro="KBArticle#viewNavigationLinksPG">
-			<var name="next" value="true" />
-			<var name="previous" value="true" />
-		</execute>
-
-		<execute function="Click" locator1="KnowledgeBaseArticle#NEXT" />
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Content 3" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title 3" />
-		</execute>
-
-		<execute macro="KBArticle#viewNavigationLinksPG">
-			<var name="next" value="false" />
-			<var name="previous" value="true" />
-		</execute>
-
-		<execute function="Click" locator1="KnowledgeBaseArticle#PREVIOUS" />
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Content 2" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title 2" />
-		</execute>
-
-		<execute macro="KBArticle#viewNavigationLinksPG">
-			<var name="next" value="true" />
-			<var name="previous" value="true" />
-		</execute>
-
-		<execute function="Click" locator1="KnowledgeBaseArticle#PREVIOUS" />
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Content 1" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title 1" />
-		</execute>
-
-		<execute macro="KBArticle#viewNavigationLinksPG">
-			<var name="next" value="true" />
-			<var name="previous" value="false" />
-		</execute>
-	</command>
-
-	<command name="ViewKBArticleViaUserDefinedFriendlyURL" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article2 Content" />
-			<var name="kbArticleFriendlyURL" value="Friendly Universal Resource Locator" />
-			<var name="kbArticleTitle" value="Knowledge Base Article2 Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<var attribute="href" locator="//div[@class='kbarticle-navigation']/ul/li/a[contains(.,'Knowledge Base Article2 Title')]" name="kbAricleFriendlyURL" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Welcome" />
-		</execute>
-
-		<execute function="Open" locator1="${kbAricleFriendlyURL}" />
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article2 Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article2 Title" />
-		</execute>
-	</command>
-
-	<command name="ViewKBArticleWithBlogsEntryRelatedAsset" priority="3">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleRelatedAssetTitle" value="Blogs Entry Title" />
-			<var name="kbArticleRelatedAssetType" value="Blogs Entry" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleRelatedAssetTitle" value="Blogs Entry Title" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<var name="kbArticleRelatedAssetTitle" value="Blogs Entry Title" />
-		<var name="key_kbArticleRelatedAssetTitle" value="${kbArticleRelatedAssetTitle}" />
-
-		<execute function="AssertClick#assertTextClickAt" locator1="AssetRelatedAssets#KB_RELATED_ASSETS_LINKS" value1="${kbArticleRelatedAssetTitle}" />
-
-		<execute macro="KBArticle#viewBlogsEntryRelatedAsset" />
-	</command>
-
-	<command name="ViewKBArticleWithEditedStarRatings" priority="3">
-		<property name="test.name.skip.portal.instance" value="PGKnowledgebasedisplay#ViewKBArticleWithEditedStarRatings" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="Navigator#gotoNavTab">
-			<var name="navTab" value="Social" />
-		</execute>
-
-		<execute function="Select" locator1="Select#KNOWLEDGE_BASE_RATING" value1="Stars" />
-
-		<execute function="AssertClickNoError" locator1="Button#SAVE" value1="Save" />
-
-		<execute function="Confirm" value1="Existing ratings data values will be adapted to match the new ratings type even though it may not be accurate. Do you want to continue?" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#rateArticle1Star">
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="KBArticle#viewArticle1StarRatingPG" />
-
-		<execute macro="KBArticle#rateArticleFrom1StarTo5Star">
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="KBArticle#viewArticle5StarRatingPG" />
-	</command>
-
-	<command name="ViewKBArticleWithKBChildArticleHierarchyNavigation" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Parent Content 1" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Parent Content 2" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 2" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Parent Content 3" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 3" />
-		</execute>
-
-		<execute macro="KBArticle#addChildArticleViaKBAdmin">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1" />
-			<var name="kbChildArticleContent" value="Knowledge Base Article Parent Content 1 Child 1" />
-			<var name="kbChildArticleTitle" value="Knowledge Base Article Parent Title 1 Child 1" />
-		</execute>
-
-		<execute macro="KBArticle#addChildArticleViaKBAdmin">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1" />
-			<var name="kbChildArticleContent" value="Knowledge Base Article Parent Content 1 Child 2" />
-			<var name="kbChildArticleTitle" value="Knowledge Base Article Parent Title 1 Child 2" />
-		</execute>
-
-		<execute macro="KBArticle#addChildArticleViaKBAdmin">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1" />
-			<var name="kbChildArticleContent" value="Knowledge Base Article Parent Content 1 Child 3" />
-			<var name="kbChildArticleTitle" value="Knowledge Base Article Parent Title 1 Child 3" />
-		</execute>
-
-		<execute macro="KBArticle#addChildArticleViaKBAdmin">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 2" />
-			<var name="kbChildArticleContent" value="Knowledge Base Article Parent Content 2 Child 1" />
-			<var name="kbChildArticleTitle" value="Knowledge Base Article Parent Title 2 Child 1" />
-		</execute>
-
-		<execute macro="KBArticle#addChildArticleViaKBAdmin">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 2" />
-			<var name="kbChildArticleContent" value="Knowledge Base Article Parent Content 2 Child 2" />
-			<var name="kbChildArticleTitle" value="Knowledge Base Article Parent Title 2 Child 2" />
-		</execute>
-
-		<execute macro="KBArticle#addChildArticleViaKBAdmin">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 3" />
-			<var name="kbChildArticleContent" value="Knowledge Base Article Parent Content 3 Child 1" />
-			<var name="kbChildArticleTitle" value="Knowledge Base Article Parent Title 3 Child 1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#gotoKBArticleViaKBDisplayHierarchyNavigationPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1" />
-		</execute>
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Parent Content 1" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1" />
-		</execute>
-
-		<execute macro="KBArticle#viewParentArticleHierarchyViaKBDisplayPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title" />
-		</execute>
-
-		<execute macro="KBArticle#viewChildArticleHierarchyViaKBDisplayPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1" />
-		</execute>
-
-		<execute macro="KBArticle#viewChildArticleHierarchyViaKBDisplayPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 2" />
-		</execute>
-
-		<execute macro="KBArticle#viewChildArticleHierarchyViaKBDisplayPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 3" />
-		</execute>
-
-		<execute macro="KBArticle#gotoKBChildArticleViaKBDisplayHierarchyNavigationPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 2" />
-			<var name="kbChildArticleTitle" value="Knowledge Base Article Parent Title 2 Child 2" />
-		</execute>
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Parent Content 2 Child 2" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 2 Child 2" />
-		</execute>
-	</command>
-
-	<command name="ViewKBArticleWithoutConfiguration" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewDefaultViaKBDisplayPG" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-	</command>
-
-	<command name="ViewKBArticleWithStarRatings" priority="4">
-		<property name="test.name.skip.portal.instance" value="PGKnowledgebasedisplay#ViewKBArticleWithStarRatings" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="KBArticle#rateArticlePG">
-			<var name="articleVoteCount" value="1" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-			<var name="rateUp" value="true" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="Navigator#gotoNavTab">
-			<var name="navTab" value="Social" />
-		</execute>
-
-		<execute function="Select" locator1="Select#KNOWLEDGE_BASE_RATING" value1="Stars" />
-
-		<execute function="AssertClickNoError" locator1="Button#SAVE" value1="Save" />
-
-		<execute function="Confirm" value1="Existing ratings data values will be adapted to match the new ratings type even though it may not be accurate. Do you want to continue?" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewArticle5StarRatingPG" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="Navigator#gotoNavTab">
-			<var name="navTab" value="Social" />
-		</execute>
-
-		<execute function="Select" locator1="Select#KNOWLEDGE_BASE_RATING" value1="Thumbs" />
-
-		<execute function="AssertClickNoError" locator1="Button#SAVE" value1="Save" />
-
-		<execute function="Confirm" value1="Existing ratings data values will be adapted to match the new ratings type even though it may not be accurate. Do you want to continue?" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#rateArticlePG">
-			<var name="articleVoteCount" value="1" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-	</command>
-
-	<command name="ViewKBArticleWithXSSCodeInjectedTitle" priority="3">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleFriendlyURL" value="Title" />
-			<var name="kbArticleTitle"><![CDATA[><img onerror="alert('xss')" src="xx" /><]]></var>
-			<var name="specialCharacters" value="true" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute function="AssertAlertNotPresent" />
-
-		<execute macro="KBArticle#viewViaKBDisplayPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle"><![CDATA[><img onerror="alert('xss')" src="xx" /><]]></var>
-		</execute>
-	</command>
-
-	<command name="ViewKBChildArticleViaNextLink" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Parent Content 1" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1" />
-		</execute>
-
-		<execute macro="KBArticle#addChildArticleViaKBAdmin">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1" />
-			<var name="kbChildArticleContent" value="This is a child article. Lengthy articles are no longer summarized on the KB Display portlet, and the Read More link has been deprecated. To access a child article, one must click on the parent article and then click on the child page link found either: under the article navigation, or under the parent article entry." />
-			<var name="kbChildArticleTitle" value="Knowledge Base Article Parent Title 1 Child 1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewParentArticleHierarchyViaKBDisplayPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title" />
-		</execute>
-
-		<execute macro="KBArticle#viewViaNextLinkPG">
-			<var name="kbArticleContent" value="This is a child article. Lengthy articles are no longer summarized on the KB Display portlet, and the Read More link has been deprecated. To access a child article, one must click on the parent article and then click on the child page link found either: under the article navigation, or under the parent article entry." />
-			<var name="kbArticleTitle" value="Knowledge Base Article Parent Title 1 Child 1" />
-		</execute>
-	</command>
-
-	<command name="ViewNoDuplicateKBSuggestionAfterRefresh" priority="3">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Display Page" />
-		</execute>
-
-		<execute macro="KBArticleSuggestion#addPG">
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-			<var name="kbSuggestionBody" value="Knowledge Base Article Suggestion" />
-		</execute>
-
-		<execute function="Refresh" />
-
-		<execute macro="KBArticleSuggestion#viewPG">
-			<var name="kbSuggestionBody" value="Knowledge Base Article Suggestion" />
-			<var name="kbSuggestionUserName" value="Test Test" />
-			<var name="status" value="New" />
-		</execute>
-
-		<execute macro="KBArticleSuggestion#viewNoDuplicatePG">
-			<var name="kbSuggestionBody" value="Knowledge Base Article Suggestion" />
-			<var name="kbSuggestionUserName" value="Test Test" />
-			<var name="kbThereAreSuggestionsLink" value="There is one suggestion. (1 Pending)" />
-			<var name="status" value="New" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|custom.properties|default.layout.template.id=1_column|
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Knowledge Base|
+	And these variables
+		|custom.properties|default.layout.template.id=1_column|
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Knowledge Base|
+		|pageName|Knowledge Base Display Page|
+		|portletName|Knowledge Base Display|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Knowledge Base Display Page|
+	And SitePageNavigator goto Edit Page
+		|page|Knowledge Base Display Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then Portlet add PG
+		|portletName|Knowledge Base Display|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Child Article
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle add Child PG Via KB Display
+		|kbArticleContent|Child Article Content|
+		|kbArticleTitle|Child Article Title|
+	And Pause at locator '5000'
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then KBArticle view Child Article PG
+		|kbArticleTitle|Knowledge Base Article Title|
+		|kbChildArticleContent|Child Article Content|
+		|kbChildArticleTitle|Child Article Title|
+Scenario: Add KB Article Content Null
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent||
+		|kbArticleInvalidContent|true|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then KBArticle view No PG Via KB Display
+		|kbArticleTitle|Knowledge Base Article Title|
+Scenario: Add KB Article Suggestion
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view PG
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And KBArticleSuggestion add PG
+		|kbArticleTitle|Knowledge Base Article Title|
+		|kbSuggestionBody|Knowledge Base Article Suggestion|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then KBArticleSuggestion view PG
+		|kbSuggestionBody|Knowledge Base Article Suggestion|
+		|kbSuggestionUserName|Test Test|
+		|status|New|
+Scenario: Add KB Article Title Null
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP With Invalid Title
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle||
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then KBArticle view No PG Via KB Display
+		|kbArticleTitle|Knowledge Base Article Content|
+Scenario: Add Multiple KB Article Suggestions
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article1 Content|
+		|kbArticleTitle|Knowledge Base Article1 Title|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article2 Content|
+		|kbArticleTitle|Knowledge Base Article2 Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle goto KB Article Via KB Display Hierarchy Navigation PG
+		|kbArticleTitle|Knowledge Base Article1 Title|
+	And KBArticleSuggestion add PG
+		|kbArticleTitle|Knowledge Base Article1 Title|
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion1|
+	And KBArticleSuggestion add PG
+		|kbArticleTitle|Knowledge Base Article1 Title|
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion2|
+	And KBArticleSuggestion add PG
+		|kbArticleTitle|Knowledge Base Article1 Title|
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion3|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And AssertTextEquals assert Partial Text the value 'There are 3 suggestions. (3 Pending)' at locator 'KnowledgeBase#LINK_THERE_ARE_SUGGESTIONS'
+	And KBArticleSuggestion view PG
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion1|
+		|kbSuggestionUserName|Test Test|
+		|status|New|
+	And KBArticleSuggestion view PG
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion2|
+		|kbSuggestionUserName|Test Test|
+		|status|New|
+	Then KBArticleSuggestion view PG
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion3|
+		|kbSuggestionUserName|Test Test|
+		|status|New|
+Scenario: Cancel Add Child Article
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle add Child PG Via KB Display
+		|cancel|true|
+		|kbArticleContent|Child Article Content|
+		|kbArticleTitle|Child Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view PG
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	Then AssertElementNotPresent at locator 'KnowledgeBase#HIERARCHY_NAVIGATION_CHILD'
+Scenario: Cannot View Duplicate Breadcrumbs When Adding Parent Article
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content Parent|
+		|kbArticleTitle|Knowledge Base Article Title Parent|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content Child|
+		|kbArticleTitle|Knowledge Base Article Title Child|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle goto KB Article Via KB Display Hierarchy Navigation PG
+		|kbArticleTitle|Knowledge Base Article Title Child|
+	And KBArticle move Article Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Title Child|
+	And SelectFrame at locator 'KnowledgeBaseSelectParent#IFRAME'
+	And AssertElementPresent at locator 'KnowledgeBaseSelectParent#BREADCRUMB_HOME'
+	Then AssertElementNotPresent at locator '//ul[contains(@class,'breadcrumb')]//a[contains(.,'Home')]/following-sibling::ul[contains(@class,'breadcrumb')]'
+Scenario: Delete Child Article
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle add Child PG Via KB Display
+		|kbArticleContent|Child Article Content|
+		|kbArticleTitle|Child Article Title|
+	And Pause at locator '5000'
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Child Article PG
+		|kbArticleTitle|Knowledge Base Article Title|
+		|kbChildArticleContent|Child Article Content|
+		|kbChildArticleTitle|Child Article Title|
+	Then KBArticle delete PG
+Scenario: Delete KB Article Via KB Display
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle delete PG
+		|kbArticleTitle|Knowledge Base Article Title|
+	Then KBArticle view Default Via KB Display PG
+Scenario: Edit Child Article
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Parent Content 1|
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+	And KBArticle add Child Article Via KB Admin
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+		|kbChildArticleContent|Knowledge Base Article Parent Title 1 Child Content 1|
+		|kbChildArticleTitle|Knowledge Base Article Parent Title 1 Child 1|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Parent Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title|
+	And KBArticle view Child Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle edit PG Via KB Display
+		|kbArticleContentEdit|Knowledge Base Article Parent Content Edited 1|
+		|kbArticleTitleEdit|Knowledge Base Article Parent Title Edited 1|
+	And Pause at locator '5000'
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle goto KB Child Article Via KB Display Hierarchy Navigation PG
+		|kbArticleTitle|Knowledge Base Article Parent Title Edited 1|
+		|kbChildArticleTitle|Knowledge Base Article Parent Title 1 Child 1|
+	And KBArticle edit PG Via KB Display
+		|kbArticleContentEdit|Knowledge Base Child Article Content Edited 1|
+		|kbArticleTitleEdit|Knowledge Base Article Parent Title Edited 1 Child 1|
+	And Pause at locator '5000'
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Parent Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title Edited|
+	Then KBArticle view Child Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title Edited 1|
+Scenario: Edit KB Article
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle edit PG Via KB Display
+		|kbArticleContentEdit|Knowledge Base Article Content Edit|
+		|kbArticleTitle|Knowledge Base Article Title|
+		|kbArticleTitleEdit|Knowledge Base Article Title Edit|
+	And Pause at locator '5000'
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content Edit|
+		|kbArticleTitle|Knowledge Base Article Title Edit|
+Scenario: Edit KB Article Display Settings Via KB Display Configuration
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Default KB Display Settings PG
+	And KBArticle configure KB Display Settings PG
+		|history|false|
+		|print|false|
+		|subscribe|false|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then KBArticle view KB Display PG
+		|history|false|
+		|print|false|
+		|subscribe|false|
+Scenario: Rate KB Article Without Suggestions
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then KBArticle rate Article PG
+		|articleVoteCount|1|
+		|kbArticleTitle|Knowledge Base Article Title|
+		|rateUp|true|
+Scenario: Select Parent Article Via KB Display
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Parent Content 1|
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Parent Content 1 Child 1|
+		|kbArticleTitle|Knowledge Base Article Parent Title 1 Child 1|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle goto KB Article Via KB Display Hierarchy Navigation PG
+		|kbArticleTitle|Knowledge Base Article Parent Title 1 Child 1|
+	And KBArticle move Article Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title 1 Child 1|
+	And KBArticle select Parent Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+	And KBArticle view Parent Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title|
+	Then KBArticle view Child Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+Scenario: View Edited KB Article Title History
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|KB Article Content|
+		|kbArticleTitle|KB Article Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle edit CP
+		|kbArticleContentEdit|KB Article Content Edit|
+		|kbArticleTitle|KB Article Title|
+		|kbArticleTitleEdit|KB Article Title Edit|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then KBArticle view Article History PG
+		|kbArticleContent|KB Article Content Edit|
+		|kbArticleContentAddedDiff|Edit|
+		|kbArticleVersionNew|2|
+		|kbArticleVersionOld|1|
+		|viewNoXMLInTitle|true|
+Scenario: View KB Article Suggestions Workflow
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article1 Content|
+		|kbArticleTitle|Knowledge Base Article1 Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticleSuggestion add PG
+		|kbArticleTitle|Knowledge Base Article1 Title|
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion|
+	And KBArticle goto Suggestions Navigation PG
+	And KBArticleSuggestion goto Suggestion Status New
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion|
+		|suggestionCount|1|
+	And KBArticleSuggestion view PG
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion|
+		|kbSuggestionUserName|Test Test|
+		|status|New|
+	And KBArticleSuggestion move To In Progress Status
+		|kbArticleTitle|Knowledge Base Article1 Title|
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion|
+	And KBArticleSuggestion view PG
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion|
+		|kbSuggestionUserName|Test Test|
+		|status|In Progress|
+	And KBArticleSuggestion move To Resolved Status
+		|kbArticleTitle|Knowledge Base Article1 Title|
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion|
+	Then KBArticleSuggestion view PG
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion|
+		|kbSuggestionUserName|Test Test|
+		|status|Resolved|
+Scenario: View KB Article Via Default Friendly URL
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article2 Content|
+		|kbArticleTitle|Knowledge Base Article2 Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And these variables
+		|kbAricleFriendlyURL||
+	And Navigator goto Page
+		|pageName|Welcome|
+	And Open at locator '${kbAricleFriendlyURL}'
+	Then KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article2 Content|
+		|kbArticleTitle|Knowledge Base Article2 Title|
+Scenario: View KB Article Via Navigation Links
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content 1|
+		|kbArticleTitle|Knowledge Base Article Title 1|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content 2|
+		|kbArticleTitle|Knowledge Base Article Title 2|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content 3|
+		|kbArticleTitle|Knowledge Base Article Title 3|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content 1|
+		|kbArticleTitle|Knowledge Base Article Title 1|
+	And KBArticle view Navigation Links PG
+		|next|true|
+		|previous|false|
+	And Click at locator 'KnowledgeBaseArticle#NEXT'
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content 2|
+		|kbArticleTitle|Knowledge Base Article Title 2|
+	And KBArticle view Navigation Links PG
+		|next|true|
+		|previous|true|
+	And Click at locator 'KnowledgeBaseArticle#NEXT'
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content 3|
+		|kbArticleTitle|Knowledge Base Article Title 3|
+	And KBArticle view Navigation Links PG
+		|next|false|
+		|previous|true|
+	And Click at locator 'KnowledgeBaseArticle#PREVIOUS'
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content 2|
+		|kbArticleTitle|Knowledge Base Article Title 2|
+	And KBArticle view Navigation Links PG
+		|next|true|
+		|previous|true|
+	And Click at locator 'KnowledgeBaseArticle#PREVIOUS'
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content 1|
+		|kbArticleTitle|Knowledge Base Article Title 1|
+	Then KBArticle view Navigation Links PG
+		|next|true|
+		|previous|false|
+Scenario: View KB Article Via User Defined Friendly URL
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article2 Content|
+		|kbArticleFriendlyURL|Friendly Universal Resource Locator|
+		|kbArticleTitle|Knowledge Base Article2 Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And these variables
+		|kbAricleFriendlyURL||
+	And Navigator goto Page
+		|pageName|Welcome|
+	And Open at locator '${kbAricleFriendlyURL}'
+	Then KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article2 Content|
+		|kbArticleTitle|Knowledge Base Article2 Title|
+Scenario: View KB Article With Blogs Entry Related Asset
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleRelatedAssetTitle|Blogs Entry Title|
+		|kbArticleRelatedAssetType|Blogs Entry|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleRelatedAssetTitle|Blogs Entry Title|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And these variables
+		|kbArticleRelatedAssetTitle|Blogs Entry Title|
+	And these variables
+		|key_kbArticleRelatedAssetTitle|${kbArticleRelatedAssetTitle}|
+	And AssertClick assert Text Click At the value '${kbArticleRelatedAssetTitle}' at locator 'AssetRelatedAssets#KB_RELATED_ASSETS_LINKS'
+	Then KBArticle view Blogs Entry Related Asset
+Scenario: View KB Article With Edited Star Ratings
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|PGKnowledgebasedisplay#ViewKBArticleWithEditedStarRatings|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	And Navigator goto Nav Tab
+		|navTab|Social|
+	And Select the value 'Stars' at locator 'Select#KNOWLEDGE_BASE_RATING'
+	And AssertClickNoError the value 'Save' at locator 'Button#SAVE'
+	And Confirm the value 'Existing ratings data values will be adapted to match the new ratings type even though it may not be accurate. Do you want to continue?'
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle rate Article 1 Star
+		|kbArticleTitle|Knowledge Base Article Title|
+	And KBArticle view Article 1 Star Rating PG
+	And KBArticle rate Article From 1 Star To 5 Star
+		|kbArticleTitle|Knowledge Base Article Title|
+	Then KBArticle view Article 5 Star Rating PG
+Scenario: View KB Article With KB Child Article Hierarchy Navigation
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Parent Content 1|
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Parent Content 2|
+		|kbArticleTitle|Knowledge Base Article Parent Title 2|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Parent Content 3|
+		|kbArticleTitle|Knowledge Base Article Parent Title 3|
+	And KBArticle add Child Article Via KB Admin
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+		|kbChildArticleContent|Knowledge Base Article Parent Content 1 Child 1|
+		|kbChildArticleTitle|Knowledge Base Article Parent Title 1 Child 1|
+	And KBArticle add Child Article Via KB Admin
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+		|kbChildArticleContent|Knowledge Base Article Parent Content 1 Child 2|
+		|kbChildArticleTitle|Knowledge Base Article Parent Title 1 Child 2|
+	And KBArticle add Child Article Via KB Admin
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+		|kbChildArticleContent|Knowledge Base Article Parent Content 1 Child 3|
+		|kbChildArticleTitle|Knowledge Base Article Parent Title 1 Child 3|
+	And KBArticle add Child Article Via KB Admin
+		|kbArticleTitle|Knowledge Base Article Parent Title 2|
+		|kbChildArticleContent|Knowledge Base Article Parent Content 2 Child 1|
+		|kbChildArticleTitle|Knowledge Base Article Parent Title 2 Child 1|
+	And KBArticle add Child Article Via KB Admin
+		|kbArticleTitle|Knowledge Base Article Parent Title 2|
+		|kbChildArticleContent|Knowledge Base Article Parent Content 2 Child 2|
+		|kbChildArticleTitle|Knowledge Base Article Parent Title 2 Child 2|
+	And KBArticle add Child Article Via KB Admin
+		|kbArticleTitle|Knowledge Base Article Parent Title 3|
+		|kbChildArticleContent|Knowledge Base Article Parent Content 3 Child 1|
+		|kbChildArticleTitle|Knowledge Base Article Parent Title 3 Child 1|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle goto KB Article Via KB Display Hierarchy Navigation PG
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Parent Content 1|
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+	And KBArticle view Parent Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title|
+	And KBArticle view Child Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+	And KBArticle view Child Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title 2|
+	And KBArticle view Child Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title 3|
+	And KBArticle goto KB Child Article Via KB Display Hierarchy Navigation PG
+		|kbArticleTitle|Knowledge Base Article Parent Title 2|
+		|kbChildArticleTitle|Knowledge Base Article Parent Title 2 Child 2|
+	Then KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Parent Content 2 Child 2|
+		|kbArticleTitle|Knowledge Base Article Parent Title 2 Child 2|
+Scenario: View KB Article Without Configuration
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	When KBArticle view Default Via KB Display PG
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+Scenario: View KB Article With Star Ratings
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|PGKnowledgebasedisplay#ViewKBArticleWithStarRatings|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And KBArticle rate Article PG
+		|articleVoteCount|1|
+		|kbArticleTitle|Knowledge Base Article Title|
+		|rateUp|true|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	And Navigator goto Nav Tab
+		|navTab|Social|
+	And Select the value 'Stars' at locator 'Select#KNOWLEDGE_BASE_RATING'
+	And AssertClickNoError the value 'Save' at locator 'Button#SAVE'
+	And Confirm the value 'Existing ratings data values will be adapted to match the new ratings type even though it may not be accurate. Do you want to continue?'
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Article 5 Star Rating PG
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	And Navigator goto Nav Tab
+		|navTab|Social|
+	And Select the value 'Thumbs' at locator 'Select#KNOWLEDGE_BASE_RATING'
+	And AssertClickNoError the value 'Save' at locator 'Button#SAVE'
+	And Confirm the value 'Existing ratings data values will be adapted to match the new ratings type even though it may not be accurate. Do you want to continue?'
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then KBArticle rate Article PG
+		|articleVoteCount|1|
+		|kbArticleTitle|Knowledge Base Article Title|
+Scenario: View KB Article With XSS Code Injected Title
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleFriendlyURL|Title|
+		|kbArticleTitle||
+		|specialCharacters|true|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And AssertAlertNotPresent
+	Then KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle||
+Scenario: View KB Child Article Via Next Link
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Parent Content 1|
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+	And KBArticle add Child Article Via KB Admin
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+		|kbChildArticleContent|This is a child article. Lengthy articles are no longer summarized on the KB Display portlet, and the Read More link has been deprecated. To access a child article, one must click on the parent article and then click on the child page link found either: under the article navigation, or under the parent article entry.|
+		|kbChildArticleTitle|Knowledge Base Article Parent Title 1 Child 1|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Parent Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title|
+	Then KBArticle view Via Next Link PG
+		|kbArticleContent|This is a child article. Lengthy articles are no longer summarized on the KB Display portlet, and the Read More link has been deprecated. To access a child article, one must click on the parent article and then click on the child page link found either: under the article navigation, or under the parent article entry.|
+		|kbArticleTitle|Knowledge Base Article Parent Title 1 Child 1|
+Scenario: View No Duplicate KB Suggestion After Refresh
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticleSuggestion add PG
+		|kbArticleTitle|Knowledge Base Article Title|
+		|kbSuggestionBody|Knowledge Base Article Suggestion|
+	And Refresh
+	And KBArticleSuggestion view PG
+		|kbSuggestionBody|Knowledge Base Article Suggestion|
+		|kbSuggestionUserName|Test Test|
+		|status|New|
+	Then KBArticleSuggestion view No Duplicate PG
+		|kbSuggestionBody|Knowledge Base Article Suggestion|
+		|kbSuggestionUserName|Test Test|
+		|kbThereAreSuggestionsLink|There is one suggestion. (1 Pending)|
+		|status|New|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Knowledge Base Display Page|
+	And SitePageNavigator goto Edit Page
+		|page|Knowledge Base Display Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then Portlet add PG
+		|portletName|Knowledge Base Display|
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Child Article
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle add Child PG Via KB Display
+		|kbArticleContent|Child Article Content|
+		|kbArticleTitle|Child Article Title|
+	And Pause at locator '5000'
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then KBArticle view Child Article PG
+		|kbArticleTitle|Knowledge Base Article Title|
+		|kbChildArticleContent|Child Article Content|
+		|kbChildArticleTitle|Child Article Title|
+Scenario: Add KB Article Content Null
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent||
+		|kbArticleInvalidContent|true|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then KBArticle view No PG Via KB Display
+		|kbArticleTitle|Knowledge Base Article Title|
+Scenario: Add KB Article Suggestion
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view PG
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And KBArticleSuggestion add PG
+		|kbArticleTitle|Knowledge Base Article Title|
+		|kbSuggestionBody|Knowledge Base Article Suggestion|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then KBArticleSuggestion view PG
+		|kbSuggestionBody|Knowledge Base Article Suggestion|
+		|kbSuggestionUserName|Test Test|
+		|status|New|
+Scenario: Add KB Article Title Null
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP With Invalid Title
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle||
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then KBArticle view No PG Via KB Display
+		|kbArticleTitle|Knowledge Base Article Content|
+Scenario: Add Multiple KB Article Suggestions
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article1 Content|
+		|kbArticleTitle|Knowledge Base Article1 Title|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article2 Content|
+		|kbArticleTitle|Knowledge Base Article2 Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle goto KB Article Via KB Display Hierarchy Navigation PG
+		|kbArticleTitle|Knowledge Base Article1 Title|
+	And KBArticleSuggestion add PG
+		|kbArticleTitle|Knowledge Base Article1 Title|
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion1|
+	And KBArticleSuggestion add PG
+		|kbArticleTitle|Knowledge Base Article1 Title|
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion2|
+	And KBArticleSuggestion add PG
+		|kbArticleTitle|Knowledge Base Article1 Title|
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion3|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And AssertTextEquals assert Partial Text the value 'There are 3 suggestions. (3 Pending)' at locator 'KnowledgeBase#LINK_THERE_ARE_SUGGESTIONS'
+	And KBArticleSuggestion view PG
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion1|
+		|kbSuggestionUserName|Test Test|
+		|status|New|
+	And KBArticleSuggestion view PG
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion2|
+		|kbSuggestionUserName|Test Test|
+		|status|New|
+	Then KBArticleSuggestion view PG
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion3|
+		|kbSuggestionUserName|Test Test|
+		|status|New|
+Scenario: Cancel Add Child Article
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle add Child PG Via KB Display
+		|cancel|true|
+		|kbArticleContent|Child Article Content|
+		|kbArticleTitle|Child Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view PG
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	Then AssertElementNotPresent at locator 'KnowledgeBase#HIERARCHY_NAVIGATION_CHILD'
+Scenario: Cannot View Duplicate Breadcrumbs When Adding Parent Article
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content Parent|
+		|kbArticleTitle|Knowledge Base Article Title Parent|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content Child|
+		|kbArticleTitle|Knowledge Base Article Title Child|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle goto KB Article Via KB Display Hierarchy Navigation PG
+		|kbArticleTitle|Knowledge Base Article Title Child|
+	And KBArticle move Article Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Title Child|
+	And SelectFrame at locator 'KnowledgeBaseSelectParent#IFRAME'
+	And AssertElementPresent at locator 'KnowledgeBaseSelectParent#BREADCRUMB_HOME'
+	Then AssertElementNotPresent at locator '//ul[contains(@class,'breadcrumb')]//a[contains(.,'Home')]/following-sibling::ul[contains(@class,'breadcrumb')]'
+Scenario: Delete Child Article
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle add Child PG Via KB Display
+		|kbArticleContent|Child Article Content|
+		|kbArticleTitle|Child Article Title|
+	And Pause at locator '5000'
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Child Article PG
+		|kbArticleTitle|Knowledge Base Article Title|
+		|kbChildArticleContent|Child Article Content|
+		|kbChildArticleTitle|Child Article Title|
+	Then KBArticle delete PG
+Scenario: Delete KB Article Via KB Display
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle delete PG
+		|kbArticleTitle|Knowledge Base Article Title|
+	Then KBArticle view Default Via KB Display PG
+Scenario: Edit Child Article
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Parent Content 1|
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+	And KBArticle add Child Article Via KB Admin
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+		|kbChildArticleContent|Knowledge Base Article Parent Title 1 Child Content 1|
+		|kbChildArticleTitle|Knowledge Base Article Parent Title 1 Child 1|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Parent Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title|
+	And KBArticle view Child Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle edit PG Via KB Display
+		|kbArticleContentEdit|Knowledge Base Article Parent Content Edited 1|
+		|kbArticleTitleEdit|Knowledge Base Article Parent Title Edited 1|
+	And Pause at locator '5000'
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle goto KB Child Article Via KB Display Hierarchy Navigation PG
+		|kbArticleTitle|Knowledge Base Article Parent Title Edited 1|
+		|kbChildArticleTitle|Knowledge Base Article Parent Title 1 Child 1|
+	And KBArticle edit PG Via KB Display
+		|kbArticleContentEdit|Knowledge Base Child Article Content Edited 1|
+		|kbArticleTitleEdit|Knowledge Base Article Parent Title Edited 1 Child 1|
+	And Pause at locator '5000'
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Parent Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title Edited|
+	Then KBArticle view Child Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title Edited 1|
+Scenario: Edit KB Article
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle edit PG Via KB Display
+		|kbArticleContentEdit|Knowledge Base Article Content Edit|
+		|kbArticleTitle|Knowledge Base Article Title|
+		|kbArticleTitleEdit|Knowledge Base Article Title Edit|
+	And Pause at locator '5000'
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content Edit|
+		|kbArticleTitle|Knowledge Base Article Title Edit|
+Scenario: Edit KB Article Display Settings Via KB Display Configuration
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Default KB Display Settings PG
+	And KBArticle configure KB Display Settings PG
+		|history|false|
+		|print|false|
+		|subscribe|false|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then KBArticle view KB Display PG
+		|history|false|
+		|print|false|
+		|subscribe|false|
+Scenario: Rate KB Article Without Suggestions
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then KBArticle rate Article PG
+		|articleVoteCount|1|
+		|kbArticleTitle|Knowledge Base Article Title|
+		|rateUp|true|
+Scenario: Select Parent Article Via KB Display
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Parent Content 1|
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Parent Content 1 Child 1|
+		|kbArticleTitle|Knowledge Base Article Parent Title 1 Child 1|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle goto KB Article Via KB Display Hierarchy Navigation PG
+		|kbArticleTitle|Knowledge Base Article Parent Title 1 Child 1|
+	And KBArticle move Article Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title 1 Child 1|
+	And KBArticle select Parent Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+	And KBArticle view Parent Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title|
+	Then KBArticle view Child Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+Scenario: View Edited KB Article Title History
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|KB Article Content|
+		|kbArticleTitle|KB Article Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle edit CP
+		|kbArticleContentEdit|KB Article Content Edit|
+		|kbArticleTitle|KB Article Title|
+		|kbArticleTitleEdit|KB Article Title Edit|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then KBArticle view Article History PG
+		|kbArticleContent|KB Article Content Edit|
+		|kbArticleContentAddedDiff|Edit|
+		|kbArticleVersionNew|2|
+		|kbArticleVersionOld|1|
+		|viewNoXMLInTitle|true|
+Scenario: View KB Article Suggestions Workflow
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article1 Content|
+		|kbArticleTitle|Knowledge Base Article1 Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticleSuggestion add PG
+		|kbArticleTitle|Knowledge Base Article1 Title|
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion|
+	And KBArticle goto Suggestions Navigation PG
+	And KBArticleSuggestion goto Suggestion Status New
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion|
+		|suggestionCount|1|
+	And KBArticleSuggestion view PG
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion|
+		|kbSuggestionUserName|Test Test|
+		|status|New|
+	And KBArticleSuggestion move To In Progress Status
+		|kbArticleTitle|Knowledge Base Article1 Title|
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion|
+	And KBArticleSuggestion view PG
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion|
+		|kbSuggestionUserName|Test Test|
+		|status|In Progress|
+	And KBArticleSuggestion move To Resolved Status
+		|kbArticleTitle|Knowledge Base Article1 Title|
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion|
+	Then KBArticleSuggestion view PG
+		|kbSuggestionBody|Knowledge Base Article1 Suggestion|
+		|kbSuggestionUserName|Test Test|
+		|status|Resolved|
+Scenario: View KB Article Via Default Friendly URL
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article2 Content|
+		|kbArticleTitle|Knowledge Base Article2 Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And these variables
+		|kbAricleFriendlyURL||
+	And Navigator goto Page
+		|pageName|Welcome|
+	And Open at locator '${kbAricleFriendlyURL}'
+	Then KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article2 Content|
+		|kbArticleTitle|Knowledge Base Article2 Title|
+Scenario: View KB Article Via Navigation Links
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content 1|
+		|kbArticleTitle|Knowledge Base Article Title 1|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content 2|
+		|kbArticleTitle|Knowledge Base Article Title 2|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content 3|
+		|kbArticleTitle|Knowledge Base Article Title 3|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content 1|
+		|kbArticleTitle|Knowledge Base Article Title 1|
+	And KBArticle view Navigation Links PG
+		|next|true|
+		|previous|false|
+	And Click at locator 'KnowledgeBaseArticle#NEXT'
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content 2|
+		|kbArticleTitle|Knowledge Base Article Title 2|
+	And KBArticle view Navigation Links PG
+		|next|true|
+		|previous|true|
+	And Click at locator 'KnowledgeBaseArticle#NEXT'
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content 3|
+		|kbArticleTitle|Knowledge Base Article Title 3|
+	And KBArticle view Navigation Links PG
+		|next|false|
+		|previous|true|
+	And Click at locator 'KnowledgeBaseArticle#PREVIOUS'
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content 2|
+		|kbArticleTitle|Knowledge Base Article Title 2|
+	And KBArticle view Navigation Links PG
+		|next|true|
+		|previous|true|
+	And Click at locator 'KnowledgeBaseArticle#PREVIOUS'
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content 1|
+		|kbArticleTitle|Knowledge Base Article Title 1|
+	Then KBArticle view Navigation Links PG
+		|next|true|
+		|previous|false|
+Scenario: View KB Article Via User Defined Friendly URL
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article2 Content|
+		|kbArticleFriendlyURL|Friendly Universal Resource Locator|
+		|kbArticleTitle|Knowledge Base Article2 Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And these variables
+		|kbAricleFriendlyURL||
+	And Navigator goto Page
+		|pageName|Welcome|
+	And Open at locator '${kbAricleFriendlyURL}'
+	Then KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article2 Content|
+		|kbArticleTitle|Knowledge Base Article2 Title|
+Scenario: View KB Article With Blogs Entry Related Asset
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleRelatedAssetTitle|Blogs Entry Title|
+		|kbArticleRelatedAssetType|Blogs Entry|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleRelatedAssetTitle|Blogs Entry Title|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And these variables
+		|kbArticleRelatedAssetTitle|Blogs Entry Title|
+	And these variables
+		|key_kbArticleRelatedAssetTitle|${kbArticleRelatedAssetTitle}|
+	And AssertClick assert Text Click At the value '${kbArticleRelatedAssetTitle}' at locator 'AssetRelatedAssets#KB_RELATED_ASSETS_LINKS'
+	Then KBArticle view Blogs Entry Related Asset
+Scenario: View KB Article With Edited Star Ratings
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|PGKnowledgebasedisplay#ViewKBArticleWithEditedStarRatings|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	And Navigator goto Nav Tab
+		|navTab|Social|
+	And Select the value 'Stars' at locator 'Select#KNOWLEDGE_BASE_RATING'
+	And AssertClickNoError the value 'Save' at locator 'Button#SAVE'
+	And Confirm the value 'Existing ratings data values will be adapted to match the new ratings type even though it may not be accurate. Do you want to continue?'
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle rate Article 1 Star
+		|kbArticleTitle|Knowledge Base Article Title|
+	And KBArticle view Article 1 Star Rating PG
+	And KBArticle rate Article From 1 Star To 5 Star
+		|kbArticleTitle|Knowledge Base Article Title|
+	Then KBArticle view Article 5 Star Rating PG
+Scenario: View KB Article With KB Child Article Hierarchy Navigation
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Parent Content 1|
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Parent Content 2|
+		|kbArticleTitle|Knowledge Base Article Parent Title 2|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Parent Content 3|
+		|kbArticleTitle|Knowledge Base Article Parent Title 3|
+	And KBArticle add Child Article Via KB Admin
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+		|kbChildArticleContent|Knowledge Base Article Parent Content 1 Child 1|
+		|kbChildArticleTitle|Knowledge Base Article Parent Title 1 Child 1|
+	And KBArticle add Child Article Via KB Admin
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+		|kbChildArticleContent|Knowledge Base Article Parent Content 1 Child 2|
+		|kbChildArticleTitle|Knowledge Base Article Parent Title 1 Child 2|
+	And KBArticle add Child Article Via KB Admin
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+		|kbChildArticleContent|Knowledge Base Article Parent Content 1 Child 3|
+		|kbChildArticleTitle|Knowledge Base Article Parent Title 1 Child 3|
+	And KBArticle add Child Article Via KB Admin
+		|kbArticleTitle|Knowledge Base Article Parent Title 2|
+		|kbChildArticleContent|Knowledge Base Article Parent Content 2 Child 1|
+		|kbChildArticleTitle|Knowledge Base Article Parent Title 2 Child 1|
+	And KBArticle add Child Article Via KB Admin
+		|kbArticleTitle|Knowledge Base Article Parent Title 2|
+		|kbChildArticleContent|Knowledge Base Article Parent Content 2 Child 2|
+		|kbChildArticleTitle|Knowledge Base Article Parent Title 2 Child 2|
+	And KBArticle add Child Article Via KB Admin
+		|kbArticleTitle|Knowledge Base Article Parent Title 3|
+		|kbChildArticleContent|Knowledge Base Article Parent Content 3 Child 1|
+		|kbChildArticleTitle|Knowledge Base Article Parent Title 3 Child 1|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle goto KB Article Via KB Display Hierarchy Navigation PG
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Parent Content 1|
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+	And KBArticle view Parent Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title|
+	And KBArticle view Child Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+	And KBArticle view Child Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title 2|
+	And KBArticle view Child Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title 3|
+	And KBArticle goto KB Child Article Via KB Display Hierarchy Navigation PG
+		|kbArticleTitle|Knowledge Base Article Parent Title 2|
+		|kbChildArticleTitle|Knowledge Base Article Parent Title 2 Child 2|
+	Then KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Parent Content 2 Child 2|
+		|kbArticleTitle|Knowledge Base Article Parent Title 2 Child 2|
+Scenario: View KB Article Without Configuration
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	When KBArticle view Default Via KB Display PG
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+Scenario: View KB Article With Star Ratings
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|PGKnowledgebasedisplay#ViewKBArticleWithStarRatings|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And KBArticle rate Article PG
+		|articleVoteCount|1|
+		|kbArticleTitle|Knowledge Base Article Title|
+		|rateUp|true|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	And Navigator goto Nav Tab
+		|navTab|Social|
+	And Select the value 'Stars' at locator 'Select#KNOWLEDGE_BASE_RATING'
+	And AssertClickNoError the value 'Save' at locator 'Button#SAVE'
+	And Confirm the value 'Existing ratings data values will be adapted to match the new ratings type even though it may not be accurate. Do you want to continue?'
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Article 5 Star Rating PG
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	And Navigator goto Nav Tab
+		|navTab|Social|
+	And Select the value 'Thumbs' at locator 'Select#KNOWLEDGE_BASE_RATING'
+	And AssertClickNoError the value 'Save' at locator 'Button#SAVE'
+	And Confirm the value 'Existing ratings data values will be adapted to match the new ratings type even though it may not be accurate. Do you want to continue?'
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	Then KBArticle rate Article PG
+		|articleVoteCount|1|
+		|kbArticleTitle|Knowledge Base Article Title|
+Scenario: View KB Article With XSS Code Injected Title
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleFriendlyURL|Title|
+		|kbArticleTitle||
+		|specialCharacters|true|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And AssertAlertNotPresent
+	Then KBArticle view Via KB Display PG
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle||
+Scenario: View KB Child Article Via Next Link
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Parent Content 1|
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+	And KBArticle add Child Article Via KB Admin
+		|kbArticleTitle|Knowledge Base Article Parent Title 1|
+		|kbChildArticleContent|This is a child article. Lengthy articles are no longer summarized on the KB Display portlet, and the Read More link has been deprecated. To access a child article, one must click on the parent article and then click on the child page link found either: under the article navigation, or under the parent article entry.|
+		|kbChildArticleTitle|Knowledge Base Article Parent Title 1 Child 1|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticle view Parent Article Hierarchy Via KB Display PG
+		|kbArticleTitle|Knowledge Base Article Parent Title|
+	Then KBArticle view Via Next Link PG
+		|kbArticleContent|This is a child article. Lengthy articles are no longer summarized on the KB Display portlet, and the Read More link has been deprecated. To access a child article, one must click on the parent article and then click on the child page link found either: under the article navigation, or under the parent article entry.|
+		|kbArticleTitle|Knowledge Base Article Parent Title 1 Child 1|
+Scenario: View No Duplicate KB Suggestion After Refresh
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Display Page|
+	And KBArticleSuggestion add PG
+		|kbArticleTitle|Knowledge Base Article Title|
+		|kbSuggestionBody|Knowledge Base Article Suggestion|
+	And Refresh
+	And KBArticleSuggestion view PG
+		|kbSuggestionBody|Knowledge Base Article Suggestion|
+		|kbSuggestionUserName|Test Test|
+		|status|New|
+	Then KBArticleSuggestion view No Duplicate PG
+		|kbSuggestionBody|Knowledge Base Article Suggestion|
+		|kbSuggestionUserName|Test Test|
+		|kbThereAreSuggestionsLink|There is one suggestion. (1 Pending)|
+		|status|New|

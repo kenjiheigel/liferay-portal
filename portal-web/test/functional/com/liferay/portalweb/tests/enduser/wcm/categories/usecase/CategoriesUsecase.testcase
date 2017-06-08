@@ -1,1959 +1,1151 @@
-<definition component-name="portal-categories">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Categories" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="AddCategorywithLocalization" priority="4">
-		<property name="testray.component.names" value="Categories,Localization" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCategoryLocalizationCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="localizationName" value="Kategorienamen" />
-			<var name="localizationNameKey" value="de_DE" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="password" value="password" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#assignSiteRoleCP">
-			<var name="siteRoleName" value="Site Administrator" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editDisplaySettingsCP">
-			<var name="languageName" value="Deutsch (Deutschland)" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Category Page Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Category Page Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addWithCategoryCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-			<var name="webContentContent" value="Web Content Content" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="WebContent#viewCategorizationCategoryCP">
-			<var name="categoryNameList" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Category Page Name" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#selectWebContent">
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Category Page Name" />
-		</execute>
-
-		<execute macro="Search#searchPG">
-			<var name="localizationIDName" value="Suchen" />
-			<var name="searchTerm" value="Kategorienamen" />
-		</execute>
-
-		<execute macro="Search#viewSearchResultPG">
-			<var name="searchAssetTitle" value="Web Content Title" />
-			<var name="searchAssetType" value="Webcontent" />
-		</execute>
-	</command>
-
-	<command name="AddCategorywithSiteRole" priority="4">
-		<property name="testray.component.names" value="Categories,Permissions,Roles" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Test Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Test Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="password" value="password" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Test Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="RoleNavigator#gotoRoleType">
-			<var name="roleType" value="Site" />
-		</execute>
-
-		<execute macro="Role#add">
-			<var name="roleTitle" value="Category Role Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#definePermissionCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_CATEGORIES_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Access in Site Administration" />
-			<var name="permissionNavigationKey" value="SITE_ADMIN_CONTENT_CATEGORIES" />
-			<var name="permissionNavigationValue" value="Categories" />
-			<var name="roleTitle" value="Category Role Name" />
-			<var name="roleType" value="Site" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#definePermissionCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_CATEGORIES_RESOURCE_PERMISSIONS_ASSET_ENTRIES_ADD_CATEGORY_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Add Category" />
-			<var name="permissionNavigationKey" value="SITE_ADMIN_CONTENT_CATEGORIES" />
-			<var name="permissionNavigationValue" value="Categories" />
-			<var name="roleTitle" value="Category Role Name" />
-			<var name="roleType" value="Site" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#definePermissionCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_CATEGORIES_RESOURCE_PERMISSIONS_ASSET_ENTRIES_ADD_VOCABULARY_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Add Vocabulary" />
-			<var name="permissionNavigationKey" value="SITE_ADMIN_CONTENT_CATEGORIES" />
-			<var name="permissionNavigationValue" value="Categories" />
-			<var name="roleTitle" value="Category Role Name" />
-			<var name="roleType" value="Site" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#definePermissionCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_CATEGORIES_RESOURCE_PERMISSIONS_CATEGORY_VOCABULARY_VIEW_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="View" />
-			<var name="permissionNavigationKey" value="SITE_ADMIN_CONTENT_CATEGORIES" />
-			<var name="permissionNavigationValue" value="Categories" />
-			<var name="roleTitle" value="Category Role Name" />
-			<var name="roleType" value="Site" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#definePermissionCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_CATEGORIES_RESOURCE_PERMISSIONS_CATEGORY_ADD_CATEGORY_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Add Category" />
-			<var name="permissionNavigationKey" value="SITE_ADMIN_CONTENT_CATEGORIES" />
-			<var name="permissionNavigationValue" value="Categories" />
-			<var name="roleTitle" value="Category Role Name" />
-			<var name="roleType" value="Site" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#assignSiteRoleCP">
-			<var name="siteRoleName" value="Category Role Name" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Test Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Test Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="AddPageWithRequiredVocabulary" priority="4">
-		<property name="testray.component.names" value="Categories" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addWithAssociatedAssetTypeCP">
-			<var name="assetType" value="Page" />
-			<var name="required" value="true" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="SitePageNavigator#gotoAddPage" />
-
-		<execute macro="Page#addPageTitle">
-			<var name="pageName" value="Page Category" />
-		</execute>
-
-		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Categorization" />
-		</execute>
-
-		<execute macro="AssetCategorization#addCategory">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Page#saveAddPage" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Page#viewSpecificPG">
-			<var name="pageNameList" value="Page Category" />
-		</execute>
-	</command>
-
-	<command name="AddSubcategoryProperty" priority="3">
-		<property name="testray.component.names" value="Categories" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Subcategory#addWithPropertyCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="propertiesKeyField" value="Subcategory Key" />
-			<var name="propertiesValueField" value="Subcategory Value" />
-			<var name="subcategoryName" value="Subcategory Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Subcategory#viewCategoryPropertyCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="propertiesKeyField" value="Subcategory Key" />
-			<var name="propertiesValueField" value="Subcategory Value" />
-			<var name="subcategoryName" value="Subcategory Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-	</command>
-
-	<command name="AddVocabularyWithAssetSubtype" priority="3">
-		<property name="testray.component.names" value="Categories,Web Content Administration" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoManageStructures" />
-
-		<execute macro="WebContentStructures#addCP">
-			<var name="structureName" value="WC Structure Name" />
-		</execute>
-
-		<execute macro="DynamicDataMapping#addField">
-			<var name="field" value="Text" />
-			<var name="fieldFieldLabel" value="Text" />
-			<var name="fieldName" value="Text" />
-		</execute>
-
-		<execute macro="WebContentStructures#saveCP">
-			<var name="structureName" value="WC Structure Name" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoManageTemplatesViaStructures">
-			<var name="structureName" value="WC Structure Name" />
-		</execute>
-
-		<execute macro="WebContentTemplates#addCP">
-			<var name="templateName" value="WC Template Name" />
-		</execute>
-
-		<execute macro="WebContentTemplates#addField">
-			<var name="fieldName" value="Text" />
-		</execute>
-
-		<execute macro="WebContentTemplates#save" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addWithAssociatedAssetTypeCP">
-			<var name="assetSubtype" value="Basic Web Content" />
-			<var name="assetType" value="Web Content Article" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentTitle" value="WC Title" />
-		</execute>
-
-		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Metadata" />
-		</execute>
-
-		<execute macro="AssetCategorization#addCategory">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="WebContentNavigator#gotoAddWithStructureCP">
-			<var name="structureName" value="WC Structure Name" />
-		</execute>
-
-		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Metadata" />
-		</execute>
-
-		<execute function="AssertTextNotPresent" value1="Vocabulary Name" />
-	</command>
-
-	<command name="AddVocabularyWithMultipleAssetTypes" priority="4">
-		<property name="testray.component.names" value="Categories" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="VocabularyNavigator#gotoAdd" />
-
-		<execute macro="PortletEntry#inputName">
-			<var name="name" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Vocabulary#addAssociatedAssetType">
-			<var name="assetType" value="Blogs Entry" />
-			<var name="required" value="true" />
-		</execute>
-
-		<execute macro="Button#clickAddRow" />
-
-		<execute macro="Vocabulary#addAssociatedAssetType">
-			<var name="assetType" value="Web Content Article" />
-			<var name="required" value="true" />
-			<var name="rowNumber" value="2" />
-		</execute>
-
-		<execute macro="Button#clickSave" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addWithCategoryCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-			<var name="webContentContent" value="Web Content Content" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="Page#viewNoSelectCategory">
-			<var name="pageName" value="page Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-	</command>
-
-	<command name="AddWCFailWithRequiredVocabularyAssetType" priority="3">
-		<property name="testray.component.names" value="Categories,Web Content Administration" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addWithAssociatedAssetTypeCP">
-			<var name="assetType" value="Web Content Article" />
-			<var name="required" value="true" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addFailWithoutRequiredCategoryAssetTypeCP">
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addWithCategoryCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-			<var name="webContentContent" value="Web Content Content" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="WebContent#viewCategorizationCategoryCP">
-			<var name="categoryNameList" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-	</command>
-
-	<command name="AddWCWithOptionalVocabularyAssetType" priority="3">
-		<property name="testray.component.names" value="Categories,Web Content Administration" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addWithAssociatedAssetTypeCP">
-			<var name="assetType" value="Web Content Article" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addWithCategoryCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-			<var name="webContentContent" value="Web Content Content" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="WebContent#viewCategorizationCategoryCP">
-			<var name="categoryNameList" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Bookmarks" />
-		</execute>
-
-		<execute macro="Bookmark#viewNoCategoryCP">
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-	</command>
-
-	<command name="DeletePartialCategory" priority="4">
-		<property name="testray.component.names" value="Categories,Permissions,Roles" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="password" value="password" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="RoleNavigator#gotoRoleType">
-			<var name="roleType" value="Site" />
-		</execute>
-
-		<execute macro="Role#add">
-			<var name="roleTitle" value="Category Role Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#definePermissionsCP">
-			<var name="permissionDefinitionKeys" value="SITE_ADMIN_CONTENT_CATEGORIES_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION_CHECKBOX,SITE_ADMIN_CONTENT_CATEGORIES_GENERAL_PERMISSIONS_CONFIGURATION_CHECKBOX,SITE_ADMIN_CONTENT_CATEGORIES_GENERAL_PERMISSIONS_VIEW_CHECKBOX,SITE_ADMIN_CONTENT_CATEGORIES_RESOURCE_PERMISSIONS_ASSET_ENTRIES_ADD_CATEGORY_CHECKBOX,SITE_ADMIN_CONTENT_CATEGORIES_RESOURCE_PERMISSIONS_ASSET_ENTRIES_ADD_VOCABULARY_CHECKBOX" />
-			<var name="roleTitle" value="Category Role Name" />
-			<var name="roleType" value="Site" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#definePermissionsCP">
-			<var name="permissionDefinitionKeys" value="SITE_ADMIN_APPLICATIONS_CATEGORIES_NAVIGATION_APPLICATION_PERMISSIONS_ADD_TO_PAGE_CHECKBOX,SITE_ADMIN_APPLICATIONS_CATEGORIES_NAVIGATION_APPLICATION_PERMISSIONS_CONFIGURATION_CHECKBOX,SITE_ADMIN_APPLICATIONS_CATEGORIES_NAVIGATION_APPLICATION_PERMISSIONS_VIEW_CHECKBOX" />
-			<var name="roleTitle" value="Category Role Name" />
-			<var name="roleType" value="Site" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#assignSiteRoleCP">
-			<var name="siteRoleName" value="Category Role Name" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name 2" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#deletePartialCategoryCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#viewCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-	</command>
-
-	<command name="DisableMultipleCategories" priority="4">
-		<property name="testray.component.names" value="Categories,Web Content Administration" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="allowMultipleCategories" value="false" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name 1" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name 2" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addWithMultipleCategories">
-			<var name="categoryNameList" value="Category Name 1,Category Name 2" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-			<var name="webContentContent" value="Web Content Content" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="WebContent#viewCategorizationCategoryCP">
-			<var name="categoryNameList" value="Category Name 2" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="WebContent#viewCategorizationCategoryNotVisibleCP">
-			<var name="categoryName" value="Category Name 1" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#editCP">
-			<var name="allowMultipleCategories" value="true" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addWithMultipleCategories">
-			<var name="categoryNameList" value="Category Name 1,Category Name 2" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-			<var name="webContentContent" value="Web Content Content" />
-			<var name="webContentTitle" value="Web Content Title Multiple Categories" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="Web Content Title Multiple Categories" />
-		</execute>
-
-		<execute macro="WebContent#viewCategorizationCategoryCP">
-			<var name="categoryNameList" value="Category Name 1,Category Name 2" />
-			<var name="webContentTitle" value="Web Content Title Multiple Categories" />
-		</execute>
-	</command>
-
-	<command name="DuplicateCategoriesViaWebContentCopy" priority="3">
-		<property name="testray.component.names" value="Categories,Web Content Administration" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addWithCategoryCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-			<var name="webContentContent" value="Web Content Content" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="WebContent#viewCategorizationVocabularyCP">
-			<var name="vocabularyNameList" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="WebContent#viewCategorizationCategoryCP">
-			<var name="categoryNameList" value="Category Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContent#copyCP">
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="Web Content Title Duplicate 1" />
-		</execute>
-
-		<execute macro="WebContent#viewCP">
-			<var name="webContentContent" value="Web Content Content" />
-			<var name="webContentTitle" value="Web Content Title Duplicate 1" />
-		</execute>
-
-		<execute macro="WebContent#viewCategorizationVocabularyCP">
-			<var name="vocabularyNameList" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="WebContent#viewCategorizationCategoryCP">
-			<var name="categoryNameList" value="Category Name" />
-		</execute>
-	</command>
-
-	<command name="ExportImportWCWithCategoryViaAP" priority="4">
-		<property name="testray.component.names" value="Asset Publisher,Categories,Web Content Administration" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addWithCategoryCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-			<var name="webContentContent" value="Web Content Content" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="WebContent#viewCategorizationCategoryCP">
-			<var name="categoryNameList" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#configureCategoriesFilterPG">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="LAR#_gotoExportSite">
-			<var name="siteScopeName" value="Site Name" />
-		</execute>
-
-		<if>
-			<equals arg1="${exportPermissions}" arg2="true" />
-			<then>
-				<execute function="Check" locator1="Checkbox#PERMISSIONS" />
-			</then>
-		</if>
-
-		<execute function="Click" locator1="Button#PLUS" />
-
-		<execute function="AssertClick" locator1="SitePagesExport#EXPORT_BUTTON" value1="Export" />
-
-		<var name="key_larFileName" value="${larFileName}" />
-
-		<execute function="AssertTextEquals" locator1="SitePagesExport#CURRENT_AND_PREVIOUS_STATUS" value1="Successful" />
-
-		<var method="selenium#getText('//ul/li/div/h5')" name="valueName" />
-
-		<echo message="value name ${valueName}" />
-
-		<var group="1" input="${valueName}" name="larFileName" pattern="([a-zA-z0-9_.-]*)[(0-9KB)]*" />
-
-		<echo message="lar file name ${larFileName}" />
-
-		<execute function="Click" locator1="SitePagesExport#CURRENT_AND_PREVIOUS_DOWNLOAD" />
-		<execute function="DownloadTempFile" />
-		<execute function="SelectFrame" value1="relative=top" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Import Site Name" />
-		</execute>
-
-		<execute macro="LAR#importSiteCP">
-			<var name="larFileName" value="${larFileName}" />
-			<var name="siteName" value="Import Site Name" />
-			<var name="siteScopeName" value="Import Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Import Site Name" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewAssetPG">
-			<var name="assetContent" value="Web Content Content" />
-			<var name="assetTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Import Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="WebContent#viewCategorizationCategoryCP">
-			<var name="categoryNameList" value="Category Name" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-	</command>
-
-	<command name="MoveSubcategory" priority="3">
-		<property name="testray.component.names" value="Categories" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="dog" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="cat" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Subcategory#addCP">
-			<var name="categoryName" value="dog" />
-			<var name="subcategoryName" value="bone" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Subcategory#addCP">
-			<var name="categoryName" value="dog" />
-			<var name="subcategoryName" value="milk" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Subcategory#moveCP">
-			<var name="categoryName" value="dog" />
-			<var name="categoryNameMove" value="cat" />
-			<var name="subcategoryName" value="milk" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Subcategory#viewCP">
-			<var name="categoryName" value="cat" />
-			<var name="subcategoryName" value="milk" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-	</command>
-
-	<command name="SearchCategory" priority="4">
-		<property name="testray.component.names" value="Categories" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryDescription" value="black and white" />
-			<var name="categoryName" value="panda" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryDescription" value="brown or white" />
-			<var name="categoryName" value="llama" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#searchCP">
-			<var name="categorySearchEntry" value="llama" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Category#viewSearchResultsCP">
-			<var name="categoryNameList" value="llama" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#searchCP">
-			<var name="categorySearchEntry" value="panda" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Category#viewSearchResultsCP">
-			<var name="categoryNameList" value="panda" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#searchCP">
-			<var name="categorySearchEntry" value="brown" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Category#viewSearchResultsCP">
-			<var name="categoryDefinitionList" value="brown" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#searchCP">
-			<var name="categorySearchEntry" value="black" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Category#viewSearchResultsCP">
-			<var name="categoryDefinitionList" value="black" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#searchCP">
-			<var name="categorySearchEntry" value="white" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Category#viewSearchResultsCP">
-			<var name="categoryDefinitionList" value="brown or white,black and white" />
-			<var name="categoryNameList" value="llama,panda" />
-		</execute>
-	</command>
-
-	<command name="SearchCategoryWithNullResult" priority="3">
-		<property name="testray.component.names" value="Categories" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#searchCP">
-			<var name="categorySearchEntry" value="Null" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Category#viewSearchResultsCP">
-			<var name="nullResult" value="true" />
-		</execute>
-	</command>
-
-	<command name="SearchEditedCategory" priority="4">
-		<property name="testray.component.names" value="Categories,Documents Management" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Topic" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Search Page" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMDocument#addCP">
-			<var name="categoryNameList" value="Category Name" />
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="DM Document Title" />
-			<var name="vocabularyName" value="Topic" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#editCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="categoryNameEdit" value="Edited" />
-			<var name="vocabularyName" value="Topic" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Search Page" />
-		</execute>
-
-		<execute macro="Search#searchPG">
-			<var name="searchTerm" value="Edited" />
-		</execute>
-
-		<execute macro="Search#viewSearchResultPG">
-			<var name="searchAssetTitle" value="DM Document Title" />
-			<var name="searchAssetType" value="Document" />
-		</execute>
-	</command>
-
-	<command name="SearchSubcategory" priority="4">
-		<property name="testray.component.names" value="Categories" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Subcategory#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="subcategoryDescription" value="friendly chops" />
-			<var name="subcategoryName" value="beard hair" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Subcategory#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="subcategoryDescription" value="handlebar" />
-			<var name="subcategoryName" value="mustache hair" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Subcategory#searchCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="subcategorySearchEntry" value="${subcategoryName}" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Subcategory#viewSearchResultsCP">
-			<var name="categoryNameList" value="beard" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Subcategory#searchCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="subcategorySearchEntry" value="${subcategoryName}" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Subcategory#viewSearchResultsCP">
-			<var name="categoryNameList" value="mustache" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Subcategory#searchCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="categorySearchEntry" value="${subcategoryDescription}" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Subcategory#viewSearchResultsCP">
-			<var name="subcategoryDefinitionList" value="${subcategoryDescription}" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Subcategory#searchCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="categorySearchEntry" value="hair" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Subcategory#viewSearchResultsCP">
-			<var name="subcategoryDefinitionList" value="friendly chops,handlebar" />
-			<var name="subcategoryNameList" value="mustache,beard" />
-		</execute>
-	</command>
-
-	<command name="SearchSubcategoryWithNullResult" priority="3">
-		<property name="testray.component.names" value="Categories" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Subcategory#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="subcategoryName" value="Subcategory Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Subcategory#searchCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="subCategorySearchEntry" value="Null" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Subcategory#viewSearchResultsCP">
-			<var name="nullResult" value="true" />
-		</execute>
-	</command>
-
-	<command name="SearchVocabulary" priority="4">
-		<property name="testray.component.names" value="Categories" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyDescription" value="Sushi" />
-			<var name="vocabularyName" value="Food Vocab" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyDescription" value="Futbol" />
-			<var name="vocabularyName" value="Sport Vocab" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#searchCP">
-			<var name="vocabularySearchEntry" value="Food" />
-		</execute>
-
-		<execute macro="Vocabulary#viewSearchResultsCP">
-			<var name="vocabularyNameList" value="Food Vocab" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#searchCP">
-			<var name="vocabularySearchEntry" value="Sport" />
-		</execute>
-
-		<execute macro="Vocabulary#viewSearchResultsCP">
-			<var name="vocabularyNameList" value="Sport Vocab" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#searchCP">
-			<var name="vocabularySearchEntry" value="Sushi" />
-		</execute>
-
-		<execute macro="Vocabulary#viewSearchResultsCP">
-			<var name="vocabularyDefinitionList" value="Sushi" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#searchCP">
-			<var name="vocabularySearchEntry" value="Futbol" />
-		</execute>
-
-		<execute macro="Vocabulary#viewSearchResultsCP">
-			<var name="vocabularyDefinitionList" value="Futbol" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#searchCP">
-			<var name="vocabularySearchEntry" value="Vocab" />
-		</execute>
-
-		<execute macro="Vocabulary#viewSearchResultsCP">
-			<var name="vocabularyDefinitionList" value="Sushi,Futbol" />
-			<var name="vocabularyNameList" value="Food Vocab,Sport Vocab" />
-		</execute>
-	</command>
-
-	<command name="SearchVocabularyWithNullResult" priority="3">
-		<property name="testray.component.names" value="Categories" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyDescription" value="Vocabulary Description" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#searchCP">
-			<var name="vocabularySearchEntry" value="Null" />
-		</execute>
-
-		<execute macro="Vocabulary#viewSearchResultsCP">
-			<var name="nullResult" value="true" />
-		</execute>
-	</command>
-
-	<command name="UseCategoryFromParentSiteViaSiteHierarchy" priority="4">
-		<property name="testray.component.names" value="Categories,Site Administration,Web Content Administration" />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="parentSiteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="parentSiteName" value="${parentSiteName}" />
-			<var name="siteName" value="Child SiteName" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addWithCategoryCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-			<var name="webContentContent" value="WC Content Body" />
-			<var name="webContentTitle" value="WC Content Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Child SiteName" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="WC Content Title" />
-		</execute>
-
-		<execute macro="WebContent#viewCategorizationCategoryCP">
-			<var name="categoryNameList" value="Category Name" />
-		</execute>
-	</command>
-
-	<command name="ViewCannotAddDuplicateSubCategory" priority="3">
-		<property name="testray.component.names" value="Categories" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Subcategory#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="subcategoryName" value="Subcategory Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Subcategory#addDuplicateCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="subcategoryName" value="Subcategory Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-	</command>
-
-	<command name="ViewNavigation" priority="3">
-		<property name="testray.component.names" value="Categories" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Subcategory#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="subcategoryName" value="Subcategory Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#viewNavigationCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Categories|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Categorywith Localization
+Priority: 4
+	Given these properties
+		|testray.component.names|Categories,Localization|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add Category Localization CP
+		|categoryName|Category Name|
+		|localizationName|Kategorienamen|
+		|localizationNameKey|de_DE|
+		|vocabularyName|Vocabulary Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Navigator open URL
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User assign Site Role CP
+		|siteRoleName|Site Administrator|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Display Settings CP
+		|languageName|Deutsch (Deutschland)|
+		|userScreenName|usersn|
+	And Page add
+		|pageName|Category Page Name|
+	And Navigator goto Page
+		|pageName|Category Page Name|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Category CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+		|webContentContent|Web Content Content|
+		|webContentTitle|Web Content Title|
+	And WebContentNavigator goto Edit CP
+		|webContentTitle|Web Content Title|
+	And WebContent view Categorization Category CP
+		|categoryNameList|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator goto Page
+		|pageName|Category Page Name|
+	And WebContentDisplayPortlet select Web Content
+		|webContentTitle|Web Content Title|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Category Page Name|
+	And Search search PG
+		|localizationIDName|Suchen|
+		|searchTerm|Kategorienamen|
+	Then Search view Search Result PG
+		|searchAssetTitle|Web Content Title|
+		|searchAssetType|Webcontent|
+Scenario: Add Categorywith Site Role
+Priority: 4
+	Given these properties
+		|testray.component.names|Categories,Permissions,Roles|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Test Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Test Page Name|
+		|siteName|Test Site Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And ProductMenu goto Site
+		|site|Test Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And RoleNavigator goto Role Type
+		|roleType|Site|
+	And Role add
+		|roleTitle|Category Role Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permission CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_CATEGORIES_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION_CHECKBOX|
+		|permissionDefinitionValue|Access in Site Administration|
+		|permissionNavigationKey|SITE_ADMIN_CONTENT_CATEGORIES|
+		|permissionNavigationValue|Categories|
+		|roleTitle|Category Role Name|
+		|roleType|Site|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permission CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_CATEGORIES_RESOURCE_PERMISSIONS_ASSET_ENTRIES_ADD_CATEGORY_CHECKBOX|
+		|permissionDefinitionValue|Add Category|
+		|permissionNavigationKey|SITE_ADMIN_CONTENT_CATEGORIES|
+		|permissionNavigationValue|Categories|
+		|roleTitle|Category Role Name|
+		|roleType|Site|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permission CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_CATEGORIES_RESOURCE_PERMISSIONS_ASSET_ENTRIES_ADD_VOCABULARY_CHECKBOX|
+		|permissionDefinitionValue|Add Vocabulary|
+		|permissionNavigationKey|SITE_ADMIN_CONTENT_CATEGORIES|
+		|permissionNavigationValue|Categories|
+		|roleTitle|Category Role Name|
+		|roleType|Site|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permission CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_CATEGORIES_RESOURCE_PERMISSIONS_CATEGORY_VOCABULARY_VIEW_CHECKBOX|
+		|permissionDefinitionValue|View|
+		|permissionNavigationKey|SITE_ADMIN_CONTENT_CATEGORIES|
+		|permissionNavigationValue|Categories|
+		|roleTitle|Category Role Name|
+		|roleType|Site|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permission CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_CATEGORIES_RESOURCE_PERMISSIONS_CATEGORY_ADD_CATEGORY_CHECKBOX|
+		|permissionDefinitionValue|Add Category|
+		|permissionNavigationKey|SITE_ADMIN_CONTENT_CATEGORIES|
+		|permissionNavigationValue|Categories|
+		|roleTitle|Category Role Name|
+		|roleType|Site|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User assign Site Role CP
+		|siteRoleName|Category Role Name|
+		|userScreenName|usersn|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Test Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyName|Vocabulary Name|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Test Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+Scenario: Add Page With Required Vocabulary
+Priority: 4
+	Given these properties
+		|testray.component.names|Categories|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add With Associated Asset Type CP
+		|assetType|Page|
+		|required|true|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And SitePageNavigator goto Add Page
+	And Page add Page Title
+		|pageName|Page Category|
+	And Panel expand Panel
+		|panelHeading|Categorization|
+	And AssetCategorization add Category
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Page save Add Page
+	And Navigator open URL
+	Then Page view Specific PG
+		|pageNameList|Page Category|
+Scenario: Add Subcategory Property
+Priority: 3
+	Given these properties
+		|testray.component.names|Categories|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyName|Vocabulary Name|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Subcategory add With Property CP
+		|categoryName|Category Name|
+		|propertiesKeyField|Subcategory Key|
+		|propertiesValueField|Subcategory Value|
+		|subcategoryName|Subcategory Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	Then Subcategory view Category Property CP
+		|categoryName|Category Name|
+		|propertiesKeyField|Subcategory Key|
+		|propertiesValueField|Subcategory Value|
+		|subcategoryName|Subcategory Name|
+		|vocabularyName|Vocabulary Name|
+Scenario: Add Vocabulary With Asset Subtype
+Priority: 3
+	Given these properties
+		|testray.component.names|Categories,Web Content Administration|
+	When ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Manage Structures
+	And WebContentStructures add CP
+		|structureName|WC Structure Name|
+	And DynamicDataMapping add Field
+		|field|Text|
+		|fieldFieldLabel|Text|
+		|fieldName|Text|
+	And WebContentStructures save CP
+		|structureName|WC Structure Name|
+	And WebContentNavigator goto Manage Templates Via Structures
+		|structureName|WC Structure Name|
+	And WebContentTemplates add CP
+		|templateName|WC Template Name|
+	And WebContentTemplates add Field
+		|fieldName|Text|
+	And WebContentTemplates save
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add With Associated Asset Type CP
+		|assetSubtype|Basic Web Content|
+		|assetType|Web Content Article|
+		|vocabularyName|Vocabulary Name|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentTitle|WC Title|
+	And Panel expand Panel
+		|panelHeading|Metadata|
+	And AssetCategorization add Category
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And PortletEntry publish
+	And WebContentNavigator goto Add With Structure CP
+		|structureName|WC Structure Name|
+	And Panel expand Panel
+		|panelHeading|Metadata|
+	Then AssertTextNotPresent the value 'Vocabulary Name'
+Scenario: Add Vocabulary With Multiple Asset Types
+Priority: 4
+	Given these properties
+		|testray.component.names|Categories|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And VocabularyNavigator goto Add
+	And PortletEntry input Name
+		|name|Vocabulary Name|
+	And Vocabulary add Associated Asset Type
+		|assetType|Blogs Entry|
+		|required|true|
+	And Button click Add Row
+	And Vocabulary add Associated Asset Type
+		|assetType|Web Content Article|
+		|required|true|
+		|rowNumber|2|
+	And Button click Save
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Category CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+		|webContentContent|Web Content Content|
+		|webContentTitle|Web Content Title|
+	Then Page view No Select Category
+		|pageName|page Name|
+		|vocabularyName|Vocabulary Name|
+Scenario: Add WC Fail With Required Vocabulary Asset Type
+Priority: 3
+	Given these properties
+		|testray.component.names|Categories,Web Content Administration|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add With Associated Asset Type CP
+		|assetType|Web Content Article|
+		|required|true|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add Fail Without Required Category Asset Type CP
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Category CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+		|webContentContent|Web Content Content|
+		|webContentTitle|Web Content Title|
+	And WebContentNavigator goto Edit CP
+		|webContentTitle|Web Content Title|
+	Then WebContent view Categorization Category CP
+		|categoryNameList|Category Name|
+		|vocabularyName|Vocabulary Name|
+Scenario: Add WC With Optional Vocabulary Asset Type
+Priority: 3
+	Given these properties
+		|testray.component.names|Categories,Web Content Administration|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add With Associated Asset Type CP
+		|assetType|Web Content Article|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Category CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+		|webContentContent|Web Content Content|
+		|webContentTitle|Web Content Title|
+	And WebContentNavigator goto Edit CP
+		|webContentTitle|Web Content Title|
+	And WebContent view Categorization Category CP
+		|categoryNameList|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Bookmarks|
+	Then Bookmark view No Category CP
+		|vocabularyName|Vocabulary Name|
+Scenario: Delete Partial Category
+Priority: 4
+	Given these properties
+		|testray.component.names|Categories,Permissions,Roles|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Navigator open URL
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And RoleNavigator goto Role Type
+		|roleType|Site|
+	And Role add
+		|roleTitle|Category Role Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permissions CP
+		|permissionDefinitionKeys|SITE_ADMIN_CONTENT_CATEGORIES_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION_CHECKBOX,SITE_ADMIN_CONTENT_CATEGORIES_GENERAL_PERMISSIONS_CONFIGURATION_CHECKBOX,SITE_ADMIN_CONTENT_CATEGORIES_GENERAL_PERMISSIONS_VIEW_CHECKBOX,SITE_ADMIN_CONTENT_CATEGORIES_RESOURCE_PERMISSIONS_ASSET_ENTRIES_ADD_CATEGORY_CHECKBOX,SITE_ADMIN_CONTENT_CATEGORIES_RESOURCE_PERMISSIONS_ASSET_ENTRIES_ADD_VOCABULARY_CHECKBOX|
+		|roleTitle|Category Role Name|
+		|roleType|Site|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permissions CP
+		|permissionDefinitionKeys|SITE_ADMIN_APPLICATIONS_CATEGORIES_NAVIGATION_APPLICATION_PERMISSIONS_ADD_TO_PAGE_CHECKBOX,SITE_ADMIN_APPLICATIONS_CATEGORIES_NAVIGATION_APPLICATION_PERMISSIONS_CONFIGURATION_CHECKBOX,SITE_ADMIN_APPLICATIONS_CATEGORIES_NAVIGATION_APPLICATION_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|Category Role Name|
+		|roleType|Site|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User assign Site Role CP
+		|siteRoleName|Category Role Name|
+		|userScreenName|usersn|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryName|Category Name 2|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category delete Partial Category CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	Then Category view CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+Scenario: Disable Multiple Categories
+Priority: 4
+	Given these properties
+		|testray.component.names|Categories,Web Content Administration|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|allowMultipleCategories|false|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryName|Category Name 1|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryName|Category Name 2|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Multiple Categories
+		|categoryNameList|Category Name 1,Category Name 2|
+		|vocabularyName|Vocabulary Name|
+		|webContentContent|Web Content Content|
+		|webContentTitle|Web Content Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Edit CP
+		|webContentTitle|Web Content Title|
+	And WebContent view Categorization Category CP
+		|categoryNameList|Category Name 2|
+		|webContentTitle|Web Content Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Edit CP
+		|webContentTitle|Web Content Title|
+	And WebContent view Categorization Category Not Visible CP
+		|categoryName|Category Name 1|
+		|webContentTitle|Web Content Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary edit CP
+		|allowMultipleCategories|true|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Multiple Categories
+		|categoryNameList|Category Name 1,Category Name 2|
+		|vocabularyName|Vocabulary Name|
+		|webContentContent|Web Content Content|
+		|webContentTitle|Web Content Title Multiple Categories|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Edit CP
+		|webContentTitle|Web Content Title Multiple Categories|
+	Then WebContent view Categorization Category CP
+		|categoryNameList|Category Name 1,Category Name 2|
+		|webContentTitle|Web Content Title Multiple Categories|
+Scenario: Duplicate Categories Via Web Content Copy
+Priority: 3
+	Given these properties
+		|testray.component.names|Categories,Web Content Administration|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Category CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+		|webContentContent|Web Content Content|
+		|webContentTitle|Web Content Title|
+	And WebContentNavigator goto Edit CP
+		|webContentTitle|Web Content Title|
+	And WebContent view Categorization Vocabulary CP
+		|vocabularyNameList|Vocabulary Name|
+	And WebContent view Categorization Category CP
+		|categoryNameList|Category Name|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContent copy CP
+		|webContentTitle|Web Content Title|
+	And WebContentNavigator goto Edit CP
+		|webContentTitle|Web Content Title Duplicate 1|
+	And WebContent view CP
+		|webContentContent|Web Content Content|
+		|webContentTitle|Web Content Title Duplicate 1|
+	And WebContent view Categorization Vocabulary CP
+		|vocabularyNameList|Vocabulary Name|
+	Then WebContent view Categorization Category CP
+		|categoryNameList|Category Name|
+Scenario: Export Import WC With Category Via AP
+Priority: 4
+	Given these properties
+		|testray.component.names|Asset Publisher,Categories,Web Content Administration|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyName|Vocabulary Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Category CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+		|webContentContent|Web Content Content|
+		|webContentTitle|Web Content Title|
+	And WebContentNavigator goto Edit CP
+		|webContentTitle|Web Content Title|
+	And WebContent view Categorization Category CP
+		|categoryNameList|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Asset Publisher|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And AssetPublisherPortlet configure Categories Filter PG
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And LAR _goto Export Site
+		|siteScopeName|Site Name|
+##########################################################
+The Poshi if element is not supported in the readable syntax. Please update this test.
+##########################################################
+	And Click at locator 'Button#PLUS'
+	And AssertClick the value 'Export' at locator 'SitePagesExport#EXPORT_BUTTON'
+	And these variables
+		|key_larFileName|${larFileName}|
+	And AssertTextEquals the value 'Successful' at locator 'SitePagesExport#CURRENT_AND_PREVIOUS_STATUS'
+	And these variables
+		|valueName|selenium#getText('//ul/li/div/h5')|
+##########################################################
+The Poshi echo element is not supported in the readable syntax. Please update this test.
+##########################################################
+	And these variables
+		|larFileName||
+##########################################################
+The Poshi echo element is not supported in the readable syntax. Please update this test.
+##########################################################
+	And Click at locator 'SitePagesExport#CURRENT_AND_PREVIOUS_DOWNLOAD'
+	And DownloadTempFile
+	And SelectFrame the value 'relative=top'
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Import Site Name|
+	And LAR import Site CP
+		|larFileName|${larFileName}|
+		|siteName|Import Site Name|
+		|siteScopeName|Import Site Name|
+	And Navigator goto Site Page
+		|pageName|Test Page Name|
+		|siteName|Import Site Name|
+	And AssetPublisherPortlet view Asset PG
+		|assetContent|Web Content Content|
+		|assetTitle|Web Content Title|
+	And Navigator open Site URL
+		|siteName|Import Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Edit CP
+		|webContentTitle|Web Content Title|
+	Then WebContent view Categorization Category CP
+		|categoryNameList|Category Name|
+		|webContentTitle|Web Content Title|
+Scenario: Move Subcategory
+Priority: 3
+	Given these properties
+		|testray.component.names|Categories|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryName|dog|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryName|cat|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Subcategory add CP
+		|categoryName|dog|
+		|subcategoryName|bone|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Subcategory add CP
+		|categoryName|dog|
+		|subcategoryName|milk|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Subcategory move CP
+		|categoryName|dog|
+		|categoryNameMove|cat|
+		|subcategoryName|milk|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	Then Subcategory view CP
+		|categoryName|cat|
+		|subcategoryName|milk|
+		|vocabularyName|Vocabulary Name|
+Scenario: Search Category
+Priority: 4
+	Given these properties
+		|testray.component.names|Categories|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryDescription|black and white|
+		|categoryName|panda|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryDescription|brown or white|
+		|categoryName|llama|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category search CP
+		|categorySearchEntry|llama|
+		|vocabularyName|Vocabulary Name|
+	And Category view Search Results CP
+		|categoryNameList|llama|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category search CP
+		|categorySearchEntry|panda|
+		|vocabularyName|Vocabulary Name|
+	And Category view Search Results CP
+		|categoryNameList|panda|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category search CP
+		|categorySearchEntry|brown|
+		|vocabularyName|Vocabulary Name|
+	And Category view Search Results CP
+		|categoryDefinitionList|brown|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category search CP
+		|categorySearchEntry|black|
+		|vocabularyName|Vocabulary Name|
+	And Category view Search Results CP
+		|categoryDefinitionList|black|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category search CP
+		|categorySearchEntry|white|
+		|vocabularyName|Vocabulary Name|
+	Then Category view Search Results CP
+		|categoryDefinitionList|brown or white,black and white|
+		|categoryNameList|llama,panda|
+Scenario: Search Category With Null Result
+Priority: 3
+	Given these properties
+		|testray.component.names|Categories|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category search CP
+		|categorySearchEntry|Null|
+		|vocabularyName|Vocabulary Name|
+	Then Category view Search Results CP
+		|nullResult|true|
+Scenario: Search Edited Category
+Priority: 4
+	Given these properties
+		|testray.component.names|Categories,Documents Management|
+	When ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Topic|
+	And Page add
+		|pageName|Search Page|
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMDocument add CP
+		|categoryNameList|Category Name|
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_1.doc|
+		|dmDocumentTitle|DM Document Title|
+		|vocabularyName|Topic|
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category edit CP
+		|categoryName|Category Name|
+		|categoryNameEdit|Edited|
+		|vocabularyName|Topic|
+	And Navigator goto Page
+		|pageName|Search Page|
+	And Search search PG
+		|searchTerm|Edited|
+	Then Search view Search Result PG
+		|searchAssetTitle|DM Document Title|
+		|searchAssetType|Document|
+Scenario: Search Subcategory
+Priority: 4
+	Given these properties
+		|testray.component.names|Categories|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyName|Vocabulary Name|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Subcategory add CP
+		|categoryName|Category Name|
+		|subcategoryDescription|friendly chops|
+		|subcategoryName|beard hair|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Subcategory add CP
+		|categoryName|Category Name|
+		|subcategoryDescription|handlebar|
+		|subcategoryName|mustache hair|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Subcategory search CP
+		|categoryName|Category Name|
+		|subcategorySearchEntry|${subcategoryName}|
+		|vocabularyName|Vocabulary Name|
+	And Subcategory view Search Results CP
+		|categoryNameList|beard|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Subcategory search CP
+		|categoryName|Category Name|
+		|subcategorySearchEntry|${subcategoryName}|
+		|vocabularyName|Vocabulary Name|
+	And Subcategory view Search Results CP
+		|categoryNameList|mustache|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Subcategory search CP
+		|categoryName|Category Name|
+		|categorySearchEntry|${subcategoryDescription}|
+		|vocabularyName|Vocabulary Name|
+	And Subcategory view Search Results CP
+		|subcategoryDefinitionList|${subcategoryDescription}|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Subcategory search CP
+		|categoryName|Category Name|
+		|categorySearchEntry|hair|
+		|vocabularyName|Vocabulary Name|
+	Then Subcategory view Search Results CP
+		|subcategoryDefinitionList|friendly chops,handlebar|
+		|subcategoryNameList|mustache,beard|
+Scenario: Search Subcategory With Null Result
+Priority: 3
+	Given these properties
+		|testray.component.names|Categories|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyName|Vocabulary Name|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Subcategory add CP
+		|categoryName|Category Name|
+		|subcategoryName|Subcategory Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Subcategory search CP
+		|categoryName|Category Name|
+		|subCategorySearchEntry|Null|
+		|vocabularyName|Vocabulary Name|
+	Then Subcategory view Search Results CP
+		|nullResult|true|
+Scenario: Search Vocabulary
+Priority: 4
+	Given these properties
+		|testray.component.names|Categories|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyDescription|Sushi|
+		|vocabularyName|Food Vocab|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyDescription|Futbol|
+		|vocabularyName|Sport Vocab|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary search CP
+		|vocabularySearchEntry|Food|
+	And Vocabulary view Search Results CP
+		|vocabularyNameList|Food Vocab|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary search CP
+		|vocabularySearchEntry|Sport|
+	And Vocabulary view Search Results CP
+		|vocabularyNameList|Sport Vocab|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary search CP
+		|vocabularySearchEntry|Sushi|
+	And Vocabulary view Search Results CP
+		|vocabularyDefinitionList|Sushi|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary search CP
+		|vocabularySearchEntry|Futbol|
+	And Vocabulary view Search Results CP
+		|vocabularyDefinitionList|Futbol|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary search CP
+		|vocabularySearchEntry|Vocab|
+	Then Vocabulary view Search Results CP
+		|vocabularyDefinitionList|Sushi,Futbol|
+		|vocabularyNameList|Food Vocab,Sport Vocab|
+Scenario: Search Vocabulary With Null Result
+Priority: 3
+	Given these properties
+		|testray.component.names|Categories|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyDescription|Vocabulary Description|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary search CP
+		|vocabularySearchEntry|Null|
+	Then Vocabulary view Search Results CP
+		|nullResult|true|
+Scenario: Use Category From Parent Site Via Site Hierarchy
+Priority: 4
+	Given these properties
+		|testray.component.names|Categories,Site Administration,Web Content Administration|
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyName|Vocabulary Name|
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|parentSiteName|${parentSiteName}|
+		|siteName|Child SiteName|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Category CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+		|webContentContent|WC Content Body|
+		|webContentTitle|WC Content Title|
+	And ProductMenu goto Site
+		|site|Child SiteName|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Edit CP
+		|webContentTitle|WC Content Title|
+	Then WebContent view Categorization Category CP
+		|categoryNameList|Category Name|
+Scenario: View Cannot Add Duplicate Sub Category
+Priority: 3
+	Given these properties
+		|testray.component.names|Categories|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Subcategory add CP
+		|categoryName|Category Name|
+		|subcategoryName|Subcategory Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	Then Subcategory add Duplicate CP
+		|categoryName|Category Name|
+		|subcategoryName|Subcategory Name|
+		|vocabularyName|Vocabulary Name|
+Scenario: View Navigation
+Priority: 3
+	Given these properties
+		|testray.component.names|Categories|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Subcategory add CP
+		|categoryName|Category Name|
+		|subcategoryName|Subcategory Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	Then Category view Navigation CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|

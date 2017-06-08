@@ -1,41 +1,29 @@
-<definition component-name="portal-util-misc">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.component.names" value="IFrame Portlet" />
-	<property name="testray.main.component.name" value="IFrame Portlet" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.component.names|IFrame Portlet|
+		|testray.main.component.name|IFrame Portlet|
 
-		<execute macro="User#firstLoginPG" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|IFrame Page|
+	And Navigator goto Page
+		|pageName|IFrame Page|
+	Then Portlet add PG
+		|portletName|IFrame|
 
-		<execute macro="Page#add">
-			<var name="pageName" value="IFrame Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="IFrame Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="IFrame" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="ViewIFramePortlet" priority="3">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="IFrame Page" />
-		</execute>
-
-		<execute macro="Portlet#viewPG">
-			<var name="portletBody" value="Please configure this portlet to make it visible to all users." />
-			<var name="portletName" value="IFrame" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View I Frame Portlet
+Priority: 3
+	Given Navigator goto Page
+		|pageName|IFrame Page|
+	When Portlet view PG
+		|portletBody|Please configure this portlet to make it visible to all users.|
+		|portletName|IFrame|

@@ -1,378 +1,431 @@
-<definition component-name="portal-collaboration">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column" />
-	<property name="testray.main.component.name" value="Notifications" />
-
-	<var name="pageName" value="Message Boards Page" />
-	<var name="portletName" value="Message Boards" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="password" value="password" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#assignRegularRoleCP">
-			<var name="roleTitle" value="Administrator" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="ViewNoWebsiteNotificationForNewThreadInCategory" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="NotificationsPortlet#gotoNotificationDelivery" />
-
-		<execute macro="IFrame#selectConfigurationFrame" />
-
-		<execute macro="NotificationsPortlet#disableUserDeliveries">
-			<var name="actionType" value="Adds" />
-			<var name="contentType" value="Message Boards" />
-			<var name="notificationType" value="Website" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#addPG">
-			<var name="categoryName" value="MB Category Name" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#subscribePG">
-			<var name="categoryName" value="MB Category Name" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoPG">
-			<var name="categoryName" value="MB Category Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-	</command>
-
-	<command name="ViewNoWebsiteNotificationForUpdatedThreadInCategory" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="NotificationsPortlet#gotoNotificationDelivery" />
-
-		<execute macro="IFrame#selectConfigurationFrame" />
-
-		<execute macro="NotificationsPortlet#disableUserDeliveries">
-			<var name="actionType" value="Updates" />
-			<var name="contentType" value="Message Boards" />
-			<var name="notificationType" value="Website" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#addPG">
-			<var name="categoryName" value="MB Category Name" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#subscribePG">
-			<var name="categoryName" value="MB Category Name" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoPG">
-			<var name="categoryName" value="MB Category Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoPG">
-			<var name="categoryName" value="MB Category Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#editPG">
-			<var name="threadBodyEdit" value="MB Thread Message Body Edit" />
-			<var name="threadSubjectEdit" value="MB Thread Message Subject Edit" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-	</command>
-
-	<command name="ViewWebsiteNotificationForNewThreadInCategory" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#addPG">
-			<var name="categoryName" value="MB Category Name" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#subscribePG">
-			<var name="categoryName" value="MB Category Name" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoPG">
-			<var name="categoryName" value="MB Category Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="1" />
-		</execute>
-
-		<execute macro="Notifications#gotoNotifications" />
-
-		<execute macro="Notifications#viewNewContent">
-			<var name="assetType" value="message boards message" />
-			<var name="contentBody" value="MB Thread Message Subject" />
-			<var name="user" value="userfn userln" />
-		</execute>
-
-		<execute macro="Notifications#navigateToContent">
-			<var name="contentBody" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewPG">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-			<var name="userName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-	</command>
-
-	<command name="ViewWebsiteNotificationForUpdatedThreadInCategory" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#addPG">
-			<var name="categoryName" value="MB Category Name" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#subscribePG">
-			<var name="categoryName" value="MB Category Name" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoPG">
-			<var name="categoryName" value="MB Category Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoPG">
-			<var name="categoryName" value="MB Category Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#editPG">
-			<var name="threadBodyEdit" value="MB Thread Message Body Edit" />
-			<var name="threadSubjectEdit" value="MB Thread Message Subject Edit" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="1" />
-		</execute>
-
-		<execute macro="Notifications#gotoNotifications" />
-
-		<execute macro="Notifications#viewUpdatedContent">
-			<var name="assetType" value="message boards message" />
-			<var name="contentBody" value="MB Thread Message Subject Edit" />
-			<var name="user" value="userfn userln" />
-		</execute>
-
-		<execute macro="Notifications#navigateToContent">
-			<var name="contentBody" value="MB Thread Message Subject Edit" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewPG">
-			<var name="threadBody" value="MB Thread Message Body Edit" />
-			<var name="threadSubject" value="MB Thread Message Subject Edit" />
-		</execute>
-
-		<execute macro="Notifications#viewBadgeCount">
-			<var name="notificationCount" value="0" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Notifications|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Notifications|
+		|pageName|Message Boards Page|
+		|portletName|Message Boards|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Message Boards Page|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	Then User assign Regular Role CP
+		|roleTitle|Administrator|
+		|userScreenName|usersn|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View No Website Notification For New Thread In Category
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Message Boards Page|
+	When NotificationsPortlet goto Notification Delivery
+	And IFrame select Configuration Frame
+	And NotificationsPortlet disable User Deliveries
+		|actionType|Adds|
+		|contentType|Message Boards|
+		|notificationType|Website|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory add PG
+		|categoryName|MB Category Name|
+	And MessageboardsCategory subscribe PG
+		|categoryName|MB Category Name|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryName|MB Category Name|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	Then Notifications view Badge Count
+		|notificationCount|0|
+Scenario: View No Website Notification For Updated Thread In Category
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Message Boards Page|
+	When NotificationsPortlet goto Notification Delivery
+	And IFrame select Configuration Frame
+	And NotificationsPortlet disable User Deliveries
+		|actionType|Updates|
+		|contentType|Message Boards|
+		|notificationType|Website|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory add PG
+		|categoryName|MB Category Name|
+	And MessageboardsCategory subscribe PG
+		|categoryName|MB Category Name|
+	And MessageboardsCategory goto PG
+		|categoryName|MB Category Name|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryName|MB Category Name|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And MessageboardsThread edit PG
+		|threadBodyEdit|MB Thread Message Body Edit|
+		|threadSubjectEdit|MB Thread Message Subject Edit|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	Then Notifications view Badge Count
+		|notificationCount|0|
+Scenario: View Website Notification For New Thread In Category
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Message Boards Page|
+	When MessageboardsCategory add PG
+		|categoryName|MB Category Name|
+	And MessageboardsCategory subscribe PG
+		|categoryName|MB Category Name|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryName|MB Category Name|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Notifications view Badge Count
+		|notificationCount|1|
+	And Notifications goto Notifications
+	And Notifications view New Content
+		|assetType|message boards message|
+		|contentBody|MB Thread Message Subject|
+		|user|userfn userln|
+	And Notifications navigate To Content
+		|contentBody|MB Thread Message Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+		|userName|userfn userln|
+	Then Notifications view Badge Count
+		|notificationCount|0|
+Scenario: View Website Notification For Updated Thread In Category
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Message Boards Page|
+	When MessageboardsCategory add PG
+		|categoryName|MB Category Name|
+	And MessageboardsCategory subscribe PG
+		|categoryName|MB Category Name|
+	And MessageboardsCategory goto PG
+		|categoryName|MB Category Name|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryName|MB Category Name|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And MessageboardsThread edit PG
+		|threadBodyEdit|MB Thread Message Body Edit|
+		|threadSubjectEdit|MB Thread Message Subject Edit|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Notifications view Badge Count
+		|notificationCount|1|
+	And Notifications goto Notifications
+	And Notifications view Updated Content
+		|assetType|message boards message|
+		|contentBody|MB Thread Message Subject Edit|
+		|user|userfn userln|
+	And Notifications navigate To Content
+		|contentBody|MB Thread Message Subject Edit|
+	And MessageboardsThread view PG
+		|threadBody|MB Thread Message Body Edit|
+		|threadSubject|MB Thread Message Subject Edit|
+	Then Notifications view Badge Count
+		|notificationCount|0|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Message Boards Page|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	Then User assign Regular Role CP
+		|roleTitle|Administrator|
+		|userScreenName|usersn|
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View No Website Notification For New Thread In Category
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Message Boards Page|
+	When NotificationsPortlet goto Notification Delivery
+	And IFrame select Configuration Frame
+	And NotificationsPortlet disable User Deliveries
+		|actionType|Adds|
+		|contentType|Message Boards|
+		|notificationType|Website|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory add PG
+		|categoryName|MB Category Name|
+	And MessageboardsCategory subscribe PG
+		|categoryName|MB Category Name|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryName|MB Category Name|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	Then Notifications view Badge Count
+		|notificationCount|0|
+Scenario: View No Website Notification For Updated Thread In Category
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Message Boards Page|
+	When NotificationsPortlet goto Notification Delivery
+	And IFrame select Configuration Frame
+	And NotificationsPortlet disable User Deliveries
+		|actionType|Updates|
+		|contentType|Message Boards|
+		|notificationType|Website|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory add PG
+		|categoryName|MB Category Name|
+	And MessageboardsCategory subscribe PG
+		|categoryName|MB Category Name|
+	And MessageboardsCategory goto PG
+		|categoryName|MB Category Name|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryName|MB Category Name|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And MessageboardsThread edit PG
+		|threadBodyEdit|MB Thread Message Body Edit|
+		|threadSubjectEdit|MB Thread Message Subject Edit|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	Then Notifications view Badge Count
+		|notificationCount|0|
+Scenario: View Website Notification For New Thread In Category
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Message Boards Page|
+	When MessageboardsCategory add PG
+		|categoryName|MB Category Name|
+	And MessageboardsCategory subscribe PG
+		|categoryName|MB Category Name|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryName|MB Category Name|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Notifications view Badge Count
+		|notificationCount|1|
+	And Notifications goto Notifications
+	And Notifications view New Content
+		|assetType|message boards message|
+		|contentBody|MB Thread Message Subject|
+		|user|userfn userln|
+	And Notifications navigate To Content
+		|contentBody|MB Thread Message Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+		|userName|userfn userln|
+	Then Notifications view Badge Count
+		|notificationCount|0|
+Scenario: View Website Notification For Updated Thread In Category
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Message Boards Page|
+	When MessageboardsCategory add PG
+		|categoryName|MB Category Name|
+	And MessageboardsCategory subscribe PG
+		|categoryName|MB Category Name|
+	And MessageboardsCategory goto PG
+		|categoryName|MB Category Name|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryName|MB Category Name|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And MessageboardsThread edit PG
+		|threadBodyEdit|MB Thread Message Body Edit|
+		|threadSubjectEdit|MB Thread Message Subject Edit|
+	And Notifications view Badge Count
+		|notificationCount|0|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Notifications view Badge Count
+		|notificationCount|1|
+	And Notifications goto Notifications
+	And Notifications view Updated Content
+		|assetType|message boards message|
+		|contentBody|MB Thread Message Subject Edit|
+		|user|userfn userln|
+	And Notifications navigate To Content
+		|contentBody|MB Thread Message Subject Edit|
+	And MessageboardsThread view PG
+		|threadBody|MB Thread Message Body Edit|
+		|threadSubject|MB Thread Message Subject Edit|
+	Then Notifications view Badge Count
+		|notificationCount|0|

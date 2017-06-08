@@ -1,74 +1,28 @@
-<definition component-name="portal-user-interface">
-	<property name="portal.release" value="false" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="User Interface" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|false|
+		|portal.upstream|true|
+		|testray.main.component.name|User Interface|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="AddThemeSite" priority="5">
-		<property name="portal.acceptance" value="pending" />
-		<property name="test.name.skip.portal.instance" value="WesterosTheme#AddThemeSite" />
-		<property name="theme.file.name" value="westeros-bank-theme.war" />
-
-		<var method="TestPropsUtil#get('theme.contains.resources')" name="themeContainsResources" />
-
-		<if>
-			<equals arg1="${themeContainsResources}" arg2="true" />
-			<then>
-				<execute macro="ProductMenu#gotoControlPanelSites">
-					<var name="portlet" value="Sites" />
-				</execute>
-
-				<execute macro="Site#addSiteTemplateCP">
-					<var name="siteName" value="Westeros Bank Theme Site" />
-					<var name="siteTemplateName" value="Westeros Bank Theme" />
-				</execute>
-
-				<execute macro="ProductMenu#gotoSite">
-					<var name="site" value="Westeros Bank Theme Site" />
-				</execute>
-
-				<execute function="AssertClick" locator1="Home#PAGE" value1="FOR YOU">
-					<var name="key_pageName" value="For You" />
-				</execute>
-
-				<execute function="MouseOver" locator1="Home#PAGE">
-					<var name="key_pageName" value="Checking and Credit Cards" />
-				</execute>
-
-				<execute function="AssertClick" locator1="Home#PAGE_CHILD_PAGE" value1="All credit cards">
-					<var name="key_childPageName" value="All credit cards" />
-				</execute>
-
-				<execute function="AssertTextEquals" locator1="Header#H2_TITLE" value1="We help you to achieve your goals">
-					<var name="key_title" value="We help you to achieve your goals" />
-				</execute>
-			</then>
-			<else>
-				<var name="appName" value="westeros-bank-theme" />
-
-				<execute macro="ProductMenu#gotoControlPanelApps">
-					<var name="portlet" value="App Manager" />
-				</execute>
-
-				<execute function="Type" locator1="TextInput#SEARCH" value1="${appName}" />
-
-				<execute function="Click" locator1="Icon#BASIC_SEARCH" />
-
-				<execute function="AssertVisible" locator1="ListGroupItem#ITEM_NAME_LINK">
-					<var name="key_itemName" value="westeros-bank-theme" />
-				</execute>
-			</else>
-		</if>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Theme Site
+Priority: 5
+	Given these properties
+		|portal.acceptance|pending|
+	When these properties
+		|test.name.skip.portal.instance|WesterosTheme#AddThemeSite|
+	And these properties
+		|theme.file.name|westeros-bank-theme.war|
+	And these variables
+		|themeContainsResources|TestPropsUtil#get('theme.contains.resources')|
+##########################################################
+The Poshi if element is not supported in the readable syntax. Please update this test.
+##########################################################

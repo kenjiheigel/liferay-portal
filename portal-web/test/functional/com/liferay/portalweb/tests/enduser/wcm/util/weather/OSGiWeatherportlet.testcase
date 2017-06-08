@@ -1,32 +1,26 @@
-<definition component-name="portal-plugins-osgi">
-	<property name="osgi.app.includes" value="weather" />
-	<property name="plugins.deployment.type" value="osgi" />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.component.names" value="Weather" />
-	<property name="testray.main.component.name" value="Weather" />
+Feature:
 
-	<set-up>
-		<execute macro="User#firstLoginPG" />
+Background: This executes once per feature file
+	Given these properties
+		|osgi.app.includes|weather|
+		|plugins.deployment.type|osgi|
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.component.names|Weather|
+		|testray.main.component.name|Weather|
 
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page" />
-		</execute>
-	</set-up>
+Setup: This executes before each scenario 
+	Given User first Login PG
+	When Page add
+		|pageName|Test Page|
 
-	<tear-down>
-		<execute macro="Page#tearDownPG" />
-	</tear-down>
-
-	<command name="WeatherPortletSmoke" priority="4">
-		<var name="appName" value="Weather" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Weather" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given Page tear Down PG
+Scenario: Weather Portlet Smoke
+Priority: 4
+	Given these variables
+		|appName|Weather|
+	When Navigator goto Page
+		|pageName|Test Page|
+	Then Portlet add PG
+		|portletName|Weather|

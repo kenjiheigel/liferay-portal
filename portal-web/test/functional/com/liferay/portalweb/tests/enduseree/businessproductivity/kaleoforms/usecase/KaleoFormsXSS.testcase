@@ -1,93 +1,59 @@
-<definition component-name="portal-business-productivity-ee">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="test.run.environment" value="EE" />
-	<property name="testray.main.component.name" value="Kaleo Forms Admin" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|test.run.environment|EE|
+		|testray.main.component.name|Kaleo Forms Admin|
 
-		<execute macro="User#firstLoginPG" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Workflow Definition|
+	And Workflow upload Definition
+		|workflowDefinitionFile|workflow_definition_xss.xml|
+		|workflowDefinitionTitle||
+	And Navigator open URL
+	And Navigator open URL
+	Then ProductMenu goto Sites Content
+		|portlet|Kaleo Forms Admin|
 
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Workflow Definition" />
-		</execute>
-
-		<execute macro="Workflow#uploadDefinition">
-			<var name="workflowDefinitionFile" value="workflow_definition_xss.xml" />
-			<var name="workflowDefinitionTitle"><![CDATA['alert(0)'"alert(0)"><img src=x onerror=alert(0)><script>alert(0)</script>]]></var>
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Kaleo Forms Admin" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="AddProcess" priority="4">
-		<execute macro="KaleoFormsAdmin#addProcess" />
-
-		<execute macro="KaleoFormsAdmin#addProcessDetails">
-			<var name="kfProcessDescription" value="Kaleo Forms Process Description" />
-			<var name="kfProcessName" value="Kaleo Forms Process" />
-		</execute>
-
-		<execute macro="KaleoFormsAdmin#next" />
-
-		<execute macro="KaleoFormsAdmin#addFieldSet">
-			<var name="kfFieldSetName" value="New Kaleo Field Set" />
-			<var name="kfProcessName" value="Kaleo Forms Process" />
-		</execute>
-
-		<execute macro="DynamicDataMapping#addField">
-			<var name="field" value="Text" />
-			<var name="fieldFieldLabel" value="Text" />
-			<var name="fieldName" value="Text" />
-		</execute>
-
-		<execute macro="KaleoFormsAdmin#saveFieldSet" />
-
-		<execute macro="KaleoFormsAdmin#chooseFieldSet">
-			<var name="kfFieldSetName" value="New Kaleo Field Set" />
-			<var name="kfProcessName" value="Kaleo Forms Process" />
-		</execute>
-
-		<execute macro="KaleoFormsAdmin#next" />
-
-		<var name="key_rowEntry" value="alert" />
-
-		<execute function="Click" locator1="Icon#ROW_VERTICAL_ELLIPSIS" />
-
-		<execute function="AssertClick" locator1="KaleoFormsAdminEditProcess#WORKFLOW_MENULIST_CHOOSE" value1="Choose" />
-
-		<execute macro="KaleoFormsAdmin#next" />
-
-		<execute macro="KaleoFormsAdmin#assignForm">
-			<var name="kfProcessName" value="Kaleo Forms Process" />
-			<var name="workflowTask" value="StartNode" />
-		</execute>
-
-		<execute macro="KaleoFormsAdmin#addForm">
-			<var name="kfFormName" value="Created Task Form" />
-		</execute>
-
-		<execute macro="KaleoFormsAdmin#saveForm" />
-
-		<execute macro="KaleoFormsAdmin#chooseForm">
-			<var name="kfFormName" value="Created Task Form" />
-		</execute>
-
-		<execute macro="KaleoFormsAdmin#saveProcess">
-			<var name="kfProcessName" value="Kaleo Forms Process" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Process
+Priority: 4
+	Given KaleoFormsAdmin add Process
+	When KaleoFormsAdmin add Process Details
+		|kfProcessDescription|Kaleo Forms Process Description|
+		|kfProcessName|Kaleo Forms Process|
+	And KaleoFormsAdmin next
+	And KaleoFormsAdmin add Field Set
+		|kfFieldSetName|New Kaleo Field Set|
+		|kfProcessName|Kaleo Forms Process|
+	And DynamicDataMapping add Field
+		|field|Text|
+		|fieldFieldLabel|Text|
+		|fieldName|Text|
+	And KaleoFormsAdmin save Field Set
+	And KaleoFormsAdmin choose Field Set
+		|kfFieldSetName|New Kaleo Field Set|
+		|kfProcessName|Kaleo Forms Process|
+	And KaleoFormsAdmin next
+	And these variables
+		|key_rowEntry|alert|
+	And Click at locator 'Icon#ROW_VERTICAL_ELLIPSIS'
+	And AssertClick the value 'Choose' at locator 'KaleoFormsAdminEditProcess#WORKFLOW_MENULIST_CHOOSE'
+	And KaleoFormsAdmin next
+	And KaleoFormsAdmin assign Form
+		|kfProcessName|Kaleo Forms Process|
+		|workflowTask|StartNode|
+	And KaleoFormsAdmin add Form
+		|kfFormName|Created Task Form|
+	And KaleoFormsAdmin save Form
+	And KaleoFormsAdmin choose Form
+		|kfFormName|Created Task Form|
+	Then KaleoFormsAdmin save Process
+		|kfProcessName|Kaleo Forms Process|

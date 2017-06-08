@@ -1,1779 +1,2091 @@
-<definition component-name="portal-collaboration">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column" />
-	<property name="testray.main.component.name" value="Message Boards" />
-
-	<var name="pageName" value="Message Boards Page" />
-	<var name="portletName" value="Message Boards" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="CopyAndPasteTextInAlloyEditor" priority="4">
-		<execute macro="Page#add">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
-			<var name="columnName" value="1 Column" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute function="AssertClick" locator1="Button#POST_NEW_THREAD" value1="Post New Thread" />
-
-		<execute function="AssertElementPresent" locator1="TextInput#SUBJECT" />
-
-		<execute function="Type" locator1="TextInput#SUBJECT" value1="Message Boards Subject" />
-		<execute function="Type#typeEditor" locator1="AlloyEditor#CONTENT_FIELD" value1="Message Boards Body" />
-
-		<execute function="Copy" locator1="TextInput#SUBJECT" />
-
-		<execute function="Paste" locator1="AlloyEditor#CONTENT_FIELD" />
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
-			<var name="threadBody" value="Message Boards Subject" />
-			<var name="threadSubject" value="Message Boards Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewPG">
-			<var name="threadBody" value="Message Boards Subject" />
-			<var name="threadSubject" value="Message Boards Subject" />
-			<var name="userName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="DeleteMessageboardsThread" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addCP">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#moveToRecycleBinCP">
-			<var name="assetName" value="MB Thread Message Subject" />
-			<var name="assetType" value="Message Boards Thread" />
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#deleteCP">
-			<var name="assetName" value="MB Thread Message Subject" />
-			<var name="assetType" value="Message Boards Thread" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#viewDefaultCP">
-			<var name="assetName" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewDefaultCP">
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-	</command>
-
-	<command name="RestoreMessageboardsThread" priority="5">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addCP">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#moveToRecycleBinCP">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#restoreCP">
-			<var name="assetName" value="MB Thread Message Subject" />
-			<var name="assetRestoreLocation" value="Home" />
-			<var name="assetType" value="Message Boards Thread" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#viewDefaultCP">
-			<var name="assetName" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewCP">
-			<var name="postsNumber" value="1" />
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-	</command>
-
-	<command name="SearchMessageBoardsAttachment" priority="3">
-		<execute macro="Page#add">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
-			<var name="columnName" value="1 Column" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPGWithAttachment">
-			<var name="mbThreadAttachment" value="Document_1.docx" />
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#searchPG">
-			<var name="searchTerm" value="This is a *.docx file." />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#viewSearchResultPG">
-			<var name="mbThreadAttachment" value="Document_1.docx" />
-			<var name="searchTerm" value="This is a *.doc x file." />
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-			<var name="userName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="SplitMBThread" priority="3">
-		<execute macro="Page#add">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
-			<var name="columnName" value="1 Column" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#replyPG">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadReplyBody" value="MB Thread Reply Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="2" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#splitThreadPG">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadReplyBody" value="MB Thread Reply Body" />
-			<var name="threadSplitReplyBody" value="Split Reply Thread Body" />
-			<var name="threadSplitReplySubject" value="Split Reply Thread Subject" />
-			<var name="threadSplitSubject" value="MB Thread Split Subject" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewSplitThreadPG">
-			<var name="pageName" value="Message Boards Page" />
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadReplyBody" value="MB Thread Reply Body" />
-			<var name="threadSplitReplyBody" value="Split Reply Thread Body" />
-			<var name="threadSplitReplySubject" value="Split Reply Thread Subject" />
-			<var name="threadSplitSubject" value="MB Thread Split Subject" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-	</command>
-
-	<command name="ViewCategoriesAndThreadsOnTwoScopes" priority="3">
-		<execute macro="Page#add">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
-			<var name="columnName" value="1 Column" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
-			<var name="columnName" value="1 Column" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#configureScopePG">
-			<var name="scopeName" value="Message Boards Page 2 (Create New)" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="Portlet#viewPG">
-			<var name="portletName" value="Message Boards (Message Boards Page 2)" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Message Boards Page 3" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Message Boards Page 3" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
-			<var name="columnName" value="1 Column" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 3" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#configureScopePG">
-			<var name="scopeName" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 3" />
-		</execute>
-
-		<execute macro="Portlet#viewPG">
-			<var name="portletName" value="Message Boards (Message Boards Page 2)" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="MB Root Thread Message Body" />
-			<var name="threadSubject" value="MB Root Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#addPG">
-			<var name="categoryDescription" value="MB Category1 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category1 Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#addPG">
-			<var name="categoryDescription" value="MB Category2 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category2 Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
-			<var name="threadBody" value="MB Root Thread Message Body" />
-			<var name="threadSubject" value="MB Root Thread Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewPG">
-			<var name="threadBody" value="MB Root Thread Message Body" />
-			<var name="threadSubject" value="MB Root Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#viewPG">
-			<var name="categoryDescription" value="MB Category1 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category1 Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#viewPG">
-			<var name="categoryDescription" value="MB Category2 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category2 Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoPG">
-			<var name="categoryDescription" value="MB Category1 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category1 Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="MB Thread1 Message Body" />
-			<var name="threadSubject" value="MB Thread1 Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoPG">
-			<var name="categoryDescription" value="MB Category2 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category2 Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="MB Thread2 Message Body" />
-			<var name="threadSubject" value="MB Thread2 Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoPG">
-			<var name="categoryDescription" value="MB Category1 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category1 Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
-			<var name="threadBody" value="MB Thread1 Message Body" />
-			<var name="threadSubject" value="MB Thread1 Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewPG">
-			<var name="threadBody" value="MB Thread1 Message Body" />
-			<var name="threadSubject" value="MB Thread1 Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoPG">
-			<var name="categoryDescription" value="MB Category2 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category2 Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
-			<var name="threadBody" value="MB Thread2 Message Body" />
-			<var name="threadSubject" value="MB Thread2 Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewPG">
-			<var name="threadBody" value="MB Thread2 Message Body" />
-			<var name="threadSubject" value="MB Thread2 Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="MB Root Thread2 Message Body" />
-			<var name="threadSubject" value="MB Root Thread2 Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#addPG">
-			<var name="categoryDescription" value="MB Category3 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category3 Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#addPG">
-			<var name="categoryDescription" value="MB Category4 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category4 Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
-			<var name="threadBody" value="MB Root Thread2 Message Body" />
-			<var name="threadSubject" value="MB Root Thread2 Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewPG">
-			<var name="threadBody" value="MB Root Thread2 Message Body" />
-			<var name="threadSubject" value="MB Root Thread2 Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#viewPG">
-			<var name="categoryDescription" value="MB Category3 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category3 Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#viewPG">
-			<var name="categoryDescription" value="MB Category4 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category4 Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoPG">
-			<var name="categoryDescription" value="MB Category3 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category3 Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="MB Thread3 Message Body" />
-			<var name="threadSubject" value="MB Thread3 Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoPG">
-			<var name="categoryDescription" value="MB Category4 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category4 Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="MB Thread4 Message Body" />
-			<var name="threadSubject" value="MB Thread4 Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoPG">
-			<var name="categoryDescription" value="MB Category3 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category3 Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
-			<var name="threadBody" value="MB Thread3 Message Body" />
-			<var name="threadSubject" value="MB Thread3 Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewPG">
-			<var name="threadBody" value="MB Thread3 Message Body" />
-			<var name="threadSubject" value="MB Thread3 Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoPG">
-			<var name="categoryDescription" value="MB Category4 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category4 Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="categoryDescription" value="MB Category4 Description" />
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
-			<var name="threadBody" value="MB Thread4 Message Body" />
-			<var name="threadSubject" value="MB Thread4 Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewPG">
-			<var name="threadBody" value="MB Thread4 Message Body" />
-			<var name="threadSubject" value="MB Thread4 Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 3" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
-			<var name="threadBody" value="MB Root Thread2 Message Body" />
-			<var name="threadSubject" value="MB Root Thread2 Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewPG">
-			<var name="threadBody" value="MB Root Thread2 Message Body" />
-			<var name="threadsNumber" value="0" />
-			<var name="threadSubject" value="MB Root Thread2 Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 3" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#viewPG">
-			<var name="categoryDescription" value="MB Category3 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category3 Name" />
-			<var name="threadsNumber" value="0" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 3" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#viewPG">
-			<var name="categoryDescription" value="MB Category4 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category4 Name" />
-			<var name="threadsNumber" value="0" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 3" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoPG">
-			<var name="categoryDescription" value="MB Category3 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category3 Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="categoryDescription" value="MB Category3 Description" />
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
-			<var name="threadBody" value="MB Thread3 Message Body" />
-			<var name="threadSubject" value="MB Thread3 Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewPG">
-			<var name="threadBody" value="MB Thread3 Message Body" />
-			<var name="threadSubject" value="MB Thread3 Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 3" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoPG">
-			<var name="categoryDescription" value="MB Category4 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category4 Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="categoryDescription" value="MB Category4 Description" />
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
-			<var name="threadBody" value="MB Thread4 Message Body" />
-			<var name="threadSubject" value="MB Thread4 Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewPG">
-			<var name="threadBody" value="MB Thread4 Message Body" />
-			<var name="threadSubject" value="MB Thread4 Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 3" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoMessageBoardsCategoryPG">
-			<var name="categoryDescription" value="MB Category4 Description" />
-			<var name="categoryName" value="MB Category4 Name" />
-		</execute>
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="INLINE_PERMISSIONS_VIEW_CHECKBOX" />
-			<var name="roleTitle" value="Guest" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#viewNoPG">
-			<var name="categoryName" value="MB Category4 Name" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#gotoRecentPostsPG" />
-
-		<execute macro="MessageboardsCategory#viewNoPG">
-			<var name="categoryName" value="MB Category4 Name" />
-		</execute>
-
-		<execute macro="User#loginPG" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoPG">
-			<var name="categoryDescription" value="MB Category3 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category3 Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#replyWithAttachmentPG">
-			<var name="mbThreadAttachment" value="Document_4.jpeg" />
-			<var name="threadReplyBody" value="MB Thread1 Reply Body" />
-			<var name="threadSubject" value="MB Thread3 Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoPG">
-			<var name="categoryDescription" value="MB Category3 Description" />
-			<var name="categoryDescriptionEnabled" value="true" />
-			<var name="categoryName" value="MB Category3 Name" />
-		</execute>
-
-		<execute function="Pause" locator1="5000" />
-
-		<execute macro="MessageboardsThread#viewReplyPG">
-			<var name="mbThreadAttachment" value="Document_4.jpeg" />
-			<var name="postCount" value="2" />
-			<var name="threadBody" value="MB Thread3 Message Body" />
-			<var name="threadReplyBody" value="MB Thread1 Reply Body" />
-			<var name="threadSubject" value="MB Thread3 Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#searchPG">
-			<var name="searchTerm" value="MB Thread3 Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#viewSearchResultPG">
-			<var name="threadBody" value="MB Thread3 Message Body" />
-			<var name="threadSubject" value="MB Thread3 Message Subject" />
-			<var name="userName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#searchPG">
-			<var name="searchTerm" value="MB Thread4 Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#viewSearchResultPG">
-			<var name="threadBody" value="MB Thread4 Message Body" />
-			<var name="threadSubject" value="MB Thread4 Message Subject" />
-			<var name="userName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#searchPG">
-			<var name="searchTerm" value="MB Thread1 Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#viewNoSearchResultSubjectPG">
-			<var name="threadSubject" value="MB Thread1 Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page 2" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#searchPG">
-			<var name="searchTerm" value="MB Thread2 Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#viewNoSearchResultSubjectPG">
-			<var name="threadSubject" value="MB Thread2 Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#searchPG">
-			<var name="searchTerm" value="MB Thread1 Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#viewSearchResultPG">
-			<var name="threadBody" value="MB Thread1 Message Body" />
-			<var name="threadSubject" value="MB Thread1 Message Subject" />
-			<var name="userName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#searchPG">
-			<var name="searchTerm" value="MB Thread2 Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#viewSearchResultPG">
-			<var name="threadBody" value="MB Thread2 Message Body" />
-			<var name="threadSubject" value="MB Thread2 Message Subject" />
-			<var name="userName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#searchPG">
-			<var name="searchTerm" value="MB Thread3 Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#viewNoSearchResultSubjectPG">
-			<var name="threadSubject" value="MB Thread3 Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#searchPG">
-			<var name="searchTerm" value="MB Thread4 Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#viewNoSearchResultSubjectPG">
-			<var name="threadSubject" value="MB Thread4 Message Subject" />
-		</execute>
-	</command>
-
-	<command name="ViewCorrectViewPermissionsInMessageBoardsQuickReplyInPrivateSite" priority="3">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="membershipType" value="Private" />
-			<var name="siteName" value="Blank Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Blank Site Name" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Site Page Name" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
-			<var name="columnName" value="1 Column" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Blank Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Blank Site Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPGWithPermissions">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-			<var name="viewableBySelection" value="Owner" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Blank Site Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#replyPG">
-			<var name="threadReplyBody" value="MB Thread Message Subject Reply" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoMessageBoardsThreadReplyPG">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Blank Site Name" />
-			<var name="siteURL" value="true" />
-			<var name="threadReplyBody" value="MB Thread Message Subject Reply" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="PermissionsInline#viewPermissionsRemoved">
-			<var name="permissionDefinitionKey" value="CONFIGURATION_PERMISSIONS_VIEW_CHECKBOX" />
-			<var name="roleTitle" value="Power User" />
-		</execute>
-
-		<execute macro="PermissionsInline#viewPermissionsRemoved">
-			<var name="permissionDefinitionKey" value="CONFIGURATION_PERMISSIONS_VIEW_CHECKBOX" />
-			<var name="roleTitle" value="User" />
-		</execute>
-
-		<execute macro="PermissionsInline#viewPermissionsChecked">
-			<var name="permissionDefinitionKey" value="CONFIGURATION_PERMISSIONS_VIEW_CHECKBOX" />
-			<var name="roleTitle" value="Owner" />
-		</execute>
-	</command>
-
-	<command name="ViewMBThreadAndReplyThreadInGmail" priority="4">
-		<property name="custom.properties" value="message.boards.message.formats.default=html${line.separator}pop.server.notifications.enabled=true${line.separator}pop.server.subdomain=${line.separator}mail.session.mail.smtp.auth=true${line.separator}mail.session.mail.store.protocol=pop3${line.separator}mail.session.mail.transport.protocol=smtp" />
-		<property name="test.name.skip.portal.instance" value="MessageboardsUsecase#ViewMBThreadAndReplyThreadInGmail" />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Server Administration" />
-		</execute>
-
-		<execute macro="ServerAdministration#configureMailServerSettings">
-			<var name="needsReply" value="true" />
-			<var method="TestPropsUtil#get('email.address.2')" name="userName" />
-			<var method="TestPropsUtil#get('email.password.2')" name="userPassword" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Virtual Instances" />
-		</execute>
-
-		<execute macro="PortalInstances#editCP">
-			<var name="mailDomain" value="gmail.com" />
-			<var name="virtualHost" value="localhost" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var method="TestPropsUtil#get('email.address.3')" name="userEmailAddress" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var method="TestPropsUtil#get('email.address.3')" name="userEmailAddress" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editUserSiteCP">
-			<var name="siteName" value="${siteName}" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#editEmailViaMyAccount">
-			<var method="TestPropsUtil#get('email.address.4')" name="userEmailAddress" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#configureMessageEmailFromCP">
-			<var method="TestPropsUtil#get('email.address.2')" name="emailFromAddress" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
-			<var name="columnName" value="1 Column" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#addPG">
-			<var name="categoryName" value="MB Category Name" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var method="TestPropsUtil#get('email.address.3')" name="userEmailAddress" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoPG">
-			<var name="categoryName" value="MB Category Name" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#subscribePG" />
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var method="TestPropsUtil#get('email.address.4')" name="userEmailAddress" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoPG">
-			<var name="categoryName" value="MB Category Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject GMMB1" />
-		</execute>
-
-		<execute function="Pause" locator1="30000" />
-
-		<execute macro="Gmail#login">
-			<var method="TestPropsUtil#get('email.address.3')" name="userEmailAddress" />
-			<var method="TestPropsUtil#get('email.password.3')" name="userPassword" />
-		</execute>
-
-		<execute macro="Gmail#gotoHtmlMode" />
-
-		<execute macro="Gmail#viewMail">
-			<var name="emailFromUserName" value="Test Test" />
-			<var name="gmailAssetType" value="GMMB1" />
-			<var name="gmailMessageBody" value="MB Thread Message Body" />
-			<var name="gmailMessageTitle" value="MB Category Name New Message: MB Thread Message Subject GMMB1" />
-		</execute>
-
-		<execute macro="Gmail#replyMail">
-			<var name="gmailReplyMessage" value="MB Thread Message Subject GMMB1 Reply" />
-		</execute>
-
-		<execute function="Open" locator1="${portalURL}" />
-
-		<execute function="Pause" locator1="60000" />
-
-		<execute function="Refresh" />
-
-		<execute function="AssertVisible" locator1="Notifications#PROFILE_BADGE_COUNT" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#gotoPG">
-			<var name="categoryName" value="MB Category Name" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewReplyPG">
-			<var name="postCount" value="2" />
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadReplyBody" value="MB Thread Message Subject GMMB1 Reply" />
-			<var name="threadSubject" value="MB Thread Message Subject GMMB1" />
-			<var name="userName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Gmail#gotoHtmlMode" />
-
-		<execute macro="Gmail#deleteSpecificMail">
-			<var name="gmailMessageTitleList" value="MB Category Name New Message: MB Thread Message Subject GMMB1,Your New Account,Your New Password,GMMB1" />
-		</execute>
-	</command>
-
-	<command name="ViewMessageBoardsBannedUsers" priority="3">
-		<execute macro="Page#add">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
-			<var name="columnName" value="1 Column" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea1@liferay.com" />
-			<var name="userFirstName" value="userfn1" />
-			<var name="userLastName" value="userln1" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea1@liferay.com" />
-			<var name="userScreenName" value="usersn1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea2@liferay.com" />
-			<var name="userFirstName" value="userfn2" />
-			<var name="userLastName" value="userln2" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea2@liferay.com" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoMessageBoardsPG">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="INLINE_PERMISSIONS_REPLY_TO_MESSAGE_CHECKBOX" />
-			<var name="roleTitle" value="User" />
-		</execute>
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="INLINE_PERMISSIONS_VIEW_CHECKBOX" />
-			<var name="roleTitle" value="User" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea1@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#replyPG">
-			<var name="threadReplyBody" value="MB Thread1 Reply Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea2@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#replyPG">
-			<var name="threadReplyBody" value="MB Thread2 Reply Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="lastPostUserName" value="userfn2 userln2" />
-			<var name="postCount" value="3" />
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#banUser">
-			<var name="threadReplyBody" value="MB Thread1 Reply Body" />
-			<var name="userName" value="userfn1 userln1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="lastPostUserName" value="userfn2 userln2" />
-			<var name="postCount" value="3" />
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#banUser">
-			<var name="threadReplyBody" value="MB Thread2 Reply Body" />
-			<var name="userName" value="userfn2 userln2" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#viewBannedUserPG">
-			<var name="userScreenName" value="userfn1 userln1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#viewBannedUserPG">
-			<var name="userScreenName" value="userfn2 userln2" />
-		</execute>
-	</command>
-
-	<command name="ViewMessageBoardsThreadStatistics" priority="4">
-		<execute macro="Page#add">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
-			<var name="columnName" value="1 Column" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="MB Thread1 Message Body" />
-			<var name="threadSubject" value="MB Thread1 Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewStatisticsPostsCountPG">
-			<var name="threadPostNumber" value="1" />
-			<var name="userName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="1" />
-			<var name="threadBody" value="MB Thread1 Message Body" />
-			<var name="threadSubject" value="MB Thread1 Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#editPG">
-			<var name="saveAsDraft" value="true" />
-			<var name="threadBodyEdit" value="MB Thread1 Message Body Edit" />
-			<var name="threadSubject" value="MB Thread1 Message Subject" />
-			<var name="threadSubjectEdit" value="MB Thread1 Message Subject Edit" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewStatisticsPostsCountDefaultPG" />
-
-		<execute macro="MessageboardsThread#editViaMyPosts">
-			<var name="threadSubject" value="MB Thread1 Message Subject Edit" />
-			<var name="threadSubjectEdit" value="true" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewStatisticsPostsCountPG">
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="startedByUserName" value="Test Test" />
-			<var name="threadPostNumber" value="1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="MB Thread2 Message Body" />
-			<var name="threadSubject" value="MB Thread2 Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewStatisticsPostsCountPG">
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="startedByUserName" value="Test Test" />
-			<var name="threadPostNumber" value="2" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#deletePG">
-			<var name="threadSubject" value="MB Thread2 Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewStatisticsPostsCountPG">
-			<var name="threadPostNumber" value="1" />
-			<var name="userName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="ViewNoMBThreadXSS" priority="4">
-		<execute macro="Page#add">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
-			<var name="columnName" value="1 Column" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPG">
-			<var name="source" value="true" />
-			<var name="threadBody" value="[img]asd[font= onerror=alert(/This is an XSS Message/.source)//]FF[/font][/img]" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewNoXSSPG">
-			<var name="threadBody" value="[img]asd[font= onerror=alert(/This is an XSS Message/.source)//]FF[/font][/img]" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-	</command>
-
-	<command name="ViewNoSubscribeLinksNoWithEmailNotificationsDisabled" priority="4">
-		<execute macro="Page#add">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
-			<var name="columnName" value="1 Column" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#addPG">
-			<var name="categoryName" value="MB Category Name" />
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPG">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<var name="key_categoryName" value="MB Category Name" />
-		<var name="key_threadSubject" value="MB Thread Message Subject" />
-
-		<execute function="AssertTextEquals" locator1="MessageBoards#SUBSCRIBE_LINK" value1="Subscribe" />
-		<execute function="Click" locator1="MessageBoards#CATEGORY_LIST_ACTIONS" />
-		<execute function="AssertTextEquals" locator1="MenuItem#SUBSCRIBE" value1="Subscribe" />
-		<execute function="AssertClick" locator1="MessageBoards#CATEGORY_LIST_CATEGORY" value1="MB Category Name" />
-		<execute function="AssertTextEquals" locator1="Link#SUBSCRIBE" value1="Subscribe" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute function="Click" locator1="MessageBoards#VERTICAL_ELLIPSIS" />
-		<execute function="AssertTextEquals" locator1="MenuItem#UNSUBSCRIBE" value1="Unsubscribe" />
-		<execute function="AssertClick" locator1="MessageBoards#THREAD_LIST_THREAD" value1="MB Thread Message Subject" />
-		<execute function="AssertTextEquals" locator1="MessageBoardsThread#THREAD_ACTIONS_UNSUBSCRIBE" value1="Unsubscribe" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#configureMessageAddedEmailCP">
-			<var name="messageAddedEmailEnabled" value="false" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#configureMessageUpdatedEmailCP">
-			<var name="messageUpdatedEmailEnabled" value="false" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute function="AssertElementNotPresent" locator1="MessageBoards#SUBSCRIBE_LINK" />
-		<execute function="Click" locator1="MessageBoards#CATEGORY_LIST_ACTIONS" />
-		<execute function="AssertElementNotPresent" locator1="MenuItem#SUBSCRIBE" />
-		<execute function="AssertClick" locator1="MessageBoards#CATEGORY_LIST_CATEGORY" value1="MB Category Name" />
-		<execute function="AssertElementNotPresent" locator1="Link#SUBSCRIBE" value1="Subscribe" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute function="Click" locator1="MessageBoards#VERTICAL_ELLIPSIS" />
-		<execute function="AssertElementNotPresent" locator1="MenuItem#UNSUBSCRIBE" />
-		<execute function="AssertClick" locator1="MessageBoards#THREAD_LIST_THREAD" value1="MB Thread Message Subject" />
-		<execute function="AssertElementNotPresent" locator1="MessageBoardsThread#THREAD_ACTIONS_UNSUBSCRIBE" value1="Unsubscribe" />
-	</command>
-
-	<command name="ViewQuestionOnSplitThread" priority="3">
-		<execute macro="Page#add">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
-			<var name="columnName" value="1 Column" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addPGAsQuestion">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewMarkedAsQuestionPG">
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#replyPG">
-			<var name="threadReplyBody" value="MB Thread Split Reply Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoPG">
-			<var name="lastPostUserName" value="Test Test" />
-			<var name="postCount" value="2" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#splitThreadPG">
-			<var name="threadReplyBody" value="MB Thread Split Reply Body" />
-			<var name="threadSplitReplyBody" value="Split Reply Thread Body" />
-			<var name="threadSplitReplySubject" value="Split Reply Thread Subject" />
-			<var name="threadSplitSubject" value="MB Thread Split Subject" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewSplitThreadPG">
-			<var name="pageName" value="Message Boards Page" />
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadReplyBody" value="MB Thread Split Reply Body" />
-			<var name="threadSplitReplyBody" value="Split Reply Thread Body" />
-			<var name="threadSplitReplySubject" value="Split Reply Thread Subject" />
-			<var name="threadSplitSubject" value="MB Thread Split Subject" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewMarkedAsQuestionPG">
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-	</command>
-
-	<command name="ViewThreadDefaultQuestion" priority="3">
-		<execute macro="Page#add">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
-			<var name="columnName" value="1 Column" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewMarkAsQuestionNotCheckedCP">
-			<var name="threadSubject" value="Thread Subject" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#configureGeneralCP">
-			<var name="threadAsQuestionByDefaultEnabled" value="true" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewMarkAsQuestionCheckedCP">
-			<var name="threadSubject" value="Thread Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addCP">
-			<var name="threadBody" value="Thread Body" />
-			<var name="threadSubject" value="Thread Subject" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#replyPG">
-			<var name="markAsAnswer" value="true" />
-			<var name="markAsQuestion" value="true" />
-			<var name="threadReplyBody" value="Thread Reply Body" />
-			<var name="threadSubject" value="Thread Subject" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Message Boards Page" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewAnswerPG">
-			<var name="threadSubject" value="Thread Subject" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Message Boards|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Message Boards|
+		|pageName|Message Boards Page|
+		|portletName|Message Boards|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Copy And Paste Text In Alloy Editor
+Priority: 4
+	Given Page add
+		|pageName|Message Boards Page|
+	When SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And AssertClick the value 'Post New Thread' at locator 'Button#POST_NEW_THREAD'
+	And AssertElementPresent at locator 'TextInput#SUBJECT'
+	And Type the value 'Message Boards Subject' at locator 'TextInput#SUBJECT'
+	And Type type Editor the value 'Message Boards Body' at locator 'AlloyEditor#CONTENT_FIELD'
+	And Copy at locator 'TextInput#SUBJECT'
+	And Paste at locator 'AlloyEditor#CONTENT_FIELD'
+	And PortletEntry publish
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|Message Boards Subject|
+		|threadSubject|Message Boards Subject|
+	Then MessageboardsThread view PG
+		|threadBody|Message Boards Subject|
+		|threadSubject|Message Boards Subject|
+		|userName|Test Test|
+Scenario: Delete Messageboards Thread
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread add CP
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread move To Recycle Bin CP
+		|assetName|MB Thread Message Subject|
+		|assetType|Message Boards Thread|
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin delete CP
+		|assetName|MB Thread Message Subject|
+		|assetType|Message Boards Thread|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin view Default CP
+		|assetName|MB Thread Message Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	Then MessageboardsThread view Default CP
+		|threadSubject|MB Thread Message Subject|
+Scenario: Restore Messageboards Thread
+Priority: 5
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread add CP
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread move To Recycle Bin CP
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin restore CP
+		|assetName|MB Thread Message Subject|
+		|assetRestoreLocation|Home|
+		|assetType|Message Boards Thread|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin view Default CP
+		|assetName|MB Thread Message Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	Then MessageboardsThread view CP
+		|postsNumber|1|
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+Scenario: Search Message Boards Attachment
+Priority: 3
+	Given Page add
+		|pageName|Message Boards Page|
+	When SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread add PG With Attachment
+		|mbThreadAttachment|Document_1.docx|
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsPortlet search PG
+		|searchTerm|This is a *.docx file.|
+	Then MessageboardsPortlet view Search Result PG
+		|mbThreadAttachment|Document_1.docx|
+		|searchTerm|This is a *.doc x file.|
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+		|userName|Test Test|
+Scenario: Split MB Thread
+Priority: 3
+	Given Page add
+		|pageName|Message Boards Page|
+	When SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread reply PG
+		|threadBody|MB Thread Message Body|
+		|threadReplyBody|MB Thread Reply Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|2|
+		|threadSubject|MB Thread Message Subject|
+	And MessageboardsThread split Thread PG
+		|threadBody|MB Thread Message Body|
+		|threadReplyBody|MB Thread Reply Body|
+		|threadSplitReplyBody|Split Reply Thread Body|
+		|threadSplitReplySubject|Split Reply Thread Subject|
+		|threadSplitSubject|MB Thread Split Subject|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	Then MessageboardsThread view Split Thread PG
+		|pageName|Message Boards Page|
+		|threadBody|MB Thread Message Body|
+		|threadReplyBody|MB Thread Reply Body|
+		|threadSplitReplyBody|Split Reply Thread Body|
+		|threadSplitReplySubject|Split Reply Thread Subject|
+		|threadSplitSubject|MB Thread Split Subject|
+		|threadSubject|MB Thread Message Subject|
+Scenario: View Categories And Threads On Two Scopes
+Priority: 3
+	Given Page add
+		|pageName|Message Boards Page|
+	When SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Page add
+		|pageName|Message Boards Page 2|
+	And SitePageNavigator goto Edit Page
+		|page|Message Boards Page 2|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And MessageboardsPortlet configure Scope PG
+		|scopeName|Message Boards Page 2 (Create New)|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And Portlet view PG
+		|portletName|Message Boards (Message Boards Page 2)|
+	And Page add
+		|pageName|Message Boards Page 3|
+	And SitePageNavigator goto Edit Page
+		|page|Message Boards Page 3|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page 3|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And MessageboardsPortlet configure Scope PG
+		|scopeName|Message Boards Page 2|
+	And Navigator goto Page
+		|pageName|Message Boards Page 3|
+	And Portlet view PG
+		|portletName|Message Boards (Message Boards Page 2)|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread add PG
+		|threadBody|MB Root Thread Message Body|
+		|threadSubject|MB Root Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory add PG
+		|categoryDescription|MB Category1 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category1 Name|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory add PG
+		|categoryDescription|MB Category2 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category2 Name|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Root Thread Message Body|
+		|threadSubject|MB Root Thread Message Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Root Thread Message Body|
+		|threadSubject|MB Root Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory view PG
+		|categoryDescription|MB Category1 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category1 Name|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory view PG
+		|categoryDescription|MB Category2 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category2 Name|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category1 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category1 Name|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread1 Message Body|
+		|threadSubject|MB Thread1 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category2 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category2 Name|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread2 Message Body|
+		|threadSubject|MB Thread2 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category1 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category1 Name|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Thread1 Message Body|
+		|threadSubject|MB Thread1 Message Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Thread1 Message Body|
+		|threadSubject|MB Thread1 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category2 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category2 Name|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Thread2 Message Body|
+		|threadSubject|MB Thread2 Message Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Thread2 Message Body|
+		|threadSubject|MB Thread2 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsThread add PG
+		|threadBody|MB Root Thread2 Message Body|
+		|threadSubject|MB Root Thread2 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory add PG
+		|categoryDescription|MB Category3 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category3 Name|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory add PG
+		|categoryDescription|MB Category4 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category4 Name|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Root Thread2 Message Body|
+		|threadSubject|MB Root Thread2 Message Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Root Thread2 Message Body|
+		|threadSubject|MB Root Thread2 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory view PG
+		|categoryDescription|MB Category3 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category3 Name|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory view PG
+		|categoryDescription|MB Category4 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category4 Name|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category3 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category3 Name|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread3 Message Body|
+		|threadSubject|MB Thread3 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category4 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category4 Name|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread4 Message Body|
+		|threadSubject|MB Thread4 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category3 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category3 Name|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Thread3 Message Body|
+		|threadSubject|MB Thread3 Message Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Thread3 Message Body|
+		|threadSubject|MB Thread3 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category4 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category4 Name|
+	And MessageboardsThread goto PG
+		|categoryDescription|MB Category4 Description|
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Thread4 Message Body|
+		|threadSubject|MB Thread4 Message Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Thread4 Message Body|
+		|threadSubject|MB Thread4 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 3|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Root Thread2 Message Body|
+		|threadSubject|MB Root Thread2 Message Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Root Thread2 Message Body|
+		|threadsNumber|0|
+		|threadSubject|MB Root Thread2 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 3|
+	And MessageboardsCategory view PG
+		|categoryDescription|MB Category3 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category3 Name|
+		|threadsNumber|0|
+	And Navigator goto Page
+		|pageName|Message Boards Page 3|
+	And MessageboardsCategory view PG
+		|categoryDescription|MB Category4 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category4 Name|
+		|threadsNumber|0|
+	And Navigator goto Page
+		|pageName|Message Boards Page 3|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category3 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category3 Name|
+	And MessageboardsThread goto PG
+		|categoryDescription|MB Category3 Description|
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Thread3 Message Body|
+		|threadSubject|MB Thread3 Message Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Thread3 Message Body|
+		|threadSubject|MB Thread3 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 3|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category4 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category4 Name|
+	And MessageboardsThread goto PG
+		|categoryDescription|MB Category4 Description|
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Thread4 Message Body|
+		|threadSubject|MB Thread4 Message Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Thread4 Message Body|
+		|threadSubject|MB Thread4 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 3|
+	And PermissionsInline goto Message Boards Category PG
+		|categoryDescription|MB Category4 Description|
+		|categoryName|MB Category4 Name|
+	And Role remove Permission PG
+		|permissionDefinitionKey|INLINE_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|Guest|
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory view No PG
+		|categoryName|MB Category4 Name|
+	And MessageboardsPortlet goto Recent Posts PG
+	And MessageboardsCategory view No PG
+		|categoryName|MB Category4 Name|
+	And User login PG
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category3 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category3 Name|
+	And MessageboardsThread reply With Attachment PG
+		|mbThreadAttachment|Document_4.jpeg|
+		|threadReplyBody|MB Thread1 Reply Body|
+		|threadSubject|MB Thread3 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category3 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category3 Name|
+	And Pause at locator '5000'
+	And MessageboardsThread view Reply PG
+		|mbThreadAttachment|Document_4.jpeg|
+		|postCount|2|
+		|threadBody|MB Thread3 Message Body|
+		|threadReplyBody|MB Thread1 Reply Body|
+		|threadSubject|MB Thread3 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsPortlet search PG
+		|searchTerm|MB Thread3 Message Subject|
+	And MessageboardsPortlet view Search Result PG
+		|threadBody|MB Thread3 Message Body|
+		|threadSubject|MB Thread3 Message Subject|
+		|userName|Test Test|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsPortlet search PG
+		|searchTerm|MB Thread4 Message Subject|
+	And MessageboardsPortlet view Search Result PG
+		|threadBody|MB Thread4 Message Body|
+		|threadSubject|MB Thread4 Message Subject|
+		|userName|Test Test|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsPortlet search PG
+		|searchTerm|MB Thread1 Message Subject|
+	And MessageboardsPortlet view No Search Result Subject PG
+		|threadSubject|MB Thread1 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsPortlet search PG
+		|searchTerm|MB Thread2 Message Subject|
+	And MessageboardsPortlet view No Search Result Subject PG
+		|threadSubject|MB Thread2 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsPortlet search PG
+		|searchTerm|MB Thread1 Message Subject|
+	And MessageboardsPortlet view Search Result PG
+		|threadBody|MB Thread1 Message Body|
+		|threadSubject|MB Thread1 Message Subject|
+		|userName|Test Test|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsPortlet search PG
+		|searchTerm|MB Thread2 Message Subject|
+	And MessageboardsPortlet view Search Result PG
+		|threadBody|MB Thread2 Message Body|
+		|threadSubject|MB Thread2 Message Subject|
+		|userName|Test Test|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsPortlet search PG
+		|searchTerm|MB Thread3 Message Subject|
+	And MessageboardsPortlet view No Search Result Subject PG
+		|threadSubject|MB Thread3 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsPortlet search PG
+		|searchTerm|MB Thread4 Message Subject|
+	Then MessageboardsPortlet view No Search Result Subject PG
+		|threadSubject|MB Thread4 Message Subject|
+Scenario: View Correct View Permissions In Message Boards Quick Reply In Private Site
+Priority: 3
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Blank CP
+		|membershipType|Private|
+		|siteName|Blank Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page Name|
+		|siteName|Blank Site Name|
+	And SitePageNavigator goto Edit Page
+		|page|Site Page Name|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Blank Site Name|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Blank Site Name|
+	And MessageboardsThread add PG With Permissions
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+		|viewableBySelection|Owner|
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Blank Site Name|
+	And MessageboardsThread reply PG
+		|threadReplyBody|MB Thread Message Subject Reply|
+		|threadSubject|MB Thread Message Subject|
+	And PermissionsInline goto Message Boards Thread Reply PG
+		|pageName|Site Page Name|
+		|siteName|Blank Site Name|
+		|siteURL|true|
+		|threadReplyBody|MB Thread Message Subject Reply|
+		|threadSubject|MB Thread Message Subject|
+	And PermissionsInline view Permissions Removed
+		|permissionDefinitionKey|CONFIGURATION_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|Power User|
+	And PermissionsInline view Permissions Removed
+		|permissionDefinitionKey|CONFIGURATION_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|User|
+	Then PermissionsInline view Permissions Checked
+		|permissionDefinitionKey|CONFIGURATION_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|Owner|
+Scenario: View MB Thread And Reply Thread In Gmail
+Priority: 4
+	Given these properties
+		|custom.properties|message.boards.message.formats.default=html${line.separator}pop.server.notifications.enabled=true${line.separator}pop.server.subdomain=${line.separator}mail.session.mail.smtp.auth=true${line.separator}mail.session.mail.store.protocol=pop3${line.separator}mail.session.mail.transport.protocol=smtp|
+	When these properties
+		|test.name.skip.portal.instance|MessageboardsUsecase#ViewMBThreadAndReplyThreadInGmail|
+	And these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Server Administration|
+	And ServerAdministration configure Mail Server Settings
+		|needsReply|true|
+		|userName|TestPropsUtil#get('email.address.2')|
+		|userPassword|TestPropsUtil#get('email.password.2')|
+	And Navigator open URL
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Virtual Instances|
+	And PortalInstances edit CP
+		|mailDomain|gmail.com|
+		|virtualHost|localhost|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|TestPropsUtil#get('email.address.3')|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|TestPropsUtil#get('email.address.3')|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit User Site CP
+		|siteName|${siteName}|
+		|userScreenName|usersn|
+	And User edit Email Via My Account
+		|userEmailAddress|TestPropsUtil#get('email.address.4')|
+	And MessageboardsPortlet configure Message Email From CP
+		|emailFromAddress|TestPropsUtil#get('email.address.2')|
+	And Navigator open URL
+	And Page add
+		|pageName|Message Boards Page|
+	And SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory add PG
+		|categoryName|MB Category Name|
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|TestPropsUtil#get('email.address.3')|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryName|MB Category Name|
+	And MessageboardsPortlet subscribe PG
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|TestPropsUtil#get('email.address.4')|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryName|MB Category Name|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject GMMB1|
+	And Pause at locator '30000'
+	And Gmail login
+		|userEmailAddress|TestPropsUtil#get('email.address.3')|
+		|userPassword|TestPropsUtil#get('email.password.3')|
+	And Gmail goto Html Mode
+	And Gmail view Mail
+		|emailFromUserName|Test Test|
+		|gmailAssetType|GMMB1|
+		|gmailMessageBody|MB Thread Message Body|
+		|gmailMessageTitle|MB Category Name New Message: MB Thread Message Subject GMMB1|
+	And Gmail reply Mail
+		|gmailReplyMessage|MB Thread Message Subject GMMB1 Reply|
+	And Open at locator '${portalURL}'
+	And Pause at locator '60000'
+	And Refresh
+	And AssertVisible at locator 'Notifications#PROFILE_BADGE_COUNT'
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryName|MB Category Name|
+	And MessageboardsThread view Reply PG
+		|postCount|2|
+		|threadBody|MB Thread Message Body|
+		|threadReplyBody|MB Thread Message Subject GMMB1 Reply|
+		|threadSubject|MB Thread Message Subject GMMB1|
+		|userName|userfn userln|
+	And Gmail goto Html Mode
+	Then Gmail delete Specific Mail
+		|gmailMessageTitleList|MB Category Name New Message: MB Thread Message Subject GMMB1,Your New Account,Your New Password,GMMB1|
+Scenario: View Message Boards Banned Users
+Priority: 3
+	Given Page add
+		|pageName|Message Boards Page|
+	When SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea1@liferay.com|
+		|userFirstName|userfn1|
+		|userLastName|userln1|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea1@liferay.com|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea2@liferay.com|
+		|userFirstName|userfn2|
+		|userLastName|userln2|
+		|userScreenName|usersn2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea2@liferay.com|
+		|userScreenName|usersn2|
+	And PermissionsInline goto Message Boards PG
+		|pageName|Message Boards Page|
+	And Role define Permission PG
+		|permissionDefinitionKey|INLINE_PERMISSIONS_REPLY_TO_MESSAGE_CHECKBOX|
+		|roleTitle|User|
+	And Role define Permission PG
+		|permissionDefinitionKey|INLINE_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|User|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|userea1@liferay.com|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread reply PG
+		|threadReplyBody|MB Thread1 Reply Body|
+		|threadSubject|MB Thread Message Subject|
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|userea2@liferay.com|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread reply PG
+		|threadReplyBody|MB Thread2 Reply Body|
+		|threadSubject|MB Thread Message Subject|
+	And User logout PG
+	And User login PG
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread goto PG
+		|lastPostUserName|userfn2 userln2|
+		|postCount|3|
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And MessageboardsThread ban User
+		|threadReplyBody|MB Thread1 Reply Body|
+		|userName|userfn1 userln1|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread goto PG
+		|lastPostUserName|userfn2 userln2|
+		|postCount|3|
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And MessageboardsThread ban User
+		|threadReplyBody|MB Thread2 Reply Body|
+		|userName|userfn2 userln2|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsPortlet view Banned User PG
+		|userScreenName|userfn1 userln1|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	Then MessageboardsPortlet view Banned User PG
+		|userScreenName|userfn2 userln2|
+Scenario: View Message Boards Thread Statistics
+Priority: 4
+	Given Page add
+		|pageName|Message Boards Page|
+	When SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread1 Message Body|
+		|threadSubject|MB Thread1 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread view Statistics Posts Count PG
+		|threadPostNumber|1|
+		|userName|Test Test|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Thread1 Message Body|
+		|threadSubject|MB Thread1 Message Subject|
+	And MessageboardsThread edit PG
+		|saveAsDraft|true|
+		|threadBodyEdit|MB Thread1 Message Body Edit|
+		|threadSubject|MB Thread1 Message Subject|
+		|threadSubjectEdit|MB Thread1 Message Subject Edit|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread view Statistics Posts Count Default PG
+	And MessageboardsThread edit Via My Posts
+		|threadSubject|MB Thread1 Message Subject Edit|
+		|threadSubjectEdit|true|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread view Statistics Posts Count PG
+		|lastPostUserName|Test Test|
+		|startedByUserName|Test Test|
+		|threadPostNumber|1|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread2 Message Body|
+		|threadSubject|MB Thread2 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread view Statistics Posts Count PG
+		|lastPostUserName|Test Test|
+		|startedByUserName|Test Test|
+		|threadPostNumber|2|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread delete PG
+		|threadSubject|MB Thread2 Message Subject|
+	Then MessageboardsThread view Statistics Posts Count PG
+		|threadPostNumber|1|
+		|userName|Test Test|
+Scenario: View No MB Thread XSS
+Priority: 4
+	Given Page add
+		|pageName|Message Boards Page|
+	When SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread add PG
+		|source|true|
+		|threadBody|[img]asd[font= onerror=alert(/This is an XSS Message/.source)//]FF[/font][/img]|
+		|threadSubject|MB Thread Message Subject|
+	Then MessageboardsThread view No XSSPG
+		|threadBody|[img]asd[font= onerror=alert(/This is an XSS Message/.source)//]FF[/font][/img]|
+		|threadSubject|MB Thread Message Subject|
+Scenario: View No Subscribe Links No With Email Notifications Disabled
+Priority: 4
+	Given Page add
+		|pageName|Message Boards Page|
+	When SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And MessageboardsCategory add PG
+		|categoryName|MB Category Name|
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And these variables
+		|key_categoryName|MB Category Name|
+	And these variables
+		|key_threadSubject|MB Thread Message Subject|
+	And AssertTextEquals the value 'Subscribe' at locator 'MessageBoards#SUBSCRIBE_LINK'
+	And Click at locator 'MessageBoards#CATEGORY_LIST_ACTIONS'
+	And AssertTextEquals the value 'Subscribe' at locator 'MenuItem#SUBSCRIBE'
+	And AssertClick the value 'MB Category Name' at locator 'MessageBoards#CATEGORY_LIST_CATEGORY'
+	And AssertTextEquals the value 'Subscribe' at locator 'Link#SUBSCRIBE'
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Click at locator 'MessageBoards#VERTICAL_ELLIPSIS'
+	And AssertTextEquals the value 'Unsubscribe' at locator 'MenuItem#UNSUBSCRIBE'
+	And AssertClick the value 'MB Thread Message Subject' at locator 'MessageBoards#THREAD_LIST_THREAD'
+	And AssertTextEquals the value 'Unsubscribe' at locator 'MessageBoardsThread#THREAD_ACTIONS_UNSUBSCRIBE'
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsPortlet configure Message Added Email CP
+		|messageAddedEmailEnabled|false|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsPortlet configure Message Updated Email CP
+		|messageUpdatedEmailEnabled|false|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And AssertElementNotPresent at locator 'MessageBoards#SUBSCRIBE_LINK'
+	And Click at locator 'MessageBoards#CATEGORY_LIST_ACTIONS'
+	And AssertElementNotPresent at locator 'MenuItem#SUBSCRIBE'
+	And AssertClick the value 'MB Category Name' at locator 'MessageBoards#CATEGORY_LIST_CATEGORY'
+	And AssertElementNotPresent the value 'Subscribe' at locator 'Link#SUBSCRIBE'
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Click at locator 'MessageBoards#VERTICAL_ELLIPSIS'
+	And AssertElementNotPresent at locator 'MenuItem#UNSUBSCRIBE'
+	And AssertClick the value 'MB Thread Message Subject' at locator 'MessageBoards#THREAD_LIST_THREAD'
+	Then AssertElementNotPresent the value 'Unsubscribe' at locator 'MessageBoardsThread#THREAD_ACTIONS_UNSUBSCRIBE'
+Scenario: View Question On Split Thread
+Priority: 3
+	Given Page add
+		|pageName|Message Boards Page|
+	When SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread add PG As Question
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread view Marked As Question PG
+		|threadSubject|MB Thread Message Subject|
+	And MessageboardsThread reply PG
+		|threadReplyBody|MB Thread Split Reply Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|2|
+		|threadSubject|MB Thread Message Subject|
+	And MessageboardsThread split Thread PG
+		|threadReplyBody|MB Thread Split Reply Body|
+		|threadSplitReplyBody|Split Reply Thread Body|
+		|threadSplitReplySubject|Split Reply Thread Subject|
+		|threadSplitSubject|MB Thread Split Subject|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread view Split Thread PG
+		|pageName|Message Boards Page|
+		|threadBody|MB Thread Message Body|
+		|threadReplyBody|MB Thread Split Reply Body|
+		|threadSplitReplyBody|Split Reply Thread Body|
+		|threadSplitReplySubject|Split Reply Thread Subject|
+		|threadSplitSubject|MB Thread Split Subject|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	Then MessageboardsThread view Marked As Question PG
+		|threadSubject|MB Thread Message Subject|
+Scenario: View Thread Default Question
+Priority: 3
+	Given Page add
+		|pageName|Message Boards Page|
+	When SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread view Mark As Question Not Checked CP
+		|threadSubject|Thread Subject|
+	And MessageboardsPortlet configure General CP
+		|threadAsQuestionByDefaultEnabled|true|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread view Mark As Question Checked CP
+		|threadSubject|Thread Subject|
+	And MessageboardsThread add CP
+		|threadBody|Thread Body|
+		|threadSubject|Thread Subject|
+	And Navigator open URL
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread reply PG
+		|markAsAnswer|true|
+		|markAsQuestion|true|
+		|threadReplyBody|Thread Reply Body|
+		|threadSubject|Thread Subject|
+	And Navigator open URL
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	Then MessageboardsThread view Answer PG
+		|threadSubject|Thread Subject|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Copy And Paste Text In Alloy Editor
+Priority: 4
+	Given Page add
+		|pageName|Message Boards Page|
+	When SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And AssertClick the value 'Post New Thread' at locator 'Button#POST_NEW_THREAD'
+	And AssertElementPresent at locator 'TextInput#SUBJECT'
+	And Type the value 'Message Boards Subject' at locator 'TextInput#SUBJECT'
+	And Type type Editor the value 'Message Boards Body' at locator 'AlloyEditor#CONTENT_FIELD'
+	And Copy at locator 'TextInput#SUBJECT'
+	And Paste at locator 'AlloyEditor#CONTENT_FIELD'
+	And PortletEntry publish
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|Message Boards Subject|
+		|threadSubject|Message Boards Subject|
+	Then MessageboardsThread view PG
+		|threadBody|Message Boards Subject|
+		|threadSubject|Message Boards Subject|
+		|userName|Test Test|
+Scenario: Delete Messageboards Thread
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread add CP
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread move To Recycle Bin CP
+		|assetName|MB Thread Message Subject|
+		|assetType|Message Boards Thread|
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin delete CP
+		|assetName|MB Thread Message Subject|
+		|assetType|Message Boards Thread|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin view Default CP
+		|assetName|MB Thread Message Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	Then MessageboardsThread view Default CP
+		|threadSubject|MB Thread Message Subject|
+Scenario: Restore Messageboards Thread
+Priority: 5
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread add CP
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread move To Recycle Bin CP
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin restore CP
+		|assetName|MB Thread Message Subject|
+		|assetRestoreLocation|Home|
+		|assetType|Message Boards Thread|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin view Default CP
+		|assetName|MB Thread Message Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	Then MessageboardsThread view CP
+		|postsNumber|1|
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+Scenario: Search Message Boards Attachment
+Priority: 3
+	Given Page add
+		|pageName|Message Boards Page|
+	When SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread add PG With Attachment
+		|mbThreadAttachment|Document_1.docx|
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsPortlet search PG
+		|searchTerm|This is a *.docx file.|
+	Then MessageboardsPortlet view Search Result PG
+		|mbThreadAttachment|Document_1.docx|
+		|searchTerm|This is a *.doc x file.|
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+		|userName|Test Test|
+Scenario: Split MB Thread
+Priority: 3
+	Given Page add
+		|pageName|Message Boards Page|
+	When SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread reply PG
+		|threadBody|MB Thread Message Body|
+		|threadReplyBody|MB Thread Reply Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|2|
+		|threadSubject|MB Thread Message Subject|
+	And MessageboardsThread split Thread PG
+		|threadBody|MB Thread Message Body|
+		|threadReplyBody|MB Thread Reply Body|
+		|threadSplitReplyBody|Split Reply Thread Body|
+		|threadSplitReplySubject|Split Reply Thread Subject|
+		|threadSplitSubject|MB Thread Split Subject|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	Then MessageboardsThread view Split Thread PG
+		|pageName|Message Boards Page|
+		|threadBody|MB Thread Message Body|
+		|threadReplyBody|MB Thread Reply Body|
+		|threadSplitReplyBody|Split Reply Thread Body|
+		|threadSplitReplySubject|Split Reply Thread Subject|
+		|threadSplitSubject|MB Thread Split Subject|
+		|threadSubject|MB Thread Message Subject|
+Scenario: View Categories And Threads On Two Scopes
+Priority: 3
+	Given Page add
+		|pageName|Message Boards Page|
+	When SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Page add
+		|pageName|Message Boards Page 2|
+	And SitePageNavigator goto Edit Page
+		|page|Message Boards Page 2|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And MessageboardsPortlet configure Scope PG
+		|scopeName|Message Boards Page 2 (Create New)|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And Portlet view PG
+		|portletName|Message Boards (Message Boards Page 2)|
+	And Page add
+		|pageName|Message Boards Page 3|
+	And SitePageNavigator goto Edit Page
+		|page|Message Boards Page 3|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page 3|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And MessageboardsPortlet configure Scope PG
+		|scopeName|Message Boards Page 2|
+	And Navigator goto Page
+		|pageName|Message Boards Page 3|
+	And Portlet view PG
+		|portletName|Message Boards (Message Boards Page 2)|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread add PG
+		|threadBody|MB Root Thread Message Body|
+		|threadSubject|MB Root Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory add PG
+		|categoryDescription|MB Category1 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category1 Name|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory add PG
+		|categoryDescription|MB Category2 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category2 Name|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Root Thread Message Body|
+		|threadSubject|MB Root Thread Message Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Root Thread Message Body|
+		|threadSubject|MB Root Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory view PG
+		|categoryDescription|MB Category1 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category1 Name|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory view PG
+		|categoryDescription|MB Category2 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category2 Name|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category1 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category1 Name|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread1 Message Body|
+		|threadSubject|MB Thread1 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category2 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category2 Name|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread2 Message Body|
+		|threadSubject|MB Thread2 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category1 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category1 Name|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Thread1 Message Body|
+		|threadSubject|MB Thread1 Message Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Thread1 Message Body|
+		|threadSubject|MB Thread1 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category2 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category2 Name|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Thread2 Message Body|
+		|threadSubject|MB Thread2 Message Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Thread2 Message Body|
+		|threadSubject|MB Thread2 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsThread add PG
+		|threadBody|MB Root Thread2 Message Body|
+		|threadSubject|MB Root Thread2 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory add PG
+		|categoryDescription|MB Category3 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category3 Name|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory add PG
+		|categoryDescription|MB Category4 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category4 Name|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Root Thread2 Message Body|
+		|threadSubject|MB Root Thread2 Message Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Root Thread2 Message Body|
+		|threadSubject|MB Root Thread2 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory view PG
+		|categoryDescription|MB Category3 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category3 Name|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory view PG
+		|categoryDescription|MB Category4 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category4 Name|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category3 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category3 Name|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread3 Message Body|
+		|threadSubject|MB Thread3 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category4 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category4 Name|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread4 Message Body|
+		|threadSubject|MB Thread4 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category3 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category3 Name|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Thread3 Message Body|
+		|threadSubject|MB Thread3 Message Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Thread3 Message Body|
+		|threadSubject|MB Thread3 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category4 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category4 Name|
+	And MessageboardsThread goto PG
+		|categoryDescription|MB Category4 Description|
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Thread4 Message Body|
+		|threadSubject|MB Thread4 Message Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Thread4 Message Body|
+		|threadSubject|MB Thread4 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 3|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Root Thread2 Message Body|
+		|threadSubject|MB Root Thread2 Message Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Root Thread2 Message Body|
+		|threadsNumber|0|
+		|threadSubject|MB Root Thread2 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 3|
+	And MessageboardsCategory view PG
+		|categoryDescription|MB Category3 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category3 Name|
+		|threadsNumber|0|
+	And Navigator goto Page
+		|pageName|Message Boards Page 3|
+	And MessageboardsCategory view PG
+		|categoryDescription|MB Category4 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category4 Name|
+		|threadsNumber|0|
+	And Navigator goto Page
+		|pageName|Message Boards Page 3|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category3 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category3 Name|
+	And MessageboardsThread goto PG
+		|categoryDescription|MB Category3 Description|
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Thread3 Message Body|
+		|threadSubject|MB Thread3 Message Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Thread3 Message Body|
+		|threadSubject|MB Thread3 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 3|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category4 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category4 Name|
+	And MessageboardsThread goto PG
+		|categoryDescription|MB Category4 Description|
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Thread4 Message Body|
+		|threadSubject|MB Thread4 Message Subject|
+	And MessageboardsThread view PG
+		|threadBody|MB Thread4 Message Body|
+		|threadSubject|MB Thread4 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 3|
+	And PermissionsInline goto Message Boards Category PG
+		|categoryDescription|MB Category4 Description|
+		|categoryName|MB Category4 Name|
+	And Role remove Permission PG
+		|permissionDefinitionKey|INLINE_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|Guest|
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory view No PG
+		|categoryName|MB Category4 Name|
+	And MessageboardsPortlet goto Recent Posts PG
+	And MessageboardsCategory view No PG
+		|categoryName|MB Category4 Name|
+	And User login PG
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category3 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category3 Name|
+	And MessageboardsThread reply With Attachment PG
+		|mbThreadAttachment|Document_4.jpeg|
+		|threadReplyBody|MB Thread1 Reply Body|
+		|threadSubject|MB Thread3 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsCategory goto PG
+		|categoryDescription|MB Category3 Description|
+		|categoryDescriptionEnabled|true|
+		|categoryName|MB Category3 Name|
+	And Pause at locator '5000'
+	And MessageboardsThread view Reply PG
+		|mbThreadAttachment|Document_4.jpeg|
+		|postCount|2|
+		|threadBody|MB Thread3 Message Body|
+		|threadReplyBody|MB Thread1 Reply Body|
+		|threadSubject|MB Thread3 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsPortlet search PG
+		|searchTerm|MB Thread3 Message Subject|
+	And MessageboardsPortlet view Search Result PG
+		|threadBody|MB Thread3 Message Body|
+		|threadSubject|MB Thread3 Message Subject|
+		|userName|Test Test|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsPortlet search PG
+		|searchTerm|MB Thread4 Message Subject|
+	And MessageboardsPortlet view Search Result PG
+		|threadBody|MB Thread4 Message Body|
+		|threadSubject|MB Thread4 Message Subject|
+		|userName|Test Test|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsPortlet search PG
+		|searchTerm|MB Thread1 Message Subject|
+	And MessageboardsPortlet view No Search Result Subject PG
+		|threadSubject|MB Thread1 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page 2|
+	And MessageboardsPortlet search PG
+		|searchTerm|MB Thread2 Message Subject|
+	And MessageboardsPortlet view No Search Result Subject PG
+		|threadSubject|MB Thread2 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsPortlet search PG
+		|searchTerm|MB Thread1 Message Subject|
+	And MessageboardsPortlet view Search Result PG
+		|threadBody|MB Thread1 Message Body|
+		|threadSubject|MB Thread1 Message Subject|
+		|userName|Test Test|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsPortlet search PG
+		|searchTerm|MB Thread2 Message Subject|
+	And MessageboardsPortlet view Search Result PG
+		|threadBody|MB Thread2 Message Body|
+		|threadSubject|MB Thread2 Message Subject|
+		|userName|Test Test|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsPortlet search PG
+		|searchTerm|MB Thread3 Message Subject|
+	And MessageboardsPortlet view No Search Result Subject PG
+		|threadSubject|MB Thread3 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsPortlet search PG
+		|searchTerm|MB Thread4 Message Subject|
+	Then MessageboardsPortlet view No Search Result Subject PG
+		|threadSubject|MB Thread4 Message Subject|
+Scenario: View Correct View Permissions In Message Boards Quick Reply In Private Site
+Priority: 3
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Blank CP
+		|membershipType|Private|
+		|siteName|Blank Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page Name|
+		|siteName|Blank Site Name|
+	And SitePageNavigator goto Edit Page
+		|page|Site Page Name|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Blank Site Name|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Blank Site Name|
+	And MessageboardsThread add PG With Permissions
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+		|viewableBySelection|Owner|
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Blank Site Name|
+	And MessageboardsThread reply PG
+		|threadReplyBody|MB Thread Message Subject Reply|
+		|threadSubject|MB Thread Message Subject|
+	And PermissionsInline goto Message Boards Thread Reply PG
+		|pageName|Site Page Name|
+		|siteName|Blank Site Name|
+		|siteURL|true|
+		|threadReplyBody|MB Thread Message Subject Reply|
+		|threadSubject|MB Thread Message Subject|
+	And PermissionsInline view Permissions Removed
+		|permissionDefinitionKey|CONFIGURATION_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|Power User|
+	And PermissionsInline view Permissions Removed
+		|permissionDefinitionKey|CONFIGURATION_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|User|
+	Then PermissionsInline view Permissions Checked
+		|permissionDefinitionKey|CONFIGURATION_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|Owner|
+Scenario: View MB Thread And Reply Thread In Gmail
+Priority: 4
+	Given these properties
+		|custom.properties|message.boards.message.formats.default=html${line.separator}pop.server.notifications.enabled=true${line.separator}pop.server.subdomain=${line.separator}mail.session.mail.smtp.auth=true${line.separator}mail.session.mail.store.protocol=pop3${line.separator}mail.session.mail.transport.protocol=smtp|
+	When these properties
+		|test.name.skip.portal.instance|MessageboardsUsecase#ViewMBThreadAndReplyThreadInGmail|
+	And these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Server Administration|
+	And ServerAdministration configure Mail Server Settings
+		|needsReply|true|
+		|userName|TestPropsUtil#get('email.address.2')|
+		|userPassword|TestPropsUtil#get('email.password.2')|
+	And Navigator open URL
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Virtual Instances|
+	And PortalInstances edit CP
+		|mailDomain|gmail.com|
+		|virtualHost|localhost|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|TestPropsUtil#get('email.address.3')|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|TestPropsUtil#get('email.address.3')|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit User Site CP
+		|siteName|${siteName}|
+		|userScreenName|usersn|
+	And User edit Email Via My Account
+		|userEmailAddress|TestPropsUtil#get('email.address.4')|
+	And MessageboardsPortlet configure Message Email From CP
+		|emailFromAddress|TestPropsUtil#get('email.address.2')|
+	And Navigator open URL
+	And Page add
+		|pageName|Message Boards Page|
+	And SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory add PG
+		|categoryName|MB Category Name|
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|TestPropsUtil#get('email.address.3')|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryName|MB Category Name|
+	And MessageboardsPortlet subscribe PG
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|TestPropsUtil#get('email.address.4')|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryName|MB Category Name|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject GMMB1|
+	And Pause at locator '30000'
+	And Gmail login
+		|userEmailAddress|TestPropsUtil#get('email.address.3')|
+		|userPassword|TestPropsUtil#get('email.password.3')|
+	And Gmail goto Html Mode
+	And Gmail view Mail
+		|emailFromUserName|Test Test|
+		|gmailAssetType|GMMB1|
+		|gmailMessageBody|MB Thread Message Body|
+		|gmailMessageTitle|MB Category Name New Message: MB Thread Message Subject GMMB1|
+	And Gmail reply Mail
+		|gmailReplyMessage|MB Thread Message Subject GMMB1 Reply|
+	And Open at locator '${portalURL}'
+	And Pause at locator '60000'
+	And Refresh
+	And AssertVisible at locator 'Notifications#PROFILE_BADGE_COUNT'
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsCategory goto PG
+		|categoryName|MB Category Name|
+	And MessageboardsThread view Reply PG
+		|postCount|2|
+		|threadBody|MB Thread Message Body|
+		|threadReplyBody|MB Thread Message Subject GMMB1 Reply|
+		|threadSubject|MB Thread Message Subject GMMB1|
+		|userName|userfn userln|
+	And Gmail goto Html Mode
+	Then Gmail delete Specific Mail
+		|gmailMessageTitleList|MB Category Name New Message: MB Thread Message Subject GMMB1,Your New Account,Your New Password,GMMB1|
+Scenario: View Message Boards Banned Users
+Priority: 3
+	Given Page add
+		|pageName|Message Boards Page|
+	When SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea1@liferay.com|
+		|userFirstName|userfn1|
+		|userLastName|userln1|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea1@liferay.com|
+		|userScreenName|usersn1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea2@liferay.com|
+		|userFirstName|userfn2|
+		|userLastName|userln2|
+		|userScreenName|usersn2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea2@liferay.com|
+		|userScreenName|usersn2|
+	And PermissionsInline goto Message Boards PG
+		|pageName|Message Boards Page|
+	And Role define Permission PG
+		|permissionDefinitionKey|INLINE_PERMISSIONS_REPLY_TO_MESSAGE_CHECKBOX|
+		|roleTitle|User|
+	And Role define Permission PG
+		|permissionDefinitionKey|INLINE_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|User|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|userea1@liferay.com|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread reply PG
+		|threadReplyBody|MB Thread1 Reply Body|
+		|threadSubject|MB Thread Message Subject|
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|userea2@liferay.com|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread reply PG
+		|threadReplyBody|MB Thread2 Reply Body|
+		|threadSubject|MB Thread Message Subject|
+	And User logout PG
+	And User login PG
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread goto PG
+		|lastPostUserName|userfn2 userln2|
+		|postCount|3|
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And MessageboardsThread ban User
+		|threadReplyBody|MB Thread1 Reply Body|
+		|userName|userfn1 userln1|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread goto PG
+		|lastPostUserName|userfn2 userln2|
+		|postCount|3|
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And MessageboardsThread ban User
+		|threadReplyBody|MB Thread2 Reply Body|
+		|userName|userfn2 userln2|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsPortlet view Banned User PG
+		|userScreenName|userfn1 userln1|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	Then MessageboardsPortlet view Banned User PG
+		|userScreenName|userfn2 userln2|
+Scenario: View Message Boards Thread Statistics
+Priority: 4
+	Given Page add
+		|pageName|Message Boards Page|
+	When SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread1 Message Body|
+		|threadSubject|MB Thread1 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread view Statistics Posts Count PG
+		|threadPostNumber|1|
+		|userName|Test Test|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|1|
+		|threadBody|MB Thread1 Message Body|
+		|threadSubject|MB Thread1 Message Subject|
+	And MessageboardsThread edit PG
+		|saveAsDraft|true|
+		|threadBodyEdit|MB Thread1 Message Body Edit|
+		|threadSubject|MB Thread1 Message Subject|
+		|threadSubjectEdit|MB Thread1 Message Subject Edit|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread view Statistics Posts Count Default PG
+	And MessageboardsThread edit Via My Posts
+		|threadSubject|MB Thread1 Message Subject Edit|
+		|threadSubjectEdit|true|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread view Statistics Posts Count PG
+		|lastPostUserName|Test Test|
+		|startedByUserName|Test Test|
+		|threadPostNumber|1|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread2 Message Body|
+		|threadSubject|MB Thread2 Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread view Statistics Posts Count PG
+		|lastPostUserName|Test Test|
+		|startedByUserName|Test Test|
+		|threadPostNumber|2|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread delete PG
+		|threadSubject|MB Thread2 Message Subject|
+	Then MessageboardsThread view Statistics Posts Count PG
+		|threadPostNumber|1|
+		|userName|Test Test|
+Scenario: View No MB Thread XSS
+Priority: 4
+	Given Page add
+		|pageName|Message Boards Page|
+	When SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread add PG
+		|source|true|
+		|threadBody|[img]asd[font= onerror=alert(/This is an XSS Message/.source)//]FF[/font][/img]|
+		|threadSubject|MB Thread Message Subject|
+	Then MessageboardsThread view No XSSPG
+		|threadBody|[img]asd[font= onerror=alert(/This is an XSS Message/.source)//]FF[/font][/img]|
+		|threadSubject|MB Thread Message Subject|
+Scenario: View No Subscribe Links No With Email Notifications Disabled
+Priority: 4
+	Given Page add
+		|pageName|Message Boards Page|
+	When SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And MessageboardsCategory add PG
+		|categoryName|MB Category Name|
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread add PG
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And these variables
+		|key_categoryName|MB Category Name|
+	And these variables
+		|key_threadSubject|MB Thread Message Subject|
+	And AssertTextEquals the value 'Subscribe' at locator 'MessageBoards#SUBSCRIBE_LINK'
+	And Click at locator 'MessageBoards#CATEGORY_LIST_ACTIONS'
+	And AssertTextEquals the value 'Subscribe' at locator 'MenuItem#SUBSCRIBE'
+	And AssertClick the value 'MB Category Name' at locator 'MessageBoards#CATEGORY_LIST_CATEGORY'
+	And AssertTextEquals the value 'Subscribe' at locator 'Link#SUBSCRIBE'
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Click at locator 'MessageBoards#VERTICAL_ELLIPSIS'
+	And AssertTextEquals the value 'Unsubscribe' at locator 'MenuItem#UNSUBSCRIBE'
+	And AssertClick the value 'MB Thread Message Subject' at locator 'MessageBoards#THREAD_LIST_THREAD'
+	And AssertTextEquals the value 'Unsubscribe' at locator 'MessageBoardsThread#THREAD_ACTIONS_UNSUBSCRIBE'
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsPortlet configure Message Added Email CP
+		|messageAddedEmailEnabled|false|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsPortlet configure Message Updated Email CP
+		|messageUpdatedEmailEnabled|false|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And AssertElementNotPresent at locator 'MessageBoards#SUBSCRIBE_LINK'
+	And Click at locator 'MessageBoards#CATEGORY_LIST_ACTIONS'
+	And AssertElementNotPresent at locator 'MenuItem#SUBSCRIBE'
+	And AssertClick the value 'MB Category Name' at locator 'MessageBoards#CATEGORY_LIST_CATEGORY'
+	And AssertElementNotPresent the value 'Subscribe' at locator 'Link#SUBSCRIBE'
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Click at locator 'MessageBoards#VERTICAL_ELLIPSIS'
+	And AssertElementNotPresent at locator 'MenuItem#UNSUBSCRIBE'
+	And AssertClick the value 'MB Thread Message Subject' at locator 'MessageBoards#THREAD_LIST_THREAD'
+	Then AssertElementNotPresent the value 'Unsubscribe' at locator 'MessageBoardsThread#THREAD_ACTIONS_UNSUBSCRIBE'
+Scenario: View Question On Split Thread
+Priority: 3
+	Given Page add
+		|pageName|Message Boards Page|
+	When SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread add PG As Question
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread view Marked As Question PG
+		|threadSubject|MB Thread Message Subject|
+	And MessageboardsThread reply PG
+		|threadReplyBody|MB Thread Split Reply Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread goto PG
+		|lastPostUserName|Test Test|
+		|postCount|2|
+		|threadSubject|MB Thread Message Subject|
+	And MessageboardsThread split Thread PG
+		|threadReplyBody|MB Thread Split Reply Body|
+		|threadSplitReplyBody|Split Reply Thread Body|
+		|threadSplitReplySubject|Split Reply Thread Subject|
+		|threadSplitSubject|MB Thread Split Subject|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread view Split Thread PG
+		|pageName|Message Boards Page|
+		|threadBody|MB Thread Message Body|
+		|threadReplyBody|MB Thread Split Reply Body|
+		|threadSplitReplyBody|Split Reply Thread Body|
+		|threadSplitReplySubject|Split Reply Thread Subject|
+		|threadSplitSubject|MB Thread Split Subject|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	Then MessageboardsThread view Marked As Question PG
+		|threadSubject|MB Thread Message Subject|
+Scenario: View Thread Default Question
+Priority: 3
+	Given Page add
+		|pageName|Message Boards Page|
+	When SitePageNavigator goto Edit Page
+		|page|Message Boards Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread view Mark As Question Not Checked CP
+		|threadSubject|Thread Subject|
+	And MessageboardsPortlet configure General CP
+		|threadAsQuestionByDefaultEnabled|true|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread view Mark As Question Checked CP
+		|threadSubject|Thread Subject|
+	And MessageboardsThread add CP
+		|threadBody|Thread Body|
+		|threadSubject|Thread Subject|
+	And Navigator open URL
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	And MessageboardsThread reply PG
+		|markAsAnswer|true|
+		|markAsQuestion|true|
+		|threadReplyBody|Thread Reply Body|
+		|threadSubject|Thread Subject|
+	And Navigator open URL
+	And Navigator goto Page
+		|pageName|Message Boards Page|
+	Then MessageboardsThread view Answer PG
+		|threadSubject|Thread Subject|

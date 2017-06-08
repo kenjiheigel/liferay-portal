@@ -1,896 +1,533 @@
-<definition component-name="portal-web-forms-and-data-lists">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Forms" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="ConfigureAutofillRule" priority="5">
-		<property name="portal.acceptance" value="pending" />
-
-		<description message="This is a use case for LPS-70446." />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Forms" />
-		</execute>
-
-		<execute macro="FormsAdminNavigator#gotoDataProviders" />
-
-		<execute macro="FormsAdminNavigator#gotoAddDataProvider" />
-
-		<execute macro="FormsAdmin#editDataProvider">
-			<var name="name" value="Liferay Countries" />
-			<var name="outputParameterName" value="Country Name" />
-			<var name="outputParameterPath" value="nameCurrentValue" />
-			<var name="outputParameterType" value="List" />
-			<var name="password" value="test" />
-			<var name="url" value="${portalURL}/api/jsonws/country/get-countries" />
-			<var name="username" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="FormsAdmin#saveDataProvider" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Forms" />
-		</execute>
-
-		<execute macro="FormsAdminNavigator#gotoAddForm" />
-
-		<execute macro="Form#editName" />
-
-		<execute macro="Form#editDescription" />
-
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Text Field" />
-		</execute>
-
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Text Field" />
-		</execute>
-
-		<execute macro="Form#closeSidebar" />
-
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Select from List" />
-		</execute>
-
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Countries" />
-		</execute>
-
-		<execute macro="Form#closeSidebar" />
-
-		<execute macro="FormsAdminNavigator#gotoRules" />
-
-		<execute macro="FormRules#addRule" />
-
-		<execute macro="FormRules#configureConditionOptions">
-			<var name="conditionField" value="Text Field" />
-			<var name="conditionFieldValue" value="country" />
-			<var name="conditionOperator" value="Contains" />
-			<var name="conditionRowNumber" value="1" />
-			<var name="conditionValueType" value="Value" />
-		</execute>
-
-		<execute macro="FormRules#configureActionOptions">
-			<var name="action" value="Autofill" />
-			<var name="actionRowNumber" value="1" />
-			<var name="actionTarget" value="Liferay Countries" />
-		</execute>
-
-		<execute macro="FormRules#selectAutofillOutput">
-			<var name="dataProviderOutput" value="Countries" />
-		</execute>
-
-		<execute macro="FormRules#save" />
-
-		<execute macro="FormsAdminNavigator#gotoFormBuilder" />
-
-		<execute macro="Form#save" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Form Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Form Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Form Page" />
-			<var name="portletName" value="Form" />
-		</execute>
-
-		<execute macro="FormPortletNavigator#gotoSelectForm" />
-
-		<execute macro="FormPortletConfiguration#selectForm" />
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Form Page" />
-		</execute>
-
-		<execute macro="FormFields#viewTextLabel">
-			<var name="fieldLabel" value="Text Field" />
-			<var name="fieldName" value="TextField" />
-		</execute>
-
-		<execute macro="FormFields#editText">
-			<var name="fieldName" value="TextField" />
-			<var name="fieldValue" value="test" />
-		</execute>
-
-		<execute macro="FormFields#viewSelectOptionsList">
-			<var name="fieldName" value="Countries" />
-			<var name="selectOption" value="Option" />
-		</execute>
-
-		<execute macro="FormFields#editText">
-			<var name="fieldName" value="TextField" />
-			<var name="fieldValue" value="country" />
-		</execute>
-
-		<execute macro="FormFields#viewSelectOptionsList">
-			<var name="fieldName" value="Countries" />
-			<var name="selectOption" value="Afghanistan" />
-		</execute>
-	</command>
-
-	<command name="ConfigureCalculateRule" priority="5">
-		<property name="portal.acceptance" value="pending" />
-		<description message="This is a use case for LPS-71592." />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Forms" />
-		</execute>
-
-		<execute macro="FormsAdminNavigator#gotoAddForm" />
-
-		<execute macro="Form#editName" />
-
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Numeric" />
-		</execute>
-
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Quantity" />
-		</execute>
-
-		<execute macro="Form#closeSidebar" />
-
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Numeric" />
-		</execute>
-
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Value" />
-		</execute>
-
-		<execute macro="Form#closeSidebar" />
-
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Numeric" />
-		</execute>
-
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Total" />
-		</execute>
-
-		<execute macro="Form#closeSidebar" />
-
-		<execute macro="FormsAdminNavigator#gotoRules" />
-
-		<execute macro="FormRules#addRule" />
-
-		<execute macro="FormRules#selectConditionField">
-			<var name="conditionField" value="Quantity" />
-			<var name="conditionRowNumber" value="1" />
-		</execute>
-
-		<execute macro="FormRules#selectConditionOperator">
-			<var name="conditionOperator" value="Is not empty" />
-			<var name="conditionRowNumber" value="1" />
-		</execute>
-
-		<execute macro="FormRules#selectAction">
-			<var name="action" value="Calculate" />
-			<var name="actionRowNumber" value="1" />
-		</execute>
-
-		<execute macro="FormRules#selectCalculateField">
-			<var name="calculateFieldOption" value="Value" />
-		</execute>
-
-		<execute macro="FormRules#chooseCalculateOperator">
-			<var name="calculateOperator" value="*" />
-		</execute>
-
-		<execute macro="FormRules#selectCalculateField">
-			<var name="calculateFieldOption" value="Quantity" />
-		</execute>
-
-		<execute macro="FormRules#selectCalculateResultField">
-			<var name="calculateResultField" value="Total" />
-		</execute>
-
-		<execute macro="FormRules#save" />
-
-		<execute macro="FormsAdminNavigator#gotoFormBuilder" />
-
-		<execute macro="Form#save" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Form Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Form Page" />
-			<var name="portletName" value="Form" />
-		</execute>
-
-		<execute macro="FormPortletNavigator#gotoSelectForm" />
-
-		<execute macro="FormPortletConfiguration#selectForm" />
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Form Page" />
-		</execute>
-
-		<execute macro="FormFields#editText">
-			<var name="fieldName" value="Value" />
-			<var name="fieldValue" value="5" />
-		</execute>
-
-		<execute macro="FormFields#editText">
-			<var name="fieldName" value="Quantity" />
-			<var name="fieldValue" value="10" />
-		</execute>
-
-		<execute macro="FormFields#viewTextField">
-			<var name="fieldLabel" value="Total" />
-			<var name="fieldName" value="Total" />
-			<var name="fieldValue" value="50.0" />
-		</execute>
-	</command>
-
-	<command name="ConfigureRequireRule" priority="5">
-		<property name="portal.acceptance" value="pending" />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Forms" />
-		</execute>
-
-		<execute macro="FormsAdminNavigator#gotoAddForm" />
-
-		<execute macro="Form#editName" />
-
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Text Field" />
-		</execute>
-
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Text Field" />
-		</execute>
-
-		<execute macro="Form#closeSidebar" />
-
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Date" />
-		</execute>
-
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Date Field" />
-		</execute>
-
-		<execute macro="Form#closeSidebar" />
-
-		<execute macro="FormsAdminNavigator#gotoRules" />
-
-		<execute macro="FormRules#addRule" />
-
-		<execute macro="FormRules#configureConditionOptions">
-			<var name="conditionField" value="Text Field" />=
-			<var name="conditionFieldValue" value="test" />
-			<var name="conditionOperator" value="Is equal to" />
-			<var name="conditionRowNumber" value="1" />
-			<var name="conditionValueType" value="Value" />
-		</execute>
-
-		<execute macro="FormRules#configureActionOptions">
-			<var name="action" value="Require" />
-			<var name="actionRowNumber" value="1" />
-			<var name="actionTarget" value="Date Field" />
-		</execute>
-
-		<execute macro="FormRules#save" />
-
-		<execute macro="FormsAdminNavigator#gotoFormBuilder" />
-
-		<execute macro="Form#save" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Form Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Form Page" />
-			<var name="portletName" value="Form" />
-		</execute>
-
-		<execute macro="FormPortletNavigator#gotoSelectForm" />
-
-		<execute macro="FormPortletConfiguration#selectForm" />
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Form Page" />
-		</execute>
-
-		<execute macro="FormFields#viewRequiredAsteriskNotPresent" />
-
-		<execute macro="FormFields#editText">
-			<var name="fieldName" value="TextField" />
-			<var name="fieldValue" value="test" />
-		</execute>
-
-		<execute macro="FormFields#viewRequiredAsterisk" />
-
-		<execute macro="FormPortlet#submitWithValidationError" />
-	</command>
-
-	<command name="ConfigureShowRuleUsingAndCondition" priority="5">
-		<property name="portal.acceptance" value="pending" />
-		<property name="test.name.skip.portal.instance" value="Forms#ConfigureShowRuleUsingAndCondition" />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Forms" />
-		</execute>
-
-		<execute macro="FormsAdminNavigator#gotoAddForm" />
-
-		<execute macro="Form#editName" />
-
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Text Field" />
-		</execute>
-
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Text Field 1" />
-		</execute>
-
-		<execute macro="Form#closeSidebar" />
-
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Text Field" />
-		</execute>
-
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Text Field 2" />
-		</execute>
-
-		<execute macro="Form#closeSidebar" />
-
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Date" />
-		</execute>
-
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Date Field" />
-		</execute>
-
-		<execute macro="Form#closeSidebar" />
-
-		<execute macro="FormsAdminNavigator#gotoRules" />
-
-		<execute macro="FormRules#addRule" />
-
-		<execute macro="FormRules#addCondition" />
-
-		<execute macro="FormRules#selectRuleCondition">
-			<var name="condition" value="and" />
-		</execute>
-
-		<execute macro="FormRules#viewRuleCondition">
-			<var name="condition" value="AND" />
-			<var name="conditonRowNumber" value="1" />
-		</execute>
-
-		<execute macro="FormRules#configureConditionOptions">
-			<var name="conditionField" value="Text Field 1" />
-			<var name="conditionFieldValue" value="test" />
-			<var name="conditionOperator" value="Is equal to" />
-			<var name="conditionRowNumber" value="1" />
-			<var name="conditionValueType" value="Value" />
-		</execute>
-
-		<execute macro="FormRules#configureConditionOptions">
-			<var name="conditionField" value="Text Field 2" />
-			<var name="conditionFieldValue" value="test" />
-			<var name="conditionOperator" value="Is equal to" />
-			<var name="conditionRowNumber" value="2" />
-			<var name="conditionValueType" value="Value" />
-		</execute>
-
-		<execute macro="FormRules#configureActionOptions">
-			<var name="action" value="Show" />
-			<var name="actionRowNumber" value="1" />
-			<var name="actionTarget" value="Date Field" />
-		</execute>
-
-		<execute macro="FormRules#save" />
-
-		<execute macro="FormsAdminNavigator#gotoFormBuilder" />
-
-		<execute macro="Form#save" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Form Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Form Page" />
-			<var name="portletName" value="Form" />
-		</execute>
-
-		<execute macro="FormPortletNavigator#gotoSelectForm" />
-
-		<execute macro="FormPortletConfiguration#selectForm" />
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Form Page" />
-		</execute>
-
-		<execute macro="FormFields#editText">
-			<var name="fieldName" value="TextField1" />
-			<var name="fieldValue" value="test" />
-		</execute>
-
-		<execute macro="FormFields#viewDateFieldNotPresent">
-			<var name="fieldLabel" value="Date Field" />
-			<var name="fieldName" value="Date" />
-		</execute>
-
-		<execute macro="FormFields#editText">
-			<var name="fieldName" value="TextField2" />
-			<var name="fieldValue" value="test" />
-		</execute>
-
-		<execute macro="FormFields#viewDateField">
-			<var name="fieldLabel" value="Date Field" />
-			<var name="fieldName" value="Date" />
-		</execute>
-	</command>
-
-	<command name="ConfigureUserBelongsToRule" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Forms" />
-		</execute>
-
-		<execute macro="FormsAdminNavigator#gotoAddForm" />
-
-		<execute macro="Form#editName" />
-
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Text Field" />
-		</execute>
-
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Public" />
-		</execute>
-
-		<execute macro="Form#closeSidebar" />
-
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Text Field" />
-		</execute>
-
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Manager" />
-		</execute>
-
-		<execute macro="Form#closeSidebar" />
-
-		<execute macro="FormsAdminNavigator#gotoRules" />
-
-		<execute macro="FormRules#addRule" />
-
-		<execute macro="FormRules#configureConditionOptions">
-			<var name="conditionField" value="User" />=
-			<var name="conditionOperator" value="Belongs to" />
-			<var name="conditionRowNumber" value="1" />
-			<var name="conditionValueType" value="Site Administrator" />
-		</execute>
-
-		<execute macro="FormRules#configureActionOptions">
-			<var name="action" value="Show" />
-			<var name="actionRowNumber" value="1" />
-			<var name="actionTarget" value="Manager" />
-		</execute>
-
-		<execute macro="FormRules#addAction" />
-
-		<execute macro="FormRules#configureActionOptions">
-			<var name="action" value="Require" />
-			<var name="actionRowNumber" value="2" />
-			<var name="actionTarget" value="Manager" />
-		</execute>
-
-		<execute macro="FormRules#save" />
-
-		<execute macro="FormRules#viewSummary">
-			<var name="action" value="Require" />
-			<var name="actionTarget" value="Manager" />
-			<var name="conditionField" value="User" />
-			<var name="conditionFieldConstant" value="Site Administrator" />
-			<var name="conditionOperator" value="Belongs to" />
-			<var name="ruleNumber" value="1" />
-		</execute>
-
-		<execute macro="FormRules#viewSummary">
-			<var name="action" value="Show" />
-			<var name="actionTarget" value="Manager" />
-			<var name="conditionField" value="User" />
-			<var name="conditionFieldConstant" value="Site Administrator" />
-			<var name="conditionOperator" value="Belongs to" />
-			<var name="ruleNumber" value="1" />
-		</execute>
-
-		<execute macro="FormsAdminNavigator#gotoFormBuilder" />
-
-		<execute macro="Form#save" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Form Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Form Page" />
-			<var name="portletName" value="Form" />
-		</execute>
-
-		<execute macro="FormPortletNavigator#gotoSelectForm" />
-
-		<execute macro="FormPortletConfiguration#selectForm" />
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Form Page" />
-		</execute>
-
-		<execute macro="FormFields#viewTextField">
-			<var name="fieldLabel" value="Public" />
-			<var name="fieldName" value="Public" />
-		</execute>
-
-		<execute macro="FormFields#viewTextFieldNotVisible">
-			<var name="fieldLabel" value="Manager" />
-			<var name="fieldName" value="Manager" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#assignSiteRoleCP">
-			<var name="siteRoleName" value="Site Administrator" />
-			<var name="userScreenName" value="test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Form Page" />
-		</execute>
-
-		<execute macro="FormFields#viewTextField">
-			<var name="fieldLabel" value="Public" />
-			<var name="fieldName" value="Public" />
-		</execute>
-
-		<execute macro="FormFields#viewTextField">
-			<var name="fieldLabel" value="Manager" />
-			<var name="fieldName" value="Manager" />
-		</execute>
-
-		<execute macro="FormFields#editText">
-			<var name="fieldName" value="Public" />
-			<var name="fieldValue" value="Message" />
-		</execute>
-
-		<execute macro="FormFields#editText">
-			<var name="fieldName" value="Manager" />
-			<var name="fieldValue" value="Admin Comments" />
-		</execute>
-
-		<execute macro="FormFields#viewTextField">
-			<var name="fieldLabel" value="Manager" />
-			<var name="fieldName" value="Manager" />
-		</execute>
-
-		<execute macro="FormPortlet#submitSuccessfully" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Forms" />
-		</execute>
-
-		<execute macro="FormsAdminNavigator#gotoViewEntries" />
-
-		<execute macro="FormsAdmin#viewFormTableEntry">
-			<var name="fieldLabel" value="Public" />
-			<var name="fieldValue" value="Message" />
-		</execute>
-
-		<execute macro="FormsAdmin#viewFormTableEntry">
-			<var name="fieldLabel" value="Manager" />
-			<var name="fieldValue" value="Admin Comments" />
-		</execute>
-	</command>
-
-	<command name="EditRule" priority="5">
-		<property name="portal.acceptance" value="pending" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Forms" />
-		</execute>
-
-		<execute macro="FormsAdminNavigator#gotoAddForm" />
-
-		<execute macro="Form#editName" />
-
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Text Field" />
-		</execute>
-
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Text Field" />
-		</execute>
-
-		<execute macro="Form#closeSidebar" />
-
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Text Field" />
-		</execute>
-
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Text Field 2" />
-		</execute>
-
-		<execute macro="Form#closeSidebar" />
-
-		<execute macro="FormsAdminNavigator#gotoRules" />
-
-		<execute macro="FormRules#addRule" />
-
-		<execute macro="FormRules#configureConditionOptions">
-			<var name="conditionField" value="Text Field" />=
-			<var name="conditionFieldValue" value="test" />
-			<var name="conditionOperator" value="Is equal to" />
-			<var name="conditionRowNumber" value="1" />
-			<var name="conditionValueType" value="Value" />
-		</execute>
-
-		<execute macro="FormRules#configureActionOptions">
-			<var name="action" value="Require" />
-			<var name="actionRowNumber" value="1" />
-			<var name="actionTarget" value="Text Field 2" />
-		</execute>
-
-		<execute macro="FormRules#save" />
-
-		<execute macro="FormsAdminNavigator#gotoFormBuilder" />
-
-		<execute macro="Form#save" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Forms" />
-		</execute>
-
-		<execute macro="FormsAdminNavigator#gotoEditFormByName" />
-
-		<execute macro="FormsAdminNavigator#gotoRules" />
-
-		<execute macro="FormRules#gotoEdit">
-			<var name="ruleNumber" value="1" />
-		</execute>
-
-		<execute macro="FormRules#configureConditionOptions">
-			<var name="conditionField" value="Text Field" />
-			<var name="conditionFieldValue" value="test edit" />
-			<var name="conditionOperator" value="Is equal to" />
-			<var name="conditionRowNumber" value="1" />
-			<var name="conditionValueType" value="Value" />
-		</execute>
-
-		<execute macro="FormRules#configureActionOptions">
-			<var name="action" value="Show" />
-			<var name="actionRowNumber" value="1" />
-			<var name="actionTarget" value="Text Field 2" />
-		</execute>
-
-		<execute macro="FormRules#save" />
-	</command>
-
-	<command name="UseIsNotEmptyRuleToShowField" priority="4">
-		<description message="This is a use case for LPS-71399." />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Forms" />
-		</execute>
-
-		<execute macro="FormsAdminNavigator#gotoAddForm" />
-
-		<execute macro="Form#editName" />
-
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Text Field" />
-		</execute>
-
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="A" />
-		</execute>
-
-		<execute macro="Form#closeSidebar" />
-
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Date" />
-		</execute>
-
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="B" />
-		</execute>
-
-		<execute macro="Form#closeSidebar" />
-
-		<execute macro="FormsAdminNavigator#gotoRules" />
-
-		<execute macro="FormRules#addRule" />
-
-		<execute macro="FormRules#configureConditionOptions">
-			<var name="conditionField" value="A" />=
-			<var name="conditionOperator" value="Is not empty" />
-			<var name="conditionRowNumber" value="1" />
-		</execute>
-
-		<execute macro="FormRules#configureActionOptions">
-			<var name="action" value="Show" />
-			<var name="actionRowNumber" value="1" />
-			<var name="actionTarget" value="B" />
-		</execute>
-
-		<execute macro="FormRules#save" />
-
-		<execute macro="FormsAdminNavigator#gotoFormBuilder" />
-
-		<execute macro="Form#save" />
-
-		<execute macro="Form#publishForm" />
-
-		<execute macro="FormsAdminNavigator#openPublishURL">
-			<var name="publishFormURL" value="${publishedFormPublicURL}" />
-		</execute>
-
-		<execute macro="FormFields#viewDateFieldNotPresent">
-			<var name="fieldLabel" value="B" />
-			<var name="fieldName" value="B" />
-		</execute>
-
-		<execute macro="FormFields#editText">
-			<var name="fieldName" value="A" />
-			<var name="fieldValue" value="1" />
-		</execute>
-
-		<execute macro="FormFields#viewDateField">
-			<var name="fieldLabel" value="B" />
-			<var name="fieldName" value="B" />
-		</execute>
-
-		<execute macro="FormFields#editText">
-			<var name="fieldName" value="A" />
-			<var name="fieldValue" value="Test" />
-		</execute>
-
-		<execute macro="FormFields#viewDateField">
-			<var name="fieldLabel" value="B" />
-			<var name="fieldName" value="B" />
-		</execute>
-
-		<execute macro="FormFields#editText">
-			<var name="fieldName" value="A" />
-			<var name="fieldValue" value="%" />
-		</execute>
-
-		<execute macro="FormFields#viewDateField">
-			<var name="fieldLabel" value="B" />
-			<var name="fieldName" value="B" />
-		</execute>
-
-		<execute macro="FormFields#editTextWithBackspace">
-			<var name="fieldName" value="A" />
-		</execute>
-
-		<execute macro="FormFields#viewDateFieldNotPresent">
-			<var name="fieldLabel" value="B" />
-			<var name="fieldName" value="B" />
-		</execute>
-	</command>
-
-	<command name="ViewRuleConditionOperatorFieldOptions" priority="2">
-		<description message="This is a use case for LPS-69733." />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Forms" />
-		</execute>
-
-		<execute macro="FormsAdminNavigator#gotoAddForm" />
-
-		<execute macro="Form#editName" />
-
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Text Field" />
-		</execute>
-
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Text Field" />
-		</execute>
-
-		<execute macro="Form#closeSidebar" />
-
-		<execute macro="FormsAdminNavigator#gotoRules" />
-
-		<execute macro="FormRules#addRule" />
-
-		<execute macro="FormRules#viewConditionOperatorOptionsNotPresent">
-			<var name="conditionRowNumber" value="1" />
-		</execute>
-
-		<execute macro="FormRules#selectConditionField">
-			<var name="conditionField" value="Text Field" />
-			<var name="conditionRowNumber" value="1" />
-		</execute>
-
-		<execute macro="FormRules#viewConditionOperatorOptionsIsPresent">
-			<var name="conditionRowNumber" value="1" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Forms|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Configure Autofill Rule
+Priority: 5
+	Given these properties
+		|portal.acceptance|pending|
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	And these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Forms|
+	And FormsAdminNavigator goto Data Providers
+	And FormsAdminNavigator goto Add Data Provider
+	And FormsAdmin edit Data Provider
+		|name|Liferay Countries|
+		|outputParameterName|Country Name|
+		|outputParameterPath|nameCurrentValue|
+		|outputParameterType|List|
+		|password|test|
+		|url|${portalURL}/api/jsonws/country/get-countries|
+		|username|test@liferay.com|
+	And FormsAdmin save Data Provider
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Forms|
+	And FormsAdminNavigator goto Add Form
+	And Form edit Name
+	And Form edit Description
+	And Form goto Add Field
+		|fieldType|Text Field|
+	And Form edit Field Label
+		|fieldValue|Text Field|
+	And Form close Sidebar
+	And Form goto Add Field
+		|fieldType|Select from List|
+	And Form edit Field Label
+		|fieldValue|Countries|
+	And Form close Sidebar
+	And FormsAdminNavigator goto Rules
+	And FormRules add Rule
+	And FormRules configure Condition Options
+		|conditionField|Text Field|
+		|conditionFieldValue|country|
+		|conditionOperator|Contains|
+		|conditionRowNumber|1|
+		|conditionValueType|Value|
+	And FormRules configure Action Options
+		|action|Autofill|
+		|actionRowNumber|1|
+		|actionTarget|Liferay Countries|
+	And FormRules select Autofill Output
+		|dataProviderOutput|Countries|
+	And FormRules save
+	And FormsAdminNavigator goto Form Builder
+	And Form save
+	And Page add
+		|pageName|Form Page|
+	And Navigator goto Page
+		|pageName|Form Page|
+	And Portlet add PG
+		|pageName|Form Page|
+		|portletName|Form|
+	And FormPortletNavigator goto Select Form
+	And FormPortletConfiguration select Form
+	And PortletEntry save
+	And Navigator goto Page
+		|pageName|Form Page|
+	And FormFields view Text Label
+		|fieldLabel|Text Field|
+		|fieldName|TextField|
+	And FormFields edit Text
+		|fieldName|TextField|
+		|fieldValue|test|
+	And FormFields view Select Options List
+		|fieldName|Countries|
+		|selectOption|Option|
+	And FormFields edit Text
+		|fieldName|TextField|
+		|fieldValue|country|
+	Then FormFields view Select Options List
+		|fieldName|Countries|
+		|selectOption|Afghanistan|
+Scenario: Configure Calculate Rule
+Priority: 5
+	Given these properties
+		|portal.acceptance|pending|
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	And these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Forms|
+	And FormsAdminNavigator goto Add Form
+	And Form edit Name
+	And Form goto Add Field
+		|fieldType|Numeric|
+	And Form edit Field Label
+		|fieldValue|Quantity|
+	And Form close Sidebar
+	And Form goto Add Field
+		|fieldType|Numeric|
+	And Form edit Field Label
+		|fieldValue|Value|
+	And Form close Sidebar
+	And Form goto Add Field
+		|fieldType|Numeric|
+	And Form edit Field Label
+		|fieldValue|Total|
+	And Form close Sidebar
+	And FormsAdminNavigator goto Rules
+	And FormRules add Rule
+	And FormRules select Condition Field
+		|conditionField|Quantity|
+		|conditionRowNumber|1|
+	And FormRules select Condition Operator
+		|conditionOperator|Is not empty|
+		|conditionRowNumber|1|
+	And FormRules select Action
+		|action|Calculate|
+		|actionRowNumber|1|
+	And FormRules select Calculate Field
+		|calculateFieldOption|Value|
+	And FormRules choose Calculate Operator
+		|calculateOperator|*|
+	And FormRules select Calculate Field
+		|calculateFieldOption|Quantity|
+	And FormRules select Calculate Result Field
+		|calculateResultField|Total|
+	And FormRules save
+	And FormsAdminNavigator goto Form Builder
+	And Form save
+	And Page add
+		|pageName|Form Page|
+	And Portlet add PG
+		|pageName|Form Page|
+		|portletName|Form|
+	And FormPortletNavigator goto Select Form
+	And FormPortletConfiguration select Form
+	And PortletEntry save
+	And Navigator goto Page
+		|pageName|Form Page|
+	And FormFields edit Text
+		|fieldName|Value|
+		|fieldValue|5|
+	And FormFields edit Text
+		|fieldName|Quantity|
+		|fieldValue|10|
+	Then FormFields view Text Field
+		|fieldLabel|Total|
+		|fieldName|Total|
+		|fieldValue|50.0|
+Scenario: Configure Require Rule
+Priority: 5
+	Given these properties
+		|portal.acceptance|pending|
+	When these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Forms|
+	And FormsAdminNavigator goto Add Form
+	And Form edit Name
+	And Form goto Add Field
+		|fieldType|Text Field|
+	And Form edit Field Label
+		|fieldValue|Text Field|
+	And Form close Sidebar
+	And Form goto Add Field
+		|fieldType|Date|
+	And Form edit Field Label
+		|fieldValue|Date Field|
+	And Form close Sidebar
+	And FormsAdminNavigator goto Rules
+	And FormRules add Rule
+	And FormRules configure Condition Options
+		|conditionField|Text Field|
+		|conditionFieldValue|test|
+		|conditionOperator|Is equal to|
+		|conditionRowNumber|1|
+		|conditionValueType|Value|
+	And FormRules configure Action Options
+		|action|Require|
+		|actionRowNumber|1|
+		|actionTarget|Date Field|
+	And FormRules save
+	And FormsAdminNavigator goto Form Builder
+	And Form save
+	And Page add
+		|pageName|Form Page|
+	And Portlet add PG
+		|pageName|Form Page|
+		|portletName|Form|
+	And FormPortletNavigator goto Select Form
+	And FormPortletConfiguration select Form
+	And PortletEntry save
+	And Navigator goto Page
+		|pageName|Form Page|
+	And FormFields view Required Asterisk Not Present
+	And FormFields edit Text
+		|fieldName|TextField|
+		|fieldValue|test|
+	And FormFields view Required Asterisk
+	Then FormPortlet submit With Validation Error
+Scenario: Configure Show Rule Using And Condition
+Priority: 5
+	Given these properties
+		|portal.acceptance|pending|
+	When these properties
+		|test.name.skip.portal.instance|Forms#ConfigureShowRuleUsingAndCondition|
+	And these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Forms|
+	And FormsAdminNavigator goto Add Form
+	And Form edit Name
+	And Form goto Add Field
+		|fieldType|Text Field|
+	And Form edit Field Label
+		|fieldValue|Text Field 1|
+	And Form close Sidebar
+	And Form goto Add Field
+		|fieldType|Text Field|
+	And Form edit Field Label
+		|fieldValue|Text Field 2|
+	And Form close Sidebar
+	And Form goto Add Field
+		|fieldType|Date|
+	And Form edit Field Label
+		|fieldValue|Date Field|
+	And Form close Sidebar
+	And FormsAdminNavigator goto Rules
+	And FormRules add Rule
+	And FormRules add Condition
+	And FormRules select Rule Condition
+		|condition|and|
+	And FormRules view Rule Condition
+		|condition|AND|
+		|conditonRowNumber|1|
+	And FormRules configure Condition Options
+		|conditionField|Text Field 1|
+		|conditionFieldValue|test|
+		|conditionOperator|Is equal to|
+		|conditionRowNumber|1|
+		|conditionValueType|Value|
+	And FormRules configure Condition Options
+		|conditionField|Text Field 2|
+		|conditionFieldValue|test|
+		|conditionOperator|Is equal to|
+		|conditionRowNumber|2|
+		|conditionValueType|Value|
+	And FormRules configure Action Options
+		|action|Show|
+		|actionRowNumber|1|
+		|actionTarget|Date Field|
+	And FormRules save
+	And FormsAdminNavigator goto Form Builder
+	And Form save
+	And Page add
+		|pageName|Form Page|
+	And Portlet add PG
+		|pageName|Form Page|
+		|portletName|Form|
+	And FormPortletNavigator goto Select Form
+	And FormPortletConfiguration select Form
+	And PortletEntry save
+	And Navigator goto Page
+		|pageName|Form Page|
+	And FormFields edit Text
+		|fieldName|TextField1|
+		|fieldValue|test|
+	And FormFields view Date Field Not Present
+		|fieldLabel|Date Field|
+		|fieldName|Date|
+	And FormFields edit Text
+		|fieldName|TextField2|
+		|fieldValue|test|
+	Then FormFields view Date Field
+		|fieldLabel|Date Field|
+		|fieldName|Date|
+Scenario: Configure User Belongs To Rule
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Forms|
+	And FormsAdminNavigator goto Add Form
+	And Form edit Name
+	And Form goto Add Field
+		|fieldType|Text Field|
+	And Form edit Field Label
+		|fieldValue|Public|
+	And Form close Sidebar
+	And Form goto Add Field
+		|fieldType|Text Field|
+	And Form edit Field Label
+		|fieldValue|Manager|
+	And Form close Sidebar
+	And FormsAdminNavigator goto Rules
+	And FormRules add Rule
+	And FormRules configure Condition Options
+		|conditionField|User|
+		|conditionOperator|Belongs to|
+		|conditionRowNumber|1|
+		|conditionValueType|Site Administrator|
+	And FormRules configure Action Options
+		|action|Show|
+		|actionRowNumber|1|
+		|actionTarget|Manager|
+	And FormRules add Action
+	And FormRules configure Action Options
+		|action|Require|
+		|actionRowNumber|2|
+		|actionTarget|Manager|
+	And FormRules save
+	And FormRules view Summary
+		|action|Require|
+		|actionTarget|Manager|
+		|conditionField|User|
+		|conditionFieldConstant|Site Administrator|
+		|conditionOperator|Belongs to|
+		|ruleNumber|1|
+	And FormRules view Summary
+		|action|Show|
+		|actionTarget|Manager|
+		|conditionField|User|
+		|conditionFieldConstant|Site Administrator|
+		|conditionOperator|Belongs to|
+		|ruleNumber|1|
+	And FormsAdminNavigator goto Form Builder
+	And Form save
+	And Page add
+		|pageName|Form Page|
+	And Portlet add PG
+		|pageName|Form Page|
+		|portletName|Form|
+	And FormPortletNavigator goto Select Form
+	And FormPortletConfiguration select Form
+	And PortletEntry save
+	And Navigator goto Page
+		|pageName|Form Page|
+	And FormFields view Text Field
+		|fieldLabel|Public|
+		|fieldName|Public|
+	And FormFields view Text Field Not Visible
+		|fieldLabel|Manager|
+		|fieldName|Manager|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User assign Site Role CP
+		|siteRoleName|Site Administrator|
+		|userScreenName|test|
+	And Navigator goto Page
+		|pageName|Form Page|
+	And FormFields view Text Field
+		|fieldLabel|Public|
+		|fieldName|Public|
+	And FormFields view Text Field
+		|fieldLabel|Manager|
+		|fieldName|Manager|
+	And FormFields edit Text
+		|fieldName|Public|
+		|fieldValue|Message|
+	And FormFields edit Text
+		|fieldName|Manager|
+		|fieldValue|Admin Comments|
+	And FormFields view Text Field
+		|fieldLabel|Manager|
+		|fieldName|Manager|
+	And FormPortlet submit Successfully
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Forms|
+	And FormsAdminNavigator goto View Entries
+	And FormsAdmin view Form Table Entry
+		|fieldLabel|Public|
+		|fieldValue|Message|
+	Then FormsAdmin view Form Table Entry
+		|fieldLabel|Manager|
+		|fieldValue|Admin Comments|
+Scenario: Edit Rule
+Priority: 5
+	Given these properties
+		|portal.acceptance|pending|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Forms|
+	And FormsAdminNavigator goto Add Form
+	And Form edit Name
+	And Form goto Add Field
+		|fieldType|Text Field|
+	And Form edit Field Label
+		|fieldValue|Text Field|
+	And Form close Sidebar
+	And Form goto Add Field
+		|fieldType|Text Field|
+	And Form edit Field Label
+		|fieldValue|Text Field 2|
+	And Form close Sidebar
+	And FormsAdminNavigator goto Rules
+	And FormRules add Rule
+	And FormRules configure Condition Options
+		|conditionField|Text Field|
+		|conditionFieldValue|test|
+		|conditionOperator|Is equal to|
+		|conditionRowNumber|1|
+		|conditionValueType|Value|
+	And FormRules configure Action Options
+		|action|Require|
+		|actionRowNumber|1|
+		|actionTarget|Text Field 2|
+	And FormRules save
+	And FormsAdminNavigator goto Form Builder
+	And Form save
+	And ProductMenu goto Sites Content
+		|portlet|Forms|
+	And FormsAdminNavigator goto Edit Form By Name
+	And FormsAdminNavigator goto Rules
+	And FormRules goto Edit
+		|ruleNumber|1|
+	And FormRules configure Condition Options
+		|conditionField|Text Field|
+		|conditionFieldValue|test edit|
+		|conditionOperator|Is equal to|
+		|conditionRowNumber|1|
+		|conditionValueType|Value|
+	And FormRules configure Action Options
+		|action|Show|
+		|actionRowNumber|1|
+		|actionTarget|Text Field 2|
+	Then FormRules save
+Scenario: Use Is Not Empty Rule To Show Field
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When ProductMenu goto Sites Content
+		|portlet|Forms|
+	And FormsAdminNavigator goto Add Form
+	And Form edit Name
+	And Form goto Add Field
+		|fieldType|Text Field|
+	And Form edit Field Label
+		|fieldValue|A|
+	And Form close Sidebar
+	And Form goto Add Field
+		|fieldType|Date|
+	And Form edit Field Label
+		|fieldValue|B|
+	And Form close Sidebar
+	And FormsAdminNavigator goto Rules
+	And FormRules add Rule
+	And FormRules configure Condition Options
+		|conditionField|A|
+		|conditionOperator|Is not empty|
+		|conditionRowNumber|1|
+	And FormRules configure Action Options
+		|action|Show|
+		|actionRowNumber|1|
+		|actionTarget|B|
+	And FormRules save
+	And FormsAdminNavigator goto Form Builder
+	And Form save
+	And Form publish Form
+	And FormsAdminNavigator open Publish URL
+		|publishFormURL|${publishedFormPublicURL}|
+	And FormFields view Date Field Not Present
+		|fieldLabel|B|
+		|fieldName|B|
+	And FormFields edit Text
+		|fieldName|A|
+		|fieldValue|1|
+	And FormFields view Date Field
+		|fieldLabel|B|
+		|fieldName|B|
+	And FormFields edit Text
+		|fieldName|A|
+		|fieldValue|Test|
+	And FormFields view Date Field
+		|fieldLabel|B|
+		|fieldName|B|
+	And FormFields edit Text
+		|fieldName|A|
+		|fieldValue|%|
+	And FormFields view Date Field
+		|fieldLabel|B|
+		|fieldName|B|
+	And FormFields edit Text With Backspace
+		|fieldName|A|
+	Then FormFields view Date Field Not Present
+		|fieldLabel|B|
+		|fieldName|B|
+Scenario: View Rule Condition Operator Field Options
+Priority: 2
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Forms|
+	And FormsAdminNavigator goto Add Form
+	And Form edit Name
+	And Form goto Add Field
+		|fieldType|Text Field|
+	And Form edit Field Label
+		|fieldValue|Text Field|
+	And Form close Sidebar
+	And FormsAdminNavigator goto Rules
+	And FormRules add Rule
+	And FormRules view Condition Operator Options Not Present
+		|conditionRowNumber|1|
+	And FormRules select Condition Field
+		|conditionField|Text Field|
+		|conditionRowNumber|1|
+	Then FormRules view Condition Operator Options Is Present
+		|conditionRowNumber|1|

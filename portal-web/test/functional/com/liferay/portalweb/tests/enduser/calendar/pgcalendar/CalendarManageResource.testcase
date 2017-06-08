@@ -1,299 +1,359 @@
-<definition component-name="portal-calendar">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles" />
-	<property name="testray.main.component.name" value="Calendar" />
-
-	<var name="pageName" value="Calendar Page" />
-	<var name="portletName" value="Calendar" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Calendar Page" />
-			<var name="portletName" value="Calendar" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="Delete" priority="4">
-		<var name="calendarResourceName" value="Calendar Resource Name" />
-
-		<execute macro="CalendarResource#add">
-			<var name="calendarResourceName" value="${calendarResourceName}" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarResource#delete">
-			<var name="calendarResourceName" value="${calendarResourceName}" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarResource#viewDefault">
-			<var name="calendarResourceName" value="${calendarResourceName}" />
-		</execute>
-	</command>
-
-	<command name="Search" priority="3">
-		<description message="This is a use case for LPS-59743." />
-
-		<execute macro="CalendarResource#add">
-			<var name="calendarResourceName" value="Room 1" />
-		</execute>
-
-		<execute macro="CalendarResource#add">
-			<var name="calendarResourceName" value="Car1" />
-		</execute>
-
-		<execute macro="CalendarResource#add">
-			<var name="calendarResourceName" value="Truck" />
-		</execute>
-
-		<execute macro="CalendarResource#search">
-			<var name="calendarResourceName" value="Room Car " />
-		</execute>
-
-		<execute macro="CalendarResource#viewResourceName">
-			<var name="calendarResourceName" value="Room 1" />
-		</execute>
-
-		<execute macro="CalendarResource#viewResourceName">
-			<var name="calendarResourceName" value="Car1" />
-		</execute>
-
-		<execute macro="CalendarResource#viewResourceNameNotPresent">
-			<var name="calendarResourceName" value="Truck" />
-		</execute>
-
-		<execute macro="CalendarResource#search">
-			<var name="calendarResourceName" value="Room" />
-		</execute>
-
-		<execute macro="CalendarResource#viewResourceName">
-			<var name="calendarResourceName" value="Room 1" />
-		</execute>
-
-		<execute macro="CalendarResource#viewResourceNameNotPresent">
-			<var name="calendarResourceName" value="Car1" />
-		</execute>
-
-		<execute macro="CalendarResource#viewResourceNameNotPresent">
-			<var name="calendarResourceName" value="Truck" />
-		</execute>
-	</command>
-
-	<command name="ViewEventDateAndTimeInResourcesAvailability" priority="4">
-		<description message="This is a use case for LPS-62410." />
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#gotoConfigureInvitations" />
-
-		<execute macro="CalendarEvent#viewResourcesAvailability" />
-
-		<execute macro="CalendarEvent#compareEventDateAndTimeToResourcesAvailabilityDateAndTime" />
-
-		<execute macro="CalendarEvent#selectTimes" >
-			<var name="endDateTime" value="11:00 AM" />
-			<var name="startDateTime" value="08:00 AM" />
-		</execute>
-
-		<execute macro="CalendarEvent#compareEventDateAndTimeToResourcesAvailabilityDateAndTime" />
-
-		<execute macro="CalendarEvent#setEndDateTomorrow" />
-
-		<execute macro="CalendarEvent#selectTimes" >
-			<var name="endDateTime" value="07:00 AM" />
-			<var name="startDateTime" value="08:00 AM" />
-		</execute>
-
-		<execute macro="CalendarEvent#compareEventDateAndTimeToResourcesAvailabilityDateAndTime" />
-
-		<execute macro="CalendarEvent#publish" />
-	</command>
-
-	<command name="ViewInactive" priority="2">
-		<description message="This is a use case for LPS-55171." />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Calendar Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Calendar Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Calendar" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Calendar Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddResource" />
-
-		<execute macro="CalendarResource#editResourceName">
-			<var name="calendarResourceName" value="Calendar Resource" />
-		</execute>
-
-		<execute macro="CalendarResource#deactivate" />
-
-		<execute macro="CalendarResource#save" />
-
-		<execute macro="CalendarResource#viewDefault" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Calendar Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Calendar#searchOtherCalendars">
-			<var name="searchValue" value="resource" />
-		</execute>
-
-		<execute macro="Calendar#viewOtherCalendarsSearchResultNotPresent">
-			<var name="calendarName" value="Calendar Resource" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#viewInvitationResourceNotPresent">
-			<var name="resourceNameList" value="Calendar Resource" />
-		</execute>
-	</command>
-
-	<command name="ViewInvitedResourceAvailability" priority="3">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Calendar#add">
-			<var name="calendarName" value="userfn userln" />
-			<var name="calendarType" value="Other Calendars" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarResource#add">
-			<var name="calendarResourceName" value="Calendar Resource Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarResource#view">
-			<var name="calendarResourceName" value="Calendar Resource Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Calendar#add">
-			<var name="calendarName" value="Calendar Resource Name" />
-			<var name="calendarType" value="Other Calendars" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="calendarName" value="userfn userln" />
-			<var name="eventTitle" value="Calendar Event All Day Title" />
-			<var name="eventType" value="Regular" />
-			<var name="optionSet" value="true" />
-			<var name="optionSetValue" value="inviteResource" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="resourcesAvailability" value="true" />
-			<var name="specificOptionSetValue" value="Test Test,Calendar Resource Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#view">
-			<var name="eventNumber" value="2" />
-			<var name="eventTitle" value="Calendar Event All Day Title" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles|
+		|testray.main.component.name|Calendar|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles|
+		|testray.main.component.name|Calendar|
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Calendar Page|
+	Then Portlet add PG
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Delete
+Priority: 4
+	Given these variables
+		|calendarResourceName|Calendar Resource Name|
+	When CalendarResource add
+		|calendarResourceName|${calendarResourceName}|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarResource delete
+		|calendarResourceName|${calendarResourceName}|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarResource view Default
+		|calendarResourceName|${calendarResourceName}|
+Scenario: Search
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When CalendarResource add
+		|calendarResourceName|Room 1|
+	And CalendarResource add
+		|calendarResourceName|Car1|
+	And CalendarResource add
+		|calendarResourceName|Truck|
+	And CalendarResource search
+		|calendarResourceName|Room Car |
+	And CalendarResource view Resource Name
+		|calendarResourceName|Room 1|
+	And CalendarResource view Resource Name
+		|calendarResourceName|Car1|
+	And CalendarResource view Resource Name Not Present
+		|calendarResourceName|Truck|
+	And CalendarResource search
+		|calendarResourceName|Room|
+	And CalendarResource view Resource Name
+		|calendarResourceName|Room 1|
+	And CalendarResource view Resource Name Not Present
+		|calendarResourceName|Car1|
+	Then CalendarResource view Resource Name Not Present
+		|calendarResourceName|Truck|
+Scenario: View Event Date And Time In Resources Availability
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When CalendarNavigator goto Add Event
+	And CalendarEvent goto Configure Invitations
+	And CalendarEvent view Resources Availability
+	And CalendarEvent compare Event Date And Time To Resources Availability Date And Time
+	And CalendarEvent select Times
+		|endDateTime|11:00 AM|
+		|startDateTime|08:00 AM|
+	And CalendarEvent compare Event Date And Time To Resources Availability Date And Time
+	And CalendarEvent set End Date Tomorrow
+	And CalendarEvent select Times
+		|endDateTime|07:00 AM|
+		|startDateTime|08:00 AM|
+	And CalendarEvent compare Event Date And Time To Resources Availability Date And Time
+	Then CalendarEvent publish
+Scenario: View Inactive
+Priority: 2
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Calendar Page|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Calendar Page|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Calendar|
+	And Navigator goto Site Page
+		|pageName|Calendar Page|
+		|siteName|Site Name|
+	And CalendarNavigator goto Add Resource
+	And CalendarResource edit Resource Name
+		|calendarResourceName|Calendar Resource|
+	And CalendarResource deactivate
+	And CalendarResource save
+	And CalendarResource view Default
+	And Navigator goto Site Page
+		|pageName|Calendar Page|
+		|siteName|Site Name|
+	And Calendar search Other Calendars
+		|searchValue|resource|
+	And Calendar view Other Calendars Search Result Not Present
+		|calendarName|Calendar Resource|
+	And CalendarNavigator goto Add Event
+	Then CalendarEvent view Invitation Resource Not Present
+		|resourceNameList|Calendar Resource|
+Scenario: View Invited Resource Availability
+Priority: 3
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar add
+		|calendarName|userfn userln|
+		|calendarType|Other Calendars|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarResource add
+		|calendarResourceName|Calendar Resource Name|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarResource view
+		|calendarResourceName|Calendar Resource Name|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar add
+		|calendarName|Calendar Resource Name|
+		|calendarType|Other Calendars|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|calendarName|userfn userln|
+		|eventTitle|Calendar Event All Day Title|
+		|eventType|Regular|
+		|optionSet|true|
+		|optionSetValue|inviteResource|
+		|pageName|Calendar Page|
+		|resourcesAvailability|true|
+		|specificOptionSetValue|Test Test,Calendar Resource Name|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view
+		|eventNumber|2|
+		|eventTitle|Calendar Event All Day Title|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Calendar Page|
+	Then Portlet add PG
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Delete
+Priority: 4
+	Given these variables
+		|calendarResourceName|Calendar Resource Name|
+	When CalendarResource add
+		|calendarResourceName|${calendarResourceName}|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarResource delete
+		|calendarResourceName|${calendarResourceName}|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarResource view Default
+		|calendarResourceName|${calendarResourceName}|
+Scenario: Search
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When CalendarResource add
+		|calendarResourceName|Room 1|
+	And CalendarResource add
+		|calendarResourceName|Car1|
+	And CalendarResource add
+		|calendarResourceName|Truck|
+	And CalendarResource search
+		|calendarResourceName|Room Car |
+	And CalendarResource view Resource Name
+		|calendarResourceName|Room 1|
+	And CalendarResource view Resource Name
+		|calendarResourceName|Car1|
+	And CalendarResource view Resource Name Not Present
+		|calendarResourceName|Truck|
+	And CalendarResource search
+		|calendarResourceName|Room|
+	And CalendarResource view Resource Name
+		|calendarResourceName|Room 1|
+	And CalendarResource view Resource Name Not Present
+		|calendarResourceName|Car1|
+	Then CalendarResource view Resource Name Not Present
+		|calendarResourceName|Truck|
+Scenario: View Event Date And Time In Resources Availability
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When CalendarNavigator goto Add Event
+	And CalendarEvent goto Configure Invitations
+	And CalendarEvent view Resources Availability
+	And CalendarEvent compare Event Date And Time To Resources Availability Date And Time
+	And CalendarEvent select Times
+		|endDateTime|11:00 AM|
+		|startDateTime|08:00 AM|
+	And CalendarEvent compare Event Date And Time To Resources Availability Date And Time
+	And CalendarEvent set End Date Tomorrow
+	And CalendarEvent select Times
+		|endDateTime|07:00 AM|
+		|startDateTime|08:00 AM|
+	And CalendarEvent compare Event Date And Time To Resources Availability Date And Time
+	Then CalendarEvent publish
+Scenario: View Inactive
+Priority: 2
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Calendar Page|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Calendar Page|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Calendar|
+	And Navigator goto Site Page
+		|pageName|Calendar Page|
+		|siteName|Site Name|
+	And CalendarNavigator goto Add Resource
+	And CalendarResource edit Resource Name
+		|calendarResourceName|Calendar Resource|
+	And CalendarResource deactivate
+	And CalendarResource save
+	And CalendarResource view Default
+	And Navigator goto Site Page
+		|pageName|Calendar Page|
+		|siteName|Site Name|
+	And Calendar search Other Calendars
+		|searchValue|resource|
+	And Calendar view Other Calendars Search Result Not Present
+		|calendarName|Calendar Resource|
+	And CalendarNavigator goto Add Event
+	Then CalendarEvent view Invitation Resource Not Present
+		|resourceNameList|Calendar Resource|
+Scenario: View Invited Resource Availability
+Priority: 3
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar add
+		|calendarName|userfn userln|
+		|calendarType|Other Calendars|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarResource add
+		|calendarResourceName|Calendar Resource Name|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarResource view
+		|calendarResourceName|Calendar Resource Name|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar add
+		|calendarName|Calendar Resource Name|
+		|calendarType|Other Calendars|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|calendarName|userfn userln|
+		|eventTitle|Calendar Event All Day Title|
+		|eventType|Regular|
+		|optionSet|true|
+		|optionSetValue|inviteResource|
+		|pageName|Calendar Page|
+		|resourcesAvailability|true|
+		|specificOptionSetValue|Test Test,Calendar Resource Name|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then CalendarEvent view
+		|eventNumber|2|
+		|eventTitle|Calendar Event All Day Title|

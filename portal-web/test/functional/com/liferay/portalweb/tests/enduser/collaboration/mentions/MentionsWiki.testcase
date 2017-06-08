@@ -1,139 +1,84 @@
-<definition component-name="portal-collaboration">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column" />
-	<property name="testray.main.component.name" value="Mentions" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Mentions|
 
-		<execute macro="User#firstLoginPG" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Wiki Page|
+	And Portlet add PG
+		|portletName|Wiki|
+	And Navigator goto Page
+		|pageName|Wiki Page|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress||
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress||
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User assign Regular Role CP
+		|roleTitle|Administrator|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Server Administration|
+	And ServerAdministration configure Mail Server Settings
+		|userName||
+		|userPassword||
+	And Navigator goto Page
+		|pageName|Wiki Page|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Virtual Instances|
+	And PortalInstances edit CP
+		|mailDomain|gmail.com|
+		|virtualHost|localhost|
+	Then Navigator goto Page
+		|pageName|Wiki Page|
 
-		<execute macro="Page#add">
-			<var name="pageName" value="Wiki Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Wiki" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Page" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" property-value="email.address.4" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="password" value="password" />
-			<var name="userEmailAddress" property-value="email.address.4" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#assignRegularRoleCP">
-			<var name="roleTitle" value="Administrator" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Server Administration" />
-		</execute>
-
-		<execute macro="ServerAdministration#configureMailServerSettings">
-			<var name="userName" property-value="email.address.1" />
-			<var name="userPassword" property-value="email.password.1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Page" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Virtual Instances" />
-		</execute>
-
-		<execute macro="PortalInstances#editCP">
-			<var name="mailDomain" value="gmail.com" />
-			<var name="virtualHost" value="localhost" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Page" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="ViewWikiCommentMentionedUser" priority="5">
-		<property name="test.name.skip.portal.instance" value="MentionsWiki#ViewWikiCommentMentionedUser" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Wiki" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoNode">
-			<var name="wikiNodeName" value="Main" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoAllPagesCP" />
-
-		<execute function="Click" locator1="Button#PLUS" />
-
-		<execute macro="WikiEntry#addPageTitle">
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-
-		<execute macro="WikiEntry#addPageContent">
-			<var name="wikiPageContent" value="Wiki Page Content" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Page" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoAllPagesPG" />
-
-		<execute macro="WikiNavigator#gotoEntryViaPGTable">
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-
-		<execute function="Pause" locator1="30000" />
-
-		<execute macro="Mentions#addMentionViaComments">
-			<var name="entryComment" value="Comment mentioning" />
-			<var name="mentionsUserFullName" value="userfn userln" />
-			<var name="mentionsUserScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Mentions#viewCommentMentionTagLink">
-			<var name="mentionsUserFullName" value="userfn userln" />
-			<var name="mentionsUserScreenName" value="usersn" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View Wiki Comment Mentioned User
+Priority: 5
+	Given these properties
+		|test.name.skip.portal.instance|MentionsWiki#ViewWikiCommentMentionedUser|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiNavigator goto Node
+		|wikiNodeName|Main|
+	And WikiNavigator goto All Pages CP
+	And Click at locator 'Button#PLUS'
+	And WikiEntry add Page Title
+		|wikiPageTitle|Wiki Page Title|
+	And WikiEntry add Page Content
+		|wikiPageContent|Wiki Page Content|
+	And PortletEntry publish
+	And Navigator open URL
+	And Navigator goto Page
+		|pageName|Wiki Page|
+	And WikiNavigator goto All Pages PG
+	And WikiNavigator goto Entry Via PG Table
+		|wikiPageTitle|Wiki Page Title|
+	And Pause at locator '30000'
+	And Mentions add Mention Via Comments
+		|entryComment|Comment mentioning|
+		|mentionsUserFullName|userfn userln|
+		|mentionsUserScreenName|usersn|
+	Then Mentions view Comment Mention Tag Link
+		|mentionsUserFullName|userfn userln|
+		|mentionsUserScreenName|usersn|

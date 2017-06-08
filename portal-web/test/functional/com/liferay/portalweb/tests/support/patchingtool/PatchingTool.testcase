@@ -1,46 +1,61 @@
-<definition component-name="support-qa">
-	<property name="portal.fixpack.release" value="true" />
-	<property name="testray.main.component.name" value="Patching Tool" />
+Feature:
 
-	<var method="TestPropsUtil#get('test.build.fix.pack.zip.url')" name="testBuildFixPackZipURL" />
-	<var method="TestPropsUtil#get('test.build.fix.pack.zip.url.previous')" name="testBuildFixPackZipURLPrevious" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.fixpack.release|true|
+		|testray.main.component.name|Patching Tool|
+	And these variables
+		|portal.fixpack.release|true|
+		|testray.main.component.name|Patching Tool|
+		|testBuildFixPackZipURL|TestPropsUtil#get('test.build.fix.pack.zip.url')|
+		|testBuildFixPackZipURLPrevious|TestPropsUtil#get('test.build.fix.pack.zip.url.previous')|
+Setup: This executes before each scenario 
+	Given SignIn sign In Test Setup
+Scenario: Revert Fix Pack
+Description: Ensures that a fix pack can be reverted.
+Priority: 5
+	Given these properties
+		|skip.install-patch|true|
+	When these properties
+		|test.assert.warning.exceptions|true|
+	And SignOut sign Out
+	And Portlet shutdown Server
+	And PatchingTool install Patch
+		|patchFileZipURL|${testBuildFixPackZipURL}|
+	And Portlet start Server
+		|deleteLiferayHome|false|
+	And SignIn sign In
+	And SignOut sign Out
+	And Portlet shutdown Server
+	And PatchingTool uninstall Patches
+	And PatchingTool install Patch
+		|patchFileZipURL|${testBuildFixPackZipURLPrevious}|
+	And Portlet start Server
+		|deleteLiferayHome|false|
+	Then SignIn sign In
 
-	<set-up>
-		<execute macro="SignIn#signInTestSetup" />
-	</set-up>
+Setup: This executes before each scenario 
+	Given SignIn sign In Test Setup
 
-	<command description="Ensures that a fix pack can be reverted." name="RevertFixPack" priority="5">
-		<property name="skip.install-patch" value="true" />
-		<property name="test.assert.warning.exceptions" value="true" />
-
-		<execute macro="SignOut#signOut" />
-
-		<execute macro="Portlet#shutdownServer" />
-
-		<execute macro="PatchingTool#installPatch">
-			<var name="patchFileZipURL" value="${testBuildFixPackZipURL}" />
-		</execute>
-
-		<execute macro="Portlet#startServer">
-			<var name="deleteLiferayHome" value="false" />
-		</execute>
-
-		<execute macro="SignIn#signIn" />
-
-		<execute macro="SignOut#signOut" />
-
-		<execute macro="Portlet#shutdownServer" />
-
-		<execute macro="PatchingTool#uninstallPatches" />
-
-		<execute macro="PatchingTool#installPatch">
-			<var name="patchFileZipURL" value="${testBuildFixPackZipURLPrevious}" />
-		</execute>
-
-		<execute macro="Portlet#startServer">
-			<var name="deleteLiferayHome" value="false" />
-		</execute>
-
-		<execute macro="SignIn#signIn" />
-	</command>
-</definition>
+Scenario: Revert Fix Pack
+Description: Ensures that a fix pack can be reverted.
+Priority: 5
+	Given these properties
+		|skip.install-patch|true|
+	When these properties
+		|test.assert.warning.exceptions|true|
+	And SignOut sign Out
+	And Portlet shutdown Server
+	And PatchingTool install Patch
+		|patchFileZipURL|${testBuildFixPackZipURL}|
+	And Portlet start Server
+		|deleteLiferayHome|false|
+	And SignIn sign In
+	And SignOut sign Out
+	And Portlet shutdown Server
+	And PatchingTool uninstall Patches
+	And PatchingTool install Patch
+		|patchFileZipURL|${testBuildFixPackZipURLPrevious}|
+	And Portlet start Server
+		|deleteLiferayHome|false|
+	Then SignIn sign In

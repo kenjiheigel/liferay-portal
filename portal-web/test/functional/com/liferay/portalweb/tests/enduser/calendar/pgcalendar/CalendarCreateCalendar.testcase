@@ -1,295 +1,353 @@
-<definition component-name="portal-calendar">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles" />
-	<property name="testray.main.component.name" value="Calendar" />
-
-	<var name="pageName" value="Calendar Page" />
-	<var name="portletName" value="Calendar" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Calendar Page" />
-			<var name="portletName" value="Calendar" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="AddCalendarToCurrentSiteCalendars" priority="4">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Calendar#add">
-			<var name="calendarName" value="Site Calendar Name" />
-			<var name="calendarType" value="Current Site Calendars" />
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Calendar#view">
-			<var name="calendarName" value="Site Calendar Name" />
-			<var name="calendarType" value="Current Site Calendars" />
-			<var name="site" value="${siteName}" />
-		</execute>
-	</command>
-
-	<command name="AddCalendarToMyCalendars" priority="4">
-		<execute macro="Calendar#add">
-			<var name="calendarName" value="My Calendar Name" />
-			<var name="calendarType" value="My Calendars" />
-			<var name="user" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Calendar#view">
-			<var name="calendarName" value="My Calendar Name" />
-			<var name="calendarType" value="My Calendars" />
-			<var name="user" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="AddUserCalendarToOtherCalendars" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Calendar#add">
-			<var name="calendarName" value="userfn userln" />
-			<var name="calendarType" value="Other Calendars" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Calendar#view">
-			<var name="calendarName" value="userfn userln" />
-			<var name="calendarType" value="Other Calendars" />
-		</execute>
-
-		<execute macro="Calendar#viewOtherCalendarMenulist">
-			<var name="calendarName" value="userfn userln" />
-			<var name="color" value="668CD9" />
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-	</command>
-
-	<command name="ViewUserCanAddSiteCalendarsWithCalendarPermissions" priority="3">
-		<description message="This is a use case for LPS-56229." />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="RoleNavigator#gotoRoleType">
-			<var name="roleType" value="Site" />
-		</execute>
-
-		<execute macro="Role#add">
-			<var name="roleTitle" value="Calendar Site Role Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#definePermissionCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_APPLICATIONS_CALENDAR_MANAGE_EVENTS_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Manage Events" />
-			<var name="roleTitle" value="Calendar Site Role Name" />
-			<var name="roleType" value="Site" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#definePermissionCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_PAGE_UPDATE_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Update" />
-			<var name="roleTitle" value="Authenticated" />
-			<var name="roleUser" value="User" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="usersn@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="usersn@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site A" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editUserSiteCP">
-			<var name="siteName" value="Site A" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site B" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editUserSiteCP">
-			<var name="siteName" value="Site B" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site C" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editUserSiteCP">
-			<var name="siteName" value="Site C" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site A" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignSiteRoleCP">
-			<var name="resourceName" value="userfn userln" />
-			<var name="roleTitle" value="Calendar Site Role Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site C" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignSiteRoleCP">
-			<var name="resourceName" value="userfn userln" />
-			<var name="roleTitle" value="Calendar Site Role Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="usersn@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="UserBar#gotoDashboard" />
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Calendar" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="usersn@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="UserBar#gotoDashboard" />
-
-		<execute macro="Calendar#searchOtherCalendars">
-			<var name="searchValue" value="site" />
-		</execute>
-
-		<execute macro="Calendar#viewOtherCalendarsSearchResult">
-			<var name="calendarName" value="Site A" />
-		</execute>
-
-		<execute macro="Calendar#viewOtherCalendarsSearchResult">
-			<var name="calendarName" value="Site B" />
-		</execute>
-
-		<execute macro="Calendar#viewOtherCalendarsSearchResult">
-			<var name="calendarName" value="Site C" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#viewAvailableCalendars">
-			<var name="availableCalendarList" value="userfn userln,Site A,Site C" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewUnavailableCalendarsNotPresent">
-			<var name="unavailableCalendarList" value="Site B,Liferay" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles|
+		|testray.main.component.name|Calendar|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles|
+		|testray.main.component.name|Calendar|
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Calendar Page|
+	Then Portlet add PG
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Calendar To Current Site Calendars
+Priority: 4
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When Calendar add
+		|calendarName|Site Calendar Name|
+		|calendarType|Current Site Calendars|
+		|site|${siteName}|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then Calendar view
+		|calendarName|Site Calendar Name|
+		|calendarType|Current Site Calendars|
+		|site|${siteName}|
+Scenario: Add Calendar To My Calendars
+Priority: 4
+	Given Calendar add
+		|calendarName|My Calendar Name|
+		|calendarType|My Calendars|
+		|user|Test Test|
+	When Navigator goto Page
+		|pageName|Calendar Page|
+	Then Calendar view
+		|calendarName|My Calendar Name|
+		|calendarType|My Calendars|
+		|user|Test Test|
+Scenario: Add User Calendar To Other Calendars
+Priority: 4
+	Given ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	When User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar add
+		|calendarName|userfn userln|
+		|calendarType|Other Calendars|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar view
+		|calendarName|userfn userln|
+		|calendarType|Other Calendars|
+	Then Calendar view Other Calendar Menulist
+		|calendarName|userfn userln|
+		|color|668CD9|
+		|pageName|Calendar Page|
+Scenario: View User Can Add Site Calendars With Calendar Permissions
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And RoleNavigator goto Role Type
+		|roleType|Site|
+	And Role add
+		|roleTitle|Calendar Site Role Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permission CP
+		|permissionDefinitionKey|SITE_ADMIN_APPLICATIONS_CALENDAR_MANAGE_EVENTS_CHECKBOX|
+		|permissionDefinitionValue|Manage Events|
+		|roleTitle|Calendar Site Role Name|
+		|roleType|Site|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permission CP
+		|permissionDefinitionKey|SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_PAGE_UPDATE_CHECKBOX|
+		|permissionDefinitionValue|Update|
+		|roleTitle|Authenticated|
+		|roleUser|User|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|usersn@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|usersn@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site A|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit User Site CP
+		|siteName|Site A|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site B|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit User Site CP
+		|siteName|Site B|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site C|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit User Site CP
+		|siteName|Site C|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|Site A|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign Site Role CP
+		|resourceName|userfn userln|
+		|roleTitle|Calendar Site Role Name|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And ProductMenu goto Site
+		|site|Site C|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign Site Role CP
+		|resourceName|userfn userln|
+		|roleTitle|Calendar Site Role Name|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And User logout And Login PG
+		|userLoginEmailAddress|usersn@liferay.com|
+		|userScreenName|usersn|
+	And UserBar goto Dashboard
+	And Portlet add PG
+		|portletName|Calendar|
+	And User logout And Login PG
+		|userLoginEmailAddress|usersn@liferay.com|
+		|userScreenName|usersn|
+	And UserBar goto Dashboard
+	And Calendar search Other Calendars
+		|searchValue|site|
+	And Calendar view Other Calendars Search Result
+		|calendarName|Site A|
+	And Calendar view Other Calendars Search Result
+		|calendarName|Site B|
+	And Calendar view Other Calendars Search Result
+		|calendarName|Site C|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent view Available Calendars
+		|availableCalendarList|userfn userln,Site A,Site C|
+	Then CalendarEvent view Unavailable Calendars Not Present
+		|unavailableCalendarList|Site B,Liferay|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Calendar Page|
+	Then Portlet add PG
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Calendar To Current Site Calendars
+Priority: 4
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When Calendar add
+		|calendarName|Site Calendar Name|
+		|calendarType|Current Site Calendars|
+		|site|${siteName}|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	Then Calendar view
+		|calendarName|Site Calendar Name|
+		|calendarType|Current Site Calendars|
+		|site|${siteName}|
+Scenario: Add Calendar To My Calendars
+Priority: 4
+	Given Calendar add
+		|calendarName|My Calendar Name|
+		|calendarType|My Calendars|
+		|user|Test Test|
+	When Navigator goto Page
+		|pageName|Calendar Page|
+	Then Calendar view
+		|calendarName|My Calendar Name|
+		|calendarType|My Calendars|
+		|user|Test Test|
+Scenario: Add User Calendar To Other Calendars
+Priority: 4
+	Given ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	When User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar add
+		|calendarName|userfn userln|
+		|calendarType|Other Calendars|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar view
+		|calendarName|userfn userln|
+		|calendarType|Other Calendars|
+	Then Calendar view Other Calendar Menulist
+		|calendarName|userfn userln|
+		|color|668CD9|
+		|pageName|Calendar Page|
+Scenario: View User Can Add Site Calendars With Calendar Permissions
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And RoleNavigator goto Role Type
+		|roleType|Site|
+	And Role add
+		|roleTitle|Calendar Site Role Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permission CP
+		|permissionDefinitionKey|SITE_ADMIN_APPLICATIONS_CALENDAR_MANAGE_EVENTS_CHECKBOX|
+		|permissionDefinitionValue|Manage Events|
+		|roleTitle|Calendar Site Role Name|
+		|roleType|Site|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permission CP
+		|permissionDefinitionKey|SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_PAGE_UPDATE_CHECKBOX|
+		|permissionDefinitionValue|Update|
+		|roleTitle|Authenticated|
+		|roleUser|User|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|usersn@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|usersn@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site A|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit User Site CP
+		|siteName|Site A|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site B|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit User Site CP
+		|siteName|Site B|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site C|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit User Site CP
+		|siteName|Site C|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|Site A|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign Site Role CP
+		|resourceName|userfn userln|
+		|roleTitle|Calendar Site Role Name|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And ProductMenu goto Site
+		|site|Site C|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign Site Role CP
+		|resourceName|userfn userln|
+		|roleTitle|Calendar Site Role Name|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And User logout And Login PG
+		|userLoginEmailAddress|usersn@liferay.com|
+		|userScreenName|usersn|
+	And UserBar goto Dashboard
+	And Portlet add PG
+		|portletName|Calendar|
+	And User logout And Login PG
+		|userLoginEmailAddress|usersn@liferay.com|
+		|userScreenName|usersn|
+	And UserBar goto Dashboard
+	And Calendar search Other Calendars
+		|searchValue|site|
+	And Calendar view Other Calendars Search Result
+		|calendarName|Site A|
+	And Calendar view Other Calendars Search Result
+		|calendarName|Site B|
+	And Calendar view Other Calendars Search Result
+		|calendarName|Site C|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent view Available Calendars
+		|availableCalendarList|userfn userln,Site A,Site C|
+	Then CalendarEvent view Unavailable Calendars Not Present
+		|unavailableCalendarList|Site B,Liferay|

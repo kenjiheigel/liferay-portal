@@ -1,41 +1,29 @@
-<definition component-name="portal-legacy">
-	<property name="testray.main.component.name" value="Plugin Installer" />
+Feature:
 
-	<set-up>
-		<execute macro="User#firstLoginPG" />
+Background: This executes once per feature file
+	Given these properties
+		|testray.main.component.name|Plugin Installer|
 
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page" />
-		</execute>
-	</set-up>
+Setup: This executes before each scenario 
+	Given User first Login PG
+	When Page add
+		|pageName|Test Page|
 
-	<tear-down>
-		<execute macro="Page#tearDownPG" />
-	</tear-down>
-
-	<command name="WSRPPortletSmoke" priority="4">
-		<property name="portlet.plugins.includes" value="wsrp-portlet" />
-
-		<var name="appName" value="WSRP" />
-
-		<execute macro="ProductMenu#gotoControlPanelApps">
-			<var name="portlet" value="WSRP Admin" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelApps">
-			<var name="portlet" value="App Manager" />
-		</execute>
-
-		<execute macro="AppManager#uninstallAppCP">
-			<var name="appName" value="${appName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelApps">
-			<var name="portlet" value="App Manager" />
-		</execute>
-
-		<execute macro="AppManager#viewUninstallAppCP">
-			<var name="appName" value="${appName}" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given Page tear Down PG
+Scenario: WSRP Portlet Smoke
+Priority: 4
+	Given these properties
+		|portlet.plugins.includes|wsrp-portlet|
+	When these variables
+		|appName|WSRP|
+	And ProductMenu goto Control Panel Apps
+		|portlet|WSRP Admin|
+	And ProductMenu goto Control Panel Apps
+		|portlet|App Manager|
+	And AppManager uninstall App CP
+		|appName|${appName}|
+	And ProductMenu goto Control Panel Apps
+		|portlet|App Manager|
+	Then AppManager view Uninstall App CP
+		|appName|${appName}|

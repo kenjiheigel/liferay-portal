@@ -1,153 +1,182 @@
-<definition component-name="portal-workflow">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Workflow" />
+Feature:
 
-	<var name="pageName" value="Web Content Display Page" />
-	<var name="portletName" value="Web Content Display" />
-	<var name="workflowAssetType" value="Web Content Article" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Workflow|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Workflow|
+		|pageName|Web Content Display Page|
+		|portletName|Web Content Display|
+		|workflowAssetType|Web Content Article|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And Workflow configure Workflow Via Folder Info
+		|workflowDefinition|Single Approver (Version 1)|
+	And Page add
+		|pageName|Web Content Display Page|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then Portlet add PG
+		|portletName|Web Content Display|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Approve Web Content Via Web Content Display PG
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Web Content Display Page|
+	When WebContent add With Workflow PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent view With Workflow PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent view With Workflow PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow approve Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+Scenario: Reject Web Content Via Web Content Display PG
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Web Content Display Page|
+	When WebContent add With Workflow PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow reject Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow view Rejected Task
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then WebContent view With Workflow PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+		|workflowTask|Update|
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And Workflow configure Workflow Via Folder Info
+		|workflowDefinition|Single Approver (Version 1)|
+	And Page add
+		|pageName|Web Content Display Page|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then Portlet add PG
+		|portletName|Web Content Display|
 
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="Workflow#configureWorkflowViaFolderInfo">
-			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="ApproveWebContentViaWebContentDisplayPG" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContent#addWithWorkflowPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContent#viewWithWorkflowPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="workflowAssetTitle" value="WC WebContent Title" />
-			<var name="workflowAssetType" value="Web Content Article" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContent#viewWithWorkflowPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#approveTaskByActions">
-			<var name="workflowAssetTitle" value="WC WebContent Title" />
-			<var name="workflowAssetType" value="Web Content Article" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-	</command>
-
-	<command name="RejectWebContentViaWebContentDisplayPG" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContent#addWithWorkflowPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="workflowAssetTitle" value="WC WebContent Title" />
-			<var name="workflowAssetType" value="Web Content Article" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#rejectTaskByActions">
-			<var name="workflowAssetTitle" value="WC WebContent Title" />
-			<var name="workflowAssetType" value="Web Content Article" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#viewRejectedTask">
-			<var name="workflowAssetTitle" value="WC WebContent Title" />
-			<var name="workflowAssetType" value="Web Content Article" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
-
-		<execute macro="WebContent#viewWithWorkflowPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-			<var name="workflowTask" value="Update" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Approve Web Content Via Web Content Display PG
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Web Content Display Page|
+	When WebContent add With Workflow PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent view With Workflow PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	And WebContent view With Workflow PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow approve Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+Scenario: Reject Web Content Via Web Content Display PG
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Web Content Display Page|
+	When WebContent add With Workflow PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow reject Task By Actions
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow view Rejected Task
+		|workflowAssetTitle|WC WebContent Title|
+		|workflowAssetType|Web Content Article|
+	And Navigator goto Page
+		|pageName|Web Content Display Page|
+	Then WebContent view With Workflow PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+		|workflowTask|Update|

@@ -1,371 +1,221 @@
-<definition component-name="portal-search-ee">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="solr.enabled" value="true" />
-	<property name="test.run.environment" value="EE" />
-	<property name="testray.main.component.name" value="SOLR Impl" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Solr Page" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="SearchAssetsScopeEverythingAcrossMultipleSites" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name 1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="Apple" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name 2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="Apple" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name 3" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Apple" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Search" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="Search#configureSearchScopePG">
-			<var name="searchScope" value="Everything" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Search#searchPG">
-			<var name="searchTerm" value="Apple" />
-		</execute>
-
-		<execute macro="Search#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Web Content Article" />
-		</execute>
-
-		<execute macro="Search#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Document" />
-		</execute>
-
-		<execute macro="Search#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Blogs Entry" />
-		</execute>
-	</command>
-
-	<command name="SolrSmokeTest" priority="4">
-		<property name="test.name.skip.portal.instance" value="SolrEE#SolrSmokeTest" />
-
-		<!-- <description message="This smoke test is to ensure that Liferay is successfully running on a remote Solr by asserting the Solr administration dashboard and performing searches in portal. Note by default, an embedded Elasticsearch is deployed in portal." />
-
-		<execute macro="Solr#viewAdminDashboard">
-			<var name="solrVersion" value="5.2.1" />
-		</execute>
-
-		<execute macro="Solr#viewLiferayCoreAdminDashboard">
-			<var name="coreName" value="liferay" />
-			<var name="solrVersion" value="5.2.1" />
-		</execute>
--->
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addCP">
-			<var name="threadBody" value="Orange" />
-			<var name="threadSubject" value="Apple" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="Orange" />
-			<var name="dmDocumentFile" value="Document_1.txt" />
-			<var name="dmDocumentTitle" value="Apple" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Server Administration" />
-		</execute>
-
-		<execute macro="ServerAdministration#executeServerResourcesActions">
-			<var name="actionsDescription" value="Reindex all search indexes." />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Solr Page" />
-		</execute>
-
-		<execute macro="Search#searchPG">
-			<var name="searchTerm" value="Apple" />
-		</execute>
-
-		<execute macro="Search#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Document" />
-		</execute>
-
-		<execute macro="Search#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Message Boards Message" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Solr Page" />
-		</execute>
-
-		<execute macro="Search#searchPG">
-			<var name="searchTerm" value="Orange" />
-		</execute>
-
-		<execute macro="Search#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Document" />
-		</execute>
-
-		<execute macro="Search#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Message Boards Message" />
-		</execute>
-	</command>
-
-	<command name="SolrWithSolrCloudSmokeTest" priority="4">
-		<description message="This smoke test is to ensure that Liferay is successfully running on a remote SolrCloud with 2 nodes by asserting console logging for ZooKeeper and performing searches in portal. Note by default, an embedded Elasticsearch is deployed in portal." />
-
-		<property name="solr.solrcloud.enabled" value="true" />
-		<property name="test.name.skip.portal.instance" value="SolrEE#SolrWithSolrCloudSmokeTest" />
-
-		<execute macro="Solr#viewSolrwithSolrCloudEnabledInConsole" />
-
-		<execute macro="Solr#viewLiferayCloudDashboard">
-			<var name="cloudCollectionName" value="liferay" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addCP">
-			<var name="threadBody" value="Orange" />
-			<var name="threadSubject" value="Apple" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="Orange" />
-			<var name="dmDocumentFile" value="Document_1.txt" />
-			<var name="dmDocumentTitle" value="Apple" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Server Administration" />
-		</execute>
-
-		<execute macro="ServerAdministration#executeServerResourcesActions">
-			<var name="actionsDescription" value="Reindex all search indexes." />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Solr Page" />
-		</execute>
-
-		<execute macro="Search#searchPG">
-			<var name="searchTerm" value="Apple" />
-		</execute>
-
-		<execute macro="Search#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Document" />
-		</execute>
-
-		<execute macro="Search#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Message Boards Message" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Solr Page" />
-		</execute>
-
-		<execute macro="Search#searchPG">
-			<var name="searchTerm" value="Orange" />
-		</execute>
-
-		<execute macro="Search#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Document" />
-		</execute>
-
-		<execute macro="Search#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Message Boards Message" />
-		</execute>
-	</command>
-
-	<command name="SolrWithSSLAuthenticationSmokeTest" priority="4">
-		<description message="This smoke test is to ensure that Liferay is successfully running on a remote Solr with SSL Authentication by asserting console logging for KeyStoreLoaderImpl and performing searches in portal. Note by default, an embedded Elasticsearch is deployed in portal." />
-
-		<property name="solr.ssl.authentication.enabled" value="true" />
-		<property name="test.name.skip.portal.instance" value="SolrEE#SolrWithSSLAuthenticationSmokeTest" />
-
-		<execute macro="Solr#viewSolrwithSSLAuthenticationEnabledInConsole" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addCP">
-			<var name="threadBody" value="Orange" />
-			<var name="threadSubject" value="Apple" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="Orange" />
-			<var name="dmDocumentFile" value="Document_1.txt" />
-			<var name="dmDocumentTitle" value="Apple" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Server Administration" />
-		</execute>
-
-		<execute macro="ServerAdministration#executeServerResourcesActions">
-			<var name="actionsDescription" value="Reindex all search indexes." />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Solr Page" />
-		</execute>
-
-		<execute macro="Search#searchPG">
-			<var name="searchTerm" value="Apple" />
-		</execute>
-
-		<execute macro="Search#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Document" />
-		</execute>
-
-		<execute macro="Search#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Message Boards Message" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Solr Page" />
-		</execute>
-
-		<execute macro="Search#searchPG">
-			<var name="searchTerm" value="Orange" />
-		</execute>
-
-		<execute macro="Search#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Document" />
-		</execute>
-
-		<execute macro="Search#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Message Boards Message" />
-		</execute>
-	</command>
-
-	<command name="ViewReindexAllSearchIndexesLoggingInSolrAdmin" priority="4">
-		<property name="index.on.startup" value="false" />
-		<property name="solr.logging.info.level" value="true" />
-		<property name="test.name.skip.portal.instance" value="SolrEE#ViewReindexAllSearchIndexesLoggingInSolrAdmin" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Server Administration" />
-		</execute>
-
-		<execute macro="ServerAdministration#executeServerResourcesActions">
-			<var name="actionsDescription" value="Reindex all search indexes." />
-		</execute>
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="http://localhost:8983/solr/#/~logging" />
-		</execute>
-
-		<execute macro="Solr#viewLoggerNameInSolrAdminLogging" />
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|solr.enabled|true|
+		|test.run.environment|EE|
+		|testray.main.component.name|SOLR Impl|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	Then Page add
+		|pageName|Solr Page|
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Search Assets Scope Everything Across Multiple Sites
+Priority: 4
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Blank CP
+		|siteName|Site Name 1|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|Apple|
+	And PortletEntry publish
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 2|
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMDocument add CP
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_1.doc|
+		|dmDocumentTitle|Apple|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name 3|
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Apple|
+	And Navigator open URL
+	And Portlet goto Portlet Options
+		|portletName|Search|
+		|portletOption|Configuration|
+	And Search configure Search Scope PG
+		|searchScope|Everything|
+	And Navigator open URL
+	And Search search PG
+		|searchTerm|Apple|
+	And Search view Search Results PG
+		|searchAssetTitle|Apple|
+		|searchAssetType|Web Content Article|
+	And Search view Search Results PG
+		|searchAssetTitle|Apple|
+		|searchAssetType|Document|
+	Then Search view Search Results PG
+		|searchAssetTitle|Apple|
+		|searchAssetType|Blogs Entry|
+Scenario: Solr Smoke Test
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|SolrEE#SolrSmokeTest|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread add CP
+		|threadBody|Orange|
+		|threadSubject|Apple|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMDocument add CP
+		|dmDocumentDescription|Orange|
+		|dmDocumentFile|Document_1.txt|
+		|dmDocumentTitle|Apple|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Server Administration|
+	And ServerAdministration execute Server Resources Actions
+		|actionsDescription|Reindex all search indexes.|
+	And Navigator goto Page
+		|pageName|Solr Page|
+	And Search search PG
+		|searchTerm|Apple|
+	And Search view Search Results PG
+		|searchAssetTitle|Apple|
+		|searchAssetType|Document|
+	And Search view Search Results PG
+		|searchAssetTitle|Apple|
+		|searchAssetType|Message Boards Message|
+	And Navigator goto Page
+		|pageName|Solr Page|
+	And Search search PG
+		|searchTerm|Orange|
+	And Search view Search Results PG
+		|searchAssetTitle|Apple|
+		|searchAssetType|Document|
+	Then Search view Search Results PG
+		|searchAssetTitle|Apple|
+		|searchAssetType|Message Boards Message|
+Scenario: Solr With Solr Cloud Smoke Test
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When these properties
+		|solr.solrcloud.enabled|true|
+	And these properties
+		|test.name.skip.portal.instance|SolrEE#SolrWithSolrCloudSmokeTest|
+	And Solr view Solrwith Solr Cloud Enabled In Console
+	And Solr view Liferay Cloud Dashboard
+		|cloudCollectionName|liferay|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread add CP
+		|threadBody|Orange|
+		|threadSubject|Apple|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMDocument add CP
+		|dmDocumentDescription|Orange|
+		|dmDocumentFile|Document_1.txt|
+		|dmDocumentTitle|Apple|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Server Administration|
+	And ServerAdministration execute Server Resources Actions
+		|actionsDescription|Reindex all search indexes.|
+	And Navigator goto Page
+		|pageName|Solr Page|
+	And Search search PG
+		|searchTerm|Apple|
+	And Search view Search Results PG
+		|searchAssetTitle|Apple|
+		|searchAssetType|Document|
+	And Search view Search Results PG
+		|searchAssetTitle|Apple|
+		|searchAssetType|Message Boards Message|
+	And Navigator goto Page
+		|pageName|Solr Page|
+	And Search search PG
+		|searchTerm|Orange|
+	And Search view Search Results PG
+		|searchAssetTitle|Apple|
+		|searchAssetType|Document|
+	Then Search view Search Results PG
+		|searchAssetTitle|Apple|
+		|searchAssetType|Message Boards Message|
+Scenario: Solr With SSL Authentication Smoke Test
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When these properties
+		|solr.ssl.authentication.enabled|true|
+	And these properties
+		|test.name.skip.portal.instance|SolrEE#SolrWithSSLAuthenticationSmokeTest|
+	And Solr view Solrwith SSL Authentication Enabled In Console
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread add CP
+		|threadBody|Orange|
+		|threadSubject|Apple|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMDocument add CP
+		|dmDocumentDescription|Orange|
+		|dmDocumentFile|Document_1.txt|
+		|dmDocumentTitle|Apple|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Server Administration|
+	And ServerAdministration execute Server Resources Actions
+		|actionsDescription|Reindex all search indexes.|
+	And Navigator goto Page
+		|pageName|Solr Page|
+	And Search search PG
+		|searchTerm|Apple|
+	And Search view Search Results PG
+		|searchAssetTitle|Apple|
+		|searchAssetType|Document|
+	And Search view Search Results PG
+		|searchAssetTitle|Apple|
+		|searchAssetType|Message Boards Message|
+	And Navigator goto Page
+		|pageName|Solr Page|
+	And Search search PG
+		|searchTerm|Orange|
+	And Search view Search Results PG
+		|searchAssetTitle|Apple|
+		|searchAssetType|Document|
+	Then Search view Search Results PG
+		|searchAssetTitle|Apple|
+		|searchAssetType|Message Boards Message|
+Scenario: View Reindex All Search Indexes Logging In Solr Admin
+Priority: 4
+	Given these properties
+		|index.on.startup|false|
+	When these properties
+		|solr.logging.info.level|true|
+	And these properties
+		|test.name.skip.portal.instance|SolrEE#ViewReindexAllSearchIndexesLoggingInSolrAdmin|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Server Administration|
+	And ServerAdministration execute Server Resources Actions
+		|actionsDescription|Reindex all search indexes.|
+	And Navigator open Specific URL
+		|url|http://localhost:8983/solr/#/~logging|
+	Then Solr view Logger Name In Solr Admin Logging

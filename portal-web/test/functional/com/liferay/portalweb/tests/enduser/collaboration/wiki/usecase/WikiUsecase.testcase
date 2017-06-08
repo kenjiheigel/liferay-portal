@@ -1,573 +1,643 @@
-<definition component-name="portal-collaboration">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column" />
-	<property name="testray.main.component.name" value="Wiki" />
-
-	<var name="pageName" value="Wiki Test Page" />
-	<var name="portletName" value="Wiki" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
-			<var name="columnName" value="1 Column" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Wiki" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="ActivateInitialStagingWithWikiAttachment" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addCP">
-			<var name="siteName" value="Site Name" />
-			<var name="siteType" value="Blank" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Staging Test Page" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
-			<var name="columnName" value="1 Column" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Wiki" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoAllPagesPG" />
-
-		<execute macro="WikiPage#addPG">
-			<var name="wikiPageContent" value="Wiki Page Content" />
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoPG">
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-
-		<execute macro="WikiPage#addAttachmentViaPageEdit">
-			<var name="attachmentFileName" value="Document_1.jpg" />
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#activateStagingCP">
-			<var name="siteName" value="Site Name" />
-			<var name="uncheckContent" value="Wiki" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoPG">
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-
-		<execute macro="WikiPage#viewAttachmentPGViaEdit">
-			<var name="attachmentFileName" value="Document_1.jpg" />
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoPG">
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-
-		<execute macro="WikiPage#viewAttachmentPGViaEdit">
-			<var name="attachmentFileName" value="Document_1.jpg" />
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-	</command>
-
-	<command name="ConfigurePortletDisplaySettings" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="WikiPortlet#viewConfigurationTabs">
-			<var name="isNotPresent" value="NAVIGATION_EMAIL_FROM,NAVIGATION_PAGE_ADDED_EMAIL,NAVIGATION_PAGE_UPDATED_EMAIL,NAVIGATION_RSS" />
-			<var name="isPresent" value="SETUP_DISPLAY_SETTINGS_PANEL" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Wiki" />
-		</execute>
-
-		<execute macro="WikiPortlet#gotoConfiguration" />
-
-		<execute macro="WikiPortlet#viewConfigurationTabs">
-			<var name="isNotPresent" value="SETUP_DISPLAY_SETTINGS" />
-			<var name="isPresent" value="NAVIGATION_EMAIL_FROM,NAVIGATION_PAGE_ADDED_EMAIL,NAVIGATION_PAGE_UPDATED_EMAIL,NAVIGATION_RSS" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="WikiPortlet#configureDisplaySettings">
-			<var name="uncheckSetting" value="ENABLE_COMMENTS,ENABLE_COMMENT_RATINGS,ENABLE_PAGE_RATINGS,ENABLE_RELATED_ASSETS" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="WikiPortlet#viewDisplaySettings">
-			<var name="uncheckedSetting" value="ENABLE_COMMENTS,ENABLE_COMMENT_RATINGS,ENABLE_PAGE_RATINGS,ENABLE_RELATED_ASSETS" />
-		</execute>
-	</command>
-
-	<command name="DeleteDeleteWikiFrontpage" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Wiki" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoNode">
-			<var name="wikiNodeName" value="Main" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoCP">
-			<var name="wikiPageTitle" value="FrontPage" />
-		</execute>
-
-		<execute macro="WikiPage#addFrontPageCP">
-			<var name="wikiFrontPageContent" value="Wiki FrontPage Content" />
-			<var name="wikiNodeName" value="Main" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Wiki" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoNode">
-			<var name="wikiNodeName" value="Main" />
-		</execute>
-
-		<execute macro="WikiPage#moveToRecycleBinCP">
-			<var name="wikiNodeName" value="Main" />
-			<var name="wikiPageTitle" value="FrontPage" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#deleteCP">
-			<var name="assetName" value="FrontPage" />
-			<var name="assetType" value="Wiki Page" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#viewDefaultCP">
-			<var name="assetName" value="FrontPage" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Wiki" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoNode">
-			<var name="wikiNodeName" value="Main" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoFrontPageCP" />
-
-		<execute macro="WikiPage#viewFrontPageDefaultCP">
-			<var name="wikiPageTitle" value="FrontPage" />
-		</execute>
-	</command>
-
-	<command name="RateAndEditPageComment" priority="5">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Wiki" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoNode">
-			<var name="wikiNodeName" value="Main" />
-		</execute>
-
-		<execute macro="WikiPage#addCP">
-			<var name="wikiPageContent" value="Wiki Page Content 1" />
-			<var name="wikiPageTitle" value="Wiki Page 1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoAllPagesPG" />
-
-		<execute macro="WikiTable#viewEntry">
-			<var name="draftStatus" value="Approved" />
-			<var name="wikiPageTitle" value="Wiki Page 1" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoEntryViaPGTable">
-			<var name="wikiPageTitle" value="Wiki Page 1" />
-		</execute>
-
-		<execute macro="WikiEntry#viewPageContentBody">
-			<var name="wikiPageContent" value="Wiki Page Content 1" />
-		</execute>
-
-		<execute macro="WikiPage#addComment">
-			<var name="entryComment" value="Wiki Page Comment" />
-		</execute>
-
-		<execute macro="WikiPage#rateCommentAsGood" />
-
-		<execute macro="WikiPage#editComment">
-			<var name="entryComment" value="Wiki Page Comment" />
-			<var name="entryCommentEdit" value="Wiki Page Comment Edited" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoAllPagesPG" />
-
-		<execute macro="WikiNavigator#gotoEntryViaPGTable">
-			<var name="wikiPageTitle" value="Wiki Page 1" />
-		</execute>
-
-		<execute macro="WikiPage#viewCommentPG">
-			<var name="entryComment" value="Wiki Page Comment Edited" />
-			<var name="wikiPageTitle" value="Wiki Page 1" />
-		</execute>
-
-		<execute macro="WikiPage#viewCommentRatingGood" />
-	</command>
-
-	<command name="RatePage" priority="5">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Wiki" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoNode">
-			<var name="wikiNodeName" value="Main" />
-		</execute>
-
-		<execute macro="WikiPage#addCP">
-			<var name="wikiPageContent" value="Wiki Page Content 1" />
-			<var name="wikiPageTitle" value="Wiki Page 1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoAllPagesPG" />
-
-		<execute macro="WikiTable#viewEntry">
-			<var name="draftStatus" value="Approved" />
-			<var name="wikiPageTitle" value="Wiki Page 1" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoEntryViaPGTable">
-			<var name="wikiPageTitle" value="Wiki Page 1" />
-		</execute>
-
-		<execute macro="WikiEntry#viewPageContentBody">
-			<var name="wikiPageContent" value="Wiki Page Content 1" />
-		</execute>
-
-		<execute macro="WikiPage#rate4StarsPG">
-			<var name="wikiPageTitle" value="Wiki Page 1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoAllPagesPG" />
-
-		<execute macro="WikiNavigator#gotoEntryViaPGTable">
-			<var name="wikiPageTitle" value="Wiki Page 1" />
-		</execute>
-
-		<execute macro="WikiEntry#viewPageContentBody">
-			<var name="wikiPageContent" value="Wiki Page Content 1" />
-		</execute>
-
-		<execute macro="WikiPage#viewRate4StarsPG">
-			<var name="wikiPageTitle" value="Wiki Page 1" />
-		</execute>
-	</command>
-
-	<command name="RestoreDeleteWikiFrontpage" priority="5">
-		<property name="portal.acceptance" value="quarantine" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Wiki" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoNode">
-			<var name="wikiNodeName" value="Main" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoCP">
-			<var name="wikiPageTitle" value="FrontPage" />
-		</execute>
-
-		<execute macro="WikiPage#addFrontPageCP">
-			<var name="wikiFrontPageContent" value="Wiki FrontPage Content" />
-			<var name="wikiPageTitle" value="FrontPage" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Wiki" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoNode">
-			<var name="wikiNodeName" value="Main" />
-		</execute>
-
-		<execute macro="WikiPage#moveToRecycleBinCP">
-			<var name="wikiNodeName" value="Main" />
-			<var name="wikiPageTitle" value="FrontPage" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#restoreOverwriteCP">
-			<var name="assetName" value="FrontPage" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Wiki" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoNode">
-			<var name="wikiNodeName" value="Main" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoFrontPageCP" />
-
-		<execute macro="WikiPage#viewFrontPageCP">
-			<var name="wikiFrontPageContent" value="Wiki FrontPage Content" />
-			<var name="wikiFrontPageTitle" value="FrontPage" />
-			<var name="wikiNodeName" value="Main" />
-		</execute>
-	</command>
-
-	<command name="SearchWikiCommentsAndAttachments" priority="4">
-		<execute macro="WikiPage#addFrontPagePG">
-			<var name="wikiNodeName" value="Main" />
-			<var name="wikiPageContent" value="Wiki FrontPage Content" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="WikiPage#addAttachmentViaPageEdit">
-			<var name="attachmentFileName" value="Document_1.txt" />
-			<var name="wikiPageTitle" value="FrontPage" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="WikiPage#addChildPagePG">
-			<var name="wikiChildPageContent" value="Wiki FrontPage Child Page Content" />
-			<var name="wikiChildPageTitle" value="Wiki FrontPage Child Page Title" />
-			<var name="wikiPageTitle" value="FrontPage" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoPG">
-			<var name="wikiPageTitle" value="Wiki FrontPage Child Page Title" />
-		</execute>
-
-		<execute macro="WikiPage#addComment">
-			<var name="entryComment" value="Wiki FrontPage Child Page Comment Body document" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="WikiPage#searchPG">
-			<var name="searchTerm" value="document" />
-		</execute>
-
-		<execute macro="WikiPage#viewSearchResultsPG">
-			<var name="commentBody" value="Wiki FrontPage Child Page Comment Body document" />
-			<var name="wikiComment" value="true" />
-			<var name="wikiPageTitle" value="Wiki FrontPage Child Page Title" />
-		</execute>
-
-		<execute macro="WikiPage#viewSearchResultsPG">
-			<var name="wikiAttachment" value="true" />
-			<var name="wikiAttachmentBody" value="This is a *.txt document." />
-			<var name="wikiPageTitle" value="FrontPage" />
-		</execute>
-	</command>
-
-	<command name="ViewNoWikiXSSviaAddPage" priority="3">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="WikiPage#editFrontPagePG">
-			<var name="wikiPageContentEdit"><![CDATA[<script>alert("xss")</script>]]></var>
-		</execute>
-
-		<execute function="AssertClick" locator1="Link#EDIT" value1="Edit" />
-
-		<execute function="AssertAlertNotPresent" />
-	</command>
-
-	<command name="ViewWikiDraftPagesViaBreadcrumb" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Wiki Test Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Breadcrumb" />
-		</execute>
-
-		<execute function="AssertClick" locator1="WikiTable#NAVIGATION_RECENT_CHANGES" value1="Recent Changes" />
-
-		<execute macro="Breadcrumb#viewPG">
-			<var name="breadcrumbListVisible" value="Wiki Test Page" />
-			<var name="pathLocator" value="PAGE" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewPG">
-			<var name="breadcrumbListVisible" value="Recent Changes" />
-			<var name="pathLocator" value="PAGE" />
-		</execute>
-
-		<execute function="AssertClick" locator1="WikiTable#NAVIGATION_ALL_PAGES" value1="All Pages" />
-
-		<execute macro="Breadcrumb#viewPG">
-			<var name="breadcrumbListVisible" value="Wiki Test Page" />
-			<var name="pathLocator" value="CURRENT_LOCATION" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewPG">
-			<var name="breadcrumbListVisible" value="All Pages" />
-			<var name="pathLocator" value="CURRENT_LOCATION" />
-		</execute>
-
-		<execute function="AssertClick" locator1="WikiTable#NAVIGATION_DRAFT_PAGES" value1="Draft Pages" />
-
-		<execute macro="Breadcrumb#viewPG">
-			<var name="breadcrumbListVisible" value="Wiki Test Page" />
-			<var name="pathLocator" value="PAGE" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewPG">
-			<var name="breadcrumbListVisible" value="Draft Pages" />
-			<var name="pathLocator" value="CURRENT_LOCATION" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Wiki|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Wiki|
+		|pageName|Wiki Test Page|
+		|portletName|Wiki|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Wiki Test Page|
+	And SitePageNavigator goto Edit Page
+		|page|Wiki Test Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	Then Portlet add PG
+		|portletName|Wiki|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Activate Initial Staging With Wiki Attachment
+Priority: 4
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add CP
+		|siteName|Site Name|
+		|siteType|Blank|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And SitePageNavigator goto Edit Page
+		|page|Staging Test Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Wiki|
+	And Navigator goto Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And WikiNavigator goto All Pages PG
+	And WikiPage add PG
+		|wikiPageContent|Wiki Page Content|
+		|wikiPageTitle|Wiki Page Title|
+	And WikiNavigator goto PG
+		|wikiPageTitle|Wiki Page Title|
+	And WikiPage add Attachment Via Page Edit
+		|attachmentFileName|Document_1.jpg|
+		|wikiPageTitle|Wiki Page Title|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging activate Staging CP
+		|siteName|Site Name|
+		|uncheckContent|Wiki|
+	And Navigator goto Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And WikiNavigator goto PG
+		|wikiPageTitle|Wiki Page Title|
+	And WikiPage view Attachment PG Via Edit
+		|attachmentFileName|Document_1.jpg|
+		|wikiPageTitle|Wiki Page Title|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And WikiNavigator goto PG
+		|wikiPageTitle|Wiki Page Title|
+	Then WikiPage view Attachment PG Via Edit
+		|attachmentFileName|Document_1.jpg|
+		|wikiPageTitle|Wiki Page Title|
+Scenario: Configure Portlet Display Settings
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Wiki Test Page|
+	When Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And WikiPortlet view Configuration Tabs
+		|isNotPresent|NAVIGATION_EMAIL_FROM,NAVIGATION_PAGE_ADDED_EMAIL,NAVIGATION_PAGE_UPDATED_EMAIL,NAVIGATION_RSS|
+		|isPresent|SETUP_DISPLAY_SETTINGS_PANEL|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiPortlet goto Configuration
+	And WikiPortlet view Configuration Tabs
+		|isNotPresent|SETUP_DISPLAY_SETTINGS|
+		|isPresent|NAVIGATION_EMAIL_FROM,NAVIGATION_PAGE_ADDED_EMAIL,NAVIGATION_PAGE_UPDATED_EMAIL,NAVIGATION_RSS|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And WikiPortlet configure Display Settings
+		|uncheckSetting|ENABLE_COMMENTS,ENABLE_COMMENT_RATINGS,ENABLE_PAGE_RATINGS,ENABLE_RELATED_ASSETS|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	Then WikiPortlet view Display Settings
+		|uncheckedSetting|ENABLE_COMMENTS,ENABLE_COMMENT_RATINGS,ENABLE_PAGE_RATINGS,ENABLE_RELATED_ASSETS|
+Scenario: Delete Delete Wiki Frontpage
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiNavigator goto Node
+		|wikiNodeName|Main|
+	And WikiNavigator goto CP
+		|wikiPageTitle|FrontPage|
+	And WikiPage add Front Page CP
+		|wikiFrontPageContent|Wiki FrontPage Content|
+		|wikiNodeName|Main|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiNavigator goto Node
+		|wikiNodeName|Main|
+	And WikiPage move To Recycle Bin CP
+		|wikiNodeName|Main|
+		|wikiPageTitle|FrontPage|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin delete CP
+		|assetName|FrontPage|
+		|assetType|Wiki Page|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin view Default CP
+		|assetName|FrontPage|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiNavigator goto Node
+		|wikiNodeName|Main|
+	And WikiNavigator goto Front Page CP
+	Then WikiPage view Front Page Default CP
+		|wikiPageTitle|FrontPage|
+Scenario: Rate And Edit Page Comment
+Priority: 5
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiNavigator goto Node
+		|wikiNodeName|Main|
+	And WikiPage add CP
+		|wikiPageContent|Wiki Page Content 1|
+		|wikiPageTitle|Wiki Page 1|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And WikiNavigator goto All Pages PG
+	And WikiTable view Entry
+		|draftStatus|Approved|
+		|wikiPageTitle|Wiki Page 1|
+	And WikiNavigator goto Entry Via PG Table
+		|wikiPageTitle|Wiki Page 1|
+	And WikiEntry view Page Content Body
+		|wikiPageContent|Wiki Page Content 1|
+	And WikiPage add Comment
+		|entryComment|Wiki Page Comment|
+	And WikiPage rate Comment As Good
+	And WikiPage edit Comment
+		|entryComment|Wiki Page Comment|
+		|entryCommentEdit|Wiki Page Comment Edited|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And WikiNavigator goto All Pages PG
+	And WikiNavigator goto Entry Via PG Table
+		|wikiPageTitle|Wiki Page 1|
+	And WikiPage view Comment PG
+		|entryComment|Wiki Page Comment Edited|
+		|wikiPageTitle|Wiki Page 1|
+	Then WikiPage view Comment Rating Good
+Scenario: Rate Page
+Priority: 5
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiNavigator goto Node
+		|wikiNodeName|Main|
+	And WikiPage add CP
+		|wikiPageContent|Wiki Page Content 1|
+		|wikiPageTitle|Wiki Page 1|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And WikiNavigator goto All Pages PG
+	And WikiTable view Entry
+		|draftStatus|Approved|
+		|wikiPageTitle|Wiki Page 1|
+	And WikiNavigator goto Entry Via PG Table
+		|wikiPageTitle|Wiki Page 1|
+	And WikiEntry view Page Content Body
+		|wikiPageContent|Wiki Page Content 1|
+	And WikiPage rate 4 Stars PG
+		|wikiPageTitle|Wiki Page 1|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And WikiNavigator goto All Pages PG
+	And WikiNavigator goto Entry Via PG Table
+		|wikiPageTitle|Wiki Page 1|
+	And WikiEntry view Page Content Body
+		|wikiPageContent|Wiki Page Content 1|
+	Then WikiPage view Rate 4 Stars PG
+		|wikiPageTitle|Wiki Page 1|
+Scenario: Restore Delete Wiki Frontpage
+Priority: 5
+	Given these properties
+		|portal.acceptance|quarantine|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiNavigator goto Node
+		|wikiNodeName|Main|
+	And WikiNavigator goto CP
+		|wikiPageTitle|FrontPage|
+	And WikiPage add Front Page CP
+		|wikiFrontPageContent|Wiki FrontPage Content|
+		|wikiPageTitle|FrontPage|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiNavigator goto Node
+		|wikiNodeName|Main|
+	And WikiPage move To Recycle Bin CP
+		|wikiNodeName|Main|
+		|wikiPageTitle|FrontPage|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin restore Overwrite CP
+		|assetName|FrontPage|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiNavigator goto Node
+		|wikiNodeName|Main|
+	And WikiNavigator goto Front Page CP
+	Then WikiPage view Front Page CP
+		|wikiFrontPageContent|Wiki FrontPage Content|
+		|wikiFrontPageTitle|FrontPage|
+		|wikiNodeName|Main|
+Scenario: Search Wiki Comments And Attachments
+Priority: 4
+	Given WikiPage add Front Page PG
+		|wikiNodeName|Main|
+		|wikiPageContent|Wiki FrontPage Content|
+	When Navigator goto Page
+		|pageName|Wiki Test Page|
+	And WikiPage add Attachment Via Page Edit
+		|attachmentFileName|Document_1.txt|
+		|wikiPageTitle|FrontPage|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And WikiPage add Child Page PG
+		|wikiChildPageContent|Wiki FrontPage Child Page Content|
+		|wikiChildPageTitle|Wiki FrontPage Child Page Title|
+		|wikiPageTitle|FrontPage|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And WikiNavigator goto PG
+		|wikiPageTitle|Wiki FrontPage Child Page Title|
+	And WikiPage add Comment
+		|entryComment|Wiki FrontPage Child Page Comment Body document|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And WikiPage search PG
+		|searchTerm|document|
+	And WikiPage view Search Results PG
+		|commentBody|Wiki FrontPage Child Page Comment Body document|
+		|wikiComment|true|
+		|wikiPageTitle|Wiki FrontPage Child Page Title|
+	Then WikiPage view Search Results PG
+		|wikiAttachment|true|
+		|wikiAttachmentBody|This is a *.txt document.|
+		|wikiPageTitle|FrontPage|
+Scenario: View No Wiki XS Svia Add Page
+Priority: 3
+	Given Navigator goto Page
+		|pageName|Wiki Test Page|
+	When WikiPage edit Front Page PG
+		|wikiPageContentEdit||
+	And AssertClick the value 'Edit' at locator 'Link#EDIT'
+	Then AssertAlertNotPresent
+Scenario: View Wiki Draft Pages Via Breadcrumb
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Wiki Test Page|
+	When Portlet add PG
+		|portletName|Breadcrumb|
+	And AssertClick the value 'Recent Changes' at locator 'WikiTable#NAVIGATION_RECENT_CHANGES'
+	And Breadcrumb view PG
+		|breadcrumbListVisible|Wiki Test Page|
+		|pathLocator|PAGE|
+	And Breadcrumb view PG
+		|breadcrumbListVisible|Recent Changes|
+		|pathLocator|PAGE|
+	And AssertClick the value 'All Pages' at locator 'WikiTable#NAVIGATION_ALL_PAGES'
+	And Breadcrumb view PG
+		|breadcrumbListVisible|Wiki Test Page|
+		|pathLocator|CURRENT_LOCATION|
+	And Breadcrumb view PG
+		|breadcrumbListVisible|All Pages|
+		|pathLocator|CURRENT_LOCATION|
+	And AssertClick the value 'Draft Pages' at locator 'WikiTable#NAVIGATION_DRAFT_PAGES'
+	And Breadcrumb view PG
+		|breadcrumbListVisible|Wiki Test Page|
+		|pathLocator|PAGE|
+	Then Breadcrumb view PG
+		|breadcrumbListVisible|Draft Pages|
+		|pathLocator|CURRENT_LOCATION|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Wiki Test Page|
+	And SitePageNavigator goto Edit Page
+		|page|Wiki Test Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	Then Portlet add PG
+		|portletName|Wiki|
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Activate Initial Staging With Wiki Attachment
+Priority: 4
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add CP
+		|siteName|Site Name|
+		|siteType|Blank|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And SitePageNavigator goto Edit Page
+		|page|Staging Test Page|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Wiki|
+	And Navigator goto Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And WikiNavigator goto All Pages PG
+	And WikiPage add PG
+		|wikiPageContent|Wiki Page Content|
+		|wikiPageTitle|Wiki Page Title|
+	And WikiNavigator goto PG
+		|wikiPageTitle|Wiki Page Title|
+	And WikiPage add Attachment Via Page Edit
+		|attachmentFileName|Document_1.jpg|
+		|wikiPageTitle|Wiki Page Title|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging activate Staging CP
+		|siteName|Site Name|
+		|uncheckContent|Wiki|
+	And Navigator goto Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And WikiNavigator goto PG
+		|wikiPageTitle|Wiki Page Title|
+	And WikiPage view Attachment PG Via Edit
+		|attachmentFileName|Document_1.jpg|
+		|wikiPageTitle|Wiki Page Title|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And WikiNavigator goto PG
+		|wikiPageTitle|Wiki Page Title|
+	Then WikiPage view Attachment PG Via Edit
+		|attachmentFileName|Document_1.jpg|
+		|wikiPageTitle|Wiki Page Title|
+Scenario: Configure Portlet Display Settings
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Wiki Test Page|
+	When Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And WikiPortlet view Configuration Tabs
+		|isNotPresent|NAVIGATION_EMAIL_FROM,NAVIGATION_PAGE_ADDED_EMAIL,NAVIGATION_PAGE_UPDATED_EMAIL,NAVIGATION_RSS|
+		|isPresent|SETUP_DISPLAY_SETTINGS_PANEL|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiPortlet goto Configuration
+	And WikiPortlet view Configuration Tabs
+		|isNotPresent|SETUP_DISPLAY_SETTINGS|
+		|isPresent|NAVIGATION_EMAIL_FROM,NAVIGATION_PAGE_ADDED_EMAIL,NAVIGATION_PAGE_UPDATED_EMAIL,NAVIGATION_RSS|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And WikiPortlet configure Display Settings
+		|uncheckSetting|ENABLE_COMMENTS,ENABLE_COMMENT_RATINGS,ENABLE_PAGE_RATINGS,ENABLE_RELATED_ASSETS|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	Then WikiPortlet view Display Settings
+		|uncheckedSetting|ENABLE_COMMENTS,ENABLE_COMMENT_RATINGS,ENABLE_PAGE_RATINGS,ENABLE_RELATED_ASSETS|
+Scenario: Delete Delete Wiki Frontpage
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiNavigator goto Node
+		|wikiNodeName|Main|
+	And WikiNavigator goto CP
+		|wikiPageTitle|FrontPage|
+	And WikiPage add Front Page CP
+		|wikiFrontPageContent|Wiki FrontPage Content|
+		|wikiNodeName|Main|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiNavigator goto Node
+		|wikiNodeName|Main|
+	And WikiPage move To Recycle Bin CP
+		|wikiNodeName|Main|
+		|wikiPageTitle|FrontPage|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin delete CP
+		|assetName|FrontPage|
+		|assetType|Wiki Page|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin view Default CP
+		|assetName|FrontPage|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiNavigator goto Node
+		|wikiNodeName|Main|
+	And WikiNavigator goto Front Page CP
+	Then WikiPage view Front Page Default CP
+		|wikiPageTitle|FrontPage|
+Scenario: Rate And Edit Page Comment
+Priority: 5
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiNavigator goto Node
+		|wikiNodeName|Main|
+	And WikiPage add CP
+		|wikiPageContent|Wiki Page Content 1|
+		|wikiPageTitle|Wiki Page 1|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And WikiNavigator goto All Pages PG
+	And WikiTable view Entry
+		|draftStatus|Approved|
+		|wikiPageTitle|Wiki Page 1|
+	And WikiNavigator goto Entry Via PG Table
+		|wikiPageTitle|Wiki Page 1|
+	And WikiEntry view Page Content Body
+		|wikiPageContent|Wiki Page Content 1|
+	And WikiPage add Comment
+		|entryComment|Wiki Page Comment|
+	And WikiPage rate Comment As Good
+	And WikiPage edit Comment
+		|entryComment|Wiki Page Comment|
+		|entryCommentEdit|Wiki Page Comment Edited|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And WikiNavigator goto All Pages PG
+	And WikiNavigator goto Entry Via PG Table
+		|wikiPageTitle|Wiki Page 1|
+	And WikiPage view Comment PG
+		|entryComment|Wiki Page Comment Edited|
+		|wikiPageTitle|Wiki Page 1|
+	Then WikiPage view Comment Rating Good
+Scenario: Rate Page
+Priority: 5
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiNavigator goto Node
+		|wikiNodeName|Main|
+	And WikiPage add CP
+		|wikiPageContent|Wiki Page Content 1|
+		|wikiPageTitle|Wiki Page 1|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And WikiNavigator goto All Pages PG
+	And WikiTable view Entry
+		|draftStatus|Approved|
+		|wikiPageTitle|Wiki Page 1|
+	And WikiNavigator goto Entry Via PG Table
+		|wikiPageTitle|Wiki Page 1|
+	And WikiEntry view Page Content Body
+		|wikiPageContent|Wiki Page Content 1|
+	And WikiPage rate 4 Stars PG
+		|wikiPageTitle|Wiki Page 1|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And WikiNavigator goto All Pages PG
+	And WikiNavigator goto Entry Via PG Table
+		|wikiPageTitle|Wiki Page 1|
+	And WikiEntry view Page Content Body
+		|wikiPageContent|Wiki Page Content 1|
+	Then WikiPage view Rate 4 Stars PG
+		|wikiPageTitle|Wiki Page 1|
+Scenario: Restore Delete Wiki Frontpage
+Priority: 5
+	Given these properties
+		|portal.acceptance|quarantine|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiNavigator goto Node
+		|wikiNodeName|Main|
+	And WikiNavigator goto CP
+		|wikiPageTitle|FrontPage|
+	And WikiPage add Front Page CP
+		|wikiFrontPageContent|Wiki FrontPage Content|
+		|wikiPageTitle|FrontPage|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiNavigator goto Node
+		|wikiNodeName|Main|
+	And WikiPage move To Recycle Bin CP
+		|wikiNodeName|Main|
+		|wikiPageTitle|FrontPage|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin restore Overwrite CP
+		|assetName|FrontPage|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiNavigator goto Node
+		|wikiNodeName|Main|
+	And WikiNavigator goto Front Page CP
+	Then WikiPage view Front Page CP
+		|wikiFrontPageContent|Wiki FrontPage Content|
+		|wikiFrontPageTitle|FrontPage|
+		|wikiNodeName|Main|
+Scenario: Search Wiki Comments And Attachments
+Priority: 4
+	Given WikiPage add Front Page PG
+		|wikiNodeName|Main|
+		|wikiPageContent|Wiki FrontPage Content|
+	When Navigator goto Page
+		|pageName|Wiki Test Page|
+	And WikiPage add Attachment Via Page Edit
+		|attachmentFileName|Document_1.txt|
+		|wikiPageTitle|FrontPage|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And WikiPage add Child Page PG
+		|wikiChildPageContent|Wiki FrontPage Child Page Content|
+		|wikiChildPageTitle|Wiki FrontPage Child Page Title|
+		|wikiPageTitle|FrontPage|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And WikiNavigator goto PG
+		|wikiPageTitle|Wiki FrontPage Child Page Title|
+	And WikiPage add Comment
+		|entryComment|Wiki FrontPage Child Page Comment Body document|
+	And Navigator goto Page
+		|pageName|Wiki Test Page|
+	And WikiPage search PG
+		|searchTerm|document|
+	And WikiPage view Search Results PG
+		|commentBody|Wiki FrontPage Child Page Comment Body document|
+		|wikiComment|true|
+		|wikiPageTitle|Wiki FrontPage Child Page Title|
+	Then WikiPage view Search Results PG
+		|wikiAttachment|true|
+		|wikiAttachmentBody|This is a *.txt document.|
+		|wikiPageTitle|FrontPage|
+Scenario: View No Wiki XS Svia Add Page
+Priority: 3
+	Given Navigator goto Page
+		|pageName|Wiki Test Page|
+	When WikiPage edit Front Page PG
+		|wikiPageContentEdit||
+	And AssertClick the value 'Edit' at locator 'Link#EDIT'
+	Then AssertAlertNotPresent
+Scenario: View Wiki Draft Pages Via Breadcrumb
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Wiki Test Page|
+	When Portlet add PG
+		|portletName|Breadcrumb|
+	And AssertClick the value 'Recent Changes' at locator 'WikiTable#NAVIGATION_RECENT_CHANGES'
+	And Breadcrumb view PG
+		|breadcrumbListVisible|Wiki Test Page|
+		|pathLocator|PAGE|
+	And Breadcrumb view PG
+		|breadcrumbListVisible|Recent Changes|
+		|pathLocator|PAGE|
+	And AssertClick the value 'All Pages' at locator 'WikiTable#NAVIGATION_ALL_PAGES'
+	And Breadcrumb view PG
+		|breadcrumbListVisible|Wiki Test Page|
+		|pathLocator|CURRENT_LOCATION|
+	And Breadcrumb view PG
+		|breadcrumbListVisible|All Pages|
+		|pathLocator|CURRENT_LOCATION|
+	And AssertClick the value 'Draft Pages' at locator 'WikiTable#NAVIGATION_DRAFT_PAGES'
+	And Breadcrumb view PG
+		|breadcrumbListVisible|Wiki Test Page|
+		|pathLocator|PAGE|
+	Then Breadcrumb view PG
+		|breadcrumbListVisible|Draft Pages|
+		|pathLocator|CURRENT_LOCATION|

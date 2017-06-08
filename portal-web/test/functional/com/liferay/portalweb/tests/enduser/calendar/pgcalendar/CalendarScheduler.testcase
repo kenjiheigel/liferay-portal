@@ -1,306 +1,369 @@
-<definition component-name="portal-calendar">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles" />
-	<property name="testray.main.component.name" value="Calendar" />
-
-	<var name="pageName" value="Calendar Page" />
-	<var name="portletName" value="Calendar" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Calendar Page" />
-			<var name="portletName" value="Calendar" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="ViewCorrectNumberOfWeeksMonthView" priority="3">
-		<description message="This is a use case for LPS-52517." />
-
-		<execute macro="Calendar#viewMonth">
-			<var name="dateMonth" value="April 2016" />
-		</execute>
-
-		<execute macro="Calendar#viewWeekCountViaMonthView">
-			<var name="weekNumber" value="5" />
-		</execute>
-
-		<execute macro="Calendar#viewMonth">
-			<var name="dateMonth" value="July 2016" />
-		</execute>
-
-		<execute macro="Calendar#viewWeekCountViaMonthView">
-			<var name="weekNumber" value="6" />
-		</execute>
-	</command>
-
-	<command name="ViewCreatedEventVisibleOnScheduler" priority="2">
-		<description message="This is a use case for LPS-67400." />
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<var locator="CalendarEditEvent#END_DATE_TIME" name="endDateTime" />
-		<var locator="CalendarEditEvent#START_DATE_TIME" name="startDateTime" />
-
-		<execute macro="CalendarEvent#viewTimes">
-			<var name="endDateTime" value="${endDateTime}" />
-			<var name="startDateTime" value="${startDateTime}" />
-		</execute>
-
-		<execute macro="CalendarEvent#editTitle">
-			<var name="eventTitle" value="Calendar Event" />
-		</execute>
-
-		<execute macro="CalendarEvent#publish" />
-
-		<execute macro="IFrame#closeFrame" />
-
-		<execute macro="CalendarScheduler#selectSpecificEvent">
-			<var name="eventTitle" value="Calendar Event" />
-		</execute>
-	</command>
-
-	<command name="ViewDefaultDurationsViaScheduler" priority="3">
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoConfiguration" />
-
-		<execute macro="CalendarConfiguration#selectDefaultDuration">
-			<var name="defaultDuration" value="15 Minutes" />
-		</execute>
-
-		<execute macro="CalendarConfiguration#save" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Day" />
-		</execute>
-
-		<execute macro="CalendarEvent#addViaDayView">
-			<var name="eventTitle" value="Calendar Event 15 Minutes Title" />
-		</execute>
-
-		<execute macro="CalendarScheduler#viewEventDuration">
-			<var name="eventTitle" value="Calendar Event 15 Minutes Title" />
-			<var name="minutes" value="15" />
-		</execute>
-
-		<execute macro="CalendarEvent#tearDown" />
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoConfiguration" />
-
-		<execute macro="CalendarConfiguration#selectDefaultDuration">
-			<var name="defaultDuration" value="30 Minutes" />
-		</execute>
-
-		<execute macro="CalendarConfiguration#save" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Day" />
-		</execute>
-
-		<execute macro="CalendarEvent#addViaDayView">
-			<var name="eventTitle" value="Calendar Event 30 Minutes Title" />
-		</execute>
-
-		<execute macro="CalendarScheduler#viewEventDuration">
-			<var name="eventTitle" value="Calendar Event 30 Minutes Title" />
-			<var name="minutes" value="30" />
-		</execute>
-
-		<execute macro="CalendarEvent#tearDown" />
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoConfiguration" />
-
-		<execute macro="CalendarConfiguration#selectDefaultDuration">
-			<var name="defaultDuration" value="60 Minutes" />
-		</execute>
-
-		<execute macro="CalendarConfiguration#save" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Day" />
-		</execute>
-
-		<execute macro="CalendarEvent#addViaDayView">
-			<var name="eventTitle" value="Calendar Event 60 Minutes Title" />
-		</execute>
-
-		<execute macro="CalendarScheduler#viewEventDuration">
-			<var name="eventTitle" value="Calendar Event 60 Minutes Title" />
-			<var name="minutes" value="60" />
-		</execute>
-
-		<execute macro="CalendarEvent#tearDown" />
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoConfiguration" />
-
-		<execute macro="CalendarConfiguration#selectDefaultDuration">
-			<var name="defaultDuration" value="120 Minutes" />
-		</execute>
-
-		<execute macro="CalendarConfiguration#save" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Day" />
-		</execute>
-
-		<execute macro="CalendarEvent#addViaDayView">
-			<var name="eventTitle" value="Calendar Event 120 Minutes Title" />
-		</execute>
-
-		<execute macro="CalendarScheduler#viewEventDuration">
-			<var name="eventTitle" value="Calendar Event 120 Minutes Title" />
-			<var name="minutes" value="120" />
-		</execute>
-
-		<execute macro="CalendarEvent#tearDown" />
-	</command>
-
-	<command name="ViewDisplayedSiteCalendarEventsAsGuest" priority="3">
-		<description message="This is a use case for LPS-59251." />
-
-		<property name="test.name.skip.portal.instance" value="CalendarScheduler#ViewDisplayedSiteCalendarEventsAsGuest" />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#editTitle">
-			<var name="eventTitle" value="Liferay Calendar Event Title" />
-		</execute>
-
-		<execute macro="CalendarEvent#setTimes">
-			<var name="endDateTime" value="04:00 AM" />
-			<var name="startDateTime" value="03:00 AM" />
-		</execute>
-
-		<execute macro="CalendarEvent#selectCalendar">
-			<var name="calendarName" value="${siteName}" />
-		</execute>
-
-		<execute macro="CalendarEvent#publish" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#editTitle">
-			<var name="eventTitle" value="Test Test Calendar Event Title" />
-		</execute>
-
-		<execute macro="CalendarEvent#setTimes">
-			<var name="endDateTime" value="09:00 PM" />
-			<var name="startDateTime" value="08:00 PM" />
-		</execute>
-
-		<execute macro="CalendarEvent#selectCalendar">
-			<var name="calendarName" value="Test Test" />
-		</execute>
-
-		<execute macro="CalendarEvent#publish" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarScheduler#viewWeek">
-			<var name="eventTitle" value="Liferay Calendar Event Title" />
-		</execute>
-
-		<execute macro="CalendarScheduler#viewWeek">
-			<var name="eventTitle" value="Test Test Calendar Event Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoPersonalSite" />
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Calendar" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewSiteCalendarEventWithDefaultPermissions">
-			<var name="calendarName" value="${siteName}" />
-			<var name="endDateTime" value="04:00 AM" />
-			<var name="eventTitle" value="Liferay Calendar Event Title" />
-			<var name="siteName" value="${siteName}" />
-			<var name="startDateTime" value="03:00 AM" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewSiteCalendarEventNotPresent">
-			<var name="endDateTime" value="09:00 PM" />
-			<var name="siteName" value="Test Test" />
-			<var name="startDateTime" value="08:00 PM" />
-		</execute>
-
-		<execute macro="Navigator#gotoSpecificURLPage">
-			<var name="pageName" value="Welcome" />
-			<var name="url" value="localhost:8080/web/test" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewSiteCalendarEventWithDefaultPermissions">
-			<var name="calendarName" value="Test Test" />
-			<var name="endDateTime" value="09:00 PM" />
-			<var name="eventTitle" value="Test Test Calendar Event Title" />
-			<var name="siteName" value="Test Test" />
-			<var name="startDateTime" value="08:00 PM" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewSiteCalendarEventNotPresent">
-			<var name="endDateTime" value="04:00 AM" />
-			<var name="siteName" value="${siteName}" />
-			<var name="startDateTime" value="03:00 AM" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles|
+		|testray.main.component.name|Calendar|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles|
+		|testray.main.component.name|Calendar|
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Calendar Page|
+	Then Portlet add PG
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View Correct Number Of Weeks Month View
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When Calendar view Month
+		|dateMonth|April 2016|
+	And Calendar view Week Count Via Month View
+		|weekNumber|5|
+	And Calendar view Month
+		|dateMonth|July 2016|
+	Then Calendar view Week Count Via Month View
+		|weekNumber|6|
+Scenario: View Created Event Visible On Scheduler
+Priority: 2
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When CalendarNavigator goto Add Event
+	And these variables
+		|endDateTime||
+	And these variables
+		|startDateTime||
+	And CalendarEvent view Times
+		|endDateTime|${endDateTime}|
+		|startDateTime|${startDateTime}|
+	And CalendarEvent edit Title
+		|eventTitle|Calendar Event|
+	And CalendarEvent publish
+	And IFrame close Frame
+	Then CalendarScheduler select Specific Event
+		|eventTitle|Calendar Event|
+Scenario: View Default Durations Via Scheduler
+Priority: 3
+	Given Navigator goto Page
+		|pageName|Calendar Page|
+	When CalendarNavigator goto Configuration
+	And CalendarConfiguration select Default Duration
+		|defaultDuration|15 Minutes|
+	And CalendarConfiguration save
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto View
+		|viewType|Day|
+	And CalendarEvent add Via Day View
+		|eventTitle|Calendar Event 15 Minutes Title|
+	And CalendarScheduler view Event Duration
+		|eventTitle|Calendar Event 15 Minutes Title|
+		|minutes|15|
+	And CalendarEvent tear Down
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Configuration
+	And CalendarConfiguration select Default Duration
+		|defaultDuration|30 Minutes|
+	And CalendarConfiguration save
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto View
+		|viewType|Day|
+	And CalendarEvent add Via Day View
+		|eventTitle|Calendar Event 30 Minutes Title|
+	And CalendarScheduler view Event Duration
+		|eventTitle|Calendar Event 30 Minutes Title|
+		|minutes|30|
+	And CalendarEvent tear Down
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Configuration
+	And CalendarConfiguration select Default Duration
+		|defaultDuration|60 Minutes|
+	And CalendarConfiguration save
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto View
+		|viewType|Day|
+	And CalendarEvent add Via Day View
+		|eventTitle|Calendar Event 60 Minutes Title|
+	And CalendarScheduler view Event Duration
+		|eventTitle|Calendar Event 60 Minutes Title|
+		|minutes|60|
+	And CalendarEvent tear Down
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Configuration
+	And CalendarConfiguration select Default Duration
+		|defaultDuration|120 Minutes|
+	And CalendarConfiguration save
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto View
+		|viewType|Day|
+	And CalendarEvent add Via Day View
+		|eventTitle|Calendar Event 120 Minutes Title|
+	And CalendarScheduler view Event Duration
+		|eventTitle|Calendar Event 120 Minutes Title|
+		|minutes|120|
+	Then CalendarEvent tear Down
+Scenario: View Displayed Site Calendar Events As Guest
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When these properties
+		|test.name.skip.portal.instance|CalendarScheduler#ViewDisplayedSiteCalendarEventsAsGuest|
+	And TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Liferay Calendar Event Title|
+	And CalendarEvent set Times
+		|endDateTime|04:00 AM|
+		|startDateTime|03:00 AM|
+	And CalendarEvent select Calendar
+		|calendarName|${siteName}|
+	And CalendarEvent publish
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Test Test Calendar Event Title|
+	And CalendarEvent set Times
+		|endDateTime|09:00 PM|
+		|startDateTime|08:00 PM|
+	And CalendarEvent select Calendar
+		|calendarName|Test Test|
+	And CalendarEvent publish
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarScheduler view Week
+		|eventTitle|Liferay Calendar Event Title|
+	And CalendarScheduler view Week
+		|eventTitle|Test Test Calendar Event Title|
+	And ProductMenu goto Personal Site
+	And Portlet add PG
+		|portletName|Calendar|
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view Site Calendar Event With Default Permissions
+		|calendarName|${siteName}|
+		|endDateTime|04:00 AM|
+		|eventTitle|Liferay Calendar Event Title|
+		|siteName|${siteName}|
+		|startDateTime|03:00 AM|
+	And CalendarEvent view Site Calendar Event Not Present
+		|endDateTime|09:00 PM|
+		|siteName|Test Test|
+		|startDateTime|08:00 PM|
+	And Navigator goto Specific URL Page
+		|pageName|Welcome|
+		|url|localhost:8080/web/test|
+	And CalendarEvent view Site Calendar Event With Default Permissions
+		|calendarName|Test Test|
+		|endDateTime|09:00 PM|
+		|eventTitle|Test Test Calendar Event Title|
+		|siteName|Test Test|
+		|startDateTime|08:00 PM|
+	Then CalendarEvent view Site Calendar Event Not Present
+		|endDateTime|04:00 AM|
+		|siteName|${siteName}|
+		|startDateTime|03:00 AM|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Calendar Page|
+	Then Portlet add PG
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View Correct Number Of Weeks Month View
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When Calendar view Month
+		|dateMonth|April 2016|
+	And Calendar view Week Count Via Month View
+		|weekNumber|5|
+	And Calendar view Month
+		|dateMonth|July 2016|
+	Then Calendar view Week Count Via Month View
+		|weekNumber|6|
+Scenario: View Created Event Visible On Scheduler
+Priority: 2
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When CalendarNavigator goto Add Event
+	And these variables
+		|endDateTime||
+	And these variables
+		|startDateTime||
+	And CalendarEvent view Times
+		|endDateTime|${endDateTime}|
+		|startDateTime|${startDateTime}|
+	And CalendarEvent edit Title
+		|eventTitle|Calendar Event|
+	And CalendarEvent publish
+	And IFrame close Frame
+	Then CalendarScheduler select Specific Event
+		|eventTitle|Calendar Event|
+Scenario: View Default Durations Via Scheduler
+Priority: 3
+	Given Navigator goto Page
+		|pageName|Calendar Page|
+	When CalendarNavigator goto Configuration
+	And CalendarConfiguration select Default Duration
+		|defaultDuration|15 Minutes|
+	And CalendarConfiguration save
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto View
+		|viewType|Day|
+	And CalendarEvent add Via Day View
+		|eventTitle|Calendar Event 15 Minutes Title|
+	And CalendarScheduler view Event Duration
+		|eventTitle|Calendar Event 15 Minutes Title|
+		|minutes|15|
+	And CalendarEvent tear Down
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Configuration
+	And CalendarConfiguration select Default Duration
+		|defaultDuration|30 Minutes|
+	And CalendarConfiguration save
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto View
+		|viewType|Day|
+	And CalendarEvent add Via Day View
+		|eventTitle|Calendar Event 30 Minutes Title|
+	And CalendarScheduler view Event Duration
+		|eventTitle|Calendar Event 30 Minutes Title|
+		|minutes|30|
+	And CalendarEvent tear Down
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Configuration
+	And CalendarConfiguration select Default Duration
+		|defaultDuration|60 Minutes|
+	And CalendarConfiguration save
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto View
+		|viewType|Day|
+	And CalendarEvent add Via Day View
+		|eventTitle|Calendar Event 60 Minutes Title|
+	And CalendarScheduler view Event Duration
+		|eventTitle|Calendar Event 60 Minutes Title|
+		|minutes|60|
+	And CalendarEvent tear Down
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Configuration
+	And CalendarConfiguration select Default Duration
+		|defaultDuration|120 Minutes|
+	And CalendarConfiguration save
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto View
+		|viewType|Day|
+	And CalendarEvent add Via Day View
+		|eventTitle|Calendar Event 120 Minutes Title|
+	And CalendarScheduler view Event Duration
+		|eventTitle|Calendar Event 120 Minutes Title|
+		|minutes|120|
+	Then CalendarEvent tear Down
+Scenario: View Displayed Site Calendar Events As Guest
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When these properties
+		|test.name.skip.portal.instance|CalendarScheduler#ViewDisplayedSiteCalendarEventsAsGuest|
+	And TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Liferay Calendar Event Title|
+	And CalendarEvent set Times
+		|endDateTime|04:00 AM|
+		|startDateTime|03:00 AM|
+	And CalendarEvent select Calendar
+		|calendarName|${siteName}|
+	And CalendarEvent publish
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Test Test Calendar Event Title|
+	And CalendarEvent set Times
+		|endDateTime|09:00 PM|
+		|startDateTime|08:00 PM|
+	And CalendarEvent select Calendar
+		|calendarName|Test Test|
+	And CalendarEvent publish
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarScheduler view Week
+		|eventTitle|Liferay Calendar Event Title|
+	And CalendarScheduler view Week
+		|eventTitle|Test Test Calendar Event Title|
+	And ProductMenu goto Personal Site
+	And Portlet add PG
+		|portletName|Calendar|
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view Site Calendar Event With Default Permissions
+		|calendarName|${siteName}|
+		|endDateTime|04:00 AM|
+		|eventTitle|Liferay Calendar Event Title|
+		|siteName|${siteName}|
+		|startDateTime|03:00 AM|
+	And CalendarEvent view Site Calendar Event Not Present
+		|endDateTime|09:00 PM|
+		|siteName|Test Test|
+		|startDateTime|08:00 PM|
+	And Navigator goto Specific URL Page
+		|pageName|Welcome|
+		|url|localhost:8080/web/test|
+	And CalendarEvent view Site Calendar Event With Default Permissions
+		|calendarName|Test Test|
+		|endDateTime|09:00 PM|
+		|eventTitle|Test Test Calendar Event Title|
+		|siteName|Test Test|
+		|startDateTime|08:00 PM|
+	Then CalendarEvent view Site Calendar Event Not Present
+		|endDateTime|04:00 AM|
+		|siteName|${siteName}|
+		|startDateTime|03:00 AM|

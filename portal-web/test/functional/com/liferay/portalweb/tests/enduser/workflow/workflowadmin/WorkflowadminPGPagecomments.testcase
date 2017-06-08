@@ -1,269 +1,331 @@
-<definition component-name="portal-workflow">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Workflow" />
+Feature:
 
-	<var name="portletName" value="Page Comments" />
-	<var name="workflowAssetType" value="Comment" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Workflow|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Workflow|
+		|portletName|Page Comments|
+		|workflowAssetType|Comment|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Navigator open URL
+	And ProductMenu goto Sites Configuration
+		|portlet|Workflow Configuration|
+	And Workflow configure Workflow
+		|workflowDefinition|Single Approver (Version 1)|
+		|workflowResourceValue|Comment|
+	And Page add
+		|pageName|Page Comments Page|
+	And Navigator goto Page
+		|pageName|Page Comments Page|
+	Then Portlet add PG
+		|portletName|Page Comments|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Approve Page Comment PG
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Navigator goto Page
+		|pageName|Page Comments Page|
+	And PageComment add With Workflow PG
+		|commentAuthor|Test Test (You)|
+		|commentBody|Page Comment Comment|
+	And Navigator goto Page
+		|pageName|Page Comments Page|
+	And PageComment view With Workflow PG
+		|commentAuthor|Test Test (You)|
+		|commentBody|Page Comment Comment|
+		|commentStatus|Pending (Review)|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|Page Comment Comment|
+		|workflowAssetType|Comment|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Page Comments Page|
+	And PageComment view With Workflow PG
+		|commentAuthor|Test Test (You)|
+		|commentBody|Page Comment Comment|
+		|commentStatus|Pending (Review)|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow approve Task By Actions
+		|workflowAssetTitle|Page Comment Comment|
+		|workflowAssetType|Comment|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Page Comments Page|
+	And PageComment view PG
+		|commentAuthor|Test Test (You)|
+		|commentBody|Page Comment Comment|
+	And Page goto My Account
+		|portletName|My Submissions|
+	And Workflow goto View Completed Asset Via My Submissions
+		|workflowAssetTitle|Page Comment Comment|
+	Then PageComment view As Workflow Asset
+		|commentBody|Page Comment Comment|
+Scenario: Delete Comment
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When Navigator goto Page
+		|pageName|Page Comments Page|
+	And PageComment add With Workflow PG
+		|commentAuthor|Test Test (You)|
+		|commentBody|Page Comment Comment|
+	And Navigator goto Page
+		|pageName|Page Comments Page|
+	And PageComment view With Workflow PG
+		|commentAuthor|Test Test (You)|
+		|commentBody|Page Comment Comment|
+		|commentStatus|Pending (Review)|
+	And Page goto My Account
+		|portletName|My Submissions|
+	And Workflow view My Submissions
+		|workflowAssetTitle|Page Comment Comment|
+		|workflowAssetType|Comment|
+		|workflowDefinition|Single Approver|
+		|workflowTask|Review|
+	And PageComment tear Down PG
+		|pageName|Page Comments Page|
+	And Page goto My Account
+		|portletName|My Submissions|
+	Then Workflow view Default My Submissions CP
+Scenario: Edit Comment Assigned To Me
+Priority: 5
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When these properties
+		|portal.acceptance|true|
+	And Navigator goto Page
+		|pageName|Page Comments Page|
+	And PageComment add With Workflow PG
+		|commentAuthor|Test Test (You)|
+		|commentBody|Page Comment Comment|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|Page Comment Comment|
+		|workflowAssetType|Comment|
+		|workflowTask|Review|
+	And Workflow view Task Assigned To Me Details
+		|workflowAssetContent|Page Comment Comment|
+		|workflowAssetTitle|Page Comment Comment|
+		|workflowTask|Review|
+	And Workflow goto Preview Edit
+	And PageComment edit Comment Field
+		|commentBody|EDIT Comment|
+	And Button click Save
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	Then Workflow view Task Assigned To Me Details
+		|workflowAssetContent|EDIT Comment|
+		|workflowAssetTitle|EDIT Comment|
+		|workflowTask|Review|
+Scenario: Reject Page Comment PG
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Page Comments Page|
+	When PageComment add With Workflow PG
+		|commentAuthor|Test Test (You)|
+		|commentBody|Page Comment Comment|
+	And Navigator goto Page
+		|pageName|Page Comments Page|
+	And PageComment view With Workflow PG
+		|commentAuthor|Test Test (You)|
+		|commentBody|Page Comment Comment|
+		|commentStatus|Pending (Review)|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|Page Comment Comment|
+		|workflowAssetType|Comment|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow reject Task By Actions
+		|workflowAssetTitle|Page Comment Comment|
+		|workflowAssetType|Comment|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow view Rejected Task
+		|workflowAssetTitle|Page Comment Comment|
+		|workflowAssetType|Comment|
+	And Navigator goto Page
+		|pageName|Page Comments Page|
+	Then PageComment view With Workflow PG
+		|commentAuthor|Test Test (You)|
+		|commentBody|Page Comment Comment|
+		|commentStatus|Pending (Update)|
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Navigator open URL
+	And ProductMenu goto Sites Configuration
+		|portlet|Workflow Configuration|
+	And Workflow configure Workflow
+		|workflowDefinition|Single Approver (Version 1)|
+		|workflowResourceValue|Comment|
+	And Page add
+		|pageName|Page Comments Page|
+	And Navigator goto Page
+		|pageName|Page Comments Page|
+	Then Portlet add PG
+		|portletName|Page Comments|
 
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Workflow Configuration" />
-		</execute>
-
-		<execute macro="Workflow#configureWorkflow">
-			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowResourceValue" value="Comment" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Page Comments Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Page Comments Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Page Comments" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="ApprovePageCommentPG" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Page Comments Page" />
-		</execute>
-
-		<execute macro="PageComment#addWithWorkflowPG">
-			<var name="commentAuthor" value="Test Test (You)" />
-			<var name="commentBody" value="Page Comment Comment" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Page Comments Page" />
-		</execute>
-
-		<execute macro="PageComment#viewWithWorkflowPG">
-			<var name="commentAuthor" value="Test Test (You)" />
-			<var name="commentBody" value="Page Comment Comment" />
-			<var name="commentStatus" value="Pending (Review)" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="workflowAssetTitle" value="Page Comment Comment" />
-			<var name="workflowAssetType" value="Comment" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Page Comments Page" />
-		</execute>
-
-		<execute macro="PageComment#viewWithWorkflowPG">
-			<var name="commentAuthor" value="Test Test (You)" />
-			<var name="commentBody" value="Page Comment Comment" />
-			<var name="commentStatus" value="Pending (Review)" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#approveTaskByActions">
-			<var name="workflowAssetTitle" value="Page Comment Comment" />
-			<var name="workflowAssetType" value="Comment" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Page Comments Page" />
-		</execute>
-
-		<execute macro="PageComment#viewPG">
-			<var name="commentAuthor" value="Test Test (You)" />
-			<var name="commentBody" value="Page Comment Comment" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Submissions" />
-		</execute>
-
-		<execute macro="Workflow#gotoViewCompletedAssetViaMySubmissions">
-			<var name="workflowAssetTitle" value="Page Comment Comment" />
-		</execute>
-
-		<execute macro="PageComment#viewAsWorkflowAsset">
-			<var name="commentBody" value="Page Comment Comment" />
-		</execute>
-	</command>
-
-	<command name="DeleteComment" priority="4">
-		<description message="This is a use case for LPS-54707." />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Page Comments Page" />
-		</execute>
-
-		<execute macro="PageComment#addWithWorkflowPG">
-			<var name="commentAuthor" value="Test Test (You)" />
-			<var name="commentBody" value="Page Comment Comment" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Page Comments Page" />
-		</execute>
-
-		<execute macro="PageComment#viewWithWorkflowPG">
-			<var name="commentAuthor" value="Test Test (You)" />
-			<var name="commentBody" value="Page Comment Comment" />
-			<var name="commentStatus" value="Pending (Review)" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Submissions" />
-		</execute>
-
-		<execute macro="Workflow#viewMySubmissions">
-			<var name="workflowAssetTitle" value="Page Comment Comment" />
-			<var name="workflowAssetType" value="Comment" />
-			<var name="workflowDefinition" value="Single Approver" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="PageComment#tearDownPG">
-			<var name="pageName" value="Page Comments Page" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Submissions" />
-		</execute>
-
-		<execute macro="Workflow#viewDefaultMySubmissionsCP" />
-	</command>
-
-	<command name="EditCommentAssignedToMe" priority="5">
-		<description message="This is a use case for LPS-68780." />
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Page Comments Page" />
-		</execute>
-
-		<execute macro="PageComment#addWithWorkflowPG">
-			<var name="commentAuthor" value="Test Test (You)" />
-			<var name="commentBody" value="Page Comment Comment" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="workflowAssetTitle" value="Page Comment Comment" />
-			<var name="workflowAssetType" value="Comment" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Workflow#viewTaskAssignedToMeDetails">
-			<var name="workflowAssetContent" value="Page Comment Comment" />
-			<var name="workflowAssetTitle" value="Page Comment Comment" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Workflow#gotoPreviewEdit" />
-
-		<execute macro="PageComment#editCommentField">
-			<var name="commentBody" value="EDIT Comment" />
-		</execute>
-
-		<execute macro="Button#clickSave" />
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#viewTaskAssignedToMeDetails">
-			<var name="workflowAssetContent" value="EDIT Comment" />
-			<var name="workflowAssetTitle" value="EDIT Comment" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-	</command>
-
-	<command name="RejectPageCommentPG" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Page Comments Page" />
-		</execute>
-
-		<execute macro="PageComment#addWithWorkflowPG">
-			<var name="commentAuthor" value="Test Test (You)" />
-			<var name="commentBody" value="Page Comment Comment" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Page Comments Page" />
-		</execute>
-
-		<execute macro="PageComment#viewWithWorkflowPG">
-			<var name="commentAuthor" value="Test Test (You)" />
-			<var name="commentBody" value="Page Comment Comment" />
-			<var name="commentStatus" value="Pending (Review)" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="workflowAssetTitle" value="Page Comment Comment" />
-			<var name="workflowAssetType" value="Comment" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#rejectTaskByActions">
-			<var name="workflowAssetTitle" value="Page Comment Comment" />
-			<var name="workflowAssetType" value="Comment" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#viewRejectedTask">
-			<var name="workflowAssetTitle" value="Page Comment Comment" />
-			<var name="workflowAssetType" value="Comment" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Page Comments Page" />
-		</execute>
-
-		<execute macro="PageComment#viewWithWorkflowPG">
-			<var name="commentAuthor" value="Test Test (You)" />
-			<var name="commentBody" value="Page Comment Comment" />
-			<var name="commentStatus" value="Pending (Update)" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Approve Page Comment PG
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Navigator goto Page
+		|pageName|Page Comments Page|
+	And PageComment add With Workflow PG
+		|commentAuthor|Test Test (You)|
+		|commentBody|Page Comment Comment|
+	And Navigator goto Page
+		|pageName|Page Comments Page|
+	And PageComment view With Workflow PG
+		|commentAuthor|Test Test (You)|
+		|commentBody|Page Comment Comment|
+		|commentStatus|Pending (Review)|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|Page Comment Comment|
+		|workflowAssetType|Comment|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Page Comments Page|
+	And PageComment view With Workflow PG
+		|commentAuthor|Test Test (You)|
+		|commentBody|Page Comment Comment|
+		|commentStatus|Pending (Review)|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow approve Task By Actions
+		|workflowAssetTitle|Page Comment Comment|
+		|workflowAssetType|Comment|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Page Comments Page|
+	And PageComment view PG
+		|commentAuthor|Test Test (You)|
+		|commentBody|Page Comment Comment|
+	And Page goto My Account
+		|portletName|My Submissions|
+	And Workflow goto View Completed Asset Via My Submissions
+		|workflowAssetTitle|Page Comment Comment|
+	Then PageComment view As Workflow Asset
+		|commentBody|Page Comment Comment|
+Scenario: Delete Comment
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When Navigator goto Page
+		|pageName|Page Comments Page|
+	And PageComment add With Workflow PG
+		|commentAuthor|Test Test (You)|
+		|commentBody|Page Comment Comment|
+	And Navigator goto Page
+		|pageName|Page Comments Page|
+	And PageComment view With Workflow PG
+		|commentAuthor|Test Test (You)|
+		|commentBody|Page Comment Comment|
+		|commentStatus|Pending (Review)|
+	And Page goto My Account
+		|portletName|My Submissions|
+	And Workflow view My Submissions
+		|workflowAssetTitle|Page Comment Comment|
+		|workflowAssetType|Comment|
+		|workflowDefinition|Single Approver|
+		|workflowTask|Review|
+	And PageComment tear Down PG
+		|pageName|Page Comments Page|
+	And Page goto My Account
+		|portletName|My Submissions|
+	Then Workflow view Default My Submissions CP
+Scenario: Edit Comment Assigned To Me
+Priority: 5
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When these properties
+		|portal.acceptance|true|
+	And Navigator goto Page
+		|pageName|Page Comments Page|
+	And PageComment add With Workflow PG
+		|commentAuthor|Test Test (You)|
+		|commentBody|Page Comment Comment|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|Page Comment Comment|
+		|workflowAssetType|Comment|
+		|workflowTask|Review|
+	And Workflow view Task Assigned To Me Details
+		|workflowAssetContent|Page Comment Comment|
+		|workflowAssetTitle|Page Comment Comment|
+		|workflowTask|Review|
+	And Workflow goto Preview Edit
+	And PageComment edit Comment Field
+		|commentBody|EDIT Comment|
+	And Button click Save
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	Then Workflow view Task Assigned To Me Details
+		|workflowAssetContent|EDIT Comment|
+		|workflowAssetTitle|EDIT Comment|
+		|workflowTask|Review|
+Scenario: Reject Page Comment PG
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Page Comments Page|
+	When PageComment add With Workflow PG
+		|commentAuthor|Test Test (You)|
+		|commentBody|Page Comment Comment|
+	And Navigator goto Page
+		|pageName|Page Comments Page|
+	And PageComment view With Workflow PG
+		|commentAuthor|Test Test (You)|
+		|commentBody|Page Comment Comment|
+		|commentStatus|Pending (Review)|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|Page Comment Comment|
+		|workflowAssetType|Comment|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow reject Task By Actions
+		|workflowAssetTitle|Page Comment Comment|
+		|workflowAssetType|Comment|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow view Rejected Task
+		|workflowAssetTitle|Page Comment Comment|
+		|workflowAssetType|Comment|
+	And Navigator goto Page
+		|pageName|Page Comments Page|
+	Then PageComment view With Workflow PG
+		|commentAuthor|Test Test (You)|
+		|commentBody|Page Comment Comment|
+		|commentStatus|Pending (Update)|

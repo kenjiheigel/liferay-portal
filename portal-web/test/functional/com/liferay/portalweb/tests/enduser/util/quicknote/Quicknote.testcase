@@ -1,47 +1,33 @@
-<definition component-name="portal-util-misc">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Util" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Util|
 
-		<execute macro="User#firstLoginPG" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Quick Note Page|
+	Then Navigator goto Page
+		|pageName|Quick Note Page|
 
-		<execute macro="Page#add">
-			<var name="pageName" value="Quick Note Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Quick Note Page" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="AddQuickNote" priority="2">
-		<var name="portletName" value="Quick Note" />
-
-		<execute function="Click#clickAtSidebarClickAtWaitForScript" locator1="ControlMenu#ADD" value1="Add" />
-
-		<execute macro="Panel#expandSidebarApplicationsPanel" />
-
-		<execute function="Type#sendKeysApplicationSearch" locator1="NavBar#APPLICATION_SEARCH_FIELD" value1="${portletName}" />
-
-		<var name="portletLocator" value="//span[@data-title=&quot;${portletName}&quot; and contains(@class,'add-content-item')]" />
-
-		<execute function="AssertClick#pauseMakeVisibleAssertTextEqualsClickAt" locator1="${portletLocator}" value1="Add" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Quick Note Page" />
-		</execute>
-
-		<execute macro="QuickNote#addPG">
-			<var name="noteContent" value="Test Note Content" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Quick Note
+Priority: 2
+	Given these variables
+		|portletName|Quick Note|
+	When Click click At Sidebar Click At Wait For Script the value 'Add' at locator 'ControlMenu#ADD'
+	And Panel expand Sidebar Applications Panel
+	And Type send Keys Application Search the value '${portletName}' at locator 'NavBar#APPLICATION_SEARCH_FIELD'
+	And these variables
+		|portletLocator|//span[@data-title="${portletName}" and contains(@class,'add-content-item')]|
+	And AssertClick pause Make Visible Assert Text Equals Click At the value 'Add' at locator '${portletLocator}'
+	And Navigator goto Page
+		|pageName|Quick Note Page|
+	Then QuickNote add PG
+		|noteContent|Test Note Content|

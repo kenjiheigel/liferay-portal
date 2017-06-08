@@ -1,463 +1,271 @@
-<definition component-name="portal-collaboration">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Message Boards" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="AddMBCategory" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#addCP">
-			<var name="categoryName" value="MB Category Name" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#viewCP">
-			<var name="categoryName" value="MB Category Name" />
-			<var name="subcategoriesNumber" value="0" />
-			<var name="threadsNumber" value="0" />
-		</execute>
-	</command>
-
-	<command name="AddMBCategorySubcategory" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#addCP">
-			<var name="categoryName" value="MB Category Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#addSubcategoryCP">
-			<var name="categoryName" value="MB Category Name" />
-			<var name="subCategoryDescription" value="MB Subcategory Description" />
-			<var name="subCategoryName" value="MB Subcategory Name" />
-		</execute>
-	</command>
-
-	<command name="AddMBThread" priority="5">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addCP">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewCP">
-			<var name="postsNumber" value="1" />
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-	</command>
-
-	<command name="CKEditorSmoke" priority="5">
-		<property name="custom.properties" value="editor.wysiwyg.portal-web.docroot.html.portlet.message_boards.edit_message.bb_code.jsp=ckeditor${line.separator}editor.wysiwyg.portal-web.docroot.html.portlet.message_boards.edit_message.html.jsp=ckeditor" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute function="Click" locator1="Button#PLUS" />
-
-		<execute function="AssertClick" locator1="MenuItem#THREAD" value1="Thread" />
-
-		<execute function="Type" locator1="TextInput#SUBJECT" value1="CKEditor Entry Subject" />
-
-		<execute macro="CKEditor#assertEditorPresent" />
-
-		<execute macro="CKEditor#addContent">
-			<var name="content" value="CKEditor Entry Body" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewCP">
-			<var name="postsNumber" value="1" />
-			<var name="threadBody" value="CKEditor Entry Body" />
-			<var name="threadSubject" value="CKEditor Entry Subject" />
-		</execute>
-	</command>
-
-	<command name="DeleteMBCategories" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#addCP">
-			<var name="categoryName" value="MB Category1 Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#addCP">
-			<var name="categoryName" value="MB Category2 Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#addCP">
-			<var name="categoryName" value="MB Category3 Name" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#tearDownCP">
-			<var name="assetType" value="3 items" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute function="AssertTextEquals#assertText" locator1="Message#EMPTY_INFO" value1="There are no threads nor categories." />
-	</command>
-
-	<command name="DeleteMBThreadWithAttachment" priority="3">
-		<property name="custom.properties" value="trash.entry.check.interval=1${line.separator}trash.entries.max.age=1" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addCPWithAttachment">
-			<var name="mbAttachmentFile" value="Document_1.doc" />
-			<var name="threadBody" value="MB Body" />
-			<var name="threadSubject" value="MB Subject" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#moveToRecycleBinCP">
-			<var name="threadSubject" value="MB Subject" />
-		</execute>
-
-		<execute function="Pause" locator1="120000" />
-
-		<execute function="AssertConsoleTextNotPresent" value1="MessageListenerException" />
-		<execute function="AssertConsoleTextNotPresent" value1="com.liferay.portlet.documentlibrary.NoSuchFileEntryException" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="The Recycle Bin is empty." />
-	</command>
-
-	<command name="EditMBThreadBody" priority="5">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addCP">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoCP">
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#editCP">
-			<var name="threadBodyEdit" value="MB Thread Message Body Edit" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewCP">
-			<var name="postsNumber" value="1" />
-			<var name="threadBody" value="MB Thread Message Body Edit" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-	</command>
-
-	<command name="EditMBThreadSubject" priority="5">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addCP">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoCP">
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#editCP">
-			<var name="threadSubjectEdit" value="MB Thread Message Subject Edit" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewCP">
-			<var name="postsNumber" value="1" />
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject Edit" />
-		</execute>
-	</command>
-
-	<command name="EditMBThreadSubjectAndBody" priority="5">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addCP">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoCP">
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#editCP">
-			<var name="threadBodyEdit" value="MB Thread Message Body Edit" />
-			<var name="threadSubjectEdit" value="MB Thread Message Subject Edit" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewCP">
-			<var name="postsNumber" value="1" />
-			<var name="threadBody" value="MB Thread Message Body Edit" />
-			<var name="threadSubject" value="MB Thread Message Subject Edit" />
-		</execute>
-	</command>
-
-	<command name="MoveToRecycleBinMBThread" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addCP">
-			<var name="threadBody" value="MB Thread Message Body" />
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#moveToRecycleBinCP">
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewDefaultCP">
-			<var name="threadSubject" value="MB Thread Message Subject" />
-		</execute>
-	</command>
-
-	<command name="ViewAnonymousPostingAllowedCheckboxConfiguration" priority="3">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewAnonymousPostingCheckboxCP" />
-
-		<execute macro="MessageboardsPortlet#configureAnonymousPostingCP">
-			<var name="anonymousPostingEnabled" value="false" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#viewAnonymousPostingConfigurationCP">
-			<var name="anonymousPostingEnabled" value="false" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewNoAnonymousPostingCheckboxCP" />
-	</command>
-
-	<command name="ViewBBCodeNoXSS" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsPortlet#configureGeneralCP">
-			<var name="messageFormat" value="BBCode" />
-			<var name="messageFormatBBCodeEnabled" value="true" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addCP">
-			<var name="source" value="true" />
-			<var name="threadBody" value="[img]Not An Image[font= onerror=alert(/XSS/.source)//]FF[/font][/img]" />
-			<var name="threadSubject" value="New Thread Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#assertAlertNotPresent" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewCP">
-			<var name="postsNumber" value="1" />
-			<var name="threadBody" value="" />
-			<var name="threadSubject" value="New Thread Subject" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addCP">
-			<var name="fontSize" value="24" />
-			<var name="source" value="true" />
-			<var name="threadBody" value="[size=5]Thread Body[/size]" />
-			<var name="threadSubject" value="New Thread Subject 2" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewCP">
-			<var name="fontSize" value="24" />
-			<var name="postsNumber" value="1" />
-			<var name="threadBody" value="Thread Body" />
-			<var name="threadSubject" value="New Thread Subject 2" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Message Boards|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add MB Category
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsCategory add CP
+		|categoryName|MB Category Name|
+	Then MessageboardsCategory view CP
+		|categoryName|MB Category Name|
+		|subcategoriesNumber|0|
+		|threadsNumber|0|
+Scenario: Add MB Category Subcategory
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsCategory add CP
+		|categoryName|MB Category Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	Then MessageboardsCategory add Subcategory CP
+		|categoryName|MB Category Name|
+		|subCategoryDescription|MB Subcategory Description|
+		|subCategoryName|MB Subcategory Name|
+Scenario: Add MB Thread
+Priority: 5
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread add CP
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	Then MessageboardsThread view CP
+		|postsNumber|1|
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+Scenario: CK Editor Smoke
+Priority: 5
+	Given these properties
+		|custom.properties|editor.wysiwyg.portal-web.docroot.html.portlet.message_boards.edit_message.bb_code.jsp=ckeditor${line.separator}editor.wysiwyg.portal-web.docroot.html.portlet.message_boards.edit_message.html.jsp=ckeditor|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And Click at locator 'Button#PLUS'
+	And AssertClick the value 'Thread' at locator 'MenuItem#THREAD'
+	And Type the value 'CKEditor Entry Subject' at locator 'TextInput#SUBJECT'
+	And CKEditor assert Editor Present
+	And CKEditor add Content
+		|content|CKEditor Entry Body|
+	And PortletEntry publish
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	Then MessageboardsThread view CP
+		|postsNumber|1|
+		|threadBody|CKEditor Entry Body|
+		|threadSubject|CKEditor Entry Subject|
+Scenario: Delete MB Categories
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsCategory add CP
+		|categoryName|MB Category1 Name|
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsCategory add CP
+		|categoryName|MB Category2 Name|
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsCategory add CP
+		|categoryName|MB Category3 Name|
+	And MessageboardsCategory tear Down CP
+		|assetType|3 items|
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	Then AssertTextEquals assert Text the value 'There are no threads nor categories.' at locator 'Message#EMPTY_INFO'
+Scenario: Delete MB Thread With Attachment
+Priority: 3
+	Given these properties
+		|custom.properties|trash.entry.check.interval=1${line.separator}trash.entries.max.age=1|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread add CP With Attachment
+		|mbAttachmentFile|Document_1.doc|
+		|threadBody|MB Body|
+		|threadSubject|MB Subject|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread move To Recycle Bin CP
+		|threadSubject|MB Subject|
+	And Pause at locator '120000'
+	And AssertConsoleTextNotPresent the value 'MessageListenerException'
+	And AssertConsoleTextNotPresent the value 'com.liferay.portlet.documentlibrary.NoSuchFileEntryException'
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	Then AssertTextEquals the value 'The Recycle Bin is empty.' at locator 'Message#EMPTY_INFO'
+Scenario: Edit MB Thread Body
+Priority: 5
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread add CP
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread goto CP
+		|threadSubject|MB Thread Message Subject|
+	And MessageboardsThread edit CP
+		|threadBodyEdit|MB Thread Message Body Edit|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	Then MessageboardsThread view CP
+		|postsNumber|1|
+		|threadBody|MB Thread Message Body Edit|
+		|threadSubject|MB Thread Message Subject|
+Scenario: Edit MB Thread Subject
+Priority: 5
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread add CP
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread goto CP
+		|threadSubject|MB Thread Message Subject|
+	And MessageboardsThread edit CP
+		|threadSubjectEdit|MB Thread Message Subject Edit|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	Then MessageboardsThread view CP
+		|postsNumber|1|
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject Edit|
+Scenario: Edit MB Thread Subject And Body
+Priority: 5
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread add CP
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread goto CP
+		|threadSubject|MB Thread Message Subject|
+	And MessageboardsThread edit CP
+		|threadBodyEdit|MB Thread Message Body Edit|
+		|threadSubjectEdit|MB Thread Message Subject Edit|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	Then MessageboardsThread view CP
+		|postsNumber|1|
+		|threadBody|MB Thread Message Body Edit|
+		|threadSubject|MB Thread Message Subject Edit|
+Scenario: Move To Recycle Bin MB Thread
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread add CP
+		|threadBody|MB Thread Message Body|
+		|threadSubject|MB Thread Message Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread move To Recycle Bin CP
+		|threadSubject|MB Thread Message Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	Then MessageboardsThread view Default CP
+		|threadSubject|MB Thread Message Subject|
+Scenario: View Anonymous Posting Allowed Checkbox Configuration
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread view Anonymous Posting Checkbox CP
+	And MessageboardsPortlet configure Anonymous Posting CP
+		|anonymousPostingEnabled|false|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And MessageboardsPortlet view Anonymous Posting Configuration CP
+		|anonymousPostingEnabled|false|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	Then MessageboardsThread view No Anonymous Posting Checkbox CP
+Scenario: View BB Code No XSS
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsPortlet configure General CP
+		|messageFormat|BBCode|
+		|messageFormatBBCodeEnabled|true|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread add CP
+		|source|true|
+		|threadBody|[img]Not An Image[font= onerror=alert(/XSS/.source)//]FF[/font][/img]|
+		|threadSubject|New Thread Subject|
+	And MessageboardsThread assert Alert Not Present
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread view CP
+		|postsNumber|1|
+		|threadBody||
+		|threadSubject|New Thread Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread add CP
+		|fontSize|24|
+		|source|true|
+		|threadBody|[size=5]Thread Body[/size]|
+		|threadSubject|New Thread Subject 2|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	Then MessageboardsThread view CP
+		|fontSize|24|
+		|postsNumber|1|
+		|threadBody|Thread Body|
+		|threadSubject|New Thread Subject 2|

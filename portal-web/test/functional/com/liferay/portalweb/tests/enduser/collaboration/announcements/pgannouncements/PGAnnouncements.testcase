@@ -1,298 +1,399 @@
-<definition component-name="portal-collaboration">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column" />
-	<property name="testray.main.component.name" value="Announcements" />
+Feature:
 
-	<var name="pageName" value="Announcements Page" />
-	<var name="portletName" value="Announcements" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Announcements|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Announcements|
+		|pageName|Announcements Page|
+		|portletName|Announcements|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Announcements Page|
+	Then Portlet add PG
+		|portletName|Announcements|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Announcements Entry
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|PGAnnouncements#AddAnnouncementsEntry|
+	When Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry add PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	Then AnnouncementsEntry view PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.liferay.com|
+Scenario: Add Announcements Entry Future Date
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Announcements Page|
+	When AnnouncementsEntry add Entry With Future Date
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.liferay.com|
+	And Pause at locator '10000'
+	And AssertClick the value 'New' at locator 'Announcements#NAVIGATION_ENTRIES_NEW'
+	And AssertTextNotPresent the value 'Announcements Entry Title'
+	And Pause at locator '120000'
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	Then AnnouncementsEntry view PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.liferay.com|
+Scenario: Add Announcements Entry Past Expiration Date
+Priority: 3
+	Given Navigator goto Page
+		|pageName|Announcements Page|
+	When AnnouncementsEntry add PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.liferay.com|
+		|expirationDate|12/31/2013|
+		|pastDate|true|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AssertTextNotPresent the value 'Announcements Entry Title'
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Announcements and Alerts|
+	And AssertTextEquals the value 'General' at locator 'Dropdown#FILTER'
+	Then AssertTextEquals the value 'No entries were found.' at locator 'Message#NO_ENTRIES'
+Scenario: Add Announcements Entry Priority Important
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Announcements Page|
+	When AnnouncementsEntry add PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.liferay.com|
+		|priority|Important|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	Then AnnouncementsEntry view PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+Scenario: Add Announcements Entry Site
+Priority: 3
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Announcements Page|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Announcements Page|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Announcements|
+	And AnnouncementsEntry add PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Site Page
+		|pageName|Announcements Page|
+		|siteName|Site Name|
+	Then AnnouncementsEntry view PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+Scenario: Delete Announcements Entry
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|test.name.skip.portal.instance|PGAnnouncements#DeleteAnnouncementsEntry|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry add PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry delete PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+	Then AnnouncementsEntry view Delete PG
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+Scenario: Edit Announcements Entry
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|test.name.skip.portal.instance|PGAnnouncements#EditAnnouncementsEntry|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry add PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry edit PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryContentEdit|Announcements Entry Content Edit|
+		|entryTitle|Announcements Entry Title|
+		|entryTitleEdit|Announcements Entry Title Edit|
+		|entryURLEdit|http://www.alloyui.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	Then AnnouncementsEntry view PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content Edit|
+		|entryTitle|Announcements Entry Title Edit|
+Scenario: View Previous Announcement Entries
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|test.name.skip.portal.instance|PGAnnouncements#ViewPreviousAnnouncementEntries|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry add PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry mark As Read PG
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+	And AnnouncementsEntry view Previous PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+	And AssertClick the value 'New' at locator 'Announcements#NAVIGATION_ENTRIES_NEW'
+	Then AnnouncementsEntry view No PG
+		|entryTitle|Announcements Entry Title|
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Announcements Page|
+	Then Portlet add PG
+		|portletName|Announcements|
 
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Announcements" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="AddAnnouncementsEntry" priority="4">
-		<property name="test.name.skip.portal.instance" value="PGAnnouncements#AddAnnouncementsEntry" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewPG">
-			<var name="announcementType" value="General" />
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-	</command>
-
-	<command name="AddAnnouncementsEntryFutureDate" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addEntryWithFutureDate">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute function="Pause" locator1="10000" />
-
-		<execute function="AssertClick" locator1="Announcements#NAVIGATION_ENTRIES_NEW" value1="New" />
-
-		<execute function="AssertTextNotPresent" value1="Announcements Entry Title" />
-		<execute function="Pause" locator1="120000" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewPG">
-			<var name="announcementType" value="General" />
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-	</command>
-
-	<command name="AddAnnouncementsEntryPastExpirationDate" priority="3">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-			<var name="entryURL" value="http://www.liferay.com" />
-			<var name="expirationDate" value="12/31/2013" />
-			<var name="pastDate" value="true" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute function="AssertTextNotPresent" value1="Announcements Entry Title" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Announcements and Alerts" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="Dropdown#FILTER" value1="General" />
-
-		<execute function="AssertTextEquals" locator1="Message#NO_ENTRIES" value1="No entries were found." />
-	</command>
-
-	<command name="AddAnnouncementsEntryPriorityImportant" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-			<var name="entryURL" value="http://www.liferay.com" />
-			<var name="priority" value="Important" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewPG">
-			<var name="announcementType" value="General" />
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-		</execute>
-	</command>
-
-	<command name="AddAnnouncementsEntrySite" priority="3">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Announcements Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Announcements Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Announcements" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Announcements Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewPG">
-			<var name="announcementType" value="General" />
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-		</execute>
-	</command>
-
-	<command name="DeleteAnnouncementsEntry" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="test.name.skip.portal.instance" value="PGAnnouncements#DeleteAnnouncementsEntry" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#deletePG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewDeletePG">
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-		</execute>
-	</command>
-
-	<command name="EditAnnouncementsEntry" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="test.name.skip.portal.instance" value="PGAnnouncements#EditAnnouncementsEntry" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#editPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryContentEdit" value="Announcements Entry Content Edit" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-			<var name="entryTitleEdit" value="Announcements Entry Title Edit" />
-			<var name="entryURLEdit" value="http://www.alloyui.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewPG">
-			<var name="announcementType" value="General" />
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content Edit" />
-			<var name="entryTitle" value="Announcements Entry Title Edit" />
-		</execute>
-	</command>
-
-	<command name="ViewPreviousAnnouncementEntries" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="test.name.skip.portal.instance" value="PGAnnouncements#ViewPreviousAnnouncementEntries" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#markAsReadPG">
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewPreviousPG">
-			<var name="announcementType" value="General" />
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-		</execute>
-
-		<execute function="AssertClick" locator1="Announcements#NAVIGATION_ENTRIES_NEW" value1="New" />
-
-		<execute macro="AnnouncementsEntry#viewNoPG">
-			<var name="entryTitle" value="Announcements Entry Title" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Announcements Entry
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|PGAnnouncements#AddAnnouncementsEntry|
+	When Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry add PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	Then AnnouncementsEntry view PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.liferay.com|
+Scenario: Add Announcements Entry Future Date
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Announcements Page|
+	When AnnouncementsEntry add Entry With Future Date
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.liferay.com|
+	And Pause at locator '10000'
+	And AssertClick the value 'New' at locator 'Announcements#NAVIGATION_ENTRIES_NEW'
+	And AssertTextNotPresent the value 'Announcements Entry Title'
+	And Pause at locator '120000'
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	Then AnnouncementsEntry view PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.liferay.com|
+Scenario: Add Announcements Entry Past Expiration Date
+Priority: 3
+	Given Navigator goto Page
+		|pageName|Announcements Page|
+	When AnnouncementsEntry add PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.liferay.com|
+		|expirationDate|12/31/2013|
+		|pastDate|true|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AssertTextNotPresent the value 'Announcements Entry Title'
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Announcements and Alerts|
+	And AssertTextEquals the value 'General' at locator 'Dropdown#FILTER'
+	Then AssertTextEquals the value 'No entries were found.' at locator 'Message#NO_ENTRIES'
+Scenario: Add Announcements Entry Priority Important
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Announcements Page|
+	When AnnouncementsEntry add PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.liferay.com|
+		|priority|Important|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	Then AnnouncementsEntry view PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+Scenario: Add Announcements Entry Site
+Priority: 3
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Announcements Page|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Announcements Page|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Announcements|
+	And AnnouncementsEntry add PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Site Page
+		|pageName|Announcements Page|
+		|siteName|Site Name|
+	Then AnnouncementsEntry view PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+Scenario: Delete Announcements Entry
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|test.name.skip.portal.instance|PGAnnouncements#DeleteAnnouncementsEntry|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry add PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry delete PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+	Then AnnouncementsEntry view Delete PG
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+Scenario: Edit Announcements Entry
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|test.name.skip.portal.instance|PGAnnouncements#EditAnnouncementsEntry|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry add PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry edit PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryContentEdit|Announcements Entry Content Edit|
+		|entryTitle|Announcements Entry Title|
+		|entryTitleEdit|Announcements Entry Title Edit|
+		|entryURLEdit|http://www.alloyui.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	Then AnnouncementsEntry view PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content Edit|
+		|entryTitle|Announcements Entry Title Edit|
+Scenario: View Previous Announcement Entries
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|test.name.skip.portal.instance|PGAnnouncements#ViewPreviousAnnouncementEntries|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry add PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry mark As Read PG
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+	And AnnouncementsEntry view Previous PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+	And AssertClick the value 'New' at locator 'Announcements#NAVIGATION_ENTRIES_NEW'
+	Then AnnouncementsEntry view No PG
+		|entryTitle|Announcements Entry Title|

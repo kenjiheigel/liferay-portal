@@ -1,35 +1,26 @@
-<definition component-name="portal-plugins-osgi">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="App Manager" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|App Manager|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="ViewIndependentModulesIsNotNestedWithinItself" priority="4">
-		<property name="test.name.skip.portal.instance" value="AppManagerUsecase#ViewIndependentModulesIsNotNestedWithinItself" />
-
-		<execute macro="ProductMenu#gotoControlPanelApps">
-			<var name="portlet" value="App Manager" />
-		</execute>
-
-		<execute macro="AppManager#selectAppCP">
-			<var name="appName" value="Independent Modules" />
-		</execute>
-
-		<execute function="Pause" locator1="3000" />
-
-		<execute macro="AppManager#viewNoAppCP">
-			<var name="appName" value="Independent Modules" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View Independent Modules Is Not Nested Within Itself
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|AppManagerUsecase#ViewIndependentModulesIsNotNestedWithinItself|
+	When ProductMenu goto Control Panel Apps
+		|portlet|App Manager|
+	And AppManager select App CP
+		|appName|Independent Modules|
+	And Pause at locator '3000'
+	Then AppManager view No App CP
+		|appName|Independent Modules|

@@ -1,1168 +1,717 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Site Administration" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="AddMember" priority="4">
-		<property name="testray.component.names" value="Site Administration,Users and Organizations" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-	</command>
-
-	<command name="AddMemberAssignSiteRole" priority="4">
-		<property name="testray.component.names" value="Site Administration,Users and Organizations" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignSiteRoleCP">
-			<var name="resourceName" value="userfn userln" />
-			<var name="roleTitle" value="Site Content Reviewer" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#viewSiteRoleViaSiteMembershipsCP">
-			<var name="resourceName" value="userfn userln" />
-			<var name="roleTitle" value="Site Content Reviewer" />
-		</execute>
-	</command>
-
-	<command name="AddMemberOrganization" priority="4">
-		<property name="testray.component.names" value="Site Administration,Users and Organizations" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Organization#addCP">
-			<var name="orgName" value="Organization Name" />
-			<var name="orgType" value="Organization" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignOrganizationAsMemberCP">
-			<var name="orgName" value="Organization Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#viewMemberOrganizationCP">
-			<var name="orgName" value="Organization Name" />
-		</execute>
-	</command>
-
-	<command name="AddMembersSiteUser" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="testray.component.names" value="Site Administration,Users and Organizations" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#viewMemberCP">
-			<var name="siteName" value="Site Name" />
-			<var name="siteScopeName" value="Site Name" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-	</command>
-
-	<command name="AddMemberUserGroup" priority="4">
-		<property name="testray.component.names" value="Site Administration,User Groups" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="User Groups" />
-		</execute>
-
-		<execute macro="UserGroup#addCP">
-			<var name="userGroupName" value="User Group Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserGroupAsMemberCP">
-			<var name="userGroupName" value="User Group Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#viewMemberUserGroupCP">
-			<var name="userGroupName" value="User Group Name" />
-		</execute>
-	</command>
-
-	<command name="AddMemberUserGroupAssignSiteRole" priority="4">
-		<property name="testray.component.names" value="Site Administration,User Groups" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="User Groups" />
-		</execute>
-
-		<execute macro="UserGroup#addCP">
-			<var name="userGroupName" value="User Group Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserGroupAsMemberCP">
-			<var name="userGroupName" value="User Group Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="User Groups" />
-		</execute>
-
-		<execute macro="Site#assignSiteRoleCP">
-			<var name="resourceName" value="User Group Name" />
-			<var name="roleTitle" value="Site Content Reviewer" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="User Groups" />
-		</execute>
-
-		<execute macro="Site#viewSiteRoleViaSiteMembershipsCP">
-			<var name="resourceName" value="User Group Name" />
-			<var name="roleTitle" value="Site Content Reviewer" />
-		</execute>
-	</command>
-
-	<command name="LimitMembershipParentSite" priority="4">
-		<property name="testray.component.names" value="Site Administration" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="parentSiteName" value="Site Name" />
-			<var name="siteName" value="Child SiteName" />
-		</execute>
-
-		<execute macro="Site#limitMembership">
-			<var name="siteLimitMembership" value="Yes" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#viewMemberCP">
-			<var name="siteName" value="Site Name" />
-			<var name="siteScopeName" value="Site Name" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Child SiteName" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Child SiteName" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#viewMemberCP">
-			<var name="childSiteName" value="Site Name" />
-			<var name="siteScopeName" value="Child SiteName" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Child SiteName" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#removeMemberCP">
-			<var name="siteName" value="Child SiteName" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#removeMemberCP">
-			<var name="siteName" value="Site Name" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Child SiteName" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#viewLimitMembershipParentSiteCP">
-			<var name="siteName" value="Site Name" />
-			<var name="siteScopeName" value="Child SiteName" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-	</command>
-
-	<command name="OrganizationsView" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="test.name.skip.portal.instance" value="CPSitememberships#OrganizationsView" />
-		<property name="testray.component.names" value="Site Administration,Users and Organizations" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Server Administration" />
-		</execute>
-
-		<execute macro="ServerAdministration#executeServerResourcesActions">
-			<var name="actionsDescription" value="Reindex all search indexes." />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Organization#addCP">
-			<var name="orgName" value="Organization Name 1" />
-			<var name="orgType" value="Organization" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#addSiteCP">
-			<var name="orgName" value="Organization Name 1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-			<var name="siteName" value="Organization Name 1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="allowManualMembershipManagement" value="true" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#addMemberCP">
-			<var name="orgName" value="Organization Name 1" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#addMemberCP">
-			<var name="orgName" value="Organization Name 1" />
-			<var name="userFirstName" value="Test" />
-			<var name="userLastName" value="Test" />
-			<var name="userName" value="Test Test" />
-			<var name="userScreenName" value="test" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#manageMembershipOptionsInSites">
-			<var name="allowManualMembershipManagement" value="true" />
-			<var name="orgName" value="Organization Name 1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Organization Name 1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#viewMemberOrganizationCP">
-			<var name="orgName" value="Organization Name 1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Organization#addCP">
-			<var name="orgName" value="Organization Name 2" />
-			<var name="orgType" value="Organization" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Organization#addCP">
-			<var name="orgName" value="Organization Name 3" />
-			<var name="orgType" value="Organization" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Organization Name 1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Organization Name 1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignOrganizationAsMemberCP">
-			<var name="orgName" value="Organization Name 2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Organization Name 1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#viewMemberOrganizationCP">
-			<var name="orgName" value="Organization Name 2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Organization Name 1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignOrganizationAsMemberCP">
-			<var name="orgName" value="Organization Name 3" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Organization Name 1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#viewMemberOrganizationCP">
-			<var name="orgName" value="Organization Name 3" />
-		</execute>
-	</command>
-
-	<command name="RemoveMember" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="testray.component.names" value="Site Administration,Users and Organizations" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#removeMemberCP">
-			<var name="siteName" value="Site Name" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-	</command>
-
-	<command name="SiteMembershipSearchOrganization" priority="3">
-		<property name="testray.component.names" value="Site Administration,Users and Organizations" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Organization#addCP">
-			<var name="orgName" value="Organization Name 1" />
-			<var name="orgType" value="Organization" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Organization#addCP">
-			<var name="orgName" value="Organization Name 2" />
-			<var name="orgType" value="Organization" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignOrganizationAsMemberCP">
-			<var name="orgName" value="Organization Name 1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Organizations" />
-		</execute>
-
-		<execute macro="Site#searchMembershipCP">
-			<var name="emptyResults" value="true" />
-			<var name="searchValue">"Organization Name 2"</var>
-		</execute>
-
-		<execute macro="Site#searchMembershipCP">
-			<var name="searchValue">"Organization Name 1"</var>
-		</execute>
-	</command>
-
-	<command name="SiteMembershipSearchUserGroup" priority="3">
-		<property name="testray.component.names" value="Site Administration,User Groups" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="User Groups" />
-		</execute>
-
-		<execute macro="UserGroup#addCP">
-			<var name="userGroupName" value="User Group Name 1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="User Groups" />
-		</execute>
-
-		<execute macro="UserGroup#addCP">
-			<var name="userGroupName" value="User Group Name 2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserGroupAsMemberCP">
-			<var name="userGroupName" value="User Group Name 1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="User Groups" />
-		</execute>
-
-		<execute macro="Site#searchMembershipCP">
-			<var name="emptyResults" value="true" />
-			<var name="searchValue">"User Group Name 2"</var>
-		</execute>
-
-		<execute macro="Site#searchMembershipCP">
-			<var name="searchValue">"User Group Name 1"</var>
-		</execute>
-	</command>
-
-	<command name="SiteMembershipsPagination" priority="3">
-		<property name="testray.component.names" value="Site Administration,Users and Organizations" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addMultipleCP">
-			<var name="numberOfUsers" value="10" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#addAllMembersCP" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#viewMemberListCP">
-			<var name="usersEmailsList" value="userea1@liferay.com,userea2@liferay.com,userea3@liferay.com,userea4@liferay.com,userea5@liferay.com,userea6@liferay.com,userea7@liferay.com,userea8@liferay.com,userea9@liferay.com,userea10@liferay.com" />
-		</execute>
-
-		<execute macro="Site#viewMemberCP">
-			<var name="userFirstName" value="Test" />
-			<var name="userLastName" value="Test" />
-			<var name="userScreenName" value="test" />
-		</execute>
-
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Users" />
-		</execute>
-
-		<execute function="AssertClick" locator1="Pagination#ITEMS_PER_PAGE_SELECT" value1="20 Entries" />
-
-		<execute function="Click" locator1="Pagination#FIVE_ITEMS_PER_PAGE" />
-
-		<execute function="AssertTextEquals" locator1="Pagination#CURRENT_PAGE_SELECT" value1="Showing 1 to 5 of 11 entries." />
-
-		<execute function="Click" locator1="Pagination#NEXT_LINK" />
-
-		<execute function="AssertTextEquals" locator1="Pagination#CURRENT_PAGE_SELECT" value1="Showing 6 to 10 of 11 entries." />
-
-		<execute macro="Site#assertMemberListNotVisibleCP">
-			<var name="usersEmailsList" value="userfn1@liferay.com,userfn2@liferay.com,userfn3@liferay.com,userfn10@liferay.com" />
-		</execute>
-
-		<execute macro="Site#viewMemberListCP">
-			<var name="usersEmailsList" value="userea4@liferay.com,userea5@liferay.com,userea6@liferay.com,userea7@liferay.com,userea8@liferay.com" />
-		</execute>
-
-		<execute macro="Site#assertMemberListNotVisibleCP">
-			<var name="usersEmailsList" value="userea9@liferay.com" />
-		</execute>
-
-		<execute function="Click" locator1="Pagination#FIRST_LINK" />
-
-		<execute function="AssertTextEquals" locator1="Pagination#CURRENT_PAGE_SELECT" value1="Showing 1 to 5 of 11 entries." />
-
-		<execute macro="Site#viewMemberListCP">
-			<var name="usersEmailsList" value="userea1@liferay.com,userea2@liferay.com,userea3@liferay.com,userea10@liferay.com" />
-		</execute>
-
-		<execute macro="Site#assertMemberListNotVisibleCP">
-			<var name="usersEmailsList" value="userea4@liferay.com,userea5@liferay.com,userea6@liferay.com,userea7@liferay.com,userea8@liferay.com,userea9@liferay.com" />
-		</execute>
-
-		<execute macro="Site#viewMemberCP">
-			<var name="userFirstName" value="Test" />
-			<var name="userLastName" value="Test" />
-			<var name="userScreenName" value="test" />
-		</execute>
-
-		<execute function="Click" locator1="Pagination#LAST_LINK" />
-
-		<execute function="AssertTextEquals" locator1="Pagination#CURRENT_PAGE_SELECT" value1="Showing 11 to 11 of 11 entries." />
-
-		<execute macro="Site#assertMemberListNotVisibleCP">
-			<var name="usersEmailsList" value="userea1@liferay.com,userea2@liferay.com,userea3@liferay.com,userea4@liferay.com,userea5@liferay.com,userea6@liferay.com,userea7@liferay.com,userea8@liferay.com,userea10@liferay.com" />
-		</execute>
-
-		<execute macro="Site#viewMemberListCP">
-			<var name="usersEmailsList" value="userea9@liferay.com" />
-		</execute>
-
-		<execute function="Click" locator1="Pagination#PREVIOUS_LINK" />
-
-		<execute function="AssertTextEquals" locator1="Pagination#CURRENT_PAGE_SELECT" value1="Showing 6 to 10 of 11 entries." />
-
-		<execute macro="Site#assertMemberListNotVisibleCP">
-			<var name="usersEmailsList" value="userea1@liferay.com,userea2@liferay.com,userea3@liferay.com,userea9@liferay.com,userea10@liferay.com" />
-		</execute>
-
-		<execute macro="Site#viewMemberListCP">
-			<var name="usersEmailsList" value="userea4@liferay.com,userea5@liferay.com,userea6@liferay.com,userea7@liferay.com,userea8@liferay.com" />
-		</execute>
-	</command>
-
-	<command name="SiteMembershipsSearch" priority="4">
-		<property name="testray.component.names" value="Site Administration,Users and Organizations" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="4568@liferay.com" />
-			<var name="userFirstName" value="userfnTest1" />
-			<var name="userLastName" value="One" />
-			<var name="userScreenName" value="user1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="5670@liferay.com" />
-			<var name="userFirstName" value="userfnTest2" />
-			<var name="userLastName" value="Two" />
-			<var name="userScreenName" value="screen2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="9758@liferay.com" />
-			<var name="userFirstName" value="userfnTest3" />
-			<var name="userLastName" value="Three" />
-			<var name="userScreenName" value="member3" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#addAllMembersCP" />
-
-		<execute macro="Site#searchMemberCP">
-			<var name="userFirstName" value="userfnTest1" />
-			<var name="userFirstNameSearchValue" value="userfnTest1" />
-			<var name="userLastName" value="One" />
-			<var name="userScreenName" value="user1" />
-		</execute>
-
-		<execute macro="Site#searchMemberCP">
-			<var name="userFirstName" value="userfnTest2" />
-			<var name="userFirstNameSearchValue" value="userfnTest2" />
-			<var name="userLastName" value="Two" />
-			<var name="userScreenName" value="screen2" />
-		</execute>
-
-		<execute macro="Site#searchMemberCP">
-			<var name="userFirstName" value="userfnTest3" />
-			<var name="userFirstNameSearchValue" value="userfnTest3" />
-			<var name="userLastName" value="Three" />
-			<var name="userScreenName" value="member3" />
-		</execute>
-
-		<execute macro="Site#searchMemberCP">
-			<var name="userFirstName" value="userfnTest1" />
-			<var name="userFirstNameSearchValue" value="Test" />
-			<var name="userLastName" value="One" />
-			<var name="userScreenName" value="user1" />
-		</execute>
-
-		<execute macro="Site#viewMemberCP">
-			<var name="userFirstName" value="userfnTest2" />
-			<var name="userLastName" value="Two" />
-			<var name="userScreenName" value="screen2" />
-		</execute>
-
-		<execute macro="Site#viewMemberCP">
-			<var name="userFirstName" value="userfnTest3" />
-			<var name="userLastName" value="Three" />
-			<var name="userScreenName" value="member3" />
-		</execute>
-
-		<execute macro="Site#searchMemberCP">
-			<var name="userFirstName" value="userfnTest1" />
-			<var name="userLastName" value="One" />
-			<var name="userScreenName" value="user1" />
-			<var name="userScreenNameSearchValue" value="user1" />
-		</execute>
-
-		<execute macro="Site#searchMemberCP">
-			<var name="userFirstName" value="userfnTest2" />
-			<var name="userLastName" value="Two" />
-			<var name="userScreenName" value="screen2" />
-			<var name="userScreenNameSearchValue" value="screen" />
-		</execute>
-
-		<execute macro="Site#searchMemberCP">
-			<var name="userFirstName" value="userfnTest3" />
-			<var name="userLastName" value="Three" />
-			<var name="userScreenName" value="member3" />
-			<var name="userScreenNameSearchValue" value="member" />
-		</execute>
-
-		<execute macro="Site#searchMemberCP">
-			<var name="userEmailAddress" value="4568@liferay.com" />
-			<var name="userEmailAddressSearchValue" value="4" />
-			<var name="userFirstName" value="userfnTest1" />
-			<var name="userLastName" value="One" />
-			<var name="userScreenName" value="user1" />
-		</execute>
-
-		<execute macro="Site#searchMemberCP">
-			<var name="userEmailAddress" value="4568@liferay.com" />
-			<var name="userEmailAddressSearchValue" value="5" />
-			<var name="userFirstName" value="userfnTest1" />
-			<var name="userLastName" value="One" />
-			<var name="userScreenName" value="user1" />
-		</execute>
-
-		<execute macro="Site#viewMemberCP">
-			<var name="userFirstName" value="userfnTest2" />
-			<var name="userLastName" value="Two" />
-			<var name="userScreenName" value="screen2" />
-		</execute>
-
-		<execute macro="Site#viewMemberCP">
-			<var name="userFirstName" value="userfnTest3" />
-			<var name="userLastName" value="Three" />
-			<var name="userScreenName" value="member3" />
-		</execute>
-
-		<execute macro="Site#searchMemberCP">
-			<var name="userEmailAddress" value="4568@liferay.com" />
-			<var name="userEmailAddressSearchValue" value="6" />
-			<var name="userFirstName" value="userfnTest1" />
-			<var name="userLastName" value="One" />
-			<var name="userScreenName" value="user1" />
-		</execute>
-
-		<execute macro="Site#viewMemberCP">
-			<var name="userFirstName" value="userfnTest2" />
-			<var name="userLastName" value="Two" />
-			<var name="userScreenName" value="screen2" />
-		</execute>
-
-		<execute macro="Site#searchMemberCP">
-			<var name="userEmailAddress" value="5670@liferay.com" />
-			<var name="userEmailAddressSearchValue" value="7" />
-			<var name="userFirstName" value="userfnTest2" />
-			<var name="userLastName" value="Two" />
-			<var name="userScreenName" value="screen2" />
-		</execute>
-
-		<execute macro="Site#viewMemberCP">
-			<var name="userFirstName" value="userfnTest3" />
-			<var name="userLastName" value="Three" />
-			<var name="userScreenName" value="member3" />
-		</execute>
-
-		<execute macro="Site#searchMemberCP">
-			<var name="userEmailAddress" value="4568@liferay.com" />
-			<var name="userEmailAddressSearchValue" value="8" />
-			<var name="userFirstName" value="userfnTest1" />
-			<var name="userLastName" value="One" />
-			<var name="userScreenName" value="user1" />
-		</execute>
-
-		<execute macro="Site#viewMemberCP">
-			<var name="userFirstName" value="userfnTest3" />
-			<var name="userLastName" value="Three" />
-			<var name="userScreenName" value="member3" />
-		</execute>
-
-		<execute macro="Site#searchMemberCP">
-			<var name="userEmailAddress" value="5670@liferay.com" />
-			<var name="userEmailAddressSearchValue" value="0" />
-			<var name="userFirstName" value="userfnTest2" />
-			<var name="userLastName" value="Two" />
-			<var name="userScreenName" value="screen2" />
-		</execute>
-
-		<execute macro="Site#searchMemberCP">
-			<var name="userEmailAddress" value="4568@liferay.com" />
-			<var name="userEmailAddressSearchValue" value="9" />
-			<var name="userFirstName" value="userfnTest3" />
-			<var name="userLastName" value="Three" />
-			<var name="userScreenName" value="member3" />
-		</execute>
-
-		<execute macro="Site#searchMemberCP">
-			<var name="userFirstName" value="userfnTest1" />
-			<var name="userLastName" value="One" />
-			<var name="userLastNameSearchValue" value="One" />
-			<var name="userScreenName" value="user1" />
-		</execute>
-
-		<execute macro="Site#searchMemberCP">
-			<var name="userFirstName" value="userfnTest2" />
-			<var name="userLastName" value="Two" />
-			<var name="userLastNameSearchValue" value="Two" />
-			<var name="userScreenName" value="screen2" />
-		</execute>
-
-		<execute macro="Site#searchMemberCP">
-			<var name="userFirstName" value="userfnTest3" />
-			<var name="userLastName" value="Three" />
-			<var name="userLastNameSearchValue" value="Three" />
-			<var name="userScreenName" value="member3" />
-		</execute>
-	</command>
-
-	<command name="ViewMembershipRequestWithSiteMembershipScope" priority="3">
-		<property name="testray.component.names" value="Site Administration,Users and Organizations" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="membershipType" value="Restricted" />
-			<var name="siteName" value="Site Name 1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="membershipType" value="Restricted" />
-			<var name="siteName" value="Site Name 2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="Userfn Userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="UserBar#gotoDashboard" />
-
-		<execute macro="Site#joinViaMySitesPG">
-			<var name="membershipType" value="Restricted" />
-			<var name="siteName" value="Site Name 1" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name 1" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#viewSiteMembershipsRequest">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name 2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#viewNoSiteMembershipsRequest" />
-	</command>
-
-	<command name="ViewNoManualMembershipManagement" priority="3">
-		<property name="testray.component.names" value="Site Administration" />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Site#manageMembershipOptions">
-			<var name="allowManualMembershipManagement" value="true" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#manageMembershipOptions">
-			<var name="allowManualMembershipManagement" value="false" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute function="AssertNotVisible" locator1="ControlMenu#ADMIN_SITE_ADMINISTRATION_USERS" value1="Users" />
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Site Administration|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Member
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Administration,Users and Organizations|
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	Then Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+Scenario: Add Member Assign Site Role
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Administration,Users and Organizations|
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign Site Role CP
+		|resourceName|userfn userln|
+		|roleTitle|Site Content Reviewer|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	Then Site view Site Role Via Site Memberships CP
+		|resourceName|userfn userln|
+		|roleTitle|Site Content Reviewer|
+Scenario: Add Member Organization
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Administration,Users and Organizations|
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add CP
+		|orgName|Organization Name|
+		|orgType|Organization|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign Organization As Member CP
+		|orgName|Organization Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	Then Site view Member Organization CP
+		|orgName|Organization Name|
+Scenario: Add Members Site User
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|testray.component.names|Site Administration,Users and Organizations|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	Then Site view Member CP
+		|siteName|Site Name|
+		|siteScopeName|Site Name|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+Scenario: Add Member User Group
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Administration,User Groups|
+	When ProductMenu goto Control Panel Users
+		|portlet|User Groups|
+	And UserGroup add CP
+		|userGroupName|User Group Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User Group As Member CP
+		|userGroupName|User Group Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	Then Site view Member User Group CP
+		|userGroupName|User Group Name|
+Scenario: Add Member User Group Assign Site Role
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Administration,User Groups|
+	When ProductMenu goto Control Panel Users
+		|portlet|User Groups|
+	And UserGroup add CP
+		|userGroupName|User Group Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User Group As Member CP
+		|userGroupName|User Group Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Navigator goto Nav Item
+		|navItem|User Groups|
+	And Site assign Site Role CP
+		|resourceName|User Group Name|
+		|roleTitle|Site Content Reviewer|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Navigator goto Nav Item
+		|navItem|User Groups|
+	Then Site view Site Role Via Site Memberships CP
+		|resourceName|User Group Name|
+		|roleTitle|Site Content Reviewer|
+Scenario: Limit Membership Parent Site
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Administration|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|parentSiteName|Site Name|
+		|siteName|Child SiteName|
+	And Site limit Membership
+		|siteLimitMembership|Yes|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site view Member CP
+		|siteName|Site Name|
+		|siteScopeName|Site Name|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|Child SiteName|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|Child SiteName|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site view Member CP
+		|childSiteName|Site Name|
+		|siteScopeName|Child SiteName|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|Child SiteName|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site remove Member CP
+		|siteName|Child SiteName|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site remove Member CP
+		|siteName|Site Name|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|Child SiteName|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	Then Site view Limit Membership Parent Site CP
+		|siteName|Site Name|
+		|siteScopeName|Child SiteName|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+Scenario: Organizations View
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|test.name.skip.portal.instance|CPSitememberships#OrganizationsView|
+	And these properties
+		|testray.component.names|Site Administration,Users and Organizations|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Server Administration|
+	And ServerAdministration execute Server Resources Actions
+		|actionsDescription|Reindex all search indexes.|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add CP
+		|orgName|Organization Name 1|
+		|orgType|Organization|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization add Site CP
+		|orgName|Organization Name 1|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page|
+		|siteName|Organization Name 1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|allowManualMembershipManagement|true|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization add Member CP
+		|orgName|Organization Name 1|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userName|userfn userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization add Member CP
+		|orgName|Organization Name 1|
+		|userFirstName|Test|
+		|userLastName|Test|
+		|userName|Test Test|
+		|userScreenName|test|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization manage Membership Options In Sites
+		|allowManualMembershipManagement|true|
+		|orgName|Organization Name 1|
+	And ProductMenu goto Site
+		|site|Organization Name 1|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site view Member Organization CP
+		|orgName|Organization Name 1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add CP
+		|orgName|Organization Name 2|
+		|orgType|Organization|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add CP
+		|orgName|Organization Name 3|
+		|orgType|Organization|
+	And ProductMenu goto Site
+		|site|Organization Name 1|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|Organization Name 1|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign Organization As Member CP
+		|orgName|Organization Name 2|
+	And ProductMenu goto Site
+		|site|Organization Name 1|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site view Member Organization CP
+		|orgName|Organization Name 2|
+	And ProductMenu goto Site
+		|site|Organization Name 1|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign Organization As Member CP
+		|orgName|Organization Name 3|
+	And ProductMenu goto Site
+		|site|Organization Name 1|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	Then Site view Member Organization CP
+		|orgName|Organization Name 3|
+Scenario: Remove Member
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|testray.component.names|Site Administration,Users and Organizations|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	Then Site remove Member CP
+		|siteName|Site Name|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+Scenario: Site Membership Search Organization
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Administration,Users and Organizations|
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add CP
+		|orgName|Organization Name 1|
+		|orgType|Organization|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add CP
+		|orgName|Organization Name 2|
+		|orgType|Organization|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign Organization As Member CP
+		|orgName|Organization Name 1|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Navigator goto Nav Item
+		|navItem|Organizations|
+	And Site search Membership CP
+		|emptyResults|true|
+		|searchValue||
+	Then Site search Membership CP
+		|searchValue||
+Scenario: Site Membership Search User Group
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Administration,User Groups|
+	When ProductMenu goto Control Panel Users
+		|portlet|User Groups|
+	And UserGroup add CP
+		|userGroupName|User Group Name 1|
+	And ProductMenu goto Control Panel Users
+		|portlet|User Groups|
+	And UserGroup add CP
+		|userGroupName|User Group Name 2|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User Group As Member CP
+		|userGroupName|User Group Name 1|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Navigator goto Nav Item
+		|navItem|User Groups|
+	And Site search Membership CP
+		|emptyResults|true|
+		|searchValue||
+	Then Site search Membership CP
+		|searchValue||
+Scenario: Site Memberships Pagination
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Administration,Users and Organizations|
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add Multiple CP
+		|numberOfUsers|10|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site add All Members CP
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site view Member List CP
+		|usersEmailsList|userea1@liferay.com,userea2@liferay.com,userea3@liferay.com,userea4@liferay.com,userea5@liferay.com,userea6@liferay.com,userea7@liferay.com,userea8@liferay.com,userea9@liferay.com,userea10@liferay.com|
+	And Site view Member CP
+		|userFirstName|Test|
+		|userLastName|Test|
+		|userScreenName|test|
+	And Navigator goto Nav Item
+		|navItem|Users|
+	And AssertClick the value '20 Entries' at locator 'Pagination#ITEMS_PER_PAGE_SELECT'
+	And Click at locator 'Pagination#FIVE_ITEMS_PER_PAGE'
+	And AssertTextEquals the value 'Showing 1 to 5 of 11 entries.' at locator 'Pagination#CURRENT_PAGE_SELECT'
+	And Click at locator 'Pagination#NEXT_LINK'
+	And AssertTextEquals the value 'Showing 6 to 10 of 11 entries.' at locator 'Pagination#CURRENT_PAGE_SELECT'
+	And Site assert Member List Not Visible CP
+		|usersEmailsList|userfn1@liferay.com,userfn2@liferay.com,userfn3@liferay.com,userfn10@liferay.com|
+	And Site view Member List CP
+		|usersEmailsList|userea4@liferay.com,userea5@liferay.com,userea6@liferay.com,userea7@liferay.com,userea8@liferay.com|
+	And Site assert Member List Not Visible CP
+		|usersEmailsList|userea9@liferay.com|
+	And Click at locator 'Pagination#FIRST_LINK'
+	And AssertTextEquals the value 'Showing 1 to 5 of 11 entries.' at locator 'Pagination#CURRENT_PAGE_SELECT'
+	And Site view Member List CP
+		|usersEmailsList|userea1@liferay.com,userea2@liferay.com,userea3@liferay.com,userea10@liferay.com|
+	And Site assert Member List Not Visible CP
+		|usersEmailsList|userea4@liferay.com,userea5@liferay.com,userea6@liferay.com,userea7@liferay.com,userea8@liferay.com,userea9@liferay.com|
+	And Site view Member CP
+		|userFirstName|Test|
+		|userLastName|Test|
+		|userScreenName|test|
+	And Click at locator 'Pagination#LAST_LINK'
+	And AssertTextEquals the value 'Showing 11 to 11 of 11 entries.' at locator 'Pagination#CURRENT_PAGE_SELECT'
+	And Site assert Member List Not Visible CP
+		|usersEmailsList|userea1@liferay.com,userea2@liferay.com,userea3@liferay.com,userea4@liferay.com,userea5@liferay.com,userea6@liferay.com,userea7@liferay.com,userea8@liferay.com,userea10@liferay.com|
+	And Site view Member List CP
+		|usersEmailsList|userea9@liferay.com|
+	And Click at locator 'Pagination#PREVIOUS_LINK'
+	And AssertTextEquals the value 'Showing 6 to 10 of 11 entries.' at locator 'Pagination#CURRENT_PAGE_SELECT'
+	And Site assert Member List Not Visible CP
+		|usersEmailsList|userea1@liferay.com,userea2@liferay.com,userea3@liferay.com,userea9@liferay.com,userea10@liferay.com|
+	Then Site view Member List CP
+		|usersEmailsList|userea4@liferay.com,userea5@liferay.com,userea6@liferay.com,userea7@liferay.com,userea8@liferay.com|
+Scenario: Site Memberships Search
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Administration,Users and Organizations|
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|4568@liferay.com|
+		|userFirstName|userfnTest1|
+		|userLastName|One|
+		|userScreenName|user1|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|5670@liferay.com|
+		|userFirstName|userfnTest2|
+		|userLastName|Two|
+		|userScreenName|screen2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|9758@liferay.com|
+		|userFirstName|userfnTest3|
+		|userLastName|Three|
+		|userScreenName|member3|
+	And Navigator open URL
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site add All Members CP
+	And Site search Member CP
+		|userFirstName|userfnTest1|
+		|userFirstNameSearchValue|userfnTest1|
+		|userLastName|One|
+		|userScreenName|user1|
+	And Site search Member CP
+		|userFirstName|userfnTest2|
+		|userFirstNameSearchValue|userfnTest2|
+		|userLastName|Two|
+		|userScreenName|screen2|
+	And Site search Member CP
+		|userFirstName|userfnTest3|
+		|userFirstNameSearchValue|userfnTest3|
+		|userLastName|Three|
+		|userScreenName|member3|
+	And Site search Member CP
+		|userFirstName|userfnTest1|
+		|userFirstNameSearchValue|Test|
+		|userLastName|One|
+		|userScreenName|user1|
+	And Site view Member CP
+		|userFirstName|userfnTest2|
+		|userLastName|Two|
+		|userScreenName|screen2|
+	And Site view Member CP
+		|userFirstName|userfnTest3|
+		|userLastName|Three|
+		|userScreenName|member3|
+	And Site search Member CP
+		|userFirstName|userfnTest1|
+		|userLastName|One|
+		|userScreenName|user1|
+		|userScreenNameSearchValue|user1|
+	And Site search Member CP
+		|userFirstName|userfnTest2|
+		|userLastName|Two|
+		|userScreenName|screen2|
+		|userScreenNameSearchValue|screen|
+	And Site search Member CP
+		|userFirstName|userfnTest3|
+		|userLastName|Three|
+		|userScreenName|member3|
+		|userScreenNameSearchValue|member|
+	And Site search Member CP
+		|userEmailAddress|4568@liferay.com|
+		|userEmailAddressSearchValue|4|
+		|userFirstName|userfnTest1|
+		|userLastName|One|
+		|userScreenName|user1|
+	And Site search Member CP
+		|userEmailAddress|4568@liferay.com|
+		|userEmailAddressSearchValue|5|
+		|userFirstName|userfnTest1|
+		|userLastName|One|
+		|userScreenName|user1|
+	And Site view Member CP
+		|userFirstName|userfnTest2|
+		|userLastName|Two|
+		|userScreenName|screen2|
+	And Site view Member CP
+		|userFirstName|userfnTest3|
+		|userLastName|Three|
+		|userScreenName|member3|
+	And Site search Member CP
+		|userEmailAddress|4568@liferay.com|
+		|userEmailAddressSearchValue|6|
+		|userFirstName|userfnTest1|
+		|userLastName|One|
+		|userScreenName|user1|
+	And Site view Member CP
+		|userFirstName|userfnTest2|
+		|userLastName|Two|
+		|userScreenName|screen2|
+	And Site search Member CP
+		|userEmailAddress|5670@liferay.com|
+		|userEmailAddressSearchValue|7|
+		|userFirstName|userfnTest2|
+		|userLastName|Two|
+		|userScreenName|screen2|
+	And Site view Member CP
+		|userFirstName|userfnTest3|
+		|userLastName|Three|
+		|userScreenName|member3|
+	And Site search Member CP
+		|userEmailAddress|4568@liferay.com|
+		|userEmailAddressSearchValue|8|
+		|userFirstName|userfnTest1|
+		|userLastName|One|
+		|userScreenName|user1|
+	And Site view Member CP
+		|userFirstName|userfnTest3|
+		|userLastName|Three|
+		|userScreenName|member3|
+	And Site search Member CP
+		|userEmailAddress|5670@liferay.com|
+		|userEmailAddressSearchValue|0|
+		|userFirstName|userfnTest2|
+		|userLastName|Two|
+		|userScreenName|screen2|
+	And Site search Member CP
+		|userEmailAddress|4568@liferay.com|
+		|userEmailAddressSearchValue|9|
+		|userFirstName|userfnTest3|
+		|userLastName|Three|
+		|userScreenName|member3|
+	And Site search Member CP
+		|userFirstName|userfnTest1|
+		|userLastName|One|
+		|userLastNameSearchValue|One|
+		|userScreenName|user1|
+	And Site search Member CP
+		|userFirstName|userfnTest2|
+		|userLastName|Two|
+		|userLastNameSearchValue|Two|
+		|userScreenName|screen2|
+	Then Site search Member CP
+		|userFirstName|userfnTest3|
+		|userLastName|Three|
+		|userLastNameSearchValue|Three|
+		|userScreenName|member3|
+Scenario: View Membership Request With Site Membership Scope
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Administration,Users and Organizations|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|membershipType|Restricted|
+		|siteName|Site Name 1|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|membershipType|Restricted|
+		|siteName|Site Name 2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|Userfn Userln|
+		|userScreenName|usersn|
+	And UserBar goto Dashboard
+	And Site join Via My Sites PG
+		|membershipType|Restricted|
+		|siteName|Site Name 1|
+	And User logout And Login PG
+		|userLoginFullName|Test Test|
+	And ProductMenu goto Site
+		|site|Site Name 1|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site view Site Memberships Request
+		|userFirstName|userfn|
+		|userLastName|userln|
+	And ProductMenu goto Site
+		|site|Site Name 2|
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	Then Site view No Site Memberships Request
+Scenario: View No Manual Membership Management
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Administration|
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And Site manage Membership Options
+		|allowManualMembershipManagement|true|
+	And Navigator open URL
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site manage Membership Options
+		|allowManualMembershipManagement|false|
+	And Navigator open URL
+	And ProductMenu goto Site
+		|site|${siteName}|
+	Then AssertNotVisible the value 'Users' at locator 'ControlMenu#ADMIN_SITE_ADMINISTRATION_USERS'

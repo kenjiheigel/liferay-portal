@@ -1,2217 +1,2630 @@
-<definition component-name="portal-collaboration">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column" />
-	<property name="testray.main.component.name" value="Blogs" />
-
-	<var name="pageName" value="Blogs Page" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="AddBlogsEntryWithHTML" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntryWithHTML">
-			<var name="entryContent"><![CDATA[<b>Bold Type</b> <i>Italics</i>]]></var>
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Bold Type Italics" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContentBold" value="Bold Type" />
-			<var name="entryContentItalics" value="Italics" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="AddBlogsEntryWithInlineImage" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoAddEntry" />
-
-		<execute macro="BlogsEntry#addTitle">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#addContentWithInlineImage">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="navTab" value="Upload Image" />
-			<var name="uploadFileName" value="Document_1.jpg" />
-		</execute>
-
-		<execute function="Pause" locator1="1000" />
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewInlineImage">
-			<var name="uploadFileName" value="Document_1" />
-		</execute>
-	</command>
-
-	<command name="AllowMultiplePortletConfigurationsPerSite" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page 1" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page 2" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page 2" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#selectConfigurationIFrame" />
-
-		<execute macro="BlogsConfiguration#selectMaximumItemstoDisplay">
-			<var name="maximumItemsToDisplay" value="75" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#uncheckComments" />
-		<execute macro="BlogsConfiguration#uncheckRelatedAssets" />
-		<execute macro="BlogsConfiguration#uncheckSocialBookmarks" />
-
-		<execute macro="BlogsConfiguration#saveConfigurationIFrame" />
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#selectConfigurationIFrame" />
-
-		<execute macro="BlogsConfiguration#gotoRSS" />
-
-		<execute macro="BlogsConfiguration#uncheckRSSSubscriptionCheckbox" />
-
-		<execute macro="BlogsConfiguration#saveConfigurationIFrame" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page 2" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#selectConfigurationIFrame" />
-
-		<execute macro="BlogsConfiguration#viewDefaultConfiguration" />
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Liferay" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#selectConfigurationIFrame" />
-
-		<execute macro="BlogsConfiguration#gotoRSS" />
-
-		<execute macro="BlogsConfiguration#viewDefaultConfigurationRSS" />
-	</command>
-
-	<command name="ChangeBlogsEntryCoverImage" priority="3">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_1.jpg" />
-			<var name="dmDocumentTitle" value="Document_1.jpg" />
-		</execute>
-
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_2.jpg" />
-			<var name="dmDocumentTitle" value="Document_2.jpg" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntryWithUploadedCoverImage">
-			<var name="coverImageName" value="Document_3" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="navTab" value="Documents and Media" />
-			<var name="uploadFileName" value="Document_3.jpg" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="BlogsNavigator#gotoEntryCP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="uploadFileName" value="Document_3" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoBrowseImage" />
-
-		<execute macro="ItemSelector#searchDMImages">
-			<var name="imageFileName" value="Document_1.jpg" />
-		</execute>
-
-		<execute function="SelectFrame" locator1="ItemSelector#ITEM_SELECTOR_IFRAME" />
-
-		<var name="key_imageFileName" value="Document_1.jpg" />
-
-		<execute function="Click" locator1="ItemSelector#SELECT_FILE_IMAGE_PREVIEW" />
-
-		<execute function="SelectFrameTop" value1="relative=top" />
-
-		<execute function="AssertClick" locator1="ItemSelector#ADD_BUTTON" value1="Add" />
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="BlogsNavigator#gotoEntryCP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="uploadFileName" value="Document_1" />
-		</execute>
-	</command>
-
-	<command name="DeleteBlogsEntry" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsNavigator#moveToRecycleBinCP">
-			<var name="assetType" value="Blogs Entry" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#deleteCP">
-			<var name="assetName" value="Blogs Entry Title" />
-			<var name="assetType" value="Blogs Entry" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#viewDefaultCP">
-			<var name="assetName" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewDefaultCP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="DeleteDraftBlogsEntry" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addDraft">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="DMPortlet#setDescriptiveView" />
-
-		<execute macro="BlogsEntry#moveToRecycleBinDraftCP">
-			<var name="assetType" value="Blogs Entry" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#deleteCP">
-			<var name="assetName" value="Blogs Entry Title" />
-			<var name="assetType" value="Blogs Entry" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#viewDefaultCP">
-			<var name="assetName" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewDefaultCP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="DemoTrackbackURL" priority="4">
-		<property name="custom.properties" value="blogs.trackback.enabled=true" />
-		<property name="test.name.skip.portal.instance" value="BlogsUsecase#DemoTrackbackURL" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry1 Content" />
-			<var name="entryTitle" value="Blogs Entry1 Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#addWithTrackbackURLPG">
-			<var name="entryContent" value="Blogs Entry1 Content" />
-			<var name="entryContent2" value="Blogs Entry2 Content" />
-			<var name="entryTitle" value="Blogs Entry1 Title" />
-			<var name="entryTitle2" value="Blogs Entry2 Title" />
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry1 Content" />
-			<var name="entryTitle" value="Blogs Entry1 Title" />
-		</execute>
-
-		<execute macro="BlogsEntryComment#viewPG">
-			<var name="commentCount" value="1" />
-			<var name="entryComment" value="[...] Blogs Entry2 Content [...] Read More" />
-			<var name="userFullName" value="Test Test" />
-		</execute>
-
-		<execute function="AssertClick" locator1="Link#READ_MORE" value1="Read More" />
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="Blogs Entry2 Content" />
-			<var name="entryTitle" value="Blogs Entry2 Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Virtual Instances" />
-		</execute>
-
-		<execute macro="PortalInstances#addCP">
-			<var name="mailDomain" value="www.able.com" />
-			<var name="virtualHost" value="www.able.com" />
-			<var name="webId" value="www.able.com" />
-		</execute>
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@www.able.com" />
-			<var name="virtualHostsURL" value="http://www.able.com:8080" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteScopeSelected" value="true" />
-		</execute>
-
-		<execute macro="Navigator#gotoSpecificURLPage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="url" value="http://www.able.com:8080" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry3 Content" />
-			<var name="entryTitle" value="Blogs Entry3 Title" />
-		</execute>
-
-		<var name="key_entryTitle" value="Blogs Entry3 Title" />
-
-		<execute function="AssertClick" locator1="Blogs#ENTRY_COMMENTS_COUNT" value1="0" />
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="Blogs Entry3 Content" />
-			<var name="entryTitle" value="Blogs Entry3 Title" />
-		</execute>
-
-		<execute function="AssertTextEquals#assertValue" locator1="BlogsEntry#COMMENTS_TRACKBACK_URL" value1="http://www.able.com:8080/web/guest/blogs-page/-/blogs/trackback/blogs-entry3-title" />
-
-		<execute macro="Navigator#gotoSpecificURLPage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="url" value="http://www.able.com:8080" />
-		</execute>
-
-		<execute macro="BlogsEntry#addWithTrackbackURLPG">
-			<var name="entryContent" value="Blogs Entry3 Content" />
-			<var name="entryContent2" value="Blogs Entry4 Content" />
-			<var name="entryTitle" value="Blogs Entry3 Title" />
-			<var name="entryTitle2" value="Blogs Entry4 Title" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="http://www.able.com:8080" />
-			<var name="virtualHosts" value="true" />
-			<var name="virtualHostsURL" value="www.able.com:8080" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="Blogs Entry4 Content" />
-			<var name="entryTitle" value="Blogs Entry4 Title" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry3 Content" />
-			<var name="entryTitle" value="Blogs Entry3 Title" />
-		</execute>
-
-		<execute macro="BlogsEntryComment#viewPG">
-			<var name="commentCount" value="1" />
-			<var name="entryComment" value="[...] Blogs Entry4 Content [...] Read More" />
-			<var name="entryContent" value="Blogs Entry3 Content" />
-			<var name="entryTitle" value="Blogs Entry3 Title" />
-			<var name="userFullName" value="Test Test" />
-		</execute>
-
-		<execute function="AssertTextEquals#assertValue" locator1="BlogsEntry#COMMENTS_TRACKBACK_URL" value1="http://www.able.com:8080/web/guest/blogs-page/-/blogs/trackback/blogs-entry3-title" />
-
-		<execute function="AssertClick" locator1="Link#READ_MORE" value1="Read More" />
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="Blogs Entry4 Content" />
-			<var name="entryTitle" value="Blogs Entry4 Title" />
-		</execute>
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-			<var name="virtualHostsURL" value="http://www.able.com:8080" />
-		</execute>
-
-		<execute macro="Navigator#gotoSpecificURLPage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="url" value="http://www.able.com:8080" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry5 Content" />
-			<var name="entryTitle" value="Blogs Entry5 Title" />
-		</execute>
-
-		<var name="key_entryTitle" value="Blogs Entry5 Title" />
-
-		<execute function="AssertClick" locator1="Blogs#ENTRY_COMMENTS_COUNT" value1="0" />
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="Blogs Entry5 Content" />
-			<var name="entryTitle" value="Blogs Entry5 Title" />
-		</execute>
-
-		<execute function="AssertTextEquals#assertValue" locator1="BlogsEntry#COMMENTS_TRACKBACK_URL" value1="http://www.able.com:8080/web/guest/blogs-page/-/blogs/trackback/blogs-entry5-title" />
-
-		<execute macro="Navigator#gotoSpecificURLPage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="url" value="http://www.able.com:8080" />
-		</execute>
-
-		<execute macro="BlogsEntry#addWithTrackbackURLPG">
-			<var name="entryContent" value="Blogs Entry5 Content" />
-			<var name="entryContent2" value="Blogs Entry6 Content" />
-			<var name="entryTitle" value="Blogs Entry5 Title" />
-			<var name="entryTitle2" value="Blogs Entry6 Title" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="virtualHosts" value="true" />
-			<var name="virtualHostsURL" value="http://www.able.com:8080" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="Blogs Entry6 Content" />
-			<var name="entryTitle" value="Blogs Entry6 Title" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoPG">
-			<var name="entryContent" value="Blogs Entry5 Content" />
-			<var name="entryTitle" value="Blogs Entry5 Title" />
-		</execute>
-
-		<execute macro="BlogsEntryComment#viewPG">
-			<var name="commentCount" value="1" />
-			<var name="entryComment" value="[...] Blogs Entry6 Content [...] Read More" />
-			<var name="userFullName" value="Test Test" />
-		</execute>
-
-		<execute function="AssertTextEquals#assertValue" locator1="BlogsEntry#COMMENTS_TRACKBACK_URL" value1="http://www.able.com:8080/web/guest/blogs-page/-/blogs/trackback/blogs-entry5-title" />
-
-		<execute function="AssertClick" locator1="Link#READ_MORE" value1="Read More" />
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="Blogs Entry6 Content" />
-			<var name="entryTitle" value="Blogs Entry6 Title" />
-		</execute>
-	</command>
-
-	<command name="ImportBlogsCommentLAR" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntryComment#add">
-			<var name="entryComment" value="Blogs Entry Comment" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntryComment#viewPG">
-			<var name="commentCount" value="1" />
-			<var name="entryComment" value="Blogs Entry Comment" />
-			<var name="userFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="LAR#exportPortlet">
-			<var name="larFileName" value="Blogs.portlet.lar" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#tearDownCP" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="LAR#importPortlet">
-			<var name="larFileName" value="Blogs.portlet.lar" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntryComment#viewPG">
-			<var name="commentCount" value="1" />
-			<var name="entryComment" value="Blogs Entry Comment" />
-			<var name="userFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="RestoreBlogsEntry" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsNavigator#moveToRecycleBinCP">
-			<var name="assetType" value="Blogs Entry" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#restoreCP">
-			<var name="assetName" value="Blogs Entry Title" />
-			<var name="assetRestoreLocation" value="Blogs" />
-			<var name="assetType" value="Blogs Entry" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#viewDefaultCP">
-			<var name="assetName" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryCP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="StagingBlogs" priority="3">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addCP">
-			<var name="siteName" value="Site Name" />
-			<var name="siteType" value="Blank" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#activateStagingCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Blogs Page 1" />
-			<var name="pageStaging" value="true" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Blogs Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs Aggregator" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Blogs Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Recent Bloggers" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Blogs Page 2" />
-			<var name="pageStaging" value="true" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Blogs Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content 1" />
-			<var name="entryTitle" value="Blogs Entry Title 1" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Blogs Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="RecentBloggers#viewPG">
-			<var name="entryAuthor" value="Test Test" />
-			<var name="postCount" value="1" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry Content 1" />
-			<var name="entryTitle" value="Blogs Entry Title 1" />
-		</execute>
-
-		<var name="key_entryTitle" value="Blogs Entry Title 1" />
-
-		<execute function="AssertTextEquals" locator1="BlogsEntry#TITLE" value1="Blogs Entry Title 1" />
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="Blogs Entry Content 1" />
-			<var name="entryTitle" value="Blogs Entry Title 1" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoStagingSite" />
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#configurePublishToLive">
-			<var name="checkPageName" value="Blogs Page 1" />
-		</execute>
-
-		<execute macro="Staging#publishToLive" />
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Blogs Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="RecentBloggers#viewPG">
-			<var name="entryAuthor" value="Test Test" />
-			<var name="postCount" value="1" />
-		</execute>
-
-		<var name="key_entryTitle" value="Blogs Entry Title 1" />
-
-		<execute function="AssertTextEquals" locator1="BlogsEntry#TITLE" value1="Blogs Entry Title 1" />
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry Content 1" />
-			<var name="entryTitle" value="Blogs Entry Title 1" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="Blogs Entry Content 1" />
-			<var name="entryTitle" value="Blogs Entry Title 1" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Blogs Page 2" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#configureScopePG">
-			<var name="scopeSelection" value="Blogs Page 2 (Create New)" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Blogs Page 2" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content 2" />
-			<var name="entryTitle" value="Blogs Entry Title 2" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Blogs Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<var name="key_entryTitle" value="Blogs Entry Title 1" />
-
-		<execute function="AssertTextEquals" locator1="BlogsEntry#TITLE" value1="Blogs Entry Title 1" />
-
-		<var name="key_entryTitle" value="Blogs Entry Title 2" />
-
-		<execute function="AssertTextEquals" locator1="BlogsEntry#TITLE" value1="Blogs Entry Title 2" />
-
-		<execute macro="BlogsAggregatorPortlet#configureSelectionMethod">
-			<var name="selectionMethod" value="Scope" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Blogs Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<var name="key_entryTitle" value="Blogs Entry Title 1" />
-
-		<execute function="AssertTextEquals" locator1="BlogsEntry#TITLE" value1="Blogs Entry Title 1" />
-
-		<var name="key_entryTitle" value="Blogs Entry Title 2" />
-
-		<execute function="AssertElementNotPresent" locator1="BlogsEntry#TITLE" value1="Blogs Entry Title 2" />
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#configurePublishToLive">
-			<var name="checkPageName" value="Blogs Page 2" />
-			<var name="contentDateRange" value="All" />
-		</execute>
-
-		<execute macro="Staging#publishToLive" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page 2" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry Content 2" />
-			<var name="entryTitle" value="Blogs Entry Title 2" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="Blogs Entry Content 2" />
-			<var name="entryTitle" value="Blogs Entry Title 2" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<var name="key_entryTitle" value="Blogs Entry Title 1" />
-
-		<execute function="AssertTextEquals" locator1="BlogsEntry#TITLE" value1="Blogs Entry Title 1" />
-	</command>
-
-	<command name="StagingBlogsCP" priority="3">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addCP">
-			<var name="siteName" value="Site Name" />
-			<var name="siteType" value="Blank" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#activateStagingCP">
-			<var name="pageVersioningEnabled" value="true" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-			<var name="siteScopeName" value="Site Name" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedView" />
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#publishToLive" />
-	</command>
-
-	<command name="ViewBlogsEntriesAsGuestViaAP" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content 2" />
-			<var name="entryTitle" value="Blogs Entry Title 2" />
-		</execute>
-
-		<execute macro="BlogsEntry#removeViewPermissionsPG">
-			<var name="entryTitle" value="Blogs Entry Title 2" />
-			<var name="roleTitle" value="Guest" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoPG">
-			<var name="entryTitle" value="Blogs Entry Title 2" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntryViaAPPG">
-			<var name="assetTitle" value="Blogs Entry Title" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoEntryViaAPPG">
-			<var name="assetTitle" value="Blogs Entry Title 2" />
-			<var name="entryContent" value="Blogs Entry Content 2" />
-			<var name="entryTitle" value="Blogs Entry Title 2" />
-		</execute>
-	</command>
-
-	<command name="ViewBlogsEntriesWithSpecialCharactersOnPublicAndPrivateVirtualHostPages" priority="3">
-		<property name="test.name.skip.portal.instance" value="BlogsUsecase#ViewBlogsEntriesWithSpecialCharactersOnPublicAndPrivateVirtualHostPages" />
-
-		<var name="entryTitleSpecialCharacter" value="true" />
-		<var name="privatePageVirtualHostURL" value="www.baker.com" />
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle"><![CDATA[Blogs Entry Title `~!@#$%^&*(){}[],.<>/?|]]></var>
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle"><![CDATA[Blogs Entry Title `~!@#$%^&*(){}[],.<>/?|]]></var>
-		</execute>
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle"><![CDATA[Blogs Entry Title `~!@#$%^&*(){}[],.<>/?|]]></var>
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Virtual Instances" />
-		</execute>
-
-		<execute macro="PortalInstances#addCP">
-			<var name="mailDomain" value="www.able.com" />
-			<var name="virtualHost" value="www.able.com" />
-			<var name="webId" value="www.able.com" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@www.able.com" />
-			<var name="virtualHostsURL" value="http://www.able.com:8080" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#addVirtualHostsURLCP">
-			<var name="privatePageVirtualHostURL" value="${privatePageVirtualHostURL}" />
-			<var name="privateVirtualHosts" value="true" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Public Blogs Page" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Private Blogs Page" />
-			<var name="sitePagePrivacy" value="Private" />
-		</execute>
-
-		<execute macro="ProductMenuHelper#expandPanelSites" />
-
-		<execute function="Click" locator1="ProductMenu#SITES_COMPASS" />
-
-		<execute function="AssertTextEquals" locator1="ProductMenu#SITES_MODAL_TITLE" value1="Select Site" />
-
-		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
-
-		<var name="key_cardText" value="www.able.com" />
-
-		<execute function="AssertClick" locator1="Card#SPECIFIC_LARGE_TEXT_LINK" value1="www.able.com" />
-
-		<var name="key_siteName" value="www.able.com" />
-
-		<execute function="AssertTextEquals" locator1="SitePages#SITE_NAME" value1="www.able.com" />
-
-		<execute macro="ProductMenu#gotoPrivatePages" />
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry2 Content" />
-			<var name="entryTitle"><![CDATA[Blogs Entry Title `~!@#$%^&*(){}[],.<>/?|]]></var>
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry2 Content" />
-			<var name="entryTitle"><![CDATA[Blogs Entry Title `~!@#$%^&*(){}[],.<>/?|]]></var>
-		</execute>
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="Blogs Entry2 Content" />
-			<var name="entryTitle"><![CDATA[Blogs Entry Title `~!@#$%^&*(){}[],.<>/?|]]></var>
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@www.able.com" />
-			<var name="virtualHostsURL" value="http://www.baker.com:8080" />
-		</execute>
-
-		<execute macro="ProductMenuHelper#expandPanelSites" />
-
-		<execute function="Click" locator1="ProductMenu#SITES_COMPASS" />
-
-		<execute function="AssertTextEquals" locator1="ProductMenu#SITES_MODAL_TITLE" value1="Select Site" />
-
-		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
-
-		<var name="key_cardText" value="www.able.com" />
-
-		<execute function="AssertClick" locator1="Card#SPECIFIC_LARGE_TEXT_LINK" value1="www.able.com" />
-
-		<var name="key_siteName" value="www.able.com" />
-
-		<execute function="AssertTextEquals" locator1="SitePages#SITE_NAME" value1="www.able.com" />
-
-		<execute macro="ProductMenu#gotoPrivatePages" />
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry2 Content" />
-			<var name="entryTitle"><![CDATA[Blogs Entry Title `~!@#$%^&*(){}[],.<>/?|]]></var>
-		</execute>
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="Blogs Entry2 Content" />
-			<var name="entryTitle"><![CDATA[Blogs Entry Title `~!@#$%^&*(){}[],.<>/?|]]></var>
-		</execute>
-	</command>
-
-	<command name="ViewBlogsEntryAsPublishedViaAP" priority="3">
-		<execute macro="Page#add">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="Blogs#addViaAP">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntryViaAPPG">
-			<var name="assetTitle" value="Blogs Entry Title" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEditPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#editEntryContent">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryContentEdit" value="Blogs Entry Content Edit" />
-			<var name="entrySubtitle" value="" />
-			<var name="entrySubtitleEdit" value="Blogs Entry Subtitle Edit" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="entryTitleEdit" value="Blogs Entry Title Edit" />
-		</execute>
-
-		<execute macro="BlogsEntry#saveAsDraft" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoEntryViaAPPG">
-			<var name="assetTitle" value="Blogs Entry Title" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#publishDraftCP">
-			<var name="entryContent" value="Blogs Entry Content Edit" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle Edit" />
-			<var name="entryTitle" value="Blogs Entry Title Edit" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntryViaAPPG">
-			<var name="assetTitle" value="Blogs Entry Title Edit" />
-			<var name="entryContent" value="Blogs Entry Content Edit" />
-			<var name="entryTitle" value="Blogs Entry Title Edit" />
-		</execute>
-	</command>
-
-	<command name="ViewBlogsEntryFriendlyURLViaBlogsPortletAndRecentBloggers" priority="3">
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<var name="entryAuthor" value="Test Test" />
-		<var name="entryContent" value="Blogs Entry Content" />
-		<var name="entryTitle" value="Blogs Entry Title" />
-
-		<var method="StringUtil#replace('Blogs Entry Title', ' ', '-')" name="entryTitleURL" />
-
-		<var method="StringUtil#lowerCase('${entryTitleURL}')" name="entryTitleURL" />
-
-		<var method="StringUtil#replace('Blogs Page', ' ', '-')" name="pageNameURL" />
-
-		<var method="StringUtil#lowerCase('${pageNameURL}')" name="pageNameURL" />
-
-		<var name="friendlyURL" value="${portalURL}/web/guest/${pageNameURL}/-/blogs/${entryTitleURL}" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${friendlyURL}" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Recent Bloggers Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Recent Bloggers Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Recent Bloggers" />
-		</execute>
-
-		<var name="key_entryAuthor" value="Test Test" />
-
-		<execute function="AssertClick" locator1="Blogs#RECENT_BLOGGER_USER_NAME" value1="Test Test" />
-
-		<execute function="AssertLocation" value1="${friendlyURL}" />
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="ViewBlogsEntryOnMultiplePagesWithDefaultAndPageScope" priority="4">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Blogs Page2" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page2" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Blogs" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#selectConfigurationIFrame" />
-
-		<execute macro="BlogsNavigator#gotoConfigurationScopePG" />
-
-		<execute macro="BlogsConfiguration#selectScopePG">
-			<var name="scopeSelection" value="Blogs Page2" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page2" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#selectScopeCP">
-			<var name="scopeDefault" value="Default" />
-			<var name="scopeSelection" value="Blogs Page2" />
-		</execute>
-
-		<execute macro="Portlet#changeDisplayStyle">
-			<var name="displayStyle" value="List" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntryTable">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntryAuthorCP">
-			<var name="entryAuthorFullName" value="Test Test" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<var name="key_entryTitle" value="Blogs Entry Title" />
-
-		<execute function="AssertClick" locator1="Blogs#ENTRY_TABLE_TITLE" value1="Blogs Entry Title" />
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Blogs" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#selectConfigurationIFrame" />
-
-		<execute macro="BlogsNavigator#gotoConfigurationScopePG" />
-
-		<execute macro="BlogsConfiguration#viewScopeSelection">
-			<var name="scopeSelection" value="${siteName}" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Blogs" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#selectConfigurationIFrame" />
-
-		<execute macro="BlogsNavigator#gotoConfigurationScopePG" />
-
-		<execute macro="BlogsConfiguration#selectScopePG">
-			<var name="scopeSelection" value="Blogs Page2" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="ViewBlogsEntryWithCoverImageFromDMFolders" priority="3">
-		<execute macro="Page#add">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMFolder#addPG">
-			<var name="dmFolderDescription" value="DM Folder 1 Description" />
-			<var name="dmFolderName" value="DM Folder 1 Name" />
-		</execute>
-
-		<execute macro="DMPortlet#setDescriptiveView" />
-
-		<execute macro="DMNavigator#gotoFolder">
-			<var name="dmFolderName" value="DM Folder 1 Name" />
-		</execute>
-
-		<execute macro="DMFolder#addSubfolderPG">
-			<var name="dmSubFolderDescription" value="DM SubFolder 1 Description" />
-			<var name="dmSubFolderName" value="DM SubFolder 1 Name" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoFolder">
-			<var name="dmFolderName" value="DM SubFolder 1 Name" />
-		</execute>
-
-		<execute macro="DMDocument#addPG">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_1.jpg" />
-			<var name="dmDocumentTitle" value="Document_1.jpg" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMFolder#addPG">
-			<var name="dmFolderDescription" value="DM Folder 2 Description" />
-			<var name="dmFolderName" value="DM Folder 2 Name" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoFolder">
-			<var name="dmFolderName" value="DM Folder 2 Name" />
-		</execute>
-
-		<execute macro="DMFolder#addSubfolderPG">
-			<var name="dmSubFolderDescription" value="DM SubFolder 2 Description" />
-			<var name="dmSubFolderName" value="DM SubFolder 2 Name" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoFolder">
-			<var name="dmFolderName" value="DM SubFolder 2 Name" />
-		</execute>
-
-		<execute macro="DMDocument#addPG">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_2.jpg" />
-			<var name="dmDocumentTitle" value="Document_2.jpg" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Blogs#addEntryWithCoverImageFromDMFolders">
-			<var name="dmFolderName" value="DM Folder 1 Name" />
-			<var name="dmSubFolderName" value="DM SubFolder 1 Name" />
-			<var name="entryContent" value="Blogs Entry1 Content" />
-			<var name="entryTitle" value="Blogs Entry1 Title" />
-			<var name="imageFileName" value="Document_1.jpg" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Blogs#addEntryWithCoverImageFromDMFolders">
-			<var name="dmFolderName" value="DM Folder 2 Name" />
-			<var name="dmSubFolderName" value="DM SubFolder 2 Name" />
-			<var name="entryContent" value="Blogs Entry2 Content" />
-			<var name="entryTitle" value="Blogs Entry2 Title" />
-			<var name="imageFileName" value="Document_2.jpg" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry1 Content" />
-			<var name="entryTitle" value="Blogs Entry1 Title" />
-		</execute>
-
-		<var name="key_uploadFileName" value="Document_1" />
-
-		<execute function="AssertElementPresent" locator1="BlogsEntry#ENTRY_COVER_IMAGE" value1="Document_1" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry2 Content" />
-			<var name="entryTitle" value="Blogs Entry2 Title" />
-		</execute>
-
-		<var name="key_uploadFileName" value="Document_2" />
-
-		<execute function="AssertElementPresent" locator1="BlogsEntry#ENTRY_COVER_IMAGE" value1="Document_2" />
-	</command>
-
-	<command name="ViewBlogsEntryWithCoverImageUploadedToDM" priority="3">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntryWithUploadedCoverImage">
-			<var name="coverImageName" value="Document_1" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="navTab" value="Documents and Media" />
-			<var name="uploadFileName" value="Document_1.jpg" />
-		</execute>
-
-		<execute function="Pause" locator1="1000" />
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoDocumentCP">
-			<var name="dmDocumentTitle" value="Document_1.jpg" />
-		</execute>
-
-		<execute macro="DMDocument#viewCP">
-			<var name="dmDocumentTitle" value="Document_1.jpg" />
-		</execute>
-	</command>
-
-	<command name="ViewBlogsEntryWithCustomAbstract" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addWithCustomAbstract">
-			<var name="entryAbstractDescription" value="Blogs Entry Custom Abstract" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewAbstractDisplay">
-			<var name="entryAbstractDescription" value="Blogs Entry Custom Abstract" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryWithAbstractPG">
-			<var name="entryAbstractDescription" value="Blogs Entry Custom Abstract" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="ViewBlogsEntryWithDefaultAbstract" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addWithDefaultAbstract">
-			<var name="entryAbstractDescription" value="Blogs Entry Custom Abstract" />
-			<var name="entryContent" value="Liferay Portal provides an excellent platform for building web applications, websites, and portals, but it can additionally be used for a new category of web applications called social applications. The definition is simple: a social application is a web application that additionally leverages social identity, data, and features or services. In the left figure, the light blue squares represent a definition of a standard web application while the darker blue squares show the addition of social aspects." />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewAbstractDisplay">
-			<var name="entryAbstractDescription" value="Liferay Portal provides an excellent platform for building web applications, websites, and portals, but it can additionally be used for a new category of web applications called social applications. The definition is simple: a social application is a web application that additionally leverages social identity, data, and features or services. In the left figure, the light blue squares..." />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryWithAbstractPG">
-			<var name="entryAbstractDescription" value="Liferay Portal provides an excellent platform for building web applications, websites, and portals, but it can additionally be used for a new category of web applications called social applications. The definition is simple: a social application is a web application that additionally leverages social identity, data, and features or services. In the left figure, the light blue squares..." />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Liferay Portal provides an excellent platform for building web applications, websites, and portals, but it can additionally be used for a new category of web applications called social applications. The definition is simple: a social application is a web application that additionally leverages social identity, data, and features or services. In the left figure, the light blue squares represent a definition of a standard web application while the darker blue squares show the addition of social aspects." />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="ViewBlogsEntryWithFutureDisplayDateViaBlogsAggregator" priority="3">
-		<execute macro="Page#add">
-			<var name="pageName" value="Blogs Aggregator Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Aggregator Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs Aggregator" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoAddEntry" />
-
-		<execute macro="BlogsEntry#addEntryContent">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Configuration" />
-		</execute>
-
-		<execute macro="BlogsEntry#scheduleBlogEntry" />
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute function="AssertClick" locator1="MenuItem#NOT_PUBLISHED" value1="Not Published (1)" />
-
-		<execute macro="BlogsNavigator#gotoEditPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Configuration" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoAbstractField" />
-
-		<execute macro="BlogsEntry#addCustomAbstract">
-			<var name="entryAbstractDescription" value="Blogs Entry Abstract Description" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Aggregator Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoEntryViaBlogsAggregatorPG" />
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoEntryAsGuestPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Aggregator Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoEntryViaBlogsAggregatorPG" />
-
-		<execute function="Pause" locator1="180000" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Aggregator Page" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="Portlet#H2_HEADER" value1="Blogs Aggregator" />
-
-		<var name="key_entryAbstractDescription" value="Blogs Entry Abstract Description" />
-		<var name="key_entryTitle" value="Blogs Entry Title" />
-
-		<execute function="AssertTextEquals" locator1="BlogsEntry#TITLE" value1="Blogs Entry Title" />
-		<execute function="AssertTextEquals" locator1="BlogsEntry#CONTENT_ABSTRACT" value1="Blogs Entry Abstract Description" />
-
-		<execute function="AssertClick" locator1="BlogsEntry#TITLE_LINK" value1="Blogs Entry Title" />
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Aggregator Page" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="Portlet#H2_HEADER" value1="Blogs Aggregator" />
-		<execute function="AssertTextEquals" locator1="BlogsEntry#CONTENT_ABSTRACT" value1="Blogs Entry Abstract Description" />
-
-		<execute function="AssertClick" locator1="BlogsEntry#TITLE_LINK" value1="Blogs Entry Title" />
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="ViewBlogsEntryWithImageEditedViaItemSelector" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_2.jpg" />
-			<var name="dmDocumentTitle" value="Document_2.jpg" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoAddEntry" />
-
-		<execute macro="BlogsEntry#addTitle">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#addContent">
-			<var name="entryContent" value="Blogs Entry Content" />
-		</execute>
-
-		<execute macro="ImageEditor#gotoImageEditorViaItemSelector">
-			<var name="imageFileName" value="Document_2.jpg" />
-		</execute>
-
-		<execute macro="ImageEditor#rotateImage">
-			<var name="rotateDirection" value="right" />
-		</execute>
-
-		<execute function="Pause" locator1="3000" />
-
-		<execute macro="ImageEditor#applyChangesAndSaveFile" />
-
-		<execute function="SelectFrameTop" value1="relative=top" />
-
-		<execute function="AssertClick" locator1="ItemSelector#ADD_BUTTON" value1="Add" />
-
-		<execute function="AssertClick" locator1="Button#PUBLISH" value1="Publish" />
-
-		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="Blogs" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoDocumentCP">
-			<var name="dmDocumentTitle" value="Document_2 (1).jpg" />
-		</execute>
-
-		<execute macro="DMDocument#viewDocumentVersionNumberCmdPG">
-			<var name="dmDocumentVersionNumber" value="1.0" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewInlineImage">
-			<var name="uploadFileName"><![CDATA[Document_2+%281%29.jpg]]></var>
-		</execute>
-	</command>
-
-	<command name="ViewBlogsEntryWithUploadedCoverImage" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntryWithUploadedCoverImage">
-			<var name="coverImageName" value="Document_1" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="navTab" value="Upload Image" />
-			<var name="uploadFileName" value="Document_1.jpg" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="ViewNoBlogsDraftDisplaysInAP" priority="4">
-		<execute macro="Page#add">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntryViaAPPG">
-			<var name="assetTitle" value="Blogs Entry Title" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Blogs#editDraftPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryContentEdit" value="Blogs Entry Content Draft" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="entryTitleEdit" value="Blogs Entry Title Draft" />
-		</execute>
-
-		<execute function="Click" locator1="Icon#BACK" />
-
-		<execute function="AssertClick" locator1="MenuItem#NOT_PUBLISHED" value1="Not Published (1)" />
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="Blogs Entry Content Draft" />
-			<var name="entryTitle" value="Blogs Entry Title Draft" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewManualNoAssetsMessagePG" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute function="AssertClick" locator1="MenuItem#NOT_PUBLISHED" value1="Not Published (1)" />
-
-		<execute macro="Blogs#editEntryPG">
-			<var name="entryContent" value="Blogs Entry Content Draft" />
-			<var name="entryContentEdit" value="Blogs Entry Content Edit" />
-			<var name="entryTitle" value="Blogs Entry Title Draft" />
-			<var name="entryTitleEdit" value="Blogs Entry Title Edit" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntryViaAPPG">
-			<var name="assetTitle" value="Blogs Entry Title Edit" />
-			<var name="entryContent" value="Blogs Entry Content Edit" />
-			<var name="entryTitle" value="Blogs Entry Title Edit" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoEntryViaAPPG">
-			<var name="assetTitle" value="Blogs Entry Title Draft" />
-			<var name="entryContent" value="Blogs Entry Content Draft" />
-			<var name="entryTitle" value="Blogs Entry Title Draft" />
-		</execute>
-	</command>
-
-	<command name="ViewParentOrganizationViaSelectOrganizationInBlogsConfiguration" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs Aggregator" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="${portletName}" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<var name="key_portletName" value="Blogs Aggregator" />
-
-		<execute function="AssertTextPresent" locator1="Portlet#TITLE" value1="Blogs Aggregator" />
-
-		<execute function="SelectFrame" locator1="IFrame#CONFIGURATION" />
-
-		<execute function="AssertClick" locator1="NavBar#SETUP" value1="Setup" />
-
-		<execute function="AssertClick" locator1="Button#SELECT" value1="Select" />
-
-		<execute function="SelectFrame" value1="relative=top" />
-
-		<execute function="SelectFrame" locator1="UsersAndOrganizationsSelectOrganization#SELECT_ORGANIZATION_IFRAME" />
-
-		<execute function="AssertElementPresent" locator1="Message#EMPTY_INFO" />
-
-		<execute macro="IFrame#closeFrame" />
-
-		<var name="key_modalTitle" value="Configuration" />
-
-		<execute function="Click" locator1="Button#CLOSE_MODAL" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Organization#addCP">
-			<var name="orgName" value="Organization1 Name" />
-			<var name="orgType" value="Organization" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Organization#addCP">
-			<var name="orgName" value="Organization2 Name" />
-			<var name="orgType" value="Organization" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Organization#addCP">
-			<var name="orgName" value="Organization3 Name" />
-			<var name="orgType" value="Organization" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#searchCP">
-			<var name="orgName" value="Organization3 Name" />
-			<var name="searchTerm" value="Organization3 Name" />
-		</execute>
-
-		<execute macro="Organization#selectParentOrganizationCP">
-			<var name="orgName" value="Organization3 Name" />
-			<var name="parentOrgName" value="Organization1 Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#viewParentOrganizationCP">
-			<var name="orgName" value="Organization1 Name" />
-			<var name="parentOrgExist" value="true" />
-			<var name="parentOrgName" value="Organization1 Name" />
-			<var name="subOrgName" value="Organization3 Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="UsersAndOrganizationsNavigator#gotoOrganizations" />
-
-		<execute macro="Organization#viewParentOrganizationCP">
-			<var name="orgName" value="Organization2 Name" />
-			<var name="parentOrgExist" value="false" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsAggregatorPortlet#viewParentOrganizationPG">
-			<var name="orgName" value="Organization2 Name" />
-			<var name="parentOrgName" value="" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsAggregatorPortlet#viewParentOrganizationPG">
-			<var name="orgName" value="Organization3 Name" />
-			<var name="parentOrgName" value="Organization1 Name" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Blogs|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Blogs|
+		|pageName|Blogs Page|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Blogs Page|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	Then Portlet add PG
+		|portletName|Blogs|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Blogs Entry With HTML
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry With HTML
+		|entryContent||
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Bold Type Italics|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Entry
+		|entryContentBold|Bold Type|
+		|entryContentItalics|Italics|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+Scenario: Add Blogs Entry With Inline Image
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Add Entry
+	And BlogsEntry add Title
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry add Content With Inline Image
+		|entryContent|Blogs Entry Content|
+		|navTab|Upload Image|
+		|uploadFileName|Document_1.jpg|
+	And Pause at locator '1000'
+	And PortletEntry publish
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Inline Image
+		|uploadFileName|Document_1|
+Scenario: Allow Multiple Portlet Configurations Per Site
+Priority: 4
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Blank CP
+		|siteName|Site Name|
+	And Page add
+		|pageName|Site Page 1|
+	And Page add
+		|pageName|Site Page 2|
+	And Navigator goto Site Page
+		|pageName|Site Page 1|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Navigator goto Site Page
+		|pageName|Site Page 2|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Navigator goto Site Page
+		|pageName|Site Page 1|
+		|siteName|Site Name|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And BlogsConfiguration select Configuration I Frame
+	And BlogsConfiguration select Maximum Itemsto Display
+		|maximumItemsToDisplay|75|
+	And BlogsConfiguration uncheck Comments
+	And BlogsConfiguration uncheck Related Assets
+	And BlogsConfiguration uncheck Social Bookmarks
+	And BlogsConfiguration save Configuration I Frame
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And BlogsConfiguration select Configuration I Frame
+	And BlogsConfiguration goto RSS
+	And BlogsConfiguration uncheck RSS Subscription Checkbox
+	And BlogsConfiguration save Configuration I Frame
+	And Navigator goto Site Page
+		|pageName|Site Page 2|
+		|siteName|Site Name|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And BlogsConfiguration select Configuration I Frame
+	And BlogsConfiguration view Default Configuration
+	And Navigator open Site URL
+		|siteName|Liferay|
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And BlogsConfiguration select Configuration I Frame
+	And BlogsConfiguration goto RSS
+	Then BlogsConfiguration view Default Configuration RSS
+Scenario: Change Blogs Entry Cover Image
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMDocument add CP
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_1.jpg|
+		|dmDocumentTitle|Document_1.jpg|
+	And DMDocument add CP
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_2.jpg|
+		|dmDocumentTitle|Document_2.jpg|
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry With Uploaded Cover Image
+		|coverImageName|Document_3|
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+		|navTab|Documents and Media|
+		|uploadFileName|Document_3.jpg|
+	And PortletEntry publish
+	And BlogsNavigator goto Entry CP
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+		|uploadFileName|Document_3|
+	And BlogsNavigator goto Browse Image
+	And ItemSelector search DM Images
+		|imageFileName|Document_1.jpg|
+	And SelectFrame at locator 'ItemSelector#ITEM_SELECTOR_IFRAME'
+	And these variables
+		|key_imageFileName|Document_1.jpg|
+	And Click at locator 'ItemSelector#SELECT_FILE_IMAGE_PREVIEW'
+	And SelectFrameTop the value 'relative=top'
+	And AssertClick the value 'Add' at locator 'ItemSelector#ADD_BUTTON'
+	And PortletEntry publish
+	And BlogsNavigator goto Entry CP
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+		|uploadFileName|Document_1|
+Scenario: Delete Blogs Entry
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator move To Recycle Bin CP
+		|assetType|Blogs Entry|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin delete CP
+		|assetName|Blogs Entry Title|
+		|assetType|Blogs Entry|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin view Default CP
+		|assetName|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	Then BlogsEntry view Default CP
+		|entryTitle|Blogs Entry Title|
+Scenario: Delete Draft Blogs Entry
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Draft
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And DMPortlet set Descriptive View
+	And BlogsEntry move To Recycle Bin Draft CP
+		|assetType|Blogs Entry|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin delete CP
+		|assetName|Blogs Entry Title|
+		|assetType|Blogs Entry|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin view Default CP
+		|assetName|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	Then BlogsEntry view Default CP
+		|entryTitle|Blogs Entry Title|
+Scenario: Demo Trackback URL
+Priority: 4
+	Given these properties
+		|custom.properties|blogs.trackback.enabled=true|
+	When these properties
+		|test.name.skip.portal.instance|BlogsUsecase#DemoTrackbackURL|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Blogs add Entry
+		|entryContent|Blogs Entry1 Content|
+		|entryTitle|Blogs Entry1 Title|
+	And BlogsEntry add With Trackback URLPG
+		|entryContent|Blogs Entry1 Content|
+		|entryContent2|Blogs Entry2 Content|
+		|entryTitle|Blogs Entry1 Title|
+		|entryTitle2|Blogs Entry2 Title|
+		|pageName|Blogs Page|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry1 Content|
+		|entryTitle|Blogs Entry1 Title|
+	And BlogsEntryComment view PG
+		|commentCount|1|
+		|entryComment|[...] Blogs Entry2 Content [...] Read More|
+		|userFullName|Test Test|
+	And AssertClick the value 'Read More' at locator 'Link#READ_MORE'
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry2 Content|
+		|entryTitle|Blogs Entry2 Title|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Virtual Instances|
+	And PortalInstances add CP
+		|mailDomain|www.able.com|
+		|virtualHost|www.able.com|
+		|webId|www.able.com|
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|test@www.able.com|
+		|virtualHostsURL|http://www.able.com:8080|
+	And Page add
+		|pageName|Blogs Page|
+		|siteScopeSelected|true|
+	And Navigator goto Specific URL Page
+		|pageName|Blogs Page|
+		|url|http://www.able.com:8080|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry3 Content|
+		|entryTitle|Blogs Entry3 Title|
+	And these variables
+		|key_entryTitle|Blogs Entry3 Title|
+	And AssertClick the value '0' at locator 'Blogs#ENTRY_COMMENTS_COUNT'
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry3 Content|
+		|entryTitle|Blogs Entry3 Title|
+	And AssertTextEquals assert Value the value 'http://www.able.com:8080/web/guest/blogs-page/-/blogs/trackback/blogs-entry3-title' at locator 'BlogsEntry#COMMENTS_TRACKBACK_URL'
+	And Navigator goto Specific URL Page
+		|pageName|Blogs Page|
+		|url|http://www.able.com:8080|
+	And BlogsEntry add With Trackback URLPG
+		|entryContent|Blogs Entry3 Content|
+		|entryContent2|Blogs Entry4 Content|
+		|entryTitle|Blogs Entry3 Title|
+		|entryTitle2|Blogs Entry4 Title|
+		|pageName|Blogs Page|
+		|siteName|http://www.able.com:8080|
+		|virtualHosts|true|
+		|virtualHostsURL|www.able.com:8080|
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry4 Content|
+		|entryTitle|Blogs Entry4 Title|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry3 Content|
+		|entryTitle|Blogs Entry3 Title|
+	And BlogsEntryComment view PG
+		|commentCount|1|
+		|entryComment|[...] Blogs Entry4 Content [...] Read More|
+		|entryContent|Blogs Entry3 Content|
+		|entryTitle|Blogs Entry3 Title|
+		|userFullName|Test Test|
+	And AssertTextEquals assert Value the value 'http://www.able.com:8080/web/guest/blogs-page/-/blogs/trackback/blogs-entry3-title' at locator 'BlogsEntry#COMMENTS_TRACKBACK_URL'
+	And AssertClick the value 'Read More' at locator 'Link#READ_MORE'
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry4 Content|
+		|entryTitle|Blogs Entry4 Title|
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+		|virtualHostsURL|http://www.able.com:8080|
+	And Navigator goto Specific URL Page
+		|pageName|Blogs Page|
+		|url|http://www.able.com:8080|
+	And Blogs add Entry
+		|entryContent|Blogs Entry5 Content|
+		|entryTitle|Blogs Entry5 Title|
+	And these variables
+		|key_entryTitle|Blogs Entry5 Title|
+	And AssertClick the value '0' at locator 'Blogs#ENTRY_COMMENTS_COUNT'
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry5 Content|
+		|entryTitle|Blogs Entry5 Title|
+	And AssertTextEquals assert Value the value 'http://www.able.com:8080/web/guest/blogs-page/-/blogs/trackback/blogs-entry5-title' at locator 'BlogsEntry#COMMENTS_TRACKBACK_URL'
+	And Navigator goto Specific URL Page
+		|pageName|Blogs Page|
+		|url|http://www.able.com:8080|
+	And BlogsEntry add With Trackback URLPG
+		|entryContent|Blogs Entry5 Content|
+		|entryContent2|Blogs Entry6 Content|
+		|entryTitle|Blogs Entry5 Title|
+		|entryTitle2|Blogs Entry6 Title|
+		|pageName|Blogs Page|
+		|virtualHosts|true|
+		|virtualHostsURL|http://www.able.com:8080|
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry6 Content|
+		|entryTitle|Blogs Entry6 Title|
+	And BlogsNavigator goto PG
+		|entryContent|Blogs Entry5 Content|
+		|entryTitle|Blogs Entry5 Title|
+	And BlogsEntryComment view PG
+		|commentCount|1|
+		|entryComment|[...] Blogs Entry6 Content [...] Read More|
+		|userFullName|Test Test|
+	And AssertTextEquals assert Value the value 'http://www.able.com:8080/web/guest/blogs-page/-/blogs/trackback/blogs-entry5-title' at locator 'BlogsEntry#COMMENTS_TRACKBACK_URL'
+	And AssertClick the value 'Read More' at locator 'Link#READ_MORE'
+	Then BlogsEntry view PG
+		|entryContent|Blogs Entry6 Content|
+		|entryTitle|Blogs Entry6 Title|
+Scenario: Import Blogs Comment LAR
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Blogs Page|
+	When Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntryComment add
+		|entryComment|Blogs Entry Comment|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntryComment view PG
+		|commentCount|1|
+		|entryComment|Blogs Entry Comment|
+		|userFullName|Test Test|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And LAR export Portlet
+		|larFileName|Blogs.portlet.lar|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry tear Down CP
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And LAR import Portlet
+		|larFileName|Blogs.portlet.lar|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntryComment view PG
+		|commentCount|1|
+		|entryComment|Blogs Entry Comment|
+		|userFullName|Test Test|
+Scenario: Restore Blogs Entry
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator move To Recycle Bin CP
+		|assetType|Blogs Entry|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin restore CP
+		|assetName|Blogs Entry Title|
+		|assetRestoreLocation|Blogs|
+		|assetType|Blogs Entry|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin view Default CP
+		|assetName|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Entry CP
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+Scenario: Staging Blogs
+Priority: 3
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add CP
+		|siteName|Site Name|
+		|siteType|Blank|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging activate Staging CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Blogs Page 1|
+		|pageStaging|true|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Page 1|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Blogs Aggregator|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Page 1|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Recent Bloggers|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Blogs Page 2|
+		|pageStaging|true|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Page 1|
+		|siteName|Site Name|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content 1|
+		|entryTitle|Blogs Entry Title 1|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Page 1|
+		|siteName|Site Name|
+	And RecentBloggers view PG
+		|entryAuthor|Test Test|
+		|postCount|1|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content 1|
+		|entryTitle|Blogs Entry Title 1|
+	And these variables
+		|key_entryTitle|Blogs Entry Title 1|
+	And AssertTextEquals the value 'Blogs Entry Title 1' at locator 'BlogsEntry#TITLE'
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry Content 1|
+		|entryTitle|Blogs Entry Title 1|
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And ProductMenu goto Staging Site
+	And Staging goto Publish To Live
+	And Staging configure Publish To Live
+		|checkPageName|Blogs Page 1|
+	And Staging publish To Live
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Page 1|
+		|siteName|Site Name|
+	And RecentBloggers view PG
+		|entryAuthor|Test Test|
+		|postCount|1|
+	And these variables
+		|key_entryTitle|Blogs Entry Title 1|
+	And AssertTextEquals the value 'Blogs Entry Title 1' at locator 'BlogsEntry#TITLE'
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content 1|
+		|entryTitle|Blogs Entry Title 1|
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry Content 1|
+		|entryTitle|Blogs Entry Title 1|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Page 2|
+		|siteName|Site Name|
+	And BlogsConfiguration configure Scope PG
+		|scopeSelection|Blogs Page 2 (Create New)|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Page 2|
+		|siteName|Site Name|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content 2|
+		|entryTitle|Blogs Entry Title 2|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Page 1|
+		|siteName|Site Name|
+	And these variables
+		|key_entryTitle|Blogs Entry Title 1|
+	And AssertTextEquals the value 'Blogs Entry Title 1' at locator 'BlogsEntry#TITLE'
+	And these variables
+		|key_entryTitle|Blogs Entry Title 2|
+	And AssertTextEquals the value 'Blogs Entry Title 2' at locator 'BlogsEntry#TITLE'
+	And BlogsAggregatorPortlet configure Selection Method
+		|selectionMethod|Scope|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Page 1|
+		|siteName|Site Name|
+	And these variables
+		|key_entryTitle|Blogs Entry Title 1|
+	And AssertTextEquals the value 'Blogs Entry Title 1' at locator 'BlogsEntry#TITLE'
+	And these variables
+		|key_entryTitle|Blogs Entry Title 2|
+	And AssertElementNotPresent the value 'Blogs Entry Title 2' at locator 'BlogsEntry#TITLE'
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+		|site|Site Name|
+	And Staging goto Publish To Live
+	And Staging configure Publish To Live
+		|checkPageName|Blogs Page 2|
+		|contentDateRange|All|
+	And Staging publish To Live
+	And Navigator goto Site Page
+		|pageName|Blogs Page 2|
+		|siteName|Site Name|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content 2|
+		|entryTitle|Blogs Entry Title 2|
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry Content 2|
+		|entryTitle|Blogs Entry Title 2|
+	And Navigator goto Site Page
+		|pageName|Blogs Page 1|
+		|siteName|Site Name|
+	And these variables
+		|key_entryTitle|Blogs Entry Title 1|
+	Then AssertTextEquals the value 'Blogs Entry Title 1' at locator 'BlogsEntry#TITLE'
+Scenario: Staging Blogs CP
+Priority: 3
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add CP
+		|siteName|Site Name|
+		|siteType|Blank|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging activate Staging CP
+		|pageVersioningEnabled|true|
+		|siteName|Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+		|siteScopeName|Site Name|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And Navigator goto Staged View
+	And Staging goto Publish To Live
+	Then Staging publish To Live
+Scenario: View Blogs Entries As Guest Via AP
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Blogs Page|
+	When Portlet add PG
+		|portletName|Asset Publisher|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content 2|
+		|entryTitle|Blogs Entry Title 2|
+	And BlogsEntry remove View Permissions PG
+		|entryTitle|Blogs Entry Title 2|
+		|roleTitle|Guest|
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view No PG
+		|entryTitle|Blogs Entry Title 2|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry view Entry Via APPG
+		|assetTitle|Blogs Entry Title|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view No Entry Via APPG
+		|assetTitle|Blogs Entry Title 2|
+		|entryContent|Blogs Entry Content 2|
+		|entryTitle|Blogs Entry Title 2|
+Scenario: View Blogs Entries With Special Characters On Public And Private Virtual Host Pages
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|BlogsUsecase#ViewBlogsEntriesWithSpecialCharactersOnPublicAndPrivateVirtualHostPages|
+	When these variables
+		|entryTitleSpecialCharacter|true|
+	And these variables
+		|privatePageVirtualHostURL|www.baker.com|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle||
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle||
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle||
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Virtual Instances|
+	And PortalInstances add CP
+		|mailDomain|www.able.com|
+		|virtualHost|www.able.com|
+		|webId|www.able.com|
+	And User logout PG
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|test@www.able.com|
+		|virtualHostsURL|http://www.able.com:8080|
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Site add Virtual Hosts URLCP
+		|privatePageVirtualHostURL|${privatePageVirtualHostURL}|
+		|privateVirtualHosts|true|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+	And Page add
+		|pageName|Public Blogs Page|
+	And Page add
+		|pageName|Private Blogs Page|
+		|sitePagePrivacy|Private|
+	And ProductMenuHelper expand Panel Sites
+	And Click at locator 'ProductMenu#SITES_COMPASS'
+	And AssertTextEquals the value 'Select Site' at locator 'ProductMenu#SITES_MODAL_TITLE'
+	And SelectFrame at locator 'IFrame#DIALOG'
+	And these variables
+		|key_cardText|www.able.com|
+	And AssertClick the value 'www.able.com' at locator 'Card#SPECIFIC_LARGE_TEXT_LINK'
+	And these variables
+		|key_siteName|www.able.com|
+	And AssertTextEquals the value 'www.able.com' at locator 'SitePages#SITE_NAME'
+	And ProductMenu goto Private Pages
+	And Portlet add PG
+		|portletName|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry2 Content|
+		|entryTitle||
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry2 Content|
+		|entryTitle||
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry2 Content|
+		|entryTitle||
+	And User logout PG
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|test@www.able.com|
+		|virtualHostsURL|http://www.baker.com:8080|
+	And ProductMenuHelper expand Panel Sites
+	And Click at locator 'ProductMenu#SITES_COMPASS'
+	And AssertTextEquals the value 'Select Site' at locator 'ProductMenu#SITES_MODAL_TITLE'
+	And SelectFrame at locator 'IFrame#DIALOG'
+	And these variables
+		|key_cardText|www.able.com|
+	And AssertClick the value 'www.able.com' at locator 'Card#SPECIFIC_LARGE_TEXT_LINK'
+	And these variables
+		|key_siteName|www.able.com|
+	And AssertTextEquals the value 'www.able.com' at locator 'SitePages#SITE_NAME'
+	And ProductMenu goto Private Pages
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry2 Content|
+		|entryTitle||
+	Then BlogsEntry view PG
+		|entryContent|Blogs Entry2 Content|
+		|entryTitle||
+Scenario: View Blogs Entry As Published Via AP
+Priority: 3
+	Given Page add
+		|pageName|Asset Publisher Page|
+	When Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And Portlet add PG
+		|portletName|Asset Publisher|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And Blogs add Via AP
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And BlogsEntry view Entry Via APPG
+		|assetTitle|Blogs Entry Title|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Edit PG
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry edit Entry Content
+		|entryContent|Blogs Entry Content|
+		|entryContentEdit|Blogs Entry Content Edit|
+		|entrySubtitle||
+		|entrySubtitleEdit|Blogs Entry Subtitle Edit|
+		|entryTitle|Blogs Entry Title|
+		|entryTitleEdit|Blogs Entry Title Edit|
+	And BlogsEntry save As Draft
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And BlogsEntry view No Entry Via APPG
+		|assetTitle|Blogs Entry Title|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs publish Draft CP
+		|entryContent|Blogs Entry Content Edit|
+		|entrySubtitle|Blogs Entry Subtitle Edit|
+		|entryTitle|Blogs Entry Title Edit|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	Then BlogsEntry view Entry Via APPG
+		|assetTitle|Blogs Entry Title Edit|
+		|entryContent|Blogs Entry Content Edit|
+		|entryTitle|Blogs Entry Title Edit|
+Scenario: View Blogs Entry Friendly URL Via Blogs Portlet And Recent Bloggers
+Priority: 3
+	Given these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	When these variables
+		|entryAuthor|Test Test|
+	And these variables
+		|entryContent|Blogs Entry Content|
+	And these variables
+		|entryTitle|Blogs Entry Title|
+	And these variables
+		|entryTitleURL|StringUtil#replace('Blogs Entry Title', ' ', '-')|
+	And these variables
+		|entryTitleURL|StringUtil#lowerCase('${entryTitleURL}')|
+	And these variables
+		|pageNameURL|StringUtil#replace('Blogs Page', ' ', '-')|
+	And these variables
+		|pageNameURL|StringUtil#lowerCase('${pageNameURL}')|
+	And these variables
+		|friendlyURL|${portalURL}/web/guest/${pageNameURL}/-/blogs/${entryTitleURL}|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Navigator open Specific URL
+		|url|${friendlyURL}|
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Page add
+		|pageName|Recent Bloggers Page|
+	And Navigator goto Page
+		|pageName|Recent Bloggers Page|
+	And Portlet add PG
+		|portletName|Recent Bloggers|
+	And these variables
+		|key_entryAuthor|Test Test|
+	And AssertClick the value 'Test Test' at locator 'Blogs#RECENT_BLOGGER_USER_NAME'
+	And AssertLocation the value '${friendlyURL}'
+	Then BlogsEntry view PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+Scenario: View Blogs Entry On Multiple Pages With Default And Page Scope
+Priority: 4
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When Navigator goto Page
+		|pageName|Blogs Page|
+	And Page add
+		|pageName|Blogs Page2|
+	And Navigator goto Page
+		|pageName|Blogs Page2|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Portlet goto Portlet Options
+		|portletName|Blogs|
+		|portletOption|Configuration|
+	And BlogsConfiguration select Configuration I Frame
+	And BlogsNavigator goto Configuration Scope PG
+	And BlogsConfiguration select Scope PG
+		|scopeSelection|Blogs Page2|
+	And Navigator goto Page
+		|pageName|Blogs Page2|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry view No PG
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsConfiguration select Scope CP
+		|scopeDefault|Default|
+		|scopeSelection|Blogs Page2|
+	And Portlet change Display Style
+		|displayStyle|List|
+	And BlogsEntry view Entry Table
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view Entry Author CP
+		|entryAuthorFullName|Test Test|
+		|entryTitle|Blogs Entry Title|
+	And these variables
+		|key_entryTitle|Blogs Entry Title|
+	And AssertClick the value 'Blogs Entry Title' at locator 'Blogs#ENTRY_TABLE_TITLE'
+	And BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry view No PG
+		|entryTitle|Blogs Entry Title|
+	And Portlet goto Portlet Options
+		|portletName|Blogs|
+		|portletOption|Configuration|
+	And BlogsConfiguration select Configuration I Frame
+	And BlogsNavigator goto Configuration Scope PG
+	And BlogsConfiguration view Scope Selection
+		|scopeSelection|${siteName}|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Portlet goto Portlet Options
+		|portletName|Blogs|
+		|portletOption|Configuration|
+	And BlogsConfiguration select Configuration I Frame
+	And BlogsNavigator goto Configuration Scope PG
+	And BlogsConfiguration select Scope PG
+		|scopeSelection|Blogs Page2|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+Scenario: View Blogs Entry With Cover Image From DM Folders
+Priority: 3
+	Given Page add
+		|pageName|Documents and Media Page|
+	When Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Portlet add PG
+		|portletName|Documents and Media|
+	And DMFolder add PG
+		|dmFolderDescription|DM Folder 1 Description|
+		|dmFolderName|DM Folder 1 Name|
+	And DMPortlet set Descriptive View
+	And DMNavigator goto Folder
+		|dmFolderName|DM Folder 1 Name|
+	And DMFolder add Subfolder PG
+		|dmSubFolderDescription|DM SubFolder 1 Description|
+		|dmSubFolderName|DM SubFolder 1 Name|
+	And DMNavigator goto Folder
+		|dmFolderName|DM SubFolder 1 Name|
+	And DMDocument add PG
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_1.jpg|
+		|dmDocumentTitle|Document_1.jpg|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMFolder add PG
+		|dmFolderDescription|DM Folder 2 Description|
+		|dmFolderName|DM Folder 2 Name|
+	And DMNavigator goto Folder
+		|dmFolderName|DM Folder 2 Name|
+	And DMFolder add Subfolder PG
+		|dmSubFolderDescription|DM SubFolder 2 Description|
+		|dmSubFolderName|DM SubFolder 2 Name|
+	And DMNavigator goto Folder
+		|dmFolderName|DM SubFolder 2 Name|
+	And DMDocument add PG
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_2.jpg|
+		|dmDocumentTitle|Document_2.jpg|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Blogs add Entry With Cover Image From DM Folders
+		|dmFolderName|DM Folder 1 Name|
+		|dmSubFolderName|DM SubFolder 1 Name|
+		|entryContent|Blogs Entry1 Content|
+		|entryTitle|Blogs Entry1 Title|
+		|imageFileName|Document_1.jpg|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Blogs add Entry With Cover Image From DM Folders
+		|dmFolderName|DM Folder 2 Name|
+		|dmSubFolderName|DM SubFolder 2 Name|
+		|entryContent|Blogs Entry2 Content|
+		|entryTitle|Blogs Entry2 Title|
+		|imageFileName|Document_2.jpg|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry1 Content|
+		|entryTitle|Blogs Entry1 Title|
+	And these variables
+		|key_uploadFileName|Document_1|
+	And AssertElementPresent the value 'Document_1' at locator 'BlogsEntry#ENTRY_COVER_IMAGE'
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry2 Content|
+		|entryTitle|Blogs Entry2 Title|
+	And these variables
+		|key_uploadFileName|Document_2|
+	Then AssertElementPresent the value 'Document_2' at locator 'BlogsEntry#ENTRY_COVER_IMAGE'
+Scenario: View Blogs Entry With Cover Image Uploaded To DM
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry With Uploaded Cover Image
+		|coverImageName|Document_1|
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+		|navTab|Documents and Media|
+		|uploadFileName|Document_1.jpg|
+	And Pause at locator '1000'
+	And PortletEntry publish
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMNavigator goto Document CP
+		|dmDocumentTitle|Document_1.jpg|
+	Then DMDocument view CP
+		|dmDocumentTitle|Document_1.jpg|
+Scenario: View Blogs Entry With Custom Abstract
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add With Custom Abstract
+		|entryAbstractDescription|Blogs Entry Custom Abstract|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry view Abstract Display
+		|entryAbstractDescription|Blogs Entry Custom Abstract|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsNavigator goto Entry With Abstract PG
+		|entryAbstractDescription|Blogs Entry Custom Abstract|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+Scenario: View Blogs Entry With Default Abstract
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add With Default Abstract
+		|entryAbstractDescription|Blogs Entry Custom Abstract|
+		|entryContent|Liferay Portal provides an excellent platform for building web applications, websites, and portals, but it can additionally be used for a new category of web applications called social applications. The definition is simple: a social application is a web application that additionally leverages social identity, data, and features or services. In the left figure, the light blue squares represent a definition of a standard web application while the darker blue squares show the addition of social aspects.|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry view Abstract Display
+		|entryAbstractDescription|Liferay Portal provides an excellent platform for building web applications, websites, and portals, but it can additionally be used for a new category of web applications called social applications. The definition is simple: a social application is a web application that additionally leverages social identity, data, and features or services. In the left figure, the light blue squares...|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsNavigator goto Entry With Abstract PG
+		|entryAbstractDescription|Liferay Portal provides an excellent platform for building web applications, websites, and portals, but it can additionally be used for a new category of web applications called social applications. The definition is simple: a social application is a web application that additionally leverages social identity, data, and features or services. In the left figure, the light blue squares...|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Entry
+		|entryContent|Liferay Portal provides an excellent platform for building web applications, websites, and portals, but it can additionally be used for a new category of web applications called social applications. The definition is simple: a social application is a web application that additionally leverages social identity, data, and features or services. In the left figure, the light blue squares represent a definition of a standard web application while the darker blue squares show the addition of social aspects.|
+		|entryTitle|Blogs Entry Title|
+Scenario: View Blogs Entry With Future Display Date Via Blogs Aggregator
+Priority: 3
+	Given Page add
+		|pageName|Blogs Aggregator Page|
+	When Navigator goto Page
+		|pageName|Blogs Aggregator Page|
+	And Portlet add PG
+		|portletName|Blogs Aggregator|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Add Entry
+	And BlogsEntry add Entry Content
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Panel expand Panel
+		|panelHeading|Configuration|
+	And BlogsEntry schedule Blog Entry
+	And PortletEntry publish
+	And AssertClick the value 'Not Published (1)' at locator 'MenuItem#NOT_PUBLISHED'
+	And BlogsNavigator goto Edit PG
+		|entryTitle|Blogs Entry Title|
+	And Panel expand Panel
+		|panelHeading|Configuration|
+	And BlogsNavigator goto Abstract Field
+	And BlogsEntry add Custom Abstract
+		|entryAbstractDescription|Blogs Entry Abstract Description|
+	And PortletEntry publish
+	And Navigator goto Page
+		|pageName|Blogs Aggregator Page|
+	And BlogsEntry view No Entry Via Blogs Aggregator PG
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry view No Entry As Guest PG
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Aggregator Page|
+	And BlogsEntry view No Entry Via Blogs Aggregator PG
+	And Pause at locator '180000'
+	And Navigator goto Page
+		|pageName|Blogs Aggregator Page|
+	And AssertTextEquals the value 'Blogs Aggregator' at locator 'Portlet#H2_HEADER'
+	And these variables
+		|key_entryAbstractDescription|Blogs Entry Abstract Description|
+	And these variables
+		|key_entryTitle|Blogs Entry Title|
+	And AssertTextEquals the value 'Blogs Entry Title' at locator 'BlogsEntry#TITLE'
+	And AssertTextEquals the value 'Blogs Entry Abstract Description' at locator 'BlogsEntry#CONTENT_ABSTRACT'
+	And AssertClick the value 'Blogs Entry Title' at locator 'BlogsEntry#TITLE_LINK'
+	And BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And User login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Navigator goto Page
+		|pageName|Blogs Aggregator Page|
+	And AssertTextEquals the value 'Blogs Aggregator' at locator 'Portlet#H2_HEADER'
+	And AssertTextEquals the value 'Blogs Entry Abstract Description' at locator 'BlogsEntry#CONTENT_ABSTRACT'
+	And AssertClick the value 'Blogs Entry Title' at locator 'BlogsEntry#TITLE_LINK'
+	Then BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+Scenario: View Blogs Entry With Image Edited Via Item Selector
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMDocument add CP
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_2.jpg|
+		|dmDocumentTitle|Document_2.jpg|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Add Entry
+	And BlogsEntry add Title
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry add Content
+		|entryContent|Blogs Entry Content|
+	And ImageEditor goto Image Editor Via Item Selector
+		|imageFileName|Document_2.jpg|
+	And ImageEditor rotate Image
+		|rotateDirection|right|
+	And Pause at locator '3000'
+	And ImageEditor apply Changes And Save File
+	And SelectFrameTop the value 'relative=top'
+	And AssertClick the value 'Add' at locator 'ItemSelector#ADD_BUTTON'
+	And AssertClick the value 'Publish' at locator 'Button#PUBLISH'
+	And AssertTextEquals the value 'Blogs' at locator 'Portlet#HEADER'
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMNavigator goto Document CP
+		|dmDocumentTitle|Document_2 (1).jpg|
+	And DMDocument view Document Version Number Cmd PG
+		|dmDocumentVersionNumber|1.0|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Inline Image
+		|uploadFileName||
+Scenario: View Blogs Entry With Uploaded Cover Image
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry With Uploaded Cover Image
+		|coverImageName|Document_1|
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+		|navTab|Upload Image|
+		|uploadFileName|Document_1.jpg|
+	And PortletEntry publish
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+Scenario: View No Blogs Draft Displays In AP
+Priority: 4
+	Given Page add
+		|pageName|Asset Publisher Page|
+	When Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And Portlet add PG
+		|portletName|Asset Publisher|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And BlogsEntry view Entry Via APPG
+		|assetTitle|Blogs Entry Title|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Blogs edit Draft PG
+		|entryContent|Blogs Entry Content|
+		|entryContentEdit|Blogs Entry Content Draft|
+		|entryTitle|Blogs Entry Title|
+		|entryTitleEdit|Blogs Entry Title Draft|
+	And Click at locator 'Icon#BACK'
+	And AssertClick the value 'Not Published (1)' at locator 'MenuItem#NOT_PUBLISHED'
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry Content Draft|
+		|entryTitle|Blogs Entry Title Draft|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And AssetPublisherPortlet view Manual No Assets Message PG
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And AssertClick the value 'Not Published (1)' at locator 'MenuItem#NOT_PUBLISHED'
+	And Blogs edit Entry PG
+		|entryContent|Blogs Entry Content Draft|
+		|entryContentEdit|Blogs Entry Content Edit|
+		|entryTitle|Blogs Entry Title Draft|
+		|entryTitleEdit|Blogs Entry Title Edit|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And BlogsEntry view Entry Via APPG
+		|assetTitle|Blogs Entry Title Edit|
+		|entryContent|Blogs Entry Content Edit|
+		|entryTitle|Blogs Entry Title Edit|
+	Then BlogsEntry view No Entry Via APPG
+		|assetTitle|Blogs Entry Title Draft|
+		|entryContent|Blogs Entry Content Draft|
+		|entryTitle|Blogs Entry Title Draft|
+Scenario: View Parent Organization Via Select Organization In Blogs Configuration
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Blogs Page|
+	When Portlet add PG
+		|portletName|Blogs Aggregator|
+	And Portlet goto Portlet Options
+		|portletName|${portletName}|
+		|portletOption|Configuration|
+	And these variables
+		|key_portletName|Blogs Aggregator|
+	And AssertTextPresent the value 'Blogs Aggregator' at locator 'Portlet#TITLE'
+	And SelectFrame at locator 'IFrame#CONFIGURATION'
+	And AssertClick the value 'Setup' at locator 'NavBar#SETUP'
+	And AssertClick the value 'Select' at locator 'Button#SELECT'
+	And SelectFrame the value 'relative=top'
+	And SelectFrame at locator 'UsersAndOrganizationsSelectOrganization#SELECT_ORGANIZATION_IFRAME'
+	And AssertElementPresent at locator 'Message#EMPTY_INFO'
+	And IFrame close Frame
+	And these variables
+		|key_modalTitle|Configuration|
+	And Click at locator 'Button#CLOSE_MODAL'
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add CP
+		|orgName|Organization1 Name|
+		|orgType|Organization|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add CP
+		|orgName|Organization2 Name|
+		|orgType|Organization|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add CP
+		|orgName|Organization3 Name|
+		|orgType|Organization|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization search CP
+		|orgName|Organization3 Name|
+		|searchTerm|Organization3 Name|
+	And Organization select Parent Organization CP
+		|orgName|Organization3 Name|
+		|parentOrgName|Organization1 Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization view Parent Organization CP
+		|orgName|Organization1 Name|
+		|parentOrgExist|true|
+		|parentOrgName|Organization1 Name|
+		|subOrgName|Organization3 Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization view Parent Organization CP
+		|orgName|Organization2 Name|
+		|parentOrgExist|false|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsAggregatorPortlet view Parent Organization PG
+		|orgName|Organization2 Name|
+		|parentOrgName||
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	Then BlogsAggregatorPortlet view Parent Organization PG
+		|orgName|Organization3 Name|
+		|parentOrgName|Organization1 Name|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Blogs Page|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	Then Portlet add PG
+		|portletName|Blogs|
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Blogs Entry With HTML
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry With HTML
+		|entryContent||
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Bold Type Italics|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Entry
+		|entryContentBold|Bold Type|
+		|entryContentItalics|Italics|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+Scenario: Add Blogs Entry With Inline Image
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Add Entry
+	And BlogsEntry add Title
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry add Content With Inline Image
+		|entryContent|Blogs Entry Content|
+		|navTab|Upload Image|
+		|uploadFileName|Document_1.jpg|
+	And Pause at locator '1000'
+	And PortletEntry publish
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Inline Image
+		|uploadFileName|Document_1|
+Scenario: Allow Multiple Portlet Configurations Per Site
+Priority: 4
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Blank CP
+		|siteName|Site Name|
+	And Page add
+		|pageName|Site Page 1|
+	And Page add
+		|pageName|Site Page 2|
+	And Navigator goto Site Page
+		|pageName|Site Page 1|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Navigator goto Site Page
+		|pageName|Site Page 2|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Navigator goto Site Page
+		|pageName|Site Page 1|
+		|siteName|Site Name|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And BlogsConfiguration select Configuration I Frame
+	And BlogsConfiguration select Maximum Itemsto Display
+		|maximumItemsToDisplay|75|
+	And BlogsConfiguration uncheck Comments
+	And BlogsConfiguration uncheck Related Assets
+	And BlogsConfiguration uncheck Social Bookmarks
+	And BlogsConfiguration save Configuration I Frame
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And BlogsConfiguration select Configuration I Frame
+	And BlogsConfiguration goto RSS
+	And BlogsConfiguration uncheck RSS Subscription Checkbox
+	And BlogsConfiguration save Configuration I Frame
+	And Navigator goto Site Page
+		|pageName|Site Page 2|
+		|siteName|Site Name|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And BlogsConfiguration select Configuration I Frame
+	And BlogsConfiguration view Default Configuration
+	And Navigator open Site URL
+		|siteName|Liferay|
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And BlogsConfiguration select Configuration I Frame
+	And BlogsConfiguration goto RSS
+	Then BlogsConfiguration view Default Configuration RSS
+Scenario: Change Blogs Entry Cover Image
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMDocument add CP
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_1.jpg|
+		|dmDocumentTitle|Document_1.jpg|
+	And DMDocument add CP
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_2.jpg|
+		|dmDocumentTitle|Document_2.jpg|
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry With Uploaded Cover Image
+		|coverImageName|Document_3|
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+		|navTab|Documents and Media|
+		|uploadFileName|Document_3.jpg|
+	And PortletEntry publish
+	And BlogsNavigator goto Entry CP
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+		|uploadFileName|Document_3|
+	And BlogsNavigator goto Browse Image
+	And ItemSelector search DM Images
+		|imageFileName|Document_1.jpg|
+	And SelectFrame at locator 'ItemSelector#ITEM_SELECTOR_IFRAME'
+	And these variables
+		|key_imageFileName|Document_1.jpg|
+	And Click at locator 'ItemSelector#SELECT_FILE_IMAGE_PREVIEW'
+	And SelectFrameTop the value 'relative=top'
+	And AssertClick the value 'Add' at locator 'ItemSelector#ADD_BUTTON'
+	And PortletEntry publish
+	And BlogsNavigator goto Entry CP
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+		|uploadFileName|Document_1|
+Scenario: Delete Blogs Entry
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator move To Recycle Bin CP
+		|assetType|Blogs Entry|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin delete CP
+		|assetName|Blogs Entry Title|
+		|assetType|Blogs Entry|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin view Default CP
+		|assetName|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	Then BlogsEntry view Default CP
+		|entryTitle|Blogs Entry Title|
+Scenario: Delete Draft Blogs Entry
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Draft
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And DMPortlet set Descriptive View
+	And BlogsEntry move To Recycle Bin Draft CP
+		|assetType|Blogs Entry|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin delete CP
+		|assetName|Blogs Entry Title|
+		|assetType|Blogs Entry|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin view Default CP
+		|assetName|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	Then BlogsEntry view Default CP
+		|entryTitle|Blogs Entry Title|
+Scenario: Demo Trackback URL
+Priority: 4
+	Given these properties
+		|custom.properties|blogs.trackback.enabled=true|
+	When these properties
+		|test.name.skip.portal.instance|BlogsUsecase#DemoTrackbackURL|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Blogs add Entry
+		|entryContent|Blogs Entry1 Content|
+		|entryTitle|Blogs Entry1 Title|
+	And BlogsEntry add With Trackback URLPG
+		|entryContent|Blogs Entry1 Content|
+		|entryContent2|Blogs Entry2 Content|
+		|entryTitle|Blogs Entry1 Title|
+		|entryTitle2|Blogs Entry2 Title|
+		|pageName|Blogs Page|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry1 Content|
+		|entryTitle|Blogs Entry1 Title|
+	And BlogsEntryComment view PG
+		|commentCount|1|
+		|entryComment|[...] Blogs Entry2 Content [...] Read More|
+		|userFullName|Test Test|
+	And AssertClick the value 'Read More' at locator 'Link#READ_MORE'
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry2 Content|
+		|entryTitle|Blogs Entry2 Title|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Virtual Instances|
+	And PortalInstances add CP
+		|mailDomain|www.able.com|
+		|virtualHost|www.able.com|
+		|webId|www.able.com|
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|test@www.able.com|
+		|virtualHostsURL|http://www.able.com:8080|
+	And Page add
+		|pageName|Blogs Page|
+		|siteScopeSelected|true|
+	And Navigator goto Specific URL Page
+		|pageName|Blogs Page|
+		|url|http://www.able.com:8080|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry3 Content|
+		|entryTitle|Blogs Entry3 Title|
+	And these variables
+		|key_entryTitle|Blogs Entry3 Title|
+	And AssertClick the value '0' at locator 'Blogs#ENTRY_COMMENTS_COUNT'
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry3 Content|
+		|entryTitle|Blogs Entry3 Title|
+	And AssertTextEquals assert Value the value 'http://www.able.com:8080/web/guest/blogs-page/-/blogs/trackback/blogs-entry3-title' at locator 'BlogsEntry#COMMENTS_TRACKBACK_URL'
+	And Navigator goto Specific URL Page
+		|pageName|Blogs Page|
+		|url|http://www.able.com:8080|
+	And BlogsEntry add With Trackback URLPG
+		|entryContent|Blogs Entry3 Content|
+		|entryContent2|Blogs Entry4 Content|
+		|entryTitle|Blogs Entry3 Title|
+		|entryTitle2|Blogs Entry4 Title|
+		|pageName|Blogs Page|
+		|siteName|http://www.able.com:8080|
+		|virtualHosts|true|
+		|virtualHostsURL|www.able.com:8080|
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry4 Content|
+		|entryTitle|Blogs Entry4 Title|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry3 Content|
+		|entryTitle|Blogs Entry3 Title|
+	And BlogsEntryComment view PG
+		|commentCount|1|
+		|entryComment|[...] Blogs Entry4 Content [...] Read More|
+		|entryContent|Blogs Entry3 Content|
+		|entryTitle|Blogs Entry3 Title|
+		|userFullName|Test Test|
+	And AssertTextEquals assert Value the value 'http://www.able.com:8080/web/guest/blogs-page/-/blogs/trackback/blogs-entry3-title' at locator 'BlogsEntry#COMMENTS_TRACKBACK_URL'
+	And AssertClick the value 'Read More' at locator 'Link#READ_MORE'
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry4 Content|
+		|entryTitle|Blogs Entry4 Title|
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+		|virtualHostsURL|http://www.able.com:8080|
+	And Navigator goto Specific URL Page
+		|pageName|Blogs Page|
+		|url|http://www.able.com:8080|
+	And Blogs add Entry
+		|entryContent|Blogs Entry5 Content|
+		|entryTitle|Blogs Entry5 Title|
+	And these variables
+		|key_entryTitle|Blogs Entry5 Title|
+	And AssertClick the value '0' at locator 'Blogs#ENTRY_COMMENTS_COUNT'
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry5 Content|
+		|entryTitle|Blogs Entry5 Title|
+	And AssertTextEquals assert Value the value 'http://www.able.com:8080/web/guest/blogs-page/-/blogs/trackback/blogs-entry5-title' at locator 'BlogsEntry#COMMENTS_TRACKBACK_URL'
+	And Navigator goto Specific URL Page
+		|pageName|Blogs Page|
+		|url|http://www.able.com:8080|
+	And BlogsEntry add With Trackback URLPG
+		|entryContent|Blogs Entry5 Content|
+		|entryContent2|Blogs Entry6 Content|
+		|entryTitle|Blogs Entry5 Title|
+		|entryTitle2|Blogs Entry6 Title|
+		|pageName|Blogs Page|
+		|virtualHosts|true|
+		|virtualHostsURL|http://www.able.com:8080|
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry6 Content|
+		|entryTitle|Blogs Entry6 Title|
+	And BlogsNavigator goto PG
+		|entryContent|Blogs Entry5 Content|
+		|entryTitle|Blogs Entry5 Title|
+	And BlogsEntryComment view PG
+		|commentCount|1|
+		|entryComment|[...] Blogs Entry6 Content [...] Read More|
+		|userFullName|Test Test|
+	And AssertTextEquals assert Value the value 'http://www.able.com:8080/web/guest/blogs-page/-/blogs/trackback/blogs-entry5-title' at locator 'BlogsEntry#COMMENTS_TRACKBACK_URL'
+	And AssertClick the value 'Read More' at locator 'Link#READ_MORE'
+	Then BlogsEntry view PG
+		|entryContent|Blogs Entry6 Content|
+		|entryTitle|Blogs Entry6 Title|
+Scenario: Import Blogs Comment LAR
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Blogs Page|
+	When Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntryComment add
+		|entryComment|Blogs Entry Comment|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntryComment view PG
+		|commentCount|1|
+		|entryComment|Blogs Entry Comment|
+		|userFullName|Test Test|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And LAR export Portlet
+		|larFileName|Blogs.portlet.lar|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry tear Down CP
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And LAR import Portlet
+		|larFileName|Blogs.portlet.lar|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntryComment view PG
+		|commentCount|1|
+		|entryComment|Blogs Entry Comment|
+		|userFullName|Test Test|
+Scenario: Restore Blogs Entry
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator move To Recycle Bin CP
+		|assetType|Blogs Entry|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin restore CP
+		|assetName|Blogs Entry Title|
+		|assetRestoreLocation|Blogs|
+		|assetType|Blogs Entry|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin view Default CP
+		|assetName|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Entry CP
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+Scenario: Staging Blogs
+Priority: 3
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add CP
+		|siteName|Site Name|
+		|siteType|Blank|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging activate Staging CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Blogs Page 1|
+		|pageStaging|true|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Page 1|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Blogs Aggregator|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Page 1|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Recent Bloggers|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Blogs Page 2|
+		|pageStaging|true|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Page 1|
+		|siteName|Site Name|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content 1|
+		|entryTitle|Blogs Entry Title 1|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Page 1|
+		|siteName|Site Name|
+	And RecentBloggers view PG
+		|entryAuthor|Test Test|
+		|postCount|1|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content 1|
+		|entryTitle|Blogs Entry Title 1|
+	And these variables
+		|key_entryTitle|Blogs Entry Title 1|
+	And AssertTextEquals the value 'Blogs Entry Title 1' at locator 'BlogsEntry#TITLE'
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry Content 1|
+		|entryTitle|Blogs Entry Title 1|
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And ProductMenu goto Staging Site
+	And Staging goto Publish To Live
+	And Staging configure Publish To Live
+		|checkPageName|Blogs Page 1|
+	And Staging publish To Live
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Page 1|
+		|siteName|Site Name|
+	And RecentBloggers view PG
+		|entryAuthor|Test Test|
+		|postCount|1|
+	And these variables
+		|key_entryTitle|Blogs Entry Title 1|
+	And AssertTextEquals the value 'Blogs Entry Title 1' at locator 'BlogsEntry#TITLE'
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content 1|
+		|entryTitle|Blogs Entry Title 1|
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry Content 1|
+		|entryTitle|Blogs Entry Title 1|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Page 2|
+		|siteName|Site Name|
+	And BlogsConfiguration configure Scope PG
+		|scopeSelection|Blogs Page 2 (Create New)|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Page 2|
+		|siteName|Site Name|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content 2|
+		|entryTitle|Blogs Entry Title 2|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Page 1|
+		|siteName|Site Name|
+	And these variables
+		|key_entryTitle|Blogs Entry Title 1|
+	And AssertTextEquals the value 'Blogs Entry Title 1' at locator 'BlogsEntry#TITLE'
+	And these variables
+		|key_entryTitle|Blogs Entry Title 2|
+	And AssertTextEquals the value 'Blogs Entry Title 2' at locator 'BlogsEntry#TITLE'
+	And BlogsAggregatorPortlet configure Selection Method
+		|selectionMethod|Scope|
+	And Navigator goto Staged Site Page
+		|pageName|Blogs Page 1|
+		|siteName|Site Name|
+	And these variables
+		|key_entryTitle|Blogs Entry Title 1|
+	And AssertTextEquals the value 'Blogs Entry Title 1' at locator 'BlogsEntry#TITLE'
+	And these variables
+		|key_entryTitle|Blogs Entry Title 2|
+	And AssertElementNotPresent the value 'Blogs Entry Title 2' at locator 'BlogsEntry#TITLE'
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+		|site|Site Name|
+	And Staging goto Publish To Live
+	And Staging configure Publish To Live
+		|checkPageName|Blogs Page 2|
+		|contentDateRange|All|
+	And Staging publish To Live
+	And Navigator goto Site Page
+		|pageName|Blogs Page 2|
+		|siteName|Site Name|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content 2|
+		|entryTitle|Blogs Entry Title 2|
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry Content 2|
+		|entryTitle|Blogs Entry Title 2|
+	And Navigator goto Site Page
+		|pageName|Blogs Page 1|
+		|siteName|Site Name|
+	And these variables
+		|key_entryTitle|Blogs Entry Title 1|
+	Then AssertTextEquals the value 'Blogs Entry Title 1' at locator 'BlogsEntry#TITLE'
+Scenario: Staging Blogs CP
+Priority: 3
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add CP
+		|siteName|Site Name|
+		|siteType|Blank|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging activate Staging CP
+		|pageVersioningEnabled|true|
+		|siteName|Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+		|siteScopeName|Site Name|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And Navigator goto Staged View
+	And Staging goto Publish To Live
+	Then Staging publish To Live
+Scenario: View Blogs Entries As Guest Via AP
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Blogs Page|
+	When Portlet add PG
+		|portletName|Asset Publisher|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content 2|
+		|entryTitle|Blogs Entry Title 2|
+	And BlogsEntry remove View Permissions PG
+		|entryTitle|Blogs Entry Title 2|
+		|roleTitle|Guest|
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view No PG
+		|entryTitle|Blogs Entry Title 2|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry view Entry Via APPG
+		|assetTitle|Blogs Entry Title|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view No Entry Via APPG
+		|assetTitle|Blogs Entry Title 2|
+		|entryContent|Blogs Entry Content 2|
+		|entryTitle|Blogs Entry Title 2|
+Scenario: View Blogs Entries With Special Characters On Public And Private Virtual Host Pages
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|BlogsUsecase#ViewBlogsEntriesWithSpecialCharactersOnPublicAndPrivateVirtualHostPages|
+	When these variables
+		|entryTitleSpecialCharacter|true|
+	And these variables
+		|privatePageVirtualHostURL|www.baker.com|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle||
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle||
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle||
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Virtual Instances|
+	And PortalInstances add CP
+		|mailDomain|www.able.com|
+		|virtualHost|www.able.com|
+		|webId|www.able.com|
+	And User logout PG
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|test@www.able.com|
+		|virtualHostsURL|http://www.able.com:8080|
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Site add Virtual Hosts URLCP
+		|privatePageVirtualHostURL|${privatePageVirtualHostURL}|
+		|privateVirtualHosts|true|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+	And Page add
+		|pageName|Public Blogs Page|
+	And Page add
+		|pageName|Private Blogs Page|
+		|sitePagePrivacy|Private|
+	And ProductMenuHelper expand Panel Sites
+	And Click at locator 'ProductMenu#SITES_COMPASS'
+	And AssertTextEquals the value 'Select Site' at locator 'ProductMenu#SITES_MODAL_TITLE'
+	And SelectFrame at locator 'IFrame#DIALOG'
+	And these variables
+		|key_cardText|www.able.com|
+	And AssertClick the value 'www.able.com' at locator 'Card#SPECIFIC_LARGE_TEXT_LINK'
+	And these variables
+		|key_siteName|www.able.com|
+	And AssertTextEquals the value 'www.able.com' at locator 'SitePages#SITE_NAME'
+	And ProductMenu goto Private Pages
+	And Portlet add PG
+		|portletName|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry2 Content|
+		|entryTitle||
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry2 Content|
+		|entryTitle||
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry2 Content|
+		|entryTitle||
+	And User logout PG
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|test@www.able.com|
+		|virtualHostsURL|http://www.baker.com:8080|
+	And ProductMenuHelper expand Panel Sites
+	And Click at locator 'ProductMenu#SITES_COMPASS'
+	And AssertTextEquals the value 'Select Site' at locator 'ProductMenu#SITES_MODAL_TITLE'
+	And SelectFrame at locator 'IFrame#DIALOG'
+	And these variables
+		|key_cardText|www.able.com|
+	And AssertClick the value 'www.able.com' at locator 'Card#SPECIFIC_LARGE_TEXT_LINK'
+	And these variables
+		|key_siteName|www.able.com|
+	And AssertTextEquals the value 'www.able.com' at locator 'SitePages#SITE_NAME'
+	And ProductMenu goto Private Pages
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry2 Content|
+		|entryTitle||
+	Then BlogsEntry view PG
+		|entryContent|Blogs Entry2 Content|
+		|entryTitle||
+Scenario: View Blogs Entry As Published Via AP
+Priority: 3
+	Given Page add
+		|pageName|Asset Publisher Page|
+	When Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And Portlet add PG
+		|portletName|Asset Publisher|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And Blogs add Via AP
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And BlogsEntry view Entry Via APPG
+		|assetTitle|Blogs Entry Title|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Edit PG
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry edit Entry Content
+		|entryContent|Blogs Entry Content|
+		|entryContentEdit|Blogs Entry Content Edit|
+		|entrySubtitle||
+		|entrySubtitleEdit|Blogs Entry Subtitle Edit|
+		|entryTitle|Blogs Entry Title|
+		|entryTitleEdit|Blogs Entry Title Edit|
+	And BlogsEntry save As Draft
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And BlogsEntry view No Entry Via APPG
+		|assetTitle|Blogs Entry Title|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs publish Draft CP
+		|entryContent|Blogs Entry Content Edit|
+		|entrySubtitle|Blogs Entry Subtitle Edit|
+		|entryTitle|Blogs Entry Title Edit|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	Then BlogsEntry view Entry Via APPG
+		|assetTitle|Blogs Entry Title Edit|
+		|entryContent|Blogs Entry Content Edit|
+		|entryTitle|Blogs Entry Title Edit|
+Scenario: View Blogs Entry Friendly URL Via Blogs Portlet And Recent Bloggers
+Priority: 3
+	Given these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	When these variables
+		|entryAuthor|Test Test|
+	And these variables
+		|entryContent|Blogs Entry Content|
+	And these variables
+		|entryTitle|Blogs Entry Title|
+	And these variables
+		|entryTitleURL|StringUtil#replace('Blogs Entry Title', ' ', '-')|
+	And these variables
+		|entryTitleURL|StringUtil#lowerCase('${entryTitleURL}')|
+	And these variables
+		|pageNameURL|StringUtil#replace('Blogs Page', ' ', '-')|
+	And these variables
+		|pageNameURL|StringUtil#lowerCase('${pageNameURL}')|
+	And these variables
+		|friendlyURL|${portalURL}/web/guest/${pageNameURL}/-/blogs/${entryTitleURL}|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Navigator open Specific URL
+		|url|${friendlyURL}|
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Page add
+		|pageName|Recent Bloggers Page|
+	And Navigator goto Page
+		|pageName|Recent Bloggers Page|
+	And Portlet add PG
+		|portletName|Recent Bloggers|
+	And these variables
+		|key_entryAuthor|Test Test|
+	And AssertClick the value 'Test Test' at locator 'Blogs#RECENT_BLOGGER_USER_NAME'
+	And AssertLocation the value '${friendlyURL}'
+	Then BlogsEntry view PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+Scenario: View Blogs Entry On Multiple Pages With Default And Page Scope
+Priority: 4
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When Navigator goto Page
+		|pageName|Blogs Page|
+	And Page add
+		|pageName|Blogs Page2|
+	And Navigator goto Page
+		|pageName|Blogs Page2|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Portlet goto Portlet Options
+		|portletName|Blogs|
+		|portletOption|Configuration|
+	And BlogsConfiguration select Configuration I Frame
+	And BlogsNavigator goto Configuration Scope PG
+	And BlogsConfiguration select Scope PG
+		|scopeSelection|Blogs Page2|
+	And Navigator goto Page
+		|pageName|Blogs Page2|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry view No PG
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsConfiguration select Scope CP
+		|scopeDefault|Default|
+		|scopeSelection|Blogs Page2|
+	And Portlet change Display Style
+		|displayStyle|List|
+	And BlogsEntry view Entry Table
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view Entry Author CP
+		|entryAuthorFullName|Test Test|
+		|entryTitle|Blogs Entry Title|
+	And these variables
+		|key_entryTitle|Blogs Entry Title|
+	And AssertClick the value 'Blogs Entry Title' at locator 'Blogs#ENTRY_TABLE_TITLE'
+	And BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry view No PG
+		|entryTitle|Blogs Entry Title|
+	And Portlet goto Portlet Options
+		|portletName|Blogs|
+		|portletOption|Configuration|
+	And BlogsConfiguration select Configuration I Frame
+	And BlogsNavigator goto Configuration Scope PG
+	And BlogsConfiguration view Scope Selection
+		|scopeSelection|${siteName}|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Portlet goto Portlet Options
+		|portletName|Blogs|
+		|portletOption|Configuration|
+	And BlogsConfiguration select Configuration I Frame
+	And BlogsNavigator goto Configuration Scope PG
+	And BlogsConfiguration select Scope PG
+		|scopeSelection|Blogs Page2|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+Scenario: View Blogs Entry With Cover Image From DM Folders
+Priority: 3
+	Given Page add
+		|pageName|Documents and Media Page|
+	When Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Portlet add PG
+		|portletName|Documents and Media|
+	And DMFolder add PG
+		|dmFolderDescription|DM Folder 1 Description|
+		|dmFolderName|DM Folder 1 Name|
+	And DMPortlet set Descriptive View
+	And DMNavigator goto Folder
+		|dmFolderName|DM Folder 1 Name|
+	And DMFolder add Subfolder PG
+		|dmSubFolderDescription|DM SubFolder 1 Description|
+		|dmSubFolderName|DM SubFolder 1 Name|
+	And DMNavigator goto Folder
+		|dmFolderName|DM SubFolder 1 Name|
+	And DMDocument add PG
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_1.jpg|
+		|dmDocumentTitle|Document_1.jpg|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMFolder add PG
+		|dmFolderDescription|DM Folder 2 Description|
+		|dmFolderName|DM Folder 2 Name|
+	And DMNavigator goto Folder
+		|dmFolderName|DM Folder 2 Name|
+	And DMFolder add Subfolder PG
+		|dmSubFolderDescription|DM SubFolder 2 Description|
+		|dmSubFolderName|DM SubFolder 2 Name|
+	And DMNavigator goto Folder
+		|dmFolderName|DM SubFolder 2 Name|
+	And DMDocument add PG
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_2.jpg|
+		|dmDocumentTitle|Document_2.jpg|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Blogs add Entry With Cover Image From DM Folders
+		|dmFolderName|DM Folder 1 Name|
+		|dmSubFolderName|DM SubFolder 1 Name|
+		|entryContent|Blogs Entry1 Content|
+		|entryTitle|Blogs Entry1 Title|
+		|imageFileName|Document_1.jpg|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Blogs add Entry With Cover Image From DM Folders
+		|dmFolderName|DM Folder 2 Name|
+		|dmSubFolderName|DM SubFolder 2 Name|
+		|entryContent|Blogs Entry2 Content|
+		|entryTitle|Blogs Entry2 Title|
+		|imageFileName|Document_2.jpg|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry1 Content|
+		|entryTitle|Blogs Entry1 Title|
+	And these variables
+		|key_uploadFileName|Document_1|
+	And AssertElementPresent the value 'Document_1' at locator 'BlogsEntry#ENTRY_COVER_IMAGE'
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry2 Content|
+		|entryTitle|Blogs Entry2 Title|
+	And these variables
+		|key_uploadFileName|Document_2|
+	Then AssertElementPresent the value 'Document_2' at locator 'BlogsEntry#ENTRY_COVER_IMAGE'
+Scenario: View Blogs Entry With Cover Image Uploaded To DM
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry With Uploaded Cover Image
+		|coverImageName|Document_1|
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+		|navTab|Documents and Media|
+		|uploadFileName|Document_1.jpg|
+	And Pause at locator '1000'
+	And PortletEntry publish
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMNavigator goto Document CP
+		|dmDocumentTitle|Document_1.jpg|
+	Then DMDocument view CP
+		|dmDocumentTitle|Document_1.jpg|
+Scenario: View Blogs Entry With Custom Abstract
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add With Custom Abstract
+		|entryAbstractDescription|Blogs Entry Custom Abstract|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry view Abstract Display
+		|entryAbstractDescription|Blogs Entry Custom Abstract|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsNavigator goto Entry With Abstract PG
+		|entryAbstractDescription|Blogs Entry Custom Abstract|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+Scenario: View Blogs Entry With Default Abstract
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add With Default Abstract
+		|entryAbstractDescription|Blogs Entry Custom Abstract|
+		|entryContent|Liferay Portal provides an excellent platform for building web applications, websites, and portals, but it can additionally be used for a new category of web applications called social applications. The definition is simple: a social application is a web application that additionally leverages social identity, data, and features or services. In the left figure, the light blue squares represent a definition of a standard web application while the darker blue squares show the addition of social aspects.|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry view Abstract Display
+		|entryAbstractDescription|Liferay Portal provides an excellent platform for building web applications, websites, and portals, but it can additionally be used for a new category of web applications called social applications. The definition is simple: a social application is a web application that additionally leverages social identity, data, and features or services. In the left figure, the light blue squares...|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsNavigator goto Entry With Abstract PG
+		|entryAbstractDescription|Liferay Portal provides an excellent platform for building web applications, websites, and portals, but it can additionally be used for a new category of web applications called social applications. The definition is simple: a social application is a web application that additionally leverages social identity, data, and features or services. In the left figure, the light blue squares...|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Entry
+		|entryContent|Liferay Portal provides an excellent platform for building web applications, websites, and portals, but it can additionally be used for a new category of web applications called social applications. The definition is simple: a social application is a web application that additionally leverages social identity, data, and features or services. In the left figure, the light blue squares represent a definition of a standard web application while the darker blue squares show the addition of social aspects.|
+		|entryTitle|Blogs Entry Title|
+Scenario: View Blogs Entry With Future Display Date Via Blogs Aggregator
+Priority: 3
+	Given Page add
+		|pageName|Blogs Aggregator Page|
+	When Navigator goto Page
+		|pageName|Blogs Aggregator Page|
+	And Portlet add PG
+		|portletName|Blogs Aggregator|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Add Entry
+	And BlogsEntry add Entry Content
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Panel expand Panel
+		|panelHeading|Configuration|
+	And BlogsEntry schedule Blog Entry
+	And PortletEntry publish
+	And AssertClick the value 'Not Published (1)' at locator 'MenuItem#NOT_PUBLISHED'
+	And BlogsNavigator goto Edit PG
+		|entryTitle|Blogs Entry Title|
+	And Panel expand Panel
+		|panelHeading|Configuration|
+	And BlogsNavigator goto Abstract Field
+	And BlogsEntry add Custom Abstract
+		|entryAbstractDescription|Blogs Entry Abstract Description|
+	And PortletEntry publish
+	And Navigator goto Page
+		|pageName|Blogs Aggregator Page|
+	And BlogsEntry view No Entry Via Blogs Aggregator PG
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry view No Entry As Guest PG
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Aggregator Page|
+	And BlogsEntry view No Entry Via Blogs Aggregator PG
+	And Pause at locator '180000'
+	And Navigator goto Page
+		|pageName|Blogs Aggregator Page|
+	And AssertTextEquals the value 'Blogs Aggregator' at locator 'Portlet#H2_HEADER'
+	And these variables
+		|key_entryAbstractDescription|Blogs Entry Abstract Description|
+	And these variables
+		|key_entryTitle|Blogs Entry Title|
+	And AssertTextEquals the value 'Blogs Entry Title' at locator 'BlogsEntry#TITLE'
+	And AssertTextEquals the value 'Blogs Entry Abstract Description' at locator 'BlogsEntry#CONTENT_ABSTRACT'
+	And AssertClick the value 'Blogs Entry Title' at locator 'BlogsEntry#TITLE_LINK'
+	And BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And User login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Navigator goto Page
+		|pageName|Blogs Aggregator Page|
+	And AssertTextEquals the value 'Blogs Aggregator' at locator 'Portlet#H2_HEADER'
+	And AssertTextEquals the value 'Blogs Entry Abstract Description' at locator 'BlogsEntry#CONTENT_ABSTRACT'
+	And AssertClick the value 'Blogs Entry Title' at locator 'BlogsEntry#TITLE_LINK'
+	Then BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+Scenario: View Blogs Entry With Image Edited Via Item Selector
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMDocument add CP
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_2.jpg|
+		|dmDocumentTitle|Document_2.jpg|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Add Entry
+	And BlogsEntry add Title
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry add Content
+		|entryContent|Blogs Entry Content|
+	And ImageEditor goto Image Editor Via Item Selector
+		|imageFileName|Document_2.jpg|
+	And ImageEditor rotate Image
+		|rotateDirection|right|
+	And Pause at locator '3000'
+	And ImageEditor apply Changes And Save File
+	And SelectFrameTop the value 'relative=top'
+	And AssertClick the value 'Add' at locator 'ItemSelector#ADD_BUTTON'
+	And AssertClick the value 'Publish' at locator 'Button#PUBLISH'
+	And AssertTextEquals the value 'Blogs' at locator 'Portlet#HEADER'
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMNavigator goto Document CP
+		|dmDocumentTitle|Document_2 (1).jpg|
+	And DMDocument view Document Version Number Cmd PG
+		|dmDocumentVersionNumber|1.0|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Inline Image
+		|uploadFileName||
+Scenario: View Blogs Entry With Uploaded Cover Image
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Blogs add Entry With Uploaded Cover Image
+		|coverImageName|Document_1|
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+		|navTab|Upload Image|
+		|uploadFileName|Document_1.jpg|
+	And PortletEntry publish
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	Then BlogsEntry view Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+Scenario: View No Blogs Draft Displays In AP
+Priority: 4
+	Given Page add
+		|pageName|Asset Publisher Page|
+	When Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And Portlet add PG
+		|portletName|Asset Publisher|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And BlogsEntry view Entry Via APPG
+		|assetTitle|Blogs Entry Title|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Blogs edit Draft PG
+		|entryContent|Blogs Entry Content|
+		|entryContentEdit|Blogs Entry Content Draft|
+		|entryTitle|Blogs Entry Title|
+		|entryTitleEdit|Blogs Entry Title Draft|
+	And Click at locator 'Icon#BACK'
+	And AssertClick the value 'Not Published (1)' at locator 'MenuItem#NOT_PUBLISHED'
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry Content Draft|
+		|entryTitle|Blogs Entry Title Draft|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And AssetPublisherPortlet view Manual No Assets Message PG
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And AssertClick the value 'Not Published (1)' at locator 'MenuItem#NOT_PUBLISHED'
+	And Blogs edit Entry PG
+		|entryContent|Blogs Entry Content Draft|
+		|entryContentEdit|Blogs Entry Content Edit|
+		|entryTitle|Blogs Entry Title Draft|
+		|entryTitleEdit|Blogs Entry Title Edit|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And BlogsEntry view Entry Via APPG
+		|assetTitle|Blogs Entry Title Edit|
+		|entryContent|Blogs Entry Content Edit|
+		|entryTitle|Blogs Entry Title Edit|
+	Then BlogsEntry view No Entry Via APPG
+		|assetTitle|Blogs Entry Title Draft|
+		|entryContent|Blogs Entry Content Draft|
+		|entryTitle|Blogs Entry Title Draft|
+Scenario: View Parent Organization Via Select Organization In Blogs Configuration
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Blogs Page|
+	When Portlet add PG
+		|portletName|Blogs Aggregator|
+	And Portlet goto Portlet Options
+		|portletName|${portletName}|
+		|portletOption|Configuration|
+	And these variables
+		|key_portletName|Blogs Aggregator|
+	And AssertTextPresent the value 'Blogs Aggregator' at locator 'Portlet#TITLE'
+	And SelectFrame at locator 'IFrame#CONFIGURATION'
+	And AssertClick the value 'Setup' at locator 'NavBar#SETUP'
+	And AssertClick the value 'Select' at locator 'Button#SELECT'
+	And SelectFrame the value 'relative=top'
+	And SelectFrame at locator 'UsersAndOrganizationsSelectOrganization#SELECT_ORGANIZATION_IFRAME'
+	And AssertElementPresent at locator 'Message#EMPTY_INFO'
+	And IFrame close Frame
+	And these variables
+		|key_modalTitle|Configuration|
+	And Click at locator 'Button#CLOSE_MODAL'
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add CP
+		|orgName|Organization1 Name|
+		|orgType|Organization|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add CP
+		|orgName|Organization2 Name|
+		|orgType|Organization|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Organization add CP
+		|orgName|Organization3 Name|
+		|orgType|Organization|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization search CP
+		|orgName|Organization3 Name|
+		|searchTerm|Organization3 Name|
+	And Organization select Parent Organization CP
+		|orgName|Organization3 Name|
+		|parentOrgName|Organization1 Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization view Parent Organization CP
+		|orgName|Organization1 Name|
+		|parentOrgExist|true|
+		|parentOrgName|Organization1 Name|
+		|subOrgName|Organization3 Name|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And UsersAndOrganizationsNavigator goto Organizations
+	And Organization view Parent Organization CP
+		|orgName|Organization2 Name|
+		|parentOrgExist|false|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsAggregatorPortlet view Parent Organization PG
+		|orgName|Organization2 Name|
+		|parentOrgName||
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	Then BlogsAggregatorPortlet view Parent Organization PG
+		|orgName|Organization3 Name|
+		|parentOrgName|Organization1 Name|

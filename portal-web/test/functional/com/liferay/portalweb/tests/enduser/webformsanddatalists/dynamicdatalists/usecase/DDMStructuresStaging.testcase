@@ -1,108 +1,69 @@
-<definition component-name="portal-web-forms-and-data-lists">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Dynamic Data Lists" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Dynamic Data Lists|
 
-		<execute macro="User#firstLoginPG" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Staging Site Name|
+	And ProductMenu goto Site
+		|site|Staging Site Name|
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging activate Staging CP
+		|pageVersioningEnabled|true|
+		|siteName|Staging Site Name|
+	Then ProductMenu goto Site
+		|site|Staging Site Name|
 
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Staging Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Staging Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#activateStagingCP">
-			<var name="pageVersioningEnabled" value="true" />
-			<var name="siteName" value="Staging Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Staging Site Name" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="CreateWebContentStructureAndTemplate" priority="3">
-		<description message="This is a use case for LPS-68661." />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoManageStructures" />
-
-		<execute macro="WebContentStructures#addCP">
-			<var name="structureDescription" value="WC Structure Description" />
-			<var name="structureName" value="WC Structure Name" />
-		</execute>
-
-		<execute macro="DynamicDataMapping#addField">
-			<var name="field" value="Text" />
-			<var name="fieldFieldLabel" value="Text" />
-			<var name="fieldName" value="Text" />
-		</execute>
-
-		<execute macro="WebContentStructures#saveCP">
-			<var name="structureName" value="WC Structure Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoManageStructures" />
-
-		<execute macro="WebContentStructures#viewCP">
-			<var name="structureDescription" value="WC Structure Description" />
-			<var name="structureName" value="WC Structure Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoManageTemplates" />
-
-		<execute macro="WebContentTemplates#addCP">
-			<var name="templateDescription" value="WC Template Description" />
-			<var name="templateLanguage" value="ftl" />
-			<var name="templateName" value="WC Template Name" />
-		</execute>
-
-		<execute macro="WebContentTemplates#addStructure">
-			<var name="structureName" value="WC Structure Name" />
-			<var name="templateFieldNames" value="Text" />
-			<var name="templateLanguage" value="ftl" />
-		</execute>
-
-		<execute macro="WebContentTemplates#save" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentTemplates#viewCP">
-			<var name="templateDescription" value="WC Template Description" />
-			<var name="templateLanguage" value="ftl" />
-			<var name="templateName" value="WC Template Name" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Create Web Content Structure And Template
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Manage Structures
+	And WebContentStructures add CP
+		|structureDescription|WC Structure Description|
+		|structureName|WC Structure Name|
+	And DynamicDataMapping add Field
+		|field|Text|
+		|fieldFieldLabel|Text|
+		|fieldName|Text|
+	And WebContentStructures save CP
+		|structureName|WC Structure Name|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Manage Structures
+	And WebContentStructures view CP
+		|structureDescription|WC Structure Description|
+		|structureName|WC Structure Name|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Manage Templates
+	And WebContentTemplates add CP
+		|templateDescription|WC Template Description|
+		|templateLanguage|ftl|
+		|templateName|WC Template Name|
+	And WebContentTemplates add Structure
+		|structureName|WC Structure Name|
+		|templateFieldNames|Text|
+		|templateLanguage|ftl|
+	And WebContentTemplates save
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	Then WebContentTemplates view CP
+		|templateDescription|WC Template Description|
+		|templateLanguage|ftl|
+		|templateName|WC Template Name|

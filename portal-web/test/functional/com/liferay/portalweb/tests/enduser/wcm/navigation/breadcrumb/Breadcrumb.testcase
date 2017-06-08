@@ -1,719 +1,437 @@
-<definition component-name="portal-breadcrumb">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Breadcrumb" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="AddADTViaBreadcrumb" priority="4">
-		<property name="testray.component.names" value="Breadcrumb,Content and Appliation Templates" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Page Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Breadcrumb" />
-		</execute>
-
-		<execute macro="ApplicationDisplayTemplates#addPortletADTWithFieldEntry">
-			<var name="fieldName" value="Breadcrumb Entry" />
-			<var name="portletName" value="Breadcrumb" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Page Name" />
-		</execute>
-
-		<execute macro="ApplicationDisplayTemplates#selectPortletADT">
-			<var name="adtType" value="Breadcrumb" />
-			<var name="portletName" value="Breadcrumb" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Page Name" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Breadcrumb" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute function="SelectFrame" locator1="IFrame#CONFIGURATION" />
-
-		<execute function="AssertElementPresent" locator1="Select#DISPLAY_TEMPLATE" value1="Breadcrumb Test ADT" />
-	</command>
-
-	<command name="ConfigureNoSave" priority="3">
-		<property name="test.name.skip.portal.instance" value="Breadcrumb#ConfigureNoSave" />
-		<property name="testray.component.names" value="Breadcrumb" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Parent Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#addChild">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Parent Page Name" />
-			<var name="siteChildPageName" value="Child Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#gotoChildPagePG">
-			<var name="childPageName" value="Child Page Name" />
-			<var name="pageName" value="Parent Page Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Breadcrumb" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="Breadcrumb#configureBreadcrumb">
-			<var name="uncheckSetupName" value="Show Current Site,Show Guest Site,Show Page,Show Parent Sites,Show Application Breadcrumb" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewConfigurationPreview">
-			<var name="breadcrumbListNotVisible" value="Liferay,Site Name,Parent Page Name,Child Page Name" />
-		</execute>
-
-		<execute macro="Breadcrumb#configureBreadcrumb">
-			<var name="checkSetupName" value="Show Current Site,Show Guest Site,Show Page,Show Parent Sites,Show Application Breadcrumb" />
-			<var name="configureWithoutSave" value="true" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewConfigurationPreview">
-			<var name="breadcrumbListVisible" value="Liferay,Site Name,Parent Page Name,Child Page Name" />
-		</execute>
-	</command>
-
-	<command name="DisableShowApplicationBreadcrumb" priority="4">
-		<property name="custom.properties" value="default.layout.template.id=1_column" />
-		<property name="testray.component.names" value="Breadcrumb" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#addPG">
-			<var name="categoryName" value="MB Category Name" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#addSubcategoryPG">
-			<var name="categoryName" value="MB Category Name" />
-			<var name="subCategoryDescription" value="MB Subcategory Description" />
-			<var name="subCategoryName" value="MB Subcategory Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#addSubcategoryToSubcategoryPG">
-			<var name="categoryName" value="MB Category Name" />
-			<var name="subCategoryDescription" value="MB Subcategory Description" />
-			<var name="subCategoryName" value="MB Subcategory Name" />
-			<var name="subCategorySubCategoryName" value="MB Subcategory Subcategory Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Breadcrumb" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#viewSubcategoryPG">
-			<var name="categoryName" value="MB Category Name" />
-			<var name="subCategoryDescription" value="MB Subcategory Description" />
-			<var name="subCategoryName" value="MB Subcategory Name" />
-			<var name="threadsNumber" value="0" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#viewSubcategoryFromSubcategoryPG">
-			<var name="categoryName" value="MB Subcategory Name" />
-			<var name="subCategoryDescription" value="MB Subcategory Description" />
-			<var name="subCategoryName" value="MB Subcategory Subcategory Name" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewPG">
-			<var name="breadcrumbListVisible" value="Site Name,Page Name,MB Category Name,MB Subcategory Name,MB Subcategory Subcategory Name" />
-			<var name="pathLocator" value="EMBEDDED" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="Breadcrumb#configureBreadcrumb">
-			<var name="uncheckSetupName" value="Show Application Breadcrumb" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewConfigurationPreview">
-			<var name="breadcrumbListVisible" value="Site Name,Page Name" />
-		</execute>
-
-		<execute macro="Breadcrumb#saveDisplayPreview" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#viewSubcategoryPG">
-			<var name="categoryName" value="MB Category Name" />
-			<var name="subCategoryDescription" value="MB Subcategory Description" />
-			<var name="subCategoryName" value="MB Subcategory Name" />
-			<var name="threadsNumber" value="0" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#viewSubcategoryFromSubcategoryPG">
-			<var name="categoryName" value="MB Subcategory Name" />
-			<var name="subCategoryDescription" value="MB Subcategory Description" />
-			<var name="subCategoryName" value="MB Subcategory Subcategory Name" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewSpecificPG">
-			<var name="breadcrumbListNotVisible" value="MB Category Name,MB Subcategory Name,MB Subcategory Subcategory Name" />
-			<var name="breadcrumbListVisible" value="Site Name,Page Name" />
-			<var name="pathLocator" value="EMBEDDED" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="Breadcrumb#configureBreadcrumb">
-			<var name="checkSetupName" value="Show Application Breadcrumb" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewConfigurationPreview">
-			<var name="breadcrumbListVisible" value="Site Name,Page Name" />
-		</execute>
-
-		<execute macro="Breadcrumb#saveDisplayPreview" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#viewSubcategoryPG">
-			<var name="categoryName" value="MB Category Name" />
-			<var name="subCategoryDescription" value="MB Subcategory Description" />
-			<var name="subCategoryName" value="MB Subcategory Name" />
-			<var name="threadsNumber" value="0" />
-		</execute>
-
-		<execute macro="MessageboardsCategory#viewSubcategoryFromSubcategoryPG">
-			<var name="categoryName" value="MB Subcategory Name" />
-			<var name="subCategoryDescription" value="MB Subcategory Description" />
-			<var name="subCategoryName" value="MB Subcategory Subcategory Name" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewPG">
-			<var name="breadcrumbListVisible" value="Site Name,Page Name,MB Category Name,MB Subcategory Name,MB Subcategory Subcategory Name" />
-			<var name="pathLocator" value="EMBEDDED" />
-		</execute>
-	</command>
-
-	<command name="DisableShowCurrentSite" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="testray.component.names" value="Breadcrumb" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Parent Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#addChild">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Parent Page Name" />
-			<var name="siteChildPageName" value="Child Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#gotoChildPagePG">
-			<var name="childPageName" value="Child Page Name" />
-			<var name="pageName" value="Parent Page Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Breadcrumb" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewConfigurationPreview">
-			<var name="breadcrumbListVisible" value="Site Name,Parent Page Name,Child Page Name" />
-		</execute>
-
-		<execute macro="Breadcrumb#configureBreadcrumb">
-			<var name="uncheckSetupName" value="Show Current Site" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewConfigurationPreview">
-			<var name="breadcrumbListVisible" value="Parent Page Name,Child Page Name" />
-		</execute>
-
-		<execute macro="Breadcrumb#saveDisplayPreview" />
-
-		<execute macro="Breadcrumb#viewConfigurationPreview">
-			<var name="breadcrumbListVisible" value="Parent Page Name,Child Page Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#gotoChildPagePG">
-			<var name="childPageName" value="Child Page Name" />
-			<var name="pageName" value="Parent Page Name" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewPG">
-			<var name="breadcrumbListNotVisible" value="Site Name" />
-			<var name="breadcrumbListVisible" value="Parent Page Name,Child Page Name" />
-			<var name="pathLocator" value="PAGE" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="Breadcrumb#configureBreadcrumb">
-			<var name="checkSetupName" value="Show Current Site" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewConfigurationPreview">
-			<var name="breadcrumbListVisible" value="Site Name,Parent Page Name,Child Page Name" />
-		</execute>
-
-		<execute macro="Breadcrumb#saveDisplayPreview" />
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#gotoChildPagePG">
-			<var name="childPageName" value="Child Page Name" />
-			<var name="pageName" value="Parent Page Name" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewPG">
-			<var name="breadcrumbListVisible" value="Site Name,Parent Page Name,Child Page Name" />
-			<var name="pathLocator" value="PAGE" />
-		</execute>
-	</command>
-
-	<command name="DisableShowPage" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="testray.component.names" value="Breadcrumb" />
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-		</execute>
-
-		<execute macro="Page#addChild">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Welcome" />
-			<var name="siteChildPageName" value="Child Page Name" />
-			<var name="siteScopeSelected" value="true" />
-		</execute>
-
-		<execute macro="Page#gotoChildPagePG">
-			<var name="childPageName" value="Child Page Name" />
-			<var name="pageName" value="Welcome" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Breadcrumb" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewConfigurationPreview">
-			<var name="breadcrumbListVisible" value="Welcome,Child Page Name" />
-		</execute>
-
-		<execute macro="Breadcrumb#configureBreadcrumb">
-			<var name="checkSetupName" value="Show Guest Site" />
-		</execute>
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewConfigurationPreview">
-			<var name="breadcrumbListVisible" value="${siteName},Welcome,Child Page Name" />
-		</execute>
-
-		<execute macro="Breadcrumb#configureBreadcrumb">
-			<var name="uncheckSetupName" value="Show Page" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewConfigurationPreview">
-			<var name="breadcrumbListVisible" value="${siteName}" />
-		</execute>
-
-		<execute macro="Breadcrumb#saveDisplayPreview" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Page#gotoChildPagePG">
-			<var name="childPageName" value="Child Page Name" />
-			<var name="pageName" value="Welcome" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewPG">
-			<var name="breadcrumbListNotVisible" value="Welcome,Child Page Name" />
-			<var name="breadcrumbListVisible" value="${siteName}" />
-			<var name="pathLocator" value="PAGE" />
-		</execute>
-	</command>
-
-	<command name="DisableShowParentSite" priority="4">
-		<property name="testray.component.names" value="Breadcrumb" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="parentSiteName" value="Site Name" />
-			<var name="siteName" value="Child SiteName" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#searchInputCP">
-			<var name="siteName" value="Child SiteName" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Parent Page Name" />
-			<var name="siteName" value="Child SiteName" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#addChild">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Parent Page Name" />
-			<var name="siteChildPageName" value="Child Page Name" />
-			<var name="siteName" value="Child SiteName" />
-		</execute>
-
-		<execute macro="Page#gotoChildPagePG">
-			<var name="childPageName" value="Child Page Name" />
-			<var name="pageName" value="Parent Page Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Breadcrumb" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewConfigurationPreview">
-			<var name="breadcrumbListVisible" value="Site Name,Child SiteName,Parent Page Name,Child Page Name" />
-		</execute>
-
-		<execute macro="Breadcrumb#configureBreadcrumb">
-			<var name="uncheckSetupName" value="Show Parent Site" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewConfigurationPreview">
-			<var name="breadcrumbListVisible" value="Child SiteName,Parent Page Name,Child Page Name" />
-		</execute>
-
-		<execute macro="Breadcrumb#saveDisplayPreview" />
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Child SiteName" />
-		</execute>
-
-		<execute macro="Page#gotoChildPagePG">
-			<var name="childPageName" value="Child Page Name" />
-			<var name="pageName" value="Parent Page Name" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewPG">
-			<var name="breadcrumbListNotVisible" value="Site Name" />
-			<var name="breadcrumbListVisible" value="Child SiteName,Parent Page Name,Child Page Name" />
-			<var name="pathLocator" value="PAGE" />
-		</execute>
-	</command>
-
-	<command name="DisplayTemplateWithHorizontalStyle" priority="4">
-		<property name="testray.component.names" value="Breadcrumb" />
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-		</execute>
-
-		<execute macro="Page#addChild">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Welcome" />
-			<var name="siteChildPageName" value="Child Page Name" />
-			<var name="siteScopeSelected" value="true" />
-		</execute>
-
-		<execute macro="Page#gotoChildPagePG">
-			<var name="childPageName" value="Child Page Name" />
-			<var name="pageName" value="Welcome" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Breadcrumb" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="Breadcrumb#displayTemplatePreview">
-			<var name="displayStyle" value="Horizontal" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewConfigurationPreview">
-			<var name="breadcrumbListVisible" value="Welcome,Child Page Name" />
-		</execute>
-
-		<execute macro="Breadcrumb#saveDisplayPreview" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Page#gotoChildPagePG">
-			<var name="childPageName" value="Child Page Name" />
-			<var name="pageName" value="Welcome" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewPG">
-			<var name="breadcrumbListVisible" value="Welcome,Child Page Name" />
-			<var name="pathLocator" value="PAGE" />
-		</execute>
-	</command>
-
-	<command name="DisplayTemplateWithVerticalStyle" priority="4">
-		<property name="testray.component.names" value="Breadcrumb" />
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-		</execute>
-
-		<execute macro="Page#addChild">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Welcome" />
-			<var name="siteChildPageName" value="Child Page Name" />
-			<var name="siteScopeSelected" value="true" />
-		</execute>
-
-		<execute macro="Page#gotoChildPagePG">
-			<var name="childPageName" value="Child Page Name" />
-			<var name="pageName" value="Welcome" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Breadcrumb" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="Breadcrumb#displayTemplatePreview">
-			<var name="displayStyle" value="Vertical" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewConfigurationPreview">
-			<var name="breadcrumbListVisible" value="Welcome,Child Page Name" />
-		</execute>
-
-		<execute macro="Breadcrumb#saveDisplayPreview" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Page#gotoChildPagePG">
-			<var name="childPageName" value="Child Page Name" />
-			<var name="pageName" value="Welcome" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewPG">
-			<var name="breadcrumbListVisible" value="Welcome,Child Page Name" />
-			<var name="pathLocator" value="PAGE" />
-		</execute>
-	</command>
-
-	<command name="EnableShowGuestSite" priority="4">
-		<property name="test.name.skip.portal.instance" value="Breadcrumb#EnableShowGuestSite" />
-		<property name="testray.component.names" value="Breadcrumb" />
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-		</execute>
-
-		<execute macro="Page#addChild">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Welcome" />
-			<var name="siteChildPageName" value="Child Page Name" />
-			<var name="siteScopeSelected" value="true" />
-		</execute>
-
-		<execute macro="Page#gotoChildPagePG">
-			<var name="childPageName" value="Child Page Name" />
-			<var name="pageName" value="Welcome" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Breadcrumb" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewConfigurationPreview">
-			<var name="breadcrumbListVisible" value="Welcome,Child Page Name" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewConfigurationPreview">
-			<var name="breadcrumbListNotVisible" value="Liferay" />
-		</execute>
-
-		<execute macro="Breadcrumb#configureBreadcrumb">
-			<var name="checkSetupName" value="Show Guest Site" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewConfigurationPreview">
-			<var name="breadcrumbListVisible" value="Liferay,Welcome,Child Page Name" />
-		</execute>
-
-		<execute macro="Breadcrumb#saveDisplayPreview" />
-
-		<execute macro="Breadcrumb#viewConfigurationPreview">
-			<var name="breadcrumbListVisible" value="Liferay,Welcome,Child Page Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Page#gotoChildPagePG">
-			<var name="childPageName" value="Child Page Name" />
-			<var name="pageName" value="Welcome" />
-		</execute>
-
-		<execute macro="Breadcrumb#viewPG">
-			<var name="breadcrumbListVisible" value="Liferay,Welcome,Child Page Name" />
-			<var name="pathLocator" value="PAGE" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Breadcrumb|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add ADT Via Breadcrumb
+Priority: 4
+	Given these properties
+		|testray.component.names|Breadcrumb,Content and Appliation Templates|
+	When Page add
+		|pageName|Page Name|
+	And Portlet add PG
+		|portletName|Breadcrumb|
+	And ApplicationDisplayTemplates add Portlet ADT With Field Entry
+		|fieldName|Breadcrumb Entry|
+		|portletName|Breadcrumb|
+	And Navigator goto Page
+		|pageName|Page Name|
+	And ApplicationDisplayTemplates select Portlet ADT
+		|adtType|Breadcrumb|
+		|portletName|Breadcrumb|
+	And Navigator goto Page
+		|pageName|Page Name|
+	And Portlet goto Portlet Options
+		|portletName|Breadcrumb|
+		|portletOption|Configuration|
+	And SelectFrame at locator 'IFrame#CONFIGURATION'
+	Then AssertElementPresent the value 'Breadcrumb Test ADT' at locator 'Select#DISPLAY_TEMPLATE'
+Scenario: Configure No Save
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|Breadcrumb#ConfigureNoSave|
+	When these properties
+		|testray.component.names|Breadcrumb|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Parent Page Name|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add Child
+		|page|Public Pages|
+		|pageName|Parent Page Name|
+		|siteChildPageName|Child Page Name|
+		|siteName|Site Name|
+	And Page goto Child Page PG
+		|childPageName|Child Page Name|
+		|pageName|Parent Page Name|
+	And Portlet add PG
+		|portletName|Breadcrumb|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And Breadcrumb configure Breadcrumb
+		|uncheckSetupName|Show Current Site,Show Guest Site,Show Page,Show Parent Sites,Show Application Breadcrumb|
+	And Breadcrumb view Configuration Preview
+		|breadcrumbListNotVisible|Liferay,Site Name,Parent Page Name,Child Page Name|
+	And Breadcrumb configure Breadcrumb
+		|checkSetupName|Show Current Site,Show Guest Site,Show Page,Show Parent Sites,Show Application Breadcrumb|
+		|configureWithoutSave|true|
+	Then Breadcrumb view Configuration Preview
+		|breadcrumbListVisible|Liferay,Site Name,Parent Page Name,Child Page Name|
+Scenario: Disable Show Application Breadcrumb
+Priority: 4
+	Given these properties
+		|custom.properties|default.layout.template.id=1_column|
+	When these properties
+		|testray.component.names|Breadcrumb|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Page Name|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Page Name|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Message Boards|
+	And MessageboardsCategory add PG
+		|categoryName|MB Category Name|
+	And MessageboardsCategory add Subcategory PG
+		|categoryName|MB Category Name|
+		|subCategoryDescription|MB Subcategory Description|
+		|subCategoryName|MB Subcategory Name|
+	And Navigator goto Site Page
+		|pageName|Page Name|
+		|siteName|Site Name|
+	And MessageboardsCategory add Subcategory To Subcategory PG
+		|categoryName|MB Category Name|
+		|subCategoryDescription|MB Subcategory Description|
+		|subCategoryName|MB Subcategory Name|
+		|subCategorySubCategoryName|MB Subcategory Subcategory Name|
+	And Navigator goto Site Page
+		|pageName|Page Name|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Breadcrumb|
+	And Navigator goto Site Page
+		|pageName|Page Name|
+		|siteName|Site Name|
+	And MessageboardsCategory view Subcategory PG
+		|categoryName|MB Category Name|
+		|subCategoryDescription|MB Subcategory Description|
+		|subCategoryName|MB Subcategory Name|
+		|threadsNumber|0|
+	And MessageboardsCategory view Subcategory From Subcategory PG
+		|categoryName|MB Subcategory Name|
+		|subCategoryDescription|MB Subcategory Description|
+		|subCategoryName|MB Subcategory Subcategory Name|
+	And Breadcrumb view PG
+		|breadcrumbListVisible|Site Name,Page Name,MB Category Name,MB Subcategory Name,MB Subcategory Subcategory Name|
+		|pathLocator|EMBEDDED|
+	And Navigator goto Site Page
+		|pageName|Page Name|
+		|siteName|Site Name|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And Breadcrumb configure Breadcrumb
+		|uncheckSetupName|Show Application Breadcrumb|
+	And Breadcrumb view Configuration Preview
+		|breadcrumbListVisible|Site Name,Page Name|
+	And Breadcrumb save Display Preview
+	And Navigator goto Site Page
+		|pageName|Page Name|
+		|siteName|Site Name|
+	And MessageboardsCategory view Subcategory PG
+		|categoryName|MB Category Name|
+		|subCategoryDescription|MB Subcategory Description|
+		|subCategoryName|MB Subcategory Name|
+		|threadsNumber|0|
+	And MessageboardsCategory view Subcategory From Subcategory PG
+		|categoryName|MB Subcategory Name|
+		|subCategoryDescription|MB Subcategory Description|
+		|subCategoryName|MB Subcategory Subcategory Name|
+	And Breadcrumb view Specific PG
+		|breadcrumbListNotVisible|MB Category Name,MB Subcategory Name,MB Subcategory Subcategory Name|
+		|breadcrumbListVisible|Site Name,Page Name|
+		|pathLocator|EMBEDDED|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And Breadcrumb configure Breadcrumb
+		|checkSetupName|Show Application Breadcrumb|
+	And Breadcrumb view Configuration Preview
+		|breadcrumbListVisible|Site Name,Page Name|
+	And Breadcrumb save Display Preview
+	And Navigator goto Site Page
+		|pageName|Page Name|
+		|siteName|Site Name|
+	And MessageboardsCategory view Subcategory PG
+		|categoryName|MB Category Name|
+		|subCategoryDescription|MB Subcategory Description|
+		|subCategoryName|MB Subcategory Name|
+		|threadsNumber|0|
+	And MessageboardsCategory view Subcategory From Subcategory PG
+		|categoryName|MB Subcategory Name|
+		|subCategoryDescription|MB Subcategory Description|
+		|subCategoryName|MB Subcategory Subcategory Name|
+	Then Breadcrumb view PG
+		|breadcrumbListVisible|Site Name,Page Name,MB Category Name,MB Subcategory Name,MB Subcategory Subcategory Name|
+		|pathLocator|EMBEDDED|
+Scenario: Disable Show Current Site
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|testray.component.names|Breadcrumb|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Parent Page Name|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add Child
+		|page|Public Pages|
+		|pageName|Parent Page Name|
+		|siteChildPageName|Child Page Name|
+		|siteName|Site Name|
+	And Page goto Child Page PG
+		|childPageName|Child Page Name|
+		|pageName|Parent Page Name|
+	And Portlet add PG
+		|portletName|Breadcrumb|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And Breadcrumb view Configuration Preview
+		|breadcrumbListVisible|Site Name,Parent Page Name,Child Page Name|
+	And Breadcrumb configure Breadcrumb
+		|uncheckSetupName|Show Current Site|
+	And Breadcrumb view Configuration Preview
+		|breadcrumbListVisible|Parent Page Name,Child Page Name|
+	And Breadcrumb save Display Preview
+	And Breadcrumb view Configuration Preview
+		|breadcrumbListVisible|Parent Page Name,Child Page Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Page goto Child Page PG
+		|childPageName|Child Page Name|
+		|pageName|Parent Page Name|
+	And Breadcrumb view PG
+		|breadcrumbListNotVisible|Site Name|
+		|breadcrumbListVisible|Parent Page Name,Child Page Name|
+		|pathLocator|PAGE|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And Breadcrumb configure Breadcrumb
+		|checkSetupName|Show Current Site|
+	And Breadcrumb view Configuration Preview
+		|breadcrumbListVisible|Site Name,Parent Page Name,Child Page Name|
+	And Breadcrumb save Display Preview
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Page goto Child Page PG
+		|childPageName|Child Page Name|
+		|pageName|Parent Page Name|
+	Then Breadcrumb view PG
+		|breadcrumbListVisible|Site Name,Parent Page Name,Child Page Name|
+		|pathLocator|PAGE|
+Scenario: Disable Show Page
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|testray.component.names|Breadcrumb|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+	And Page add Child
+		|page|Public Pages|
+		|pageName|Welcome|
+		|siteChildPageName|Child Page Name|
+		|siteScopeSelected|true|
+	And Page goto Child Page PG
+		|childPageName|Child Page Name|
+		|pageName|Welcome|
+	And Portlet add PG
+		|portletName|Breadcrumb|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And Breadcrumb view Configuration Preview
+		|breadcrumbListVisible|Welcome,Child Page Name|
+	And Breadcrumb configure Breadcrumb
+		|checkSetupName|Show Guest Site|
+	And TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And Breadcrumb view Configuration Preview
+		|breadcrumbListVisible|${siteName},Welcome,Child Page Name|
+	And Breadcrumb configure Breadcrumb
+		|uncheckSetupName|Show Page|
+	And Breadcrumb view Configuration Preview
+		|breadcrumbListVisible|${siteName}|
+	And Breadcrumb save Display Preview
+	And Navigator open URL
+	And Page goto Child Page PG
+		|childPageName|Child Page Name|
+		|pageName|Welcome|
+	Then Breadcrumb view PG
+		|breadcrumbListNotVisible|Welcome,Child Page Name|
+		|breadcrumbListVisible|${siteName}|
+		|pathLocator|PAGE|
+Scenario: Disable Show Parent Site
+Priority: 4
+	Given these properties
+		|testray.component.names|Breadcrumb|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Page Name|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|parentSiteName|Site Name|
+		|siteName|Child SiteName|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site search Input CP
+		|siteName|Child SiteName|
+	And Page add
+		|pageName|Parent Page Name|
+		|siteName|Child SiteName|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add Child
+		|page|Public Pages|
+		|pageName|Parent Page Name|
+		|siteChildPageName|Child Page Name|
+		|siteName|Child SiteName|
+	And Page goto Child Page PG
+		|childPageName|Child Page Name|
+		|pageName|Parent Page Name|
+	And Portlet add PG
+		|portletName|Breadcrumb|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And Breadcrumb view Configuration Preview
+		|breadcrumbListVisible|Site Name,Child SiteName,Parent Page Name,Child Page Name|
+	And Breadcrumb configure Breadcrumb
+		|uncheckSetupName|Show Parent Site|
+	And Breadcrumb view Configuration Preview
+		|breadcrumbListVisible|Child SiteName,Parent Page Name,Child Page Name|
+	And Breadcrumb save Display Preview
+	And Navigator open Site URL
+		|siteName|Child SiteName|
+	And Page goto Child Page PG
+		|childPageName|Child Page Name|
+		|pageName|Parent Page Name|
+	Then Breadcrumb view PG
+		|breadcrumbListNotVisible|Site Name|
+		|breadcrumbListVisible|Child SiteName,Parent Page Name,Child Page Name|
+		|pathLocator|PAGE|
+Scenario: Display Template With Horizontal Style
+Priority: 4
+	Given these properties
+		|testray.component.names|Breadcrumb|
+	When SitePageNavigator goto Pages
+		|page|Public Pages|
+	And Page add Child
+		|page|Public Pages|
+		|pageName|Welcome|
+		|siteChildPageName|Child Page Name|
+		|siteScopeSelected|true|
+	And Page goto Child Page PG
+		|childPageName|Child Page Name|
+		|pageName|Welcome|
+	And Portlet add PG
+		|portletName|Breadcrumb|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And Breadcrumb display Template Preview
+		|displayStyle|Horizontal|
+	And Breadcrumb view Configuration Preview
+		|breadcrumbListVisible|Welcome,Child Page Name|
+	And Breadcrumb save Display Preview
+	And Navigator open URL
+	And Page goto Child Page PG
+		|childPageName|Child Page Name|
+		|pageName|Welcome|
+	Then Breadcrumb view PG
+		|breadcrumbListVisible|Welcome,Child Page Name|
+		|pathLocator|PAGE|
+Scenario: Display Template With Vertical Style
+Priority: 4
+	Given these properties
+		|testray.component.names|Breadcrumb|
+	When SitePageNavigator goto Pages
+		|page|Public Pages|
+	And Page add Child
+		|page|Public Pages|
+		|pageName|Welcome|
+		|siteChildPageName|Child Page Name|
+		|siteScopeSelected|true|
+	And Page goto Child Page PG
+		|childPageName|Child Page Name|
+		|pageName|Welcome|
+	And Portlet add PG
+		|portletName|Breadcrumb|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And Breadcrumb display Template Preview
+		|displayStyle|Vertical|
+	And Breadcrumb view Configuration Preview
+		|breadcrumbListVisible|Welcome,Child Page Name|
+	And Breadcrumb save Display Preview
+	And Navigator open URL
+	And Page goto Child Page PG
+		|childPageName|Child Page Name|
+		|pageName|Welcome|
+	Then Breadcrumb view PG
+		|breadcrumbListVisible|Welcome,Child Page Name|
+		|pathLocator|PAGE|
+Scenario: Enable Show Guest Site
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|Breadcrumb#EnableShowGuestSite|
+	When these properties
+		|testray.component.names|Breadcrumb|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+	And Page add Child
+		|page|Public Pages|
+		|pageName|Welcome|
+		|siteChildPageName|Child Page Name|
+		|siteScopeSelected|true|
+	And Page goto Child Page PG
+		|childPageName|Child Page Name|
+		|pageName|Welcome|
+	And Portlet add PG
+		|portletName|Breadcrumb|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And Breadcrumb view Configuration Preview
+		|breadcrumbListVisible|Welcome,Child Page Name|
+	And Breadcrumb view Configuration Preview
+		|breadcrumbListNotVisible|Liferay|
+	And Breadcrumb configure Breadcrumb
+		|checkSetupName|Show Guest Site|
+	And Breadcrumb view Configuration Preview
+		|breadcrumbListVisible|Liferay,Welcome,Child Page Name|
+	And Breadcrumb save Display Preview
+	And Breadcrumb view Configuration Preview
+		|breadcrumbListVisible|Liferay,Welcome,Child Page Name|
+	And Navigator open URL
+	And Page goto Child Page PG
+		|childPageName|Child Page Name|
+		|pageName|Welcome|
+	Then Breadcrumb view PG
+		|breadcrumbListVisible|Liferay,Welcome,Child Page Name|
+		|pathLocator|PAGE|

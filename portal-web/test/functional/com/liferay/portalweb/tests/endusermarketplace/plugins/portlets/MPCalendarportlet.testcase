@@ -1,43 +1,29 @@
-<definition component-name="portal-plugins-deployment">
-	<property name="testray.main.component.name" value="Plugin Installer" />
+Feature:
 
-	<set-up>
-		<execute macro="User#firstLoginPG" />
+Background: This executes once per feature file
+	Given these properties
+		|testray.main.component.name|Plugin Installer|
 
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page" />
-		</execute>
-	</set-up>
+Setup: This executes before each scenario 
+	Given User first Login PG
+	When Page add
+		|pageName|Test Page|
 
-	<tear-down>
-		<execute macro="Page#tearDownPG" />
-	</tear-down>
-
-	<command name="CalendarPortletSmoke" priority="4">
-		<var name="appName" value="Calendar" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Calendar" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelApps">
-			<var name="portlet" value="App Manager" />
-		</execute>
-
-		<execute macro="AppManager#uninstallAppCP">
-			<var name="appName" value="${appName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelApps">
-			<var name="portlet" value="App Manager" />
-		</execute>
-
-		<execute macro="AppManager#viewUninstallAppCP">
-			<var name="appName" value="${appName}" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given Page tear Down PG
+Scenario: Calendar Portlet Smoke
+Priority: 4
+	Given these variables
+		|appName|Calendar|
+	When Navigator goto Page
+		|pageName|Test Page|
+	And Portlet add PG
+		|portletName|Calendar|
+	And ProductMenu goto Control Panel Apps
+		|portlet|App Manager|
+	And AppManager uninstall App CP
+		|appName|${appName}|
+	And ProductMenu goto Control Panel Apps
+		|portlet|App Manager|
+	Then AppManager view Uninstall App CP
+		|appName|${appName}|

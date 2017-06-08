@@ -1,171 +1,200 @@
-<definition component-name="portal-user-interface">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="User Interface" />
+Feature:
 
-	<var name="pageName" value="CKEditor Page" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|User Interface|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|User Interface|
+		|pageName|CKEditor Page|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Blogs Entry With Image Via Blogs Images
+Priority: 4
+	Given Page add
+		|pageName|${pageName}|
+	When Portlet add PG
+		|portletName|Blogs|
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And Blogs add Entry With Uploaded Cover Image
+		|coverImageName|Document_1|
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+		|navTab|Upload Image|
+		|uploadFileName|Document_1.jpg|
+	And Pause at locator '1000'
+	And BlogsEntry save As Draft
+	And Click at locator 'BlogsEditEntry#DELETE_COVER_IMAGE_BUTTON'
+	And Click pause Click At at locator 'AlloyEditor#CONTENT_FIELD'
+	And Click at locator 'AlloyEditor#CONTENT_ADD_BUTTON'
+	And Click at locator 'AlloyEditor#CONTENT_ADD_MENUBAR_IMAGE'
+	And ItemSelector select Blog Image
+		|imageFileName|Document_1.jpg|
+	And PortletEntry publish
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	Then AssertElementPresent at locator '//div[contains(@class,'entry-content')]/p/img[contains(@src,'Document_1.jpg')]'
+Scenario: Add Web Content Article With Image Via URL
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And Type the value 'Web Content Title' at locator 'TextInput#TITLE'
+	And Click pause Click At at locator 'AlloyEditor#CONTENT_FIELD'
+	And Click at locator 'AlloyEditor#CONTENT_ADD_BUTTON'
+	And Click at locator 'AlloyEditor#CONTENT_ADD_MENUBAR_IMAGE'
+	And ItemSelector add From URL
+		|imageSourceURL|https://raw.githubusercontent.com/liferay/liferay-portal/master/portal-web/test/functional/com/liferay/portalweb/dependencies/Document_1.jpg|
+	And PortletEntry publish
+	And WebContentNavigator goto Preview Entry CP
+		|webContentTitle|Web Content Title|
+	And SelectFrame at locator 'IFrame#DIALOG'
+	Then AssertElementPresent at locator '//img[contains(@src,'Document_1.jpg')]'
+Scenario: View Wiki Front Page Left To Right
+Priority: 4
+	Given Page add
+		|pageName|${pageName}|
+	When Portlet add PG
+		|portletName|Wiki|
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WikiPage add Localized Front Page PG
+		|emptyPageMessage|This page is empty. Edit it to add some text.|
+		|successMessage|Your request completed successfully.|
+		|wikiPageContent|Wiki Left to Right Content|
+	And Navigator goto Page
+		|pageName|${pageName}|
+	Then WikiPage view Localized Front Page PG
+		|wikiPageContent|Wiki Left to Right Content|
+Scenario: View Wiki Front Page Right To Left
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|WYSIWIGUsecase#ViewWikiFrontPageRightToLeft|
+	When Page add
+		|pageName|${pageName}|
+	And Portlet add PG
+		|portletName|Language Selector|
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And Portlet add PG
+		|portletName|Wiki|
+	And LanguagePortlet select Language PG
+		|language|Hebrew (Israel)|
+	And WikiPage add Localized Front Page PG
+		|emptyPageMessage|דף זה ריק. ערוך אותו על מנת להוסיף טקסט|
+		|rtl|true|
+		|successMessage|בקשתך עברה בהצלחה|
+		|wikiPageContent|Wiki Right to Left תוֹכֶן|
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WikiPage view Localized Front Page PG
+		|rightToLeft|true|
+		|wikiPageContent|Wiki Right to Left תוֹכֶן|
+	Then LanguagePortlet select Language PG
+		|language|English (United States)|
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="AddBlogsEntryWithImageViaBlogsImages" priority="4" >
-		<execute macro="Page#add">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="Blogs#addEntryWithUploadedCoverImage">
-			<var name="coverImageName" value="Document_1" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="navTab" value="Upload Image" />
-			<var name="uploadFileName" value="Document_1.jpg" />
-		</execute>
-
-		<execute function="Pause" locator1="1000" />
-
-		<execute macro="BlogsEntry#saveAsDraft" />
-
-		<execute function="Click" locator1="BlogsEditEntry#DELETE_COVER_IMAGE_BUTTON" />
-
-		<execute function="Click#pauseClickAt" locator1="AlloyEditor#CONTENT_FIELD" />
-
-		<execute function="Click" locator1="AlloyEditor#CONTENT_ADD_BUTTON" />
-
-		<execute function="Click" locator1="AlloyEditor#CONTENT_ADD_MENUBAR_IMAGE" />
-
-		<execute macro="ItemSelector#selectBlogImage">
-			<var name="imageFileName" value="Document_1.jpg" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute function="AssertElementPresent" locator1="//div[contains(@class,'entry-content')]/p/img[contains(@src,'Document_1.jpg')]" />
-	</command>
-
-	<command name="AddWebContentArticleWithImageViaURL" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute function="Type" locator1="TextInput#TITLE" value1="Web Content Title" />
-
-		<execute function="Click#pauseClickAt" locator1="AlloyEditor#CONTENT_FIELD" />
-
-		<execute function="Click" locator1="AlloyEditor#CONTENT_ADD_BUTTON" />
-
-		<execute function="Click" locator1="AlloyEditor#CONTENT_ADD_MENUBAR_IMAGE" />
-
-		<execute macro="ItemSelector#addFromURL">
-			<var name="imageSourceURL" value="https://raw.githubusercontent.com/liferay/liferay-portal/master/portal-web/test/functional/com/liferay/portalweb/dependencies/Document_1.jpg" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="WebContentNavigator#gotoPreviewEntryCP">
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
-
-		<execute function="AssertElementPresent" locator1="//img[contains(@src,'Document_1.jpg')]" />
-	</command>
-
-	<command name="ViewWikiFrontPageLeftToRight" priority="4">
-		<execute macro="Page#add">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Wiki" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WikiPage#addLocalizedFrontPagePG">
-			<var name="emptyPageMessage" value="This page is empty. Edit it to add some text." />
-			<var name="successMessage" value="Your request completed successfully." />
-			<var name="wikiPageContent" value="Wiki Left to Right Content" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WikiPage#viewLocalizedFrontPagePG">
-			<var name="wikiPageContent" value="Wiki Left to Right Content" />
-		</execute>
-	</command>
-
-	<command name="ViewWikiFrontPageRightToLeft" priority="4">
-		<property name="test.name.skip.portal.instance" value="WYSIWIGUsecase#ViewWikiFrontPageRightToLeft" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language Selector" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Wiki" />
-		</execute>
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="Hebrew (Israel)" />
-		</execute>
-
-		<execute macro="WikiPage#addLocalizedFrontPagePG">
-			<var name="emptyPageMessage" value="דף זה ריק. ערוך אותו על מנת להוסיף טקסט" />
-			<var name="rtl" value="true" />
-			<var name="successMessage" value="בקשתך עברה בהצלחה" />
-			<var name="wikiPageContent" value="Wiki Right to Left תוֹכֶן" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="WikiPage#viewLocalizedFrontPagePG">
-			<var name="rightToLeft" value="true" />
-			<var name="wikiPageContent" value="Wiki Right to Left תוֹכֶן" />
-		</execute>
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="English (United States)" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add Blogs Entry With Image Via Blogs Images
+Priority: 4
+	Given Page add
+		|pageName|${pageName}|
+	When Portlet add PG
+		|portletName|Blogs|
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And Blogs add Entry With Uploaded Cover Image
+		|coverImageName|Document_1|
+		|entryContent|Blogs Entry Content|
+		|entrySubtitle|Blogs Entry Subtitle|
+		|entryTitle|Blogs Entry Title|
+		|navTab|Upload Image|
+		|uploadFileName|Document_1.jpg|
+	And Pause at locator '1000'
+	And BlogsEntry save As Draft
+	And Click at locator 'BlogsEditEntry#DELETE_COVER_IMAGE_BUTTON'
+	And Click pause Click At at locator 'AlloyEditor#CONTENT_FIELD'
+	And Click at locator 'AlloyEditor#CONTENT_ADD_BUTTON'
+	And Click at locator 'AlloyEditor#CONTENT_ADD_MENUBAR_IMAGE'
+	And ItemSelector select Blog Image
+		|imageFileName|Document_1.jpg|
+	And PortletEntry publish
+	And BlogsNavigator goto Entry PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	Then AssertElementPresent at locator '//div[contains(@class,'entry-content')]/p/img[contains(@src,'Document_1.jpg')]'
+Scenario: Add Web Content Article With Image Via URL
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And Type the value 'Web Content Title' at locator 'TextInput#TITLE'
+	And Click pause Click At at locator 'AlloyEditor#CONTENT_FIELD'
+	And Click at locator 'AlloyEditor#CONTENT_ADD_BUTTON'
+	And Click at locator 'AlloyEditor#CONTENT_ADD_MENUBAR_IMAGE'
+	And ItemSelector add From URL
+		|imageSourceURL|https://raw.githubusercontent.com/liferay/liferay-portal/master/portal-web/test/functional/com/liferay/portalweb/dependencies/Document_1.jpg|
+	And PortletEntry publish
+	And WebContentNavigator goto Preview Entry CP
+		|webContentTitle|Web Content Title|
+	And SelectFrame at locator 'IFrame#DIALOG'
+	Then AssertElementPresent at locator '//img[contains(@src,'Document_1.jpg')]'
+Scenario: View Wiki Front Page Left To Right
+Priority: 4
+	Given Page add
+		|pageName|${pageName}|
+	When Portlet add PG
+		|portletName|Wiki|
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WikiPage add Localized Front Page PG
+		|emptyPageMessage|This page is empty. Edit it to add some text.|
+		|successMessage|Your request completed successfully.|
+		|wikiPageContent|Wiki Left to Right Content|
+	And Navigator goto Page
+		|pageName|${pageName}|
+	Then WikiPage view Localized Front Page PG
+		|wikiPageContent|Wiki Left to Right Content|
+Scenario: View Wiki Front Page Right To Left
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|WYSIWIGUsecase#ViewWikiFrontPageRightToLeft|
+	When Page add
+		|pageName|${pageName}|
+	And Portlet add PG
+		|portletName|Language Selector|
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And Portlet add PG
+		|portletName|Wiki|
+	And LanguagePortlet select Language PG
+		|language|Hebrew (Israel)|
+	And WikiPage add Localized Front Page PG
+		|emptyPageMessage|דף זה ריק. ערוך אותו על מנת להוסיף טקסט|
+		|rtl|true|
+		|successMessage|בקשתך עברה בהצלחה|
+		|wikiPageContent|Wiki Right to Left תוֹכֶן|
+	And Navigator goto Page
+		|pageName|${pageName}|
+	And WikiPage view Localized Front Page PG
+		|rightToLeft|true|
+		|wikiPageContent|Wiki Right to Left תוֹכֶן|
+	Then LanguagePortlet select Language PG
+		|language|English (United States)|

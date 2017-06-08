@@ -1,577 +1,331 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.component.names" value="Recycle Bin,Web Content Administration" />
-	<property name="testray.main.component.name" value="Recycle Bin" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="DeleteWebcontent" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="WebContent#viewTitle">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContent#moveToRecycleBinCP">
-			<var name="assetType" value="Web Content Article" />
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#deleteCP">
-			<var name="assetName" value="WC WebContent Title" />
-			<var name="assetType" value="Web Content Article" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#viewDefaultCP">
-			<var name="assetName" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContent#viewDefaultCP">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-	</command>
-
-	<command name="MoveFolderWithWebContentToRecycleBin" priority="3">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentFolder#addCP">
-			<var name="folderDescription" value="WC Folder Description" />
-			<var name="folderName" value="WC Folder Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentFolder#gotoCP">
-			<var name="folderName" value="WC Folder Name" />
-			<var name="webContentTitle" value="WC Folder Name" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC Web Content Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="WebContent#viewTitle">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentFolder#moveToRecycleBinCP">
-			<var name="assetType" value="Web Content Folder" />
-			<var name="folderName" value="WC Folder Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContent#viewDefaultCP">
-			<var name="webContentTitle" value="WC Folder Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#viewCP">
-			<var name="assetName" value="WC Folder Name" />
-			<var name="assetType" value="Web Content Folder" />
-			<var name="deleteUser" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="RecycleWebContentViaDeleteIcon" priority="3">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC Web Content Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="WebContent#viewTitle">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContent#moveToRecycleBinViaDeleteIconCP" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContent#viewDefaultCP">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#viewCP">
-			<var name="assetName" value="WC WebContent Title" />
-			<var name="assetType" value="Web Content Article" />
-			<var name="deleteUser" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="RestoreWebcontent" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="WebContent#viewTitle">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContent#moveToRecycleBinCP">
-			<var name="assetType" value="Web Content Article" />
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#restoreCP">
-			<var name="assetName" value="WC WebContent Title" />
-			<var name="assetRestoreLocation" value="Home" />
-			<var name="assetType" value="Web Content Article" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#viewDefaultCP">
-			<var name="assetName" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-	</command>
-
-	<command name="UndoMoveToRecycleBin" priority="3">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC Web Content Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="WebContent#viewTitle">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContent#moveToRecycleBinCP">
-			<var name="assetType" value="Web Content Article" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="RecycleBin#undoMoveToRecycleBin" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContent#viewTitle">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#viewDefaultCP">
-			<var name="assetName" value="WC WebContent Title" />
-		</execute>
-	</command>
-
-	<command name="ViewDuplicateAssetNamesInRecycleBin" priority="3">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC Web Content Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="WebContent#viewTitle">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContent#moveToRecycleBinViaDeleteIconCP" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#viewCP">
-			<var name="assetName" value="WC WebContent Title" />
-			<var name="assetType" value="Web Content Article" />
-			<var name="deleteUser" value="Test Test" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC Web Content Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="WebContent#viewTitle">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContent#moveToRecycleBinViaDeleteIconCP" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#viewDuplicateNames">
-			<var name="assetName" value="WC WebContent Title" />
-		</execute>
-	</command>
-
-	<command name="ViewDuplicateFolderNamesInRecycleBin" priority="4">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentFolder#addCP">
-			<var name="folderDescription" value="WC Folder Description" />
-			<var name="folderName" value="WC Folder Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentFolder#moveToRecycleBinCP">
-			<var name="assetType" value="Web Content Folder" />
-			<var name="folderName" value="WC Folder Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#viewCP">
-			<var name="assetName" value="WC Folder Name" />
-			<var name="assetType" value="Web Content Folder" />
-			<var name="deleteUser" value="Test Test" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentFolder#addCP">
-			<var name="folderDescription" value="WC Folder Description" />
-			<var name="folderName" value="WC Folder Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentFolder#moveToRecycleBinCP">
-			<var name="assetType" value="Web Content Folder" />
-			<var name="folderName" value="WC Folder Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#viewDuplicateNames">
-			<var name="assetName" value="WC Folder Name" />
-		</execute>
-	</command>
-
-	<command name="ViewRecycleBinEntryViaSuccessMessageLink" priority="3">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC Web Content Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="WebContent#viewTitle">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContent#moveToRecycleBinCP">
-			<var name="assetType" value="Web Content Article" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="RecycleBin#gotoEntryViaSuccessMessage">
-			<var name="assetName" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="RecycleBin#viewEntry">
-			<var name="assetName" value="WC WebContent Title" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.component.names|Recycle Bin,Web Content Administration|
+		|testray.main.component.name|Recycle Bin|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Delete Webcontent
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|WC WebContent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContent move To Recycle Bin CP
+		|assetType|Web Content Article|
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin delete CP
+		|assetName|WC WebContent Title|
+		|assetType|Web Content Article|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin view Default CP
+		|assetName|WC WebContent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	Then WebContent view Default CP
+		|webContentTitle|WC WebContent Title|
+Scenario: Move Folder With Web Content To Recycle Bin
+Priority: 3
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentFolder add CP
+		|folderDescription|WC Folder Description|
+		|folderName|WC Folder Name|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentFolder goto CP
+		|folderName|WC Folder Name|
+		|webContentTitle|WC Folder Name|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|WC Web Content Content|
+		|webContentTitle|WC WebContent Title|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|WC WebContent Title|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentFolder move To Recycle Bin CP
+		|assetType|Web Content Folder|
+		|folderName|WC Folder Name|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContent view Default CP
+		|webContentTitle|WC Folder Name|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	Then RecycleBin view CP
+		|assetName|WC Folder Name|
+		|assetType|Web Content Folder|
+		|deleteUser|Test Test|
+Scenario: Recycle Web Content Via Delete Icon
+Priority: 3
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|WC Web Content Content|
+		|webContentTitle|WC WebContent Title|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|WC WebContent Title|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContent move To Recycle Bin Via Delete Icon CP
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContent view Default CP
+		|webContentTitle|WC WebContent Title|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	Then RecycleBin view CP
+		|assetName|WC WebContent Title|
+		|assetType|Web Content Article|
+		|deleteUser|Test Test|
+Scenario: Restore Webcontent
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|WC WebContent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContent move To Recycle Bin CP
+		|assetType|Web Content Article|
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin restore CP
+		|assetName|WC WebContent Title|
+		|assetRestoreLocation|Home|
+		|assetType|Web Content Article|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin view Default CP
+		|assetName|WC WebContent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Edit CP
+		|webContentTitle|WC WebContent Title|
+	Then WebContent view CP
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+Scenario: Undo Move To Recycle Bin
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|WC Web Content Content|
+		|webContentTitle|WC WebContent Title|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|WC WebContent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContent move To Recycle Bin CP
+		|assetType|Web Content Article|
+		|webContentTitle|WC WebContent Title|
+	And RecycleBin undo Move To Recycle Bin
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContent view Title
+		|webContentTitle|WC WebContent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	Then RecycleBin view Default CP
+		|assetName|WC WebContent Title|
+Scenario: View Duplicate Asset Names In Recycle Bin
+Priority: 3
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|WC Web Content Content|
+		|webContentTitle|WC WebContent Title|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|WC WebContent Title|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContent move To Recycle Bin Via Delete Icon CP
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin view CP
+		|assetName|WC WebContent Title|
+		|assetType|Web Content Article|
+		|deleteUser|Test Test|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|WC Web Content Content|
+		|webContentTitle|WC WebContent Title|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|WC WebContent Title|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContent move To Recycle Bin Via Delete Icon CP
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	Then RecycleBin view Duplicate Names
+		|assetName|WC WebContent Title|
+Scenario: View Duplicate Folder Names In Recycle Bin
+Priority: 4
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentFolder add CP
+		|folderDescription|WC Folder Description|
+		|folderName|WC Folder Name|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentFolder move To Recycle Bin CP
+		|assetType|Web Content Folder|
+		|folderName|WC Folder Name|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin view CP
+		|assetName|WC Folder Name|
+		|assetType|Web Content Folder|
+		|deleteUser|Test Test|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentFolder add CP
+		|folderDescription|WC Folder Description|
+		|folderName|WC Folder Name|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentFolder move To Recycle Bin CP
+		|assetType|Web Content Folder|
+		|folderName|WC Folder Name|
+	And ProductMenu goto Site
+		|site|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	Then RecycleBin view Duplicate Names
+		|assetName|WC Folder Name|
+Scenario: View Recycle Bin Entry Via Success Message Link
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|WC Web Content Content|
+		|webContentTitle|WC WebContent Title|
+	And PortletEntry publish
+	And WebContent view Title
+		|webContentTitle|WC WebContent Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContent move To Recycle Bin CP
+		|assetType|Web Content Article|
+		|webContentTitle|WC WebContent Title|
+	And RecycleBin goto Entry Via Success Message
+		|assetName|WC WebContent Title|
+	Then RecycleBin view Entry
+		|assetName|WC WebContent Title|

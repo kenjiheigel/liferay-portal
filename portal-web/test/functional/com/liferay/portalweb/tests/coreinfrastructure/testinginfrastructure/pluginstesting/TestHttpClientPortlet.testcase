@@ -1,27 +1,22 @@
-<definition component-name="portal-test-plugins">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Test Plugins" />
-	<property name="portlet.plugins.includes" value="test-http-client-portlet" />
+Feature:
 
-	<set-up>
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Test Plugins|
+		|portlet.plugins.includes|test-http-client-portlet|
 
-	<tear-down>
-		<execute macro="Page#tearDownPG" />
-	</tear-down>
+Setup: This executes before each scenario 
+	Given User first Login PG
 
-	<command name="ViewHTTPClient" priority="4">
-		<execute macro="Page#add">
-			<var name="pageName" value="Test HTTP Client Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Test HTTP Client" />
-		</execute>
-
-		<execute function="AssertVisible" locator1="TestBlob#TEST_PORTLET_BODY_PASSED" />
-		<execute function="AssertTextNotPresent" value1="FAILED" />
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given Page tear Down PG
+Scenario: View HTTP Client
+Priority: 4
+	Given Page add
+		|pageName|Test HTTP Client Page|
+	When Portlet add PG
+		|portletName|Test HTTP Client|
+	And AssertVisible at locator 'TestBlob#TEST_PORTLET_BODY_PASSED'
+	Then AssertTextNotPresent the value 'FAILED'

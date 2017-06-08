@@ -1,102 +1,55 @@
-<definition component-name="portal-search">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Elastic Search Impl" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Elastic Search Impl|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="AssertConfigFileValuesPropogateToModule" priority="4">
-		<property name="osgi.module.configuration.file.names" value="com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration.config" />
-		<property name="osgi.module.configurations" value="operationMode=&quot;EMBEDDED&quot;
-clientTransportIgnoreClusterName=&quot;false&quot;
-indexNamePrefix=&quot;liferay-&quot;
-httpCORSConfigurations=&quot;&quot;
-additionalConfigurations=&quot;&quot;
-httpCORSAllowOrigin=&quot;/https?://localhost(:[0-9]+)?/&quot;
-networkBindHost=&quot;&quot;
-transportTcpPort=&quot;&quot;
-bootstrapMlockAll=&quot;false&quot;
-networkPublishHost=&quot;&quot;
-overrideTypeMappings=&quot;&quot;
-clientTransportSniff=&quot;true&quot;
-additionalIndexConfigurations=&quot;&quot;
-retryOnConflict=&quot;5&quot;
-httpCORSEnabled=&quot;true&quot;
-clientTransportNodesSamplerInterval=&quot;5s&quot;
-additionalTypeMappings=&quot;&quot;
-logExceptionsOnly=&quot;true&quot;
-httpEnabled=&quot;true&quot;
-networkHost=&quot;&quot;
-transportAddresses=&quot;localhost:9300&quot;
-clusterName=&quot;LiferayElasticsearchCluster1&quot;
-discoveryZenPingUnicastHostsPort=&quot;9300-9400&quot;" />
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="http://localhost:9200" />
-		</execute>
-
-		<execute macro="Elasticsearch#viewClusterStatus">
-			<var name="clusterStatus" value="&quot;cluster_name&quot; : &quot;LiferayElasticsearchCluster1&quot;" />
-		</execute>
-	</command>
-
-	<command name="AssertIndexOnStartupViaRemote" priority="5">
-		<description message="This test asserts that index on startup works consistently on remote Elasticsearch." />
-
-		<property name="remote.elasticsearch.enabled" value="true" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#viewCP">
-			<var name="userEmailAddress" value="test@liferay.com" />
-			<var name="userFirstName" value="Test" />
-			<var name="userLastName" value="Test" />
-			<var name="userScreenName" value="test" />
-		</execute>
-	</command>
-
-	<command name="AssertSystemSettingsPropogateToModule" priority="4">
-		<property name="test.name.skip.portal.instance" value="Elasticsearch#AssertSystemSettingsPropogateToModule" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="System Settings" />
-		</execute>
-
-		<execute macro="SystemSettings#gotoCategory">
-			<var name="category" value="Foundation" />
-		</execute>
-
-		<execute macro="SystemSettings#viewConfiguration">
-			<var name="configurationName" value="Elasticsearch" />
-		</execute>
-
-		<execute macro="SystemSettings#editTextAreaSetting">
-			<var name="settingName" value="clusterName" />
-			<var name="settingValue" value="LiferayElasticsearchCluster1" />
-		</execute>
-
-		<execute macro="SystemSettings#saveConfiguration" />
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="http://localhost:9200" />
-		</execute>
-
-		<!-- LRQA-28998 -->
-
-		<!--<execute macro="Elasticsearch#viewClusterStatus">
-			<var name="clusterStatus" value="&quot;cluster_name&quot; : &quot;LiferayElasticsearchCluster1&quot;" />
-		</execute>-->
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Assert Config File Values Propogate To Module
+Priority: 4
+	Given these properties
+		|osgi.module.configuration.file.names|com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration.config|
+	When these properties
+		|osgi.module.configurations|operationMode="EMBEDDED" clientTransportIgnoreClusterName="false" indexNamePrefix="liferay-" httpCORSConfigurations="" additionalConfigurations="" httpCORSAllowOrigin="/https?://localhost(:[0-9]+)?/" networkBindHost="" transportTcpPort="" bootstrapMlockAll="false" networkPublishHost="" overrideTypeMappings="" clientTransportSniff="true" additionalIndexConfigurations="" retryOnConflict="5" httpCORSEnabled="true" clientTransportNodesSamplerInterval="5s" additionalTypeMappings="" logExceptionsOnly="true" httpEnabled="true" networkHost="" transportAddresses="localhost:9300" clusterName="LiferayElasticsearchCluster1" discoveryZenPingUnicastHostsPort="9300-9400"|
+	And Navigator open Specific URL
+		|url|http://localhost:9200|
+	Then Elasticsearch view Cluster Status
+		|clusterStatus|"cluster_name" : "LiferayElasticsearchCluster1"|
+Scenario: Assert Index On Startup Via Remote
+Priority: 5
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When these properties
+		|remote.elasticsearch.enabled|true|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	Then User view CP
+		|userEmailAddress|test@liferay.com|
+		|userFirstName|Test|
+		|userLastName|Test|
+		|userScreenName|test|
+Scenario: Assert System Settings Propogate To Module
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|Elasticsearch#AssertSystemSettingsPropogateToModule|
+	When ProductMenu goto Control Panel Configuration
+		|portlet|System Settings|
+	And SystemSettings goto Category
+		|category|Foundation|
+	And SystemSettings view Configuration
+		|configurationName|Elasticsearch|
+	And SystemSettings edit Text Area Setting
+		|settingName|clusterName|
+		|settingValue|LiferayElasticsearchCluster1|
+	And SystemSettings save Configuration
+	Then Navigator open Specific URL
+		|url|http://localhost:9200|

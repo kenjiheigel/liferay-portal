@@ -1,265 +1,351 @@
-<definition component-name="portal-social-networking">
-	<property name="osgi.app.includes" value="social-networking" />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column" />
-	<property name="testray.main.component.name" value="Social Networking" />
+Feature:
 
-	<var name="pageName" value="Friends Directory Page" />
-	<var name="portletName" value="Friends Directory" />
+Background: This executes once per feature file
+	Given these properties
+		|osgi.app.includes|social-networking|
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Social Networking|
+	And these variables
+		|osgi.app.includes|social-networking|
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Social Networking|
+		|pageName|Friends Directory Page|
+		|portletName|Friends Directory|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Friends Directory Page|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	Then Portlet add PG
+		|portletName|Friends Directory|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Search Friends Directory
+Priority: 3
+	Given these variables
+		|pageName|Friends Directory Page|
+	When these variables
+		|userEmailAddress|userea@liferay.com|
+	And these variables
+		|userFirstName|userfn|
+	And these variables
+		|userLastName|userln|
+	And these variables
+		|userMiddleName|usermn|
+	And these variables
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userMiddleName|usermn|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenuHelper open Product Menu
+	And ProductMenu goto Personal Site
+	And ProductMenuHelper expand Panel Sites
+	And ProductMenuHelper expand Category
+		|category|Navigation|
+	And Page add
+		|pageName|Friends Request Page|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	And ProductMenuHelper open Product Menu
+	And ProductMenu goto Personal Site
+	And these variables
+		|key_pageName|Friends Request Page|
+	And AssertClick the value 'Friends Request Page' at locator 'Home#PAGE'
+	And Portlet add PG
+		|portletName|Requests|
+	And Navigator open Site URL
+		|siteName|test|
+	And ProductMenuHelper open Product Menu
+	And ProductMenu goto Personal Site
+	And AssertClick the value 'Friends Request Page' at locator 'Home#PAGE'
+	And Portlet add PG
+		|portletName|Summary|
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And Navigator goto Site Page
+		|pageName|Friends Request Page|
+		|siteName|test|
+	And AssertClick the value 'ADD AS FRIEND' at locator '//div[@class='add-as-friend']/button[contains(.,'Add as Friend')]'
+	And AssertTextEquals the value 'Friend Requested' at locator '//div[contains(@class,'alert') and contains(@class,'alert-info')]'
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+		|userScreenName|usersn|
+	And Navigator goto Site Page
+		|pageName|Friends Request Page|
+		|siteName|test|
+	And AssertClick the value 'Confirm' at locator 'Link#CONFIRM'
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	And User advanced Search Via Friends Directory PG
+		|searchField|First Name|
+		|searchTerm|userfn|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	And User advanced Search Via Friends Directory PG
+		|searchField|First Name|
+		|searchNoResults|true|
+		|searchTerm|userfn1|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	And User advanced Search Via Friends Directory PG
+		|searchField|Middle Name|
+		|searchTerm|usermn|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	And User advanced Search Via Friends Directory PG
+		|searchField|Middle Name|
+		|searchNoResults|true|
+		|searchTerm|usermn1|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	And User advanced Search Via Friends Directory PG
+		|searchField|Last Name|
+		|searchTerm|userln|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	And User advanced Search Via Friends Directory PG
+		|searchField|Last Name|
+		|searchNoResults|true|
+		|searchTerm|userln1|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	And User advanced Search Via Friends Directory PG
+		|searchField|Screen Name|
+		|searchTerm|usersn|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	And User advanced Search Via Friends Directory PG
+		|searchField|Screen Name|
+		|searchNoResults|true|
+		|searchTerm|usersn1|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	And User advanced Search Via Friends Directory PG
+		|searchField|Email Address|
+		|searchTerm|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	Then User advanced Search Via Friends Directory PG
+		|searchField|Email Address|
+		|searchNoResults|true|
+		|searchTerm|userea@liferay.com1|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Friends Directory Page|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	Then Portlet add PG
+		|portletName|Friends Directory|
 
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Friends Directory Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Friends Directory Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Friends Directory" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="SearchFriendsDirectory" priority="3">
-		<var name="pageName" value="Friends Directory Page" />
-		<var name="userEmailAddress" value="userea@liferay.com" />
-		<var name="userFirstName" value="userfn" />
-		<var name="userLastName" value="userln" />
-		<var name="userMiddleName" value="usermn" />
-		<var name="userScreenName" value="usersn" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userMiddleName" value="usermn" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenuHelper#openProductMenu" />
-
-		<execute macro="ProductMenu#gotoPersonalSite" />
-
-		<execute macro="ProductMenuHelper#expandPanelSites" />
-
-		<execute macro="ProductMenuHelper#expandCategory">
-			<var name="category" value="Navigation" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Friends Request Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Friends Directory Page" />
-		</execute>
-
-		<execute macro="ProductMenuHelper#openProductMenu" />
-
-		<execute macro="ProductMenu#gotoPersonalSite" />
-
-		<var name="key_pageName" value="Friends Request Page" />
-
-		<execute function="AssertClick" locator1="Home#PAGE" value1="Friends Request Page" />
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Requests" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="test" />
-		</execute>
-
-		<execute macro="ProductMenuHelper#openProductMenu" />
-
-		<execute macro="ProductMenu#gotoPersonalSite" />
-
-		<execute function="AssertClick" locator1="Home#PAGE" value1="Friends Request Page" />
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Summary" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Friends Request Page" />
-			<var name="siteName" value="test" />
-		</execute>
-
-		<execute function="AssertClick" locator1="//div[@class='add-as-friend']/button[contains(.,'Add as Friend')]" value1="ADD AS FRIEND" />
-
-		<execute function="AssertTextEquals" locator1="//div[contains(@class,'alert') and contains(@class,'alert-info')]" value1="Friend Requested" />
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Friends Request Page" />
-			<var name="siteName" value="test" />
-		</execute>
-
-		<execute function="AssertClick" locator1="Link#CONFIRM" value1="Confirm" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Friends Directory Page" />
-		</execute>
-
-		<execute macro="User#advancedSearchViaFriendsDirectoryPG">
-			<var name="searchField" value="First Name" />
-			<var name="searchTerm" value="userfn" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Friends Directory Page" />
-		</execute>
-
-		<execute macro="User#advancedSearchViaFriendsDirectoryPG">
-			<var name="searchField" value="First Name" />
-			<var name="searchNoResults" value="true" />
-			<var name="searchTerm" value="userfn1" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Friends Directory Page" />
-		</execute>
-
-		<execute macro="User#advancedSearchViaFriendsDirectoryPG">
-			<var name="searchField" value="Middle Name" />
-			<var name="searchTerm" value="usermn" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Friends Directory Page" />
-		</execute>
-
-		<execute macro="User#advancedSearchViaFriendsDirectoryPG">
-			<var name="searchField" value="Middle Name" />
-			<var name="searchNoResults" value="true" />
-			<var name="searchTerm" value="usermn1" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Friends Directory Page" />
-		</execute>
-
-		<execute macro="User#advancedSearchViaFriendsDirectoryPG">
-			<var name="searchField" value="Last Name" />
-			<var name="searchTerm" value="userln" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Friends Directory Page" />
-		</execute>
-
-		<execute macro="User#advancedSearchViaFriendsDirectoryPG">
-			<var name="searchField" value="Last Name" />
-			<var name="searchNoResults" value="true" />
-			<var name="searchTerm" value="userln1" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Friends Directory Page" />
-		</execute>
-
-		<execute macro="User#advancedSearchViaFriendsDirectoryPG">
-			<var name="searchField" value="Screen Name" />
-			<var name="searchTerm" value="usersn" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Friends Directory Page" />
-		</execute>
-
-		<execute macro="User#advancedSearchViaFriendsDirectoryPG">
-			<var name="searchField" value="Screen Name" />
-			<var name="searchNoResults" value="true" />
-			<var name="searchTerm" value="usersn1" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Friends Directory Page" />
-		</execute>
-
-		<execute macro="User#advancedSearchViaFriendsDirectoryPG">
-			<var name="searchField" value="Email Address" />
-			<var name="searchTerm" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Friends Directory Page" />
-		</execute>
-
-		<execute macro="User#advancedSearchViaFriendsDirectoryPG">
-			<var name="searchField" value="Email Address" />
-			<var name="searchNoResults" value="true" />
-			<var name="searchTerm" value="userea@liferay.com1" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Search Friends Directory
+Priority: 3
+	Given these variables
+		|pageName|Friends Directory Page|
+	When these variables
+		|userEmailAddress|userea@liferay.com|
+	And these variables
+		|userFirstName|userfn|
+	And these variables
+		|userLastName|userln|
+	And these variables
+		|userMiddleName|usermn|
+	And these variables
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userMiddleName|usermn|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenuHelper open Product Menu
+	And ProductMenu goto Personal Site
+	And ProductMenuHelper expand Panel Sites
+	And ProductMenuHelper expand Category
+		|category|Navigation|
+	And Page add
+		|pageName|Friends Request Page|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	And ProductMenuHelper open Product Menu
+	And ProductMenu goto Personal Site
+	And these variables
+		|key_pageName|Friends Request Page|
+	And AssertClick the value 'Friends Request Page' at locator 'Home#PAGE'
+	And Portlet add PG
+		|portletName|Requests|
+	And Navigator open Site URL
+		|siteName|test|
+	And ProductMenuHelper open Product Menu
+	And ProductMenu goto Personal Site
+	And AssertClick the value 'Friends Request Page' at locator 'Home#PAGE'
+	And Portlet add PG
+		|portletName|Summary|
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And Navigator goto Site Page
+		|pageName|Friends Request Page|
+		|siteName|test|
+	And AssertClick the value 'ADD AS FRIEND' at locator '//div[@class='add-as-friend']/button[contains(.,'Add as Friend')]'
+	And AssertTextEquals the value 'Friend Requested' at locator '//div[contains(@class,'alert') and contains(@class,'alert-info')]'
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+		|userScreenName|usersn|
+	And Navigator goto Site Page
+		|pageName|Friends Request Page|
+		|siteName|test|
+	And AssertClick the value 'Confirm' at locator 'Link#CONFIRM'
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	And User advanced Search Via Friends Directory PG
+		|searchField|First Name|
+		|searchTerm|userfn|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	And User advanced Search Via Friends Directory PG
+		|searchField|First Name|
+		|searchNoResults|true|
+		|searchTerm|userfn1|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	And User advanced Search Via Friends Directory PG
+		|searchField|Middle Name|
+		|searchTerm|usermn|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	And User advanced Search Via Friends Directory PG
+		|searchField|Middle Name|
+		|searchNoResults|true|
+		|searchTerm|usermn1|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	And User advanced Search Via Friends Directory PG
+		|searchField|Last Name|
+		|searchTerm|userln|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	And User advanced Search Via Friends Directory PG
+		|searchField|Last Name|
+		|searchNoResults|true|
+		|searchTerm|userln1|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	And User advanced Search Via Friends Directory PG
+		|searchField|Screen Name|
+		|searchTerm|usersn|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	And User advanced Search Via Friends Directory PG
+		|searchField|Screen Name|
+		|searchNoResults|true|
+		|searchTerm|usersn1|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	And User advanced Search Via Friends Directory PG
+		|searchField|Email Address|
+		|searchTerm|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Friends Directory Page|
+	Then User advanced Search Via Friends Directory PG
+		|searchField|Email Address|
+		|searchNoResults|true|
+		|searchTerm|userea@liferay.com1|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|

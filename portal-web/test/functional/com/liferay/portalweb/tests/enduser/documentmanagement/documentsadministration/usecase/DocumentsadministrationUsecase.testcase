@@ -1,1479 +1,852 @@
-<definition component-name="portal-document-management">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column" />
-	<property name="testray.main.component.name" value="Documents Management" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="AddAndRemoveMetadataSets" priority="4">
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoMetadataSets" />
-
-		<execute macro="DMMetadataSet#add">
-			<var name="dmMetadataSetFieldNames" value="Text Box" />
-			<var name="metadataSetName" value="DM Metadata Set Name" />
-		</execute>
-
-		<execute macro="DMMetadataSet#save" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoDocumentType" />
-
-		<execute macro="DMDocumentType#add">
-			<var name="dmDocumentTypeDescription" value="DM Document Type Description" />
-			<var name="dmDocumentTypeFieldNames" value="Text Box" />
-			<var name="dmDocumentTypeName" value="DM Document Type Name" />
-			<var name="metadataSetName" value="DM Metadata Set Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoDocumentType" />
-
-		<execute macro="DMDocumentType#edit">
-			<var name="dmDocumentTypeName" value="DM Document Type Name" />
-			<var name="metadataSetName" value="DM Metadata Set Name" />
-			<var name="removeMetadataSet" value="true" />
-		</execute>
-	</command>
-
-	<command name="AddDocumentTypeAndMetadata" priority="3">
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoMetadataSets" />
-
-		<execute macro="DMMetadataSet#add">
-			<var name="dmMetadataSetFieldNames" value="Boolean" />
-			<var name="metadataSetName" value="Document Metadata Set Name" />
-		</execute>
-
-		<execute macro="DMMetadataSet#save" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoDocumentType" />
-
-		<execute macro="DMDocumentType#add">
-			<var name="dmDocumentTypeDescription" value="DM Document Type Description" />
-			<var name="dmDocumentTypeFieldNames" value="Boolean" />
-			<var name="dmDocumentTypeName" value="DM Document Type Name" />
-			<var name="metadataSetName" value="Document Metadata Set Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="DM Document Type Contract Description" />
-			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="DM Document Type Contract Title" />
-			<var name="dmDocumentTypeName" value="DM Document Type Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMPortlet#setDescriptiveView" />
-
-		<execute macro="DMNavigator#gotoDocumentCP">
-			<var name="dmDocumentTitle" value="DM Document Type Contract Title" />
-		</execute>
-
-		<execute macro="DMDocument#viewCP">
-			<var name="dmDocumentTitle" value="DM Document Type Contract Title" />
-		</execute>
-	</command>
-
-	<command name="AllowMultiplePortletConfigurationsPerSite" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page 1" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page 2" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page 2" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="DMPortlet#configureDisplaySettingsPG">
-			<var name="enableDisplaySettingsRelatedAssets" value="false" />
-			<var name="enableDisplaySettingsShowSearch" value="false" />
-			<var name="entriesToDisplayCount" value="75" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page 2" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="DMPortlet#viewDefaultConfigurationDisplaySettingsPG" />
-	</command>
-
-	<command name="AssertFileSizeValidation">
-		<description message="This is a use case for LPS-50760." />
-
-		<property name="test.name.skip.portal.instance" value="DocumentsadministrationUsecase#AssertFileSizeValidation" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="DM Document Description1" />
-			<var name="dmDocumentFile" value="Document_1.mp3" />
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoDocumentCP">
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="DMDocument#viewCP">
-			<var name="dmDocumentSize" value="4.3MB" />
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="LAR#exportPortlet">
-			<var name="larFileName" value="DM.portlet.lar" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Server Administration" />
-		</execute>
-
-		<execute function="AssertClick" locator1="NavBar#FILE_UPLOADS" value1="File Uploads" />
-
-		<execute function="Type" locator1="ServerAdministrationFileUploads#DOCS_AND_MEDIA_MAX_FILE_SIZE_FIELD" value1="300000" />
-
-		<execute function="ScrollWebElementIntoView" locator1="Button#SAVE" />
-
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-
-		<execute function="AssertElementPresent" locator1="Message#SUCCESS" value1="Your request completed successfully." />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoAddDocumentType">
-			<var name="dmDocumentTypeName" value="${dmDocumentTypeName}" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="Message#INFO" value1="Upload documents no larger than 293KB." />
-
-		<execute macro="DMDocument#editCmd">
-			<var name="dmDocumentFileEdit" value="Document_1.mp4" />
-			<var name="dmDocumentTitle" value="Document_1.mp4" />
-		</execute>
-
-		<execute macro="Button#clickPublish" />
-
-		<execute macro="Alert#viewRequestFailedToComplete" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_2" value1="Please enter a file with a valid file size no larger than 293KB." />
-
-		<execute macro="Button#clickCancel" />
-
-		<execute macro="LAR#_gotoExportImport" />
-
-		<execute function="AssertElementPresent" locator1="IFrame#DIALOG" />
-
-		<execute macro="LAR#_export">
-			<var name="exportPermissions" value="${exportPermissions}" />
-			<var name="larFileName" value="DM.portlet.lar" />
-		</execute>
-
-		<execute function="SelectFrame" value1="relative=top" />
-	</command>
-
-	<command name="CheckoutAndCheckin" priority="5">
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#assignRegRoleCP">
-			<var name="roleTitle" value="Administrator" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Memberships" />
-		</execute>
-
-		<execute macro="Site#assignUserAsMemberCP">
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute function="Click" locator1="Icon#DISPLAY_STYLE_DESCRIPTIVE" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMDocument#addPG">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="Document_1.doc" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute function="Click" locator1="Icon#DISPLAY_STYLE_DESCRIPTIVE" />
-
-		<execute macro="DMDocument#viewDocumentToolbarCmdAsGuestPG">
-			<var name="dmDocumentTitle" value="Document_1.doc" />
-		</execute>
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute function="Click" locator1="Icon#DISPLAY_STYLE_DESCRIPTIVE" />
-
-		<execute macro="DMDocument#enableActionsMenuOnPortlet" />
-
-		<execute macro="DMDocument#checkoutPG">
-			<var name="dmDocumentTitle" value="Document_1.doc" />
-		</execute>
-
-		<execute macro="DMDocument#viewDocumentVersionNumberCmdPG">
-			<var name="dmDocumentVersionNumber" value="PWC" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="DocumentsAndMediaDocument#DOCUMENT_INFO_WORKFLOW_STATUS" value1="Draft" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMDocument#editCmdPG">
-			<var name="dmDocumentTagName" value="tag1" />
-			<var name="dmDocumentTitle" value="Document_1.doc" />
-		</execute>
-
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-
-		<execute function="Pause" locator1="10000" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMDocument#editCmdPG">
-			<var name="dmDocumentTagName" value="tag2" />
-			<var name="dmDocumentTitle" value="Document_1.doc" />
-		</execute>
-
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-
-		<execute function="Pause" locator1="10000" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMDocument#editSavePG">
-			<var name="dmDocumentTitle" value="Document_1.doc" />
-			<var name="dmDocumentTitleEdit" value="Document1" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMDocument#editCmdPG">
-			<var name="checkedOut" value="true" />
-			<var name="dmDocumentTitle" value="Document_1.doc" />
-			<var name="userName" value="userfn userln" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoCheckedOutDocument">
-			<var name="dmCheckedOutDocumentTitle" value="Document1" />
-			<var name="dmDocumentTitle" value="Document_1.doc" />
-		</execute>
-
-		<execute macro="DMDocument#viewDocumentVersionNumberCmdPG">
-			<var name="dmDocumentVersionNumber" value="PWC" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMDocument#saveAndCheckinEditedDocumentPG">
-			<var name="dmDocumentTitle" value="Document1" />
-			<var name="revision" value="Minor" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoDocumentPG">
-			<var name="dmDocumentTitle" value="Document1" />
-		</execute>
-
-		<execute macro="DMDocument#viewDocumentVersionNumberCmdPG">
-			<var name="dmDocumentVersionNumber" value="1.1" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="DocumentsAndMediaDocument#DOCUMENT_INFO_WORKFLOW_STATUS" value1="Approved" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMDocument#checkoutPG">
-			<var name="dmDocumentTitle" value="Document1" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<var name="key_dmDocumentTitle" value="Document1" />
-
-		<execute function="AssertClick" locator1="DocumentsAndMedia#DESCRIPTIVE_LIST_DOCUMENT_TITLE" value1="Document1" />
-
-		<execute function="AssertClick#assertTextClick" locator1="Button#EDIT" value1="Edit" />
-
-		<execute macro="AssetCategorization#removeAllTags" />
-
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save" />
-
-		<execute macro="DMDocument#viewDocumentVersionNumberCmdPG">
-			<var name="dmDocumentVersionNumber" value="PWC" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMDocument#checkinPG">
-			<var name="dmDocumentTitle" value="Document1" />
-			<var name="revision" value="Minor" />
-		</execute>
-
-		<execute macro="DMDocument#viewDocumentVersionNumberCmdPG">
-			<var name="dmDocumentVersionNumber" value="1.1" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="DocumentsAndMediaDocument#DOCUMENT_INFO_WORKFLOW_STATUS" value1="Approved" />
-	</command>
-
-	<command name="Comments" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMFolder#addCP">
-			<var name="dmFolderName" value="Folder1" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMFolder#addCP">
-			<var name="dmFolderDescription" value="Description of Folder2" />
-			<var name="dmFolderName" value="Folder2" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMFolder#gotoCP">
-			<var name="dmFolderName" value="Folder1" />
-		</execute>
-
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="This is a file with zero bytes" />
-			<var name="dmDocumentTitle" value="Zero Document File" />
-			<var name="nullFile" value="true" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMFolder#gotoCP">
-			<var name="dmFolderName" value="Folder1" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoDocumentCP">
-			<var name="dmDocumentTitle" value="Zero Document File" />
-		</execute>
-
-		<execute macro="DMDocument#viewCP">
-			<var name="dmDocumentSize" value="0KB" />
-			<var name="dmDocumentTitle" value="Zero Document File" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute function="Click" locator1="Icon#DISPLAY_STYLE_DESCRIPTIVE" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Activities" />
-		</execute>
-
-		<var name="key_dmFolderName" value="Folder1" />
-
-		<execute function="AssertTextEquals" locator1="DocumentsAndMedia#DESCRIPTIVE_LIST_FOLDER_TITLE" value1="Folder1" />
-
-		<var name="key_assetName" value="Zero Document File" />
-
-		<execute function="AssertClick" locator1="Activities#ACTIVITY_TITLE_ASSET_NAME" value1="Zero Document File" />
-
-		<execute macro="DMDocument#viewDocumentTitleCmdPG">
-			<var name="dmDocumentTitle" value="Zero Document File" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoFolder">
-			<var name="dmFolderName" value="Folder1" />
-		</execute>
-
-		<execute macro="DMDocumentComment#addPG">
-			<var name="commentBody" value="This is the first comment" />
-			<var name="dmDocumentTitle" value="Zero Document File" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoFolder">
-			<var name="dmFolderName" value="Folder1" />
-		</execute>
-
-		<execute macro="DMDocumentComment#addPG">
-			<var name="commentBody" value="This is comment #2" />
-			<var name="dmDocumentTitle" value="Zero Document File" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoFolder">
-			<var name="dmFolderName" value="Folder1" />
-		</execute>
-
-		<execute macro="DMDocumentComment#viewPG">
-			<var name="commentBody" value="This is the first comment" />
-			<var name="dmDocumentTitle" value="Zero Document File" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoFolder">
-			<var name="dmFolderName" value="Folder1" />
-		</execute>
-
-		<execute macro="DMDocumentComment#viewPG">
-			<var name="commentBody" value="This is comment #2" />
-			<var name="dmDocumentTitle" value="Zero Document File" />
-		</execute>
-	</command>
-
-	<command name="ConfigureXugglerVideoPreviewSizePG" priority="3">
-		<property name="custom.properties" value="xuggler.enabled=true${line.separator}dl.file.entry.preview.video.width=0${line.separator}dl.file.entry.preview.video.height=0" />
-		<property name="test.name.skip.portal.instance" value="DocumentsadministrationUsecase#ConfigureXugglerVideoPreviewSizePG" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Server Administration" />
-		</execute>
-
-		<execute macro="ServerAdministration#configureExternalServices">
-			<var name="enableXuggler" value="true" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute function="Click" locator1="Icon#DISPLAY_STYLE_DESCRIPTIVE" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMDocument#addPG">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_1.mp4" />
-			<var name="dmDocumentTitle" value="Document_1.mp4" />
-		</execute>
-
-		<execute function="Pause" locator1="180000" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoDocumentPG">
-			<var name="dmDocumentTitle" value="Document_1.mp4" />
-		</execute>
-
-		<execute function="Pause" locator1="30000" />
-
-		<execute macro="DMDocument#waitForVideoToGenerate">
-			<var name="videoGenerationTimeCounter" value="0" />
-			<var name="videoGenerationTimeMaxWaitTime" value="6" />
-		</execute>
-
-		<var attribute="poster" locator="//video" name="videoPreviewThumbnailLink" />
-
-		<execute function="Open" locator1="${videoPreviewThumbnailLink}" />
-		<execute function="Pause" locator1="1000" />
-
-		<var name="key_videoGenerationThumbnailResolution" value="640" />
-
-		<execute function="AssertElementNotPresent" locator1="DocumentsAndMediaDocument#VIDEO_GENERATION_THUMBNAIL_RESOLUTION" />
-
-		<var name="key_videoGenerationThumbnailResolution" value="360" />
-
-		<execute function="AssertElementNotPresent" locator1="DocumentsAndMediaDocument#VIDEO_GENERATION_THUMBNAIL_RESOLUTION" />
-
-		<var name="key_videoGenerationThumbnailResolution" value="1280" />
-
-		<execute function="AssertElementPresent#assertElementPresent" locator1="DocumentsAndMediaDocument#VIDEO_GENERATION_THUMBNAIL_RESOLUTION" />
-
-		<var name="key_videoGenerationThumbnailResolution" value="720" />
-
-		<execute function="AssertElementPresent#assertElementPresent" locator1="DocumentsAndMediaDocument#VIDEO_GENERATION_THUMBNAIL_RESOLUTION" />
-	</command>
-
-	<command name="ImportDocumentWithDBStore" priority="3">
-		<property name="custom.properties" value="dl.store.impl=com.liferay.portal.store.db.DBStore" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_1.jpg" />
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="LAR#exportPortlet">
-			<var name="larFileName" value="DM_Test_DB_Store.lar" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="LAR#importPortlet">
-			<var name="larFileName" value="DM_Test_DB_Store.lar" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoDocumentCP">
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="DMDocument#viewCP">
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-	</command>
-
-	<command name="RemoveCurrentDisplayStyleViews" priority="4">
-		<execute macro="Page#add">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMPortlet#configureDisplaySettingsPG">
-			<var name="currentDisplayStyleViews" value="" />
-		</execute>
-	</command>
-
-	<command name="SelectMultipleDocumentsAndDeleteViaActionsButton" priority="4">
-		<execute macro="Page#add">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMDocument#addPG">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="Document_1.doc" />
-		</execute>
-
-		<execute macro="DMDocument#addPG">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_2.doc" />
-			<var name="dmDocumentTitle" value="Document_2.doc" />
-		</execute>
-
-		<execute macro="DMDocument#addPG">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_3.doc" />
-			<var name="dmDocumentTitle" value="Document_3.doc" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<var name="key_dmDocumentTitle" value="Document_1.doc" />
-
-		<execute function="Check" locator1="DocumentsAndMedia#ICON_DOCUMENT_CHECKBOX" />
-		<var name="key_dmDocumentTitle" value="Document_2.doc" />
-
-		<execute function="Check" locator1="DocumentsAndMedia#ICON_DOCUMENT_CHECKBOX" />
-		<var name="key_dmDocumentTitle" value="Document_3.doc" />
-
-		<execute function="Check" locator1="DocumentsAndMedia#ICON_DOCUMENT_CHECKBOX" />
-
-		<execute function="Click" locator1="Icon#MOVE_TO_RECYCLE_BIN" />
-
-		<execute function="AssertElementPresent" locator1="Message#SUCCESS" />
-
-		<execute macro="DMDocument#viewDefaultCP" />
-	</command>
-
-	<command name="UpdateDocumentTypeWithPermissions" priority="3">
-		<property name="test.name.skip.portal.instance" value="DocumentsadministrationUsecase#UpdateDocumentTypeWithPermissions" />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoDocumentType" />
-
-		<execute macro="DMDocumentType#add">
-			<var name="dmDocumentTypeDescription" value="Images" />
-			<var name="dmDocumentTypeFieldNames" value="Text Box,Date" />
-			<var name="dmDocumentTypeName" value="Photos" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Server Administration" />
-		</execute>
-
-		<execute macro="ServerAdministration#executeServerResourcesActions">
-			<var name="actionsDescription" value="Clean up permissions." />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="RoleNavigator#gotoRoleType" />
-
-		<execute macro="Role#add">
-			<var name="roleDescription" value="This is the technical writer role" />
-			<var name="roleKey" value="Technical Writer" />
-			<var name="roleName" value="Writer" />
-			<var name="roleTitle" value="Technical Writer" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#definePermissionsCP">
-			<var name="permissionDefinitionKeys" value="SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_GENERAL_PERMISSIONS_VIEW_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_DOCUMENT_TYPE_DELETE_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_DOCUMENT_TYPE_UPDATE_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_DOCUMENT_TYPE_VIEW_CHECKBOX" />
-			<var name="roleTitle" value="Technical Writer" />
-			<var name="roleType" value="Regular Role" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#definePermissionsCP">
-			<var name="permissionDefinitionKeys" value="SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_GENERAL_PERMISSIONS_VIEW_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENTS_ADD_DOCUMENT_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENTS_ADD_FOLDER_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENTS_FOLDER_ADD_DOCUMENT_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENTS_FOLDER_ADD_SUBFOLDER_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENTS_FOLDER_UPDATE_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENT_DELETE_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENT_UPDATE_CHECKBOX" />
-			<var name="roleTitle" value="Site Member" />
-			<var name="roleType" value="Site" />
-		</execute>
-
-		<execute function="Refresh" />
-
-		<execute macro="Role#viewPermissionCP">
-			<var name="permissionDefinitionValue" value="Delete" />
-			<var name="permissionNavigationValue" value="Document" />
-		</execute>
-
-		<execute macro="Role#viewPermissionCP">
-			<var name="permissionDefinitionValue" value="Update" />
-			<var name="permissionNavigationValue" value="Document" />
-		</execute>
-
-		<execute macro="Role#viewPermissionCP">
-			<var name="permissionDefinitionValue" value="Add Document" />
-			<var name="permissionNavigationValue" value="Documents" />
-		</execute>
-
-		<execute macro="Role#viewPermissionCP">
-			<var name="permissionDefinitionValue" value="Add Folder" />
-			<var name="permissionNavigationValue" value="Documents" />
-		</execute>
-
-		<execute macro="Role#viewPermissionCP">
-			<var name="permissionDefinitionValue" value="Add Document" />
-			<var name="permissionNavigationValue" value="Documents Folder" />
-		</execute>
-
-		<execute macro="Role#viewPermissionCP">
-			<var name="permissionDefinitionValue" value="Add Subfolder" />
-			<var name="permissionNavigationValue" value="Documents Folder" />
-		</execute>
-
-		<execute macro="Role#viewPermissionCP">
-			<var name="permissionDefinitionValue" value="Update" />
-			<var name="permissionNavigationValue" value="Documents Folder" />
-		</execute>
-
-		<execute function="Refresh" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="password" value="password" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Site#assignUserSitesCP">
-			<var name="siteName" value="${siteName}" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#assignRegularRoleCP">
-			<var name="roleTitle" value="Technical Writer" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute function="Pause" locator1="3000" />
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea2@liferay.com" />
-			<var name="userFirstName" value="userfn2" />
-			<var name="userLastName" value="userln2" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="password" value="password" />
-			<var name="userEmailAddress" value="userea2@liferay.com" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="Site#assignUserSitesCP">
-			<var name="siteName" value="${siteName}" />
-			<var name="userScreenName" value="usersn2" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMDocument#enableActionsMenuOnPortlet" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute function="Click" locator1="Icon#DISPLAY_STYLE_DESCRIPTIVE" />
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute function="AssertVisible" locator1="ControlMenu#HEADER_TITLE" value1="Documents and Media" />
-
-		<execute macro="DMNavigator#gotoDocumentType" />
-
-		<execute macro="DMDocumentType#edit">
-			<var name="dmDocumentTypeFieldNames" value="Radio" />
-			<var name="dmDocumentTypeName" value="Photos" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea2@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMDocument#viewCannotAddRepository" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMDocumentType#viewNoAvailableActionsViaDocumentTypesPG" />
-	</command>
-
-	<command name="ViewDocumentWithGlobalScope" priority="4">
-		<execute macro="Page#add">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Documents and Media Page - Global" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page - Global" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Global" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMFolder#addCP">
-			<var name="dmFolderDescription" value="DM Folder Description" />
-			<var name="dmFolderName" value="DM Folder Name" />
-		</execute>
-
-		<execute macro="DMFolder#gotoCP">
-			<var name="dmFolderName" value="DM Folder Name" />
-		</execute>
-
-		<execute macro="DMFolder#addSubfolderCP">
-			<var name="dmSubFolderDescription" value="DM SubFolder Description" />
-			<var name="dmSubFolderName" value="DM SubFolder Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Global" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMFolder#gotoCP">
-			<var name="dmFolderName" value="DM Folder Name" />
-		</execute>
-
-		<execute macro="DMFolder#gotoCP">
-			<var name="dmFolderName" value="DM SubFolder Name" />
-		</execute>
-
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_1.txt" />
-			<var name="dmDocumentSize" value="0KB" />
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page - Global" />
-		</execute>
-
-		<execute macro="DMPortlet#configureScopetoGlobalPG">
-			<var name="currentScope" value="Liferay" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page - Global" />
-		</execute>
-
-		<execute macro="DMPortlet#configureRootFolderPG">
-			<var name="dmFolderName" value="DM Folder Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page - Global" />
-		</execute>
-
-		<execute function="Click" locator1="Icon#DISPLAY_STYLE_DESCRIPTIVE" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page - Global" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoFolder">
-			<var name="dmFolderName" value="DM SubFolder Name" />
-		</execute>
-
-		<execute macro="DMDocument#viewPG">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMPortlet#viewDefaultPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#addCP">
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#addSitePageViaSiteTemplateCP">
-			<var name="pageName" value="DM Site Page Name - Global" />
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addSiteTemplateCP">
-			<var name="siteName" value="DM Site Name" />
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="DM Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="DM Site Page Name - Global" />
-			<var name="siteName" value="DM Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="DM Site Page Name - Global" />
-			<var name="siteName" value="DM Site Name" />
-		</execute>
-
-		<execute macro="DMPortlet#configureScopetoGlobalPG">
-			<var name="currentScope" value="DM Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="DM Site Page Name - Global" />
-			<var name="siteName" value="DM Site Name" />
-		</execute>
-
-		<execute macro="DMPortlet#configureRootFolderPG">
-			<var name="dmFolderName" value="DM Folder Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="DM Site Page Name - Global" />
-			<var name="siteName" value="DM Site Name" />
-		</execute>
-
-		<execute macro="DMNavigator#gotoFolder">
-			<var name="dmFolderName" value="DM SubFolder Name" />
-		</execute>
-
-		<execute macro="DMDocument#viewPG">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-	</command>
-
-	<command name="ViewFileCategoryAndTags" priority="4">
-		<execute macro="Page#add">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryDescription" value="Category Description" />
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Topic" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Tags" />
-		</execute>
-
-		<execute macro="Tag#addCP">
-			<var name="tagName" value="tag1" />
-		</execute>
-
-		<execute macro="Tag#addCP">
-			<var name="tagName" value="tag2" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMDocument#enableActionsMenuOnPortlet" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute function="Click" locator1="Icon#DISPLAY_STYLE_DESCRIPTIVE" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMDocument#addPG">
-			<var name="categoryName" value="Category Name" />
-			<var name="dmDocumentDescription" value="Document Description" />
-			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="Document Title" />
-			<var name="tagNameList" value="tag1,tag2" />
-			<var name="vocabularyName" value="Topic" />
-		</execute>
-
-		<var name="key_dmDocumentTitle" value="Document Title" />
-
-		<execute function="Click" locator1="DocumentsAndMedia#DESCRIPTIVE_LIST_DOCUMENT_VERTICAL_ELLIPSIS" />
-
-		<execute function="AssertClick" locator1="MenuItem#EDIT" value1="Edit" />
-
-		<var name="key_categoryName" value="Category Name" />
-
-		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Categorization" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="AssetCategorization#CATEGORY" value1="Category Name" />
-
-		<var name="key_tagName" value="tag1" />
-
-		<execute function="AssertTextEquals" locator1="AssetCategorization#TAG" value1="tag1" />
-		<var name="key_tagName" value="tag2" />
-
-		<execute function="AssertTextEquals" locator1="AssetCategorization#TAG" value1="tag2" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMDocument#viewPG">
-			<var name="categoryName" value="Category Name" />
-			<var name="dmDocumentDescription" value="Document Description" />
-			<var name="dmDocumentTitle" value="Document Title" />
-			<var name="tagNameList" value="tag1,tag2" />
-		</execute>
-	</command>
-
-	<command name="ViewPortletAfterRenamingDocumentWithDuplicateTitlePG" priority="4">
-		<execute macro="Page#add">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute function="Click" locator1="Icon#DISPLAY_STYLE_DESCRIPTIVE" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMDocument#addPG">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="DMDocument#addPG">
-			<var name="dmDocument" value="Duplicate" />
-			<var name="dmDocumentDescription" value="DM Document 2 Description" />
-			<var name="dmDocumentFile" value="Document_2.doc" />
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute function="Type" locator1="DocumentsAndMediaEditDocument#TITLE_FIELD" value1="DM Document 2 Title" />
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute function="Pause" locator1="1000" />
-
-		<execute function="AssertTextNotPresent" value1="Documents and Media is temporarily unavailable." />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute function="Pause" locator1="1000" />
-
-		<execute function="AssertTextNotPresent" value1="Documents and Media is temporarily unavailable." />
-
-		<execute macro="DMDocument#viewPG">
-			<var name="dmDocumentDescription" value="DM Document 2 Description" />
-			<var name="dmDocumentTitle" value="DM Document 2 Title" />
-		</execute>
-	</command>
-
-	<command name="ViewSingleDocumentSelectionDoesNotCheckAllFileSelectionCP" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="DM Document1 Description" />
-			<var name="dmDocumentFile" value="Document_1.jpg" />
-			<var name="dmDocumentTitle" value="DM Document1 Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="DM Document2 Description" />
-			<var name="dmDocumentFile" value="Document_1.jpg" />
-			<var name="dmDocumentTitle" value="DM Document2 Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMDocument#checkDocumentCheckboxCP">
-			<var name="dmDocumentTitle" value="DM Document1 Title" />
-		</execute>
-
-		<execute function="AssertElementPresent" locator1="Checkbox#SELECT_ALL_CHECKBOX_TICK" />
-
-		<execute macro="DMDocument#uncheckDocumentCheckboxCP">
-			<var name="dmDocumentTitle" value="DM Document1 Title" />
-		</execute>
-
-		<execute function="AssertElementNotPresent" locator1="Checkbox#SELECT_ALL_CHECKBOX_TICK" />
-
-		<execute macro="DMDocument#checkDocumentCheckboxCP">
-			<var name="dmDocumentTitle" value="DM Document1 Title" />
-		</execute>
-
-		<execute macro="DMDocument#checkDocumentCheckboxCP">
-			<var name="dmDocumentTitle" value="DM Document2 Title" />
-		</execute>
-
-		<execute function="AssertChecked" locator1="DocumentsAndMedia#TOOLBAR_SELECT_ALL_CHECKBOX" />
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Documents Management|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Add And Remove Metadata Sets
+Priority: 4
+	Given ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	When DMNavigator goto Metadata Sets
+	And DMMetadataSet add
+		|dmMetadataSetFieldNames|Text Box|
+		|metadataSetName|DM Metadata Set Name|
+	And DMMetadataSet save
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMNavigator goto Document Type
+	And DMDocumentType add
+		|dmDocumentTypeDescription|DM Document Type Description|
+		|dmDocumentTypeFieldNames|Text Box|
+		|dmDocumentTypeName|DM Document Type Name|
+		|metadataSetName|DM Metadata Set Name|
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMNavigator goto Document Type
+	Then DMDocumentType edit
+		|dmDocumentTypeName|DM Document Type Name|
+		|metadataSetName|DM Metadata Set Name|
+		|removeMetadataSet|true|
+Scenario: Add Document Type And Metadata
+Priority: 3
+	Given ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	When DMNavigator goto Metadata Sets
+	And DMMetadataSet add
+		|dmMetadataSetFieldNames|Boolean|
+		|metadataSetName|Document Metadata Set Name|
+	And DMMetadataSet save
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMNavigator goto Document Type
+	And DMDocumentType add
+		|dmDocumentTypeDescription|DM Document Type Description|
+		|dmDocumentTypeFieldNames|Boolean|
+		|dmDocumentTypeName|DM Document Type Name|
+		|metadataSetName|Document Metadata Set Name|
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMDocument add CP
+		|dmDocumentDescription|DM Document Type Contract Description|
+		|dmDocumentFile|Document_1.doc|
+		|dmDocumentTitle|DM Document Type Contract Title|
+		|dmDocumentTypeName|DM Document Type Name|
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMPortlet set Descriptive View
+	And DMNavigator goto Document CP
+		|dmDocumentTitle|DM Document Type Contract Title|
+	Then DMDocument view CP
+		|dmDocumentTitle|DM Document Type Contract Title|
+Scenario: Allow Multiple Portlet Configurations Per Site
+Priority: 4
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And Page add
+		|pageName|Site Page 1|
+	And Page add
+		|pageName|Site Page 2|
+	And Navigator goto Site Page
+		|pageName|Site Page 1|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Documents and Media|
+	And Navigator goto Site Page
+		|pageName|Site Page 2|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Documents and Media|
+	And Navigator goto Site Page
+		|pageName|Site Page 1|
+		|siteName|Site Name|
+	And DMPortlet configure Display Settings PG
+		|enableDisplaySettingsRelatedAssets|false|
+		|enableDisplaySettingsShowSearch|false|
+		|entriesToDisplayCount|75|
+	And Navigator goto Site Page
+		|pageName|Site Page 2|
+		|siteName|Site Name|
+	Then DMPortlet view Default Configuration Display Settings PG
+Scenario: Assert File Size Validation
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When these properties
+		|test.name.skip.portal.instance|DocumentsadministrationUsecase#AssertFileSizeValidation|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMDocument add CP
+		|dmDocumentDescription|DM Document Description1|
+		|dmDocumentFile|Document_1.mp3|
+		|dmDocumentTitle|DM Document Title|
+	And DMNavigator goto Document CP
+		|dmDocumentTitle|DM Document Title|
+	And DMDocument view CP
+		|dmDocumentSize|4.3MB|
+		|dmDocumentTitle|DM Document Title|
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And LAR export Portlet
+		|larFileName|DM.portlet.lar|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Server Administration|
+	And AssertClick the value 'File Uploads' at locator 'NavBar#FILE_UPLOADS'
+	And Type the value '300000' at locator 'ServerAdministrationFileUploads#DOCS_AND_MEDIA_MAX_FILE_SIZE_FIELD'
+	And ScrollWebElementIntoView at locator 'Button#SAVE'
+	And AssertClick the value 'Save' at locator 'Button#SAVE'
+	And AssertElementPresent the value 'Your request completed successfully.' at locator 'Message#SUCCESS'
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMNavigator goto Add Document Type
+		|dmDocumentTypeName|${dmDocumentTypeName}|
+	And AssertTextEquals the value 'Upload documents no larger than 293KB.' at locator 'Message#INFO'
+	And DMDocument edit Cmd
+		|dmDocumentFileEdit|Document_1.mp4|
+		|dmDocumentTitle|Document_1.mp4|
+	And Button click Publish
+	And Alert view Request Failed To Complete
+	And AssertTextEquals assert Partial Text the value 'Please enter a file with a valid file size no larger than 293KB.' at locator 'Message#ERROR_2'
+	And Button click Cancel
+	And LAR _goto Export Import
+	And AssertElementPresent at locator 'IFrame#DIALOG'
+	And LAR _export
+		|exportPermissions|${exportPermissions}|
+		|larFileName|DM.portlet.lar|
+	Then SelectFrame the value 'relative=top'
+Scenario: Checkout And Checkin
+Priority: 5
+	Given ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	When User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role assign Reg Role CP
+		|roleTitle|Administrator|
+		|userScreenName|usersn|
+	And Navigator open URL
+	And ProductMenu goto Sites Members
+		|portlet|Site Memberships|
+	And Site assign User As Member CP
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Page add
+		|pageName|Documents and Media Page|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Portlet add PG
+		|pageName|Documents and Media Page|
+		|portletName|Documents and Media|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Click at locator 'Icon#DISPLAY_STYLE_DESCRIPTIVE'
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMDocument add PG
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_1.doc|
+		|dmDocumentTitle|Document_1.doc|
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Click at locator 'Icon#DISPLAY_STYLE_DESCRIPTIVE'
+	And DMDocument view Document Toolbar Cmd As Guest PG
+		|dmDocumentTitle|Document_1.doc|
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Click at locator 'Icon#DISPLAY_STYLE_DESCRIPTIVE'
+	And DMDocument enable Actions Menu On Portlet
+	And DMDocument checkout PG
+		|dmDocumentTitle|Document_1.doc|
+	And DMDocument view Document Version Number Cmd PG
+		|dmDocumentVersionNumber|PWC|
+	And AssertTextEquals the value 'Draft' at locator 'DocumentsAndMediaDocument#DOCUMENT_INFO_WORKFLOW_STATUS'
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMDocument edit Cmd PG
+		|dmDocumentTagName|tag1|
+		|dmDocumentTitle|Document_1.doc|
+	And AssertClick the value 'Save' at locator 'Button#SAVE'
+	And Pause at locator '10000'
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMDocument edit Cmd PG
+		|dmDocumentTagName|tag2|
+		|dmDocumentTitle|Document_1.doc|
+	And AssertClick the value 'Save' at locator 'Button#SAVE'
+	And Pause at locator '10000'
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMDocument edit Save PG
+		|dmDocumentTitle|Document_1.doc|
+		|dmDocumentTitleEdit|Document1|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMDocument edit Cmd PG
+		|checkedOut|true|
+		|dmDocumentTitle|Document_1.doc|
+		|userName|userfn userln|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMNavigator goto Checked Out Document
+		|dmCheckedOutDocumentTitle|Document1|
+		|dmDocumentTitle|Document_1.doc|
+	And DMDocument view Document Version Number Cmd PG
+		|dmDocumentVersionNumber|PWC|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMDocument save And Checkin Edited Document PG
+		|dmDocumentTitle|Document1|
+		|revision|Minor|
+	And DMNavigator goto Document PG
+		|dmDocumentTitle|Document1|
+	And DMDocument view Document Version Number Cmd PG
+		|dmDocumentVersionNumber|1.1|
+	And AssertTextEquals the value 'Approved' at locator 'DocumentsAndMediaDocument#DOCUMENT_INFO_WORKFLOW_STATUS'
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMDocument checkout PG
+		|dmDocumentTitle|Document1|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And these variables
+		|key_dmDocumentTitle|Document1|
+	And AssertClick the value 'Document1' at locator 'DocumentsAndMedia#DESCRIPTIVE_LIST_DOCUMENT_TITLE'
+	And AssertClick assert Text Click the value 'Edit' at locator 'Button#EDIT'
+	And AssetCategorization remove All Tags
+	And AssertClick the value 'Save' at locator 'Button#SAVE'
+	And DMDocument view Document Version Number Cmd PG
+		|dmDocumentVersionNumber|PWC|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMDocument checkin PG
+		|dmDocumentTitle|Document1|
+		|revision|Minor|
+	And DMDocument view Document Version Number Cmd PG
+		|dmDocumentVersionNumber|1.1|
+	Then AssertTextEquals the value 'Approved' at locator 'DocumentsAndMediaDocument#DOCUMENT_INFO_WORKFLOW_STATUS'
+Scenario: Comments
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMFolder add CP
+		|dmFolderName|Folder1|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMFolder add CP
+		|dmFolderDescription|Description of Folder2|
+		|dmFolderName|Folder2|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMFolder goto CP
+		|dmFolderName|Folder1|
+	And DMDocument add CP
+		|dmDocumentDescription|This is a file with zero bytes|
+		|dmDocumentTitle|Zero Document File|
+		|nullFile|true|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMFolder goto CP
+		|dmFolderName|Folder1|
+	And DMNavigator goto Document CP
+		|dmDocumentTitle|Zero Document File|
+	And DMDocument view CP
+		|dmDocumentSize|0KB|
+		|dmDocumentTitle|Zero Document File|
+	And Page add
+		|pageName|Documents and Media Page|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Portlet add PG
+		|portletName|Documents and Media|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Click at locator 'Icon#DISPLAY_STYLE_DESCRIPTIVE'
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Portlet add PG
+		|portletName|Activities|
+	And these variables
+		|key_dmFolderName|Folder1|
+	And AssertTextEquals the value 'Folder1' at locator 'DocumentsAndMedia#DESCRIPTIVE_LIST_FOLDER_TITLE'
+	And these variables
+		|key_assetName|Zero Document File|
+	And AssertClick the value 'Zero Document File' at locator 'Activities#ACTIVITY_TITLE_ASSET_NAME'
+	And DMDocument view Document Title Cmd PG
+		|dmDocumentTitle|Zero Document File|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMNavigator goto Folder
+		|dmFolderName|Folder1|
+	And DMDocumentComment add PG
+		|commentBody|This is the first comment|
+		|dmDocumentTitle|Zero Document File|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMNavigator goto Folder
+		|dmFolderName|Folder1|
+	And DMDocumentComment add PG
+		|commentBody|This is comment #2|
+		|dmDocumentTitle|Zero Document File|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMNavigator goto Folder
+		|dmFolderName|Folder1|
+	And DMDocumentComment view PG
+		|commentBody|This is the first comment|
+		|dmDocumentTitle|Zero Document File|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMNavigator goto Folder
+		|dmFolderName|Folder1|
+	Then DMDocumentComment view PG
+		|commentBody|This is comment #2|
+		|dmDocumentTitle|Zero Document File|
+Scenario: Configure Xuggler Video Preview Size PG
+Priority: 3
+	Given these properties
+		|custom.properties|xuggler.enabled=true${line.separator}dl.file.entry.preview.video.width=0${line.separator}dl.file.entry.preview.video.height=0|
+	When these properties
+		|test.name.skip.portal.instance|DocumentsadministrationUsecase#ConfigureXugglerVideoPreviewSizePG|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Server Administration|
+	And ServerAdministration configure External Services
+		|enableXuggler|true|
+	And Page add
+		|pageName|Documents and Media Page|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Portlet add PG
+		|portletName|Documents and Media|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Click at locator 'Icon#DISPLAY_STYLE_DESCRIPTIVE'
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMDocument add PG
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_1.mp4|
+		|dmDocumentTitle|Document_1.mp4|
+	And Pause at locator '180000'
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMNavigator goto Document PG
+		|dmDocumentTitle|Document_1.mp4|
+	And Pause at locator '30000'
+	And DMDocument wait For Video To Generate
+		|videoGenerationTimeCounter|0|
+		|videoGenerationTimeMaxWaitTime|6|
+	And these variables
+		|videoPreviewThumbnailLink||
+	And Open at locator '${videoPreviewThumbnailLink}'
+	And Pause at locator '1000'
+	And these variables
+		|key_videoGenerationThumbnailResolution|640|
+	And AssertElementNotPresent at locator 'DocumentsAndMediaDocument#VIDEO_GENERATION_THUMBNAIL_RESOLUTION'
+	And these variables
+		|key_videoGenerationThumbnailResolution|360|
+	And AssertElementNotPresent at locator 'DocumentsAndMediaDocument#VIDEO_GENERATION_THUMBNAIL_RESOLUTION'
+	And these variables
+		|key_videoGenerationThumbnailResolution|1280|
+	And AssertElementPresent assert Element Present at locator 'DocumentsAndMediaDocument#VIDEO_GENERATION_THUMBNAIL_RESOLUTION'
+	And these variables
+		|key_videoGenerationThumbnailResolution|720|
+	Then AssertElementPresent assert Element Present at locator 'DocumentsAndMediaDocument#VIDEO_GENERATION_THUMBNAIL_RESOLUTION'
+Scenario: Import Document With DB Store
+Priority: 3
+	Given these properties
+		|custom.properties|dl.store.impl=com.liferay.portal.store.db.DBStore|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMDocument add CP
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_1.jpg|
+		|dmDocumentTitle|DM Document Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And LAR export Portlet
+		|larFileName|DM_Test_DB_Store.lar|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And LAR import Portlet
+		|larFileName|DM_Test_DB_Store.lar|
+	And Navigator open URL
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMNavigator goto Document CP
+		|dmDocumentTitle|DM Document Title|
+	Then DMDocument view CP
+		|dmDocumentTitle|DM Document Title|
+Scenario: Remove Current Display Style Views
+Priority: 4
+	Given Page add
+		|pageName|Documents and Media Page|
+	When Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Portlet add PG
+		|portletName|Documents and Media|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	Then DMPortlet configure Display Settings PG
+		|currentDisplayStyleViews||
+Scenario: Select Multiple Documents And Delete Via Actions Button
+Priority: 4
+	Given Page add
+		|pageName|Documents and Media Page|
+	When Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Portlet add PG
+		|portletName|Documents and Media|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMDocument add PG
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_1.doc|
+		|dmDocumentTitle|Document_1.doc|
+	And DMDocument add PG
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_2.doc|
+		|dmDocumentTitle|Document_2.doc|
+	And DMDocument add PG
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_3.doc|
+		|dmDocumentTitle|Document_3.doc|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And these variables
+		|key_dmDocumentTitle|Document_1.doc|
+	And Check at locator 'DocumentsAndMedia#ICON_DOCUMENT_CHECKBOX'
+	And these variables
+		|key_dmDocumentTitle|Document_2.doc|
+	And Check at locator 'DocumentsAndMedia#ICON_DOCUMENT_CHECKBOX'
+	And these variables
+		|key_dmDocumentTitle|Document_3.doc|
+	And Check at locator 'DocumentsAndMedia#ICON_DOCUMENT_CHECKBOX'
+	And Click at locator 'Icon#MOVE_TO_RECYCLE_BIN'
+	And AssertElementPresent at locator 'Message#SUCCESS'
+	Then DMDocument view Default CP
+Scenario: Update Document Type With Permissions
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|DocumentsadministrationUsecase#UpdateDocumentTypeWithPermissions|
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMNavigator goto Document Type
+	And DMDocumentType add
+		|dmDocumentTypeDescription|Images|
+		|dmDocumentTypeFieldNames|Text Box,Date|
+		|dmDocumentTypeName|Photos|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Server Administration|
+	And ServerAdministration execute Server Resources Actions
+		|actionsDescription|Clean up permissions.|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And RoleNavigator goto Role Type
+	And Role add
+		|roleDescription|This is the technical writer role|
+		|roleKey|Technical Writer|
+		|roleName|Writer|
+		|roleTitle|Technical Writer|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permissions CP
+		|permissionDefinitionKeys|SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_GENERAL_PERMISSIONS_VIEW_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_DOCUMENT_TYPE_DELETE_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_DOCUMENT_TYPE_UPDATE_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_DOCUMENT_TYPE_VIEW_CHECKBOX|
+		|roleTitle|Technical Writer|
+		|roleType|Regular Role|
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role define Permissions CP
+		|permissionDefinitionKeys|SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_GENERAL_PERMISSIONS_VIEW_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENTS_ADD_DOCUMENT_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENTS_ADD_FOLDER_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENTS_FOLDER_ADD_DOCUMENT_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENTS_FOLDER_ADD_SUBFOLDER_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENTS_FOLDER_UPDATE_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENT_DELETE_CHECKBOX,SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENT_UPDATE_CHECKBOX|
+		|roleTitle|Site Member|
+		|roleType|Site|
+	And Refresh
+	And Role view Permission CP
+		|permissionDefinitionValue|Delete|
+		|permissionNavigationValue|Document|
+	And Role view Permission CP
+		|permissionDefinitionValue|Update|
+		|permissionNavigationValue|Document|
+	And Role view Permission CP
+		|permissionDefinitionValue|Add Document|
+		|permissionNavigationValue|Documents|
+	And Role view Permission CP
+		|permissionDefinitionValue|Add Folder|
+		|permissionNavigationValue|Documents|
+	And Role view Permission CP
+		|permissionDefinitionValue|Add Document|
+		|permissionNavigationValue|Documents Folder|
+	And Role view Permission CP
+		|permissionDefinitionValue|Add Subfolder|
+		|permissionNavigationValue|Documents Folder|
+	And Role view Permission CP
+		|permissionDefinitionValue|Update|
+		|permissionNavigationValue|Documents Folder|
+	And Refresh
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Site assign User Sites CP
+		|siteName|${siteName}|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User assign Regular Role CP
+		|roleTitle|Technical Writer|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Pause at locator '3000'
+	And User add CP
+		|userEmailAddress|userea2@liferay.com|
+		|userFirstName|userfn2|
+		|userLastName|userln2|
+		|userScreenName|usersn2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress|userea2@liferay.com|
+		|userScreenName|usersn2|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And Site assign User Sites CP
+		|siteName|${siteName}|
+		|userScreenName|usersn2|
+	And Page add
+		|pageName|Documents and Media Page|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Portlet add PG
+		|portletName|Documents and Media|
+	And DMDocument enable Actions Menu On Portlet
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Click at locator 'Icon#DISPLAY_STYLE_DESCRIPTIVE'
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And AssertVisible the value 'Documents and Media' at locator 'ControlMenu#HEADER_TITLE'
+	And DMNavigator goto Document Type
+	And DMDocumentType edit
+		|dmDocumentTypeFieldNames|Radio|
+		|dmDocumentTypeName|Photos|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea2@liferay.com|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMDocument view Cannot Add Repository
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	Then DMDocumentType view No Available Actions Via Document Types PG
+Scenario: View Document With Global Scope
+Priority: 4
+	Given Page add
+		|pageName|Documents and Media Page|
+	When Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Portlet add PG
+		|portletName|Documents and Media|
+	And Page add
+		|pageName|Documents and Media Page - Global|
+	And Navigator goto Page
+		|pageName|Documents and Media Page - Global|
+	And Portlet add PG
+		|portletName|Documents and Media|
+	And ProductMenu goto Site
+		|site|Global|
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMFolder add CP
+		|dmFolderDescription|DM Folder Description|
+		|dmFolderName|DM Folder Name|
+	And DMFolder goto CP
+		|dmFolderName|DM Folder Name|
+	And DMFolder add Subfolder CP
+		|dmSubFolderDescription|DM SubFolder Description|
+		|dmSubFolderName|DM SubFolder Name|
+	And ProductMenu goto Site
+		|site|Global|
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMFolder goto CP
+		|dmFolderName|DM Folder Name|
+	And DMFolder goto CP
+		|dmFolderName|DM SubFolder Name|
+	And DMDocument add CP
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_1.txt|
+		|dmDocumentSize|0KB|
+		|dmDocumentTitle|DM Document Title|
+	And Navigator goto Page
+		|pageName|Documents and Media Page - Global|
+	And DMPortlet configure Scopeto Global PG
+		|currentScope|Liferay|
+	And Navigator goto Page
+		|pageName|Documents and Media Page - Global|
+	And DMPortlet configure Root Folder PG
+		|dmFolderName|DM Folder Name|
+	And Navigator goto Page
+		|pageName|Documents and Media Page - Global|
+	And Click at locator 'Icon#DISPLAY_STYLE_DESCRIPTIVE'
+	And Navigator goto Page
+		|pageName|Documents and Media Page - Global|
+	And DMNavigator goto Folder
+		|dmFolderName|DM SubFolder Name|
+	And DMDocument view PG
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentTitle|DM Document Title|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMPortlet view Default PG
+		|portletName|Documents and Media|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	And SiteTemplates add CP
+		|siteTemplateName|Site Template Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	And SiteTemplates add Site Page Via Site Template CP
+		|pageName|DM Site Page Name - Global|
+		|siteTemplateName|Site Template Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Site Template CP
+		|siteName|DM Site Name|
+		|siteTemplateName|Site Template Name|
+	And ProductMenu goto Site
+		|site|DM Site Name|
+	And Navigator goto Site Page
+		|pageName|DM Site Page Name - Global|
+		|siteName|DM Site Name|
+	And Portlet add PG
+		|portletName|Documents and Media|
+	And Navigator goto Site Page
+		|pageName|DM Site Page Name - Global|
+		|siteName|DM Site Name|
+	And DMPortlet configure Scopeto Global PG
+		|currentScope|DM Site Name|
+	And Navigator goto Site Page
+		|pageName|DM Site Page Name - Global|
+		|siteName|DM Site Name|
+	And DMPortlet configure Root Folder PG
+		|dmFolderName|DM Folder Name|
+	And Navigator goto Site Page
+		|pageName|DM Site Page Name - Global|
+		|siteName|DM Site Name|
+	And DMNavigator goto Folder
+		|dmFolderName|DM SubFolder Name|
+	Then DMDocument view PG
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentTitle|DM Document Title|
+Scenario: View File Category And Tags
+Priority: 4
+	Given Page add
+		|pageName|Documents and Media Page|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Category add CP
+		|categoryDescription|Category Description|
+		|categoryName|Category Name|
+		|vocabularyName|Topic|
+	And ProductMenu goto Sites Content
+		|portlet|Tags|
+	And Tag add CP
+		|tagName|tag1|
+	And Tag add CP
+		|tagName|tag2|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Portlet add PG
+		|portletName|Documents and Media|
+	And DMDocument enable Actions Menu On Portlet
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Click at locator 'Icon#DISPLAY_STYLE_DESCRIPTIVE'
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMDocument add PG
+		|categoryName|Category Name|
+		|dmDocumentDescription|Document Description|
+		|dmDocumentFile|Document_1.doc|
+		|dmDocumentTitle|Document Title|
+		|tagNameList|tag1,tag2|
+		|vocabularyName|Topic|
+	And these variables
+		|key_dmDocumentTitle|Document Title|
+	And Click at locator 'DocumentsAndMedia#DESCRIPTIVE_LIST_DOCUMENT_VERTICAL_ELLIPSIS'
+	And AssertClick the value 'Edit' at locator 'MenuItem#EDIT'
+	And these variables
+		|key_categoryName|Category Name|
+	And Panel expand Panel
+		|panelHeading|Categorization|
+	And AssertTextEquals the value 'Category Name' at locator 'AssetCategorization#CATEGORY'
+	And these variables
+		|key_tagName|tag1|
+	And AssertTextEquals the value 'tag1' at locator 'AssetCategorization#TAG'
+	And these variables
+		|key_tagName|tag2|
+	And AssertTextEquals the value 'tag2' at locator 'AssetCategorization#TAG'
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	Then DMDocument view PG
+		|categoryName|Category Name|
+		|dmDocumentDescription|Document Description|
+		|dmDocumentTitle|Document Title|
+		|tagNameList|tag1,tag2|
+Scenario: View Portlet After Renaming Document With Duplicate Title PG
+Priority: 4
+	Given Page add
+		|pageName|Documents and Media Page|
+	When Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Portlet add PG
+		|portletName|Documents and Media|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Click at locator 'Icon#DISPLAY_STYLE_DESCRIPTIVE'
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMDocument add PG
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_1.doc|
+		|dmDocumentTitle|DM Document Title|
+	And DMDocument add PG
+		|dmDocument|Duplicate|
+		|dmDocumentDescription|DM Document 2 Description|
+		|dmDocumentFile|Document_2.doc|
+		|dmDocumentTitle|DM Document Title|
+	And Type the value 'DM Document 2 Title' at locator 'DocumentsAndMediaEditDocument#TITLE_FIELD'
+	And PortletEntry publish
+	And Pause at locator '1000'
+	And AssertTextNotPresent the value 'Documents and Media is temporarily unavailable.'
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Pause at locator '1000'
+	And AssertTextNotPresent the value 'Documents and Media is temporarily unavailable.'
+	Then DMDocument view PG
+		|dmDocumentDescription|DM Document 2 Description|
+		|dmDocumentTitle|DM Document 2 Title|
+Scenario: View Single Document Selection Does Not Check All File Selection CP
+Priority: 4
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMDocument add CP
+		|dmDocumentDescription|DM Document1 Description|
+		|dmDocumentFile|Document_1.jpg|
+		|dmDocumentTitle|DM Document1 Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMDocument add CP
+		|dmDocumentDescription|DM Document2 Description|
+		|dmDocumentFile|Document_1.jpg|
+		|dmDocumentTitle|DM Document2 Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMDocument check Document Checkbox CP
+		|dmDocumentTitle|DM Document1 Title|
+	And AssertElementPresent at locator 'Checkbox#SELECT_ALL_CHECKBOX_TICK'
+	And DMDocument uncheck Document Checkbox CP
+		|dmDocumentTitle|DM Document1 Title|
+	And AssertElementNotPresent at locator 'Checkbox#SELECT_ALL_CHECKBOX_TICK'
+	And DMDocument check Document Checkbox CP
+		|dmDocumentTitle|DM Document1 Title|
+	And DMDocument check Document Checkbox CP
+		|dmDocumentTitle|DM Document2 Title|
+	Then AssertChecked at locator 'DocumentsAndMedia#TOOLBAR_SELECT_ALL_CHECKBOX'

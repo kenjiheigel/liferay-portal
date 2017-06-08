@@ -1,373 +1,219 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Related Assets" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="AssertRelatedAssetsDisplayWithCategory" priority="4">
-		<property name="testray.component.names" value="Categories,Staging,Related Assets,Web Content Administration" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#activateStagingCP">
-			<var name="pageVersioningEnabled" value="true" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoStagingSite" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Categories" />
-		</execute>
-
-		<execute macro="Vocabulary#addCP">
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Category#addCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoStagingSite" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="Web Content Content 1" />
-			<var name="webContentTitle" value="Web Content Title 1" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoStagingSite" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addWithCategoryCP">
-			<var name="categoryName" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-			<var name="webContentContent" value="Web Content Content 2" />
-			<var name="webContentTitle" value="Web Content Title 2" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="Web Content Title 2" />
-		</execute>
-
-		<execute macro="WebContent#viewCategorizationCategoryCP">
-			<var name="categoryNameList" value="Category Name" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoStagingSite" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="Web Content Title 2" />
-		</execute>
-
-		<execute macro="WebContent#addExistingRelatedAssetCP">
-			<var name="assetTitle" value="Web Content Title 1" />
-			<var name="assetType" value="Basic Web Content" />
-			<var name="siteName" value="Site Name" />
-			<var name="webContentTitle" value="Web Content Title 2" />
-		</execute>
-
-		<execute macro="Navigator#openStagingSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Private Page Name" />
-			<var name="sitePagePrivacy" value="Private" />
-		</execute>
-
-		<execute macro="Navigator#gotoPrivateStagedSitePage">
-			<var name="pageName" value="Private Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#configureManualAssetSelectionPG">
-			<var name="assetTitle" value="Web Content Title 1" />
-			<var name="assetType" value="Basic Web Content" />
-		</execute>
-
-		<execute macro="Navigator#gotoPrivateStagedSitePage">
-			<var name="pageName" value="Private Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Asset Publisher" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#configureDisplayTemplatePG">
-			<var name="displayTemplate" value="Full Content" />
-		</execute>
-
-		<execute macro="Navigator#gotoPrivateStagedSitePage">
-			<var name="pageName" value="Private Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Related Assets" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#configureFilterByCategories">
-			<var name="categoryName" value="Category Name" />
-			<var name="portletName" value="Related Assets" />
-			<var name="vocabularyName" value="Vocabulary Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPrivateStagedSitePage">
-			<var name="pageName" value="Private Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="RelatedAssets#viewPG">
-			<var name="assetTitle" value="Web Content Title 2" />
-		</execute>
-	</command>
-
-	<command name="ViewNoFolders" priority="3">
-		<property name="testray.component.names" value="Related Assets" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page 2" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Related Assets" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="Web Content Content" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="Web Content Content" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page 2" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="assetTitle" value="Web Content Title" />
-			<var name="assetType" value="Basic Web Content" />
-			<var name="entryAddRelatedAsset" value="true" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Bookmarks" />
-		</execute>
-
-		<execute macro="BookmarksFolder#addCP">
-			<var name="folderDescription" value="Bookmarks Folder Description" />
-			<var name="folderName" value="Bookmarks Folder Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMFolder#addCP">
-			<var name="dmFolderDescription" value="DM Folder Description" />
-			<var name="dmFolderName" value="DM Folder Name" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentFolder#addCP">
-			<var name="folderDescription" value="WC Folder Description" />
-			<var name="folderName" value="WC Folder Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewAssetPG">
-			<var name="assetContent" value="Blogs Entry Content" />
-			<var name="assetTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewAssetPG">
-			<var name="assetContent" value="Web Content Content" />
-			<var name="assetTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="RelatedAssets#viewNoPG">
-			<var name="assetTitleList" value="Blogs Entry Title,Web Content Title,DM Folder Name,WC Folder Name,Bookmarks Folder Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="WebContent#addExistingRelatedAssetCP">
-			<var name="assetTitle" value="Blogs Entry Title" />
-			<var name="assetType" value="Blogs Entry" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteURL" value="true" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="AssetPublisherPortlet#viewAssetDetailsPG">
-			<var name="assetContent" value="Blogs Entry Content" />
-			<var name="assetTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="RelatedAssets#viewPG">
-			<var name="assetTitle" value="Web Content Title" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Related Assets|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Assert Related Assets Display With Category
+Priority: 4
+	Given these properties
+		|testray.component.names|Categories,Staging,Related Assets,Web Content Administration|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Test Page|
+		|siteName|Site Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging activate Staging CP
+		|pageVersioningEnabled|true|
+		|siteName|Site Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Staging Site
+	And ProductMenu goto Sites Content
+		|portlet|Categories|
+	And Vocabulary add CP
+		|vocabularyName|Vocabulary Name|
+	And Category add CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Staging Site
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|Web Content Content 1|
+		|webContentTitle|Web Content Title 1|
+	And PortletEntry publish
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Staging Site
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Category CP
+		|categoryName|Category Name|
+		|vocabularyName|Vocabulary Name|
+		|webContentContent|Web Content Content 2|
+		|webContentTitle|Web Content Title 2|
+	And WebContentNavigator goto Edit CP
+		|webContentTitle|Web Content Title 2|
+	And WebContent view Categorization Category CP
+		|categoryNameList|Category Name|
+		|vocabularyName|Vocabulary Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Staging Site
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Edit CP
+		|webContentTitle|Web Content Title 2|
+	And WebContent add Existing Related Asset CP
+		|assetTitle|Web Content Title 1|
+		|assetType|Basic Web Content|
+		|siteName|Site Name|
+		|webContentTitle|Web Content Title 2|
+	And Navigator open Staging Site URL
+		|siteName|Site Name|
+	And Page add
+		|pageName|Private Page Name|
+		|sitePagePrivacy|Private|
+	And Navigator goto Private Staged Site Page
+		|pageName|Private Page Name|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Asset Publisher|
+	And AssetPublisherPortlet configure Manual Asset Selection PG
+		|assetTitle|Web Content Title 1|
+		|assetType|Basic Web Content|
+	And Navigator goto Private Staged Site Page
+		|pageName|Private Page Name|
+		|siteName|Site Name|
+	And Portlet goto Portlet Options
+		|portletName|Asset Publisher|
+		|portletOption|Configuration|
+	And AssetPublisherPortlet configure Display Template PG
+		|displayTemplate|Full Content|
+	And Navigator goto Private Staged Site Page
+		|pageName|Private Page Name|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Related Assets|
+	And AssetPublisherPortlet configure Filter By Categories
+		|categoryName|Category Name|
+		|portletName|Related Assets|
+		|vocabularyName|Vocabulary Name|
+	And Navigator goto Private Staged Site Page
+		|pageName|Private Page Name|
+		|siteName|Site Name|
+	Then RelatedAssets view PG
+		|assetTitle|Web Content Title 2|
+Scenario: View No Folders
+Priority: 3
+	Given these properties
+		|testray.component.names|Related Assets|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Test Page 1|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Test Page 2|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Test Page 1|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And Navigator goto Site Page
+		|pageName|Test Page 1|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Asset Publisher|
+	And Navigator goto Site Page
+		|pageName|Test Page 1|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Related Assets|
+	And Navigator goto Site Page
+		|pageName|Test Page 1|
+		|siteName|Site Name|
+	And WebContent add PG Via WCD
+		|webContentContent|Web Content Content|
+		|webContentTitle|Web Content Title|
+	And WebContent view PG Via WCD
+		|webContentContent|Web Content Content|
+	And Navigator goto Site Page
+		|pageName|Test Page 2|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Blogs|
+	And Blogs add Entry
+		|assetTitle|Web Content Title|
+		|assetType|Basic Web Content|
+		|entryAddRelatedAsset|true|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Bookmarks|
+	And BookmarksFolder add CP
+		|folderDescription|Bookmarks Folder Description|
+		|folderName|Bookmarks Folder Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMFolder add CP
+		|dmFolderDescription|DM Folder Description|
+		|dmFolderName|DM Folder Name|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentFolder add CP
+		|folderDescription|WC Folder Description|
+		|folderName|WC Folder Name|
+	And Navigator goto Site Page
+		|pageName|Test Page 1|
+		|siteName|Site Name|
+	And AssetPublisherPortlet view Asset PG
+		|assetContent|Blogs Entry Content|
+		|assetTitle|Blogs Entry Title|
+	And AssetPublisherPortlet view Asset PG
+		|assetContent|Web Content Content|
+		|assetTitle|Web Content Title|
+	And RelatedAssets view No PG
+		|assetTitleList|Blogs Entry Title,Web Content Title,DM Folder Name,WC Folder Name,Bookmarks Folder Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Edit CP
+		|webContentTitle|Web Content Title|
+	And WebContent add Existing Related Asset CP
+		|assetTitle|Blogs Entry Title|
+		|assetType|Blogs Entry|
+		|siteName|Site Name|
+		|siteURL|true|
+		|webContentTitle|Web Content Title|
+	And Navigator goto Site Page
+		|pageName|Test Page 1|
+		|siteName|Site Name|
+	And AssetPublisherPortlet view Asset Details PG
+		|assetContent|Blogs Entry Content|
+		|assetTitle|Blogs Entry Title|
+	Then RelatedAssets view PG
+		|assetTitle|Web Content Title|

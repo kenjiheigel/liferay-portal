@@ -1,146 +1,98 @@
-<definition component-name="portal-security">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Authentication" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Authentication|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="TestLDAPConnectionAndEntries" priority="3">
-		<property name="apacheds.enabled" value="true" />
-		<property name="test.name.skip.portal.instance" value="Authentication#TestLDAPConnectionAndEntries" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="PortalSettingsNavigator#gotoLDAP" />
-
-		<execute macro="PortalSettings#addLDAPServer">
-			<var name="LDAPServerName" value="ApacheDS Server" />
-		</execute>
-
-		<execute macro="PortalSettingsNavigator#gotoLDAP" />
-
-		<execute macro="PortalSettings#editLDAPServer">
-			<var name="LDAPServerName" value="ApacheDS Server" />
-		</execute>
-
-		<execute macro="PortalSettings#testLDAPConnection" />
-	</command>
-
-	<command name="ViewAuthenticationCAS" priority="3">
-		<property name="test.name.skip.portal.instance" value="Authentication#ViewAuthenticationCAS" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="PortalSettings#viewAuthenticationCASCP" />
-	</command>
-
-	<command name="ViewAuthenticationGeneral" priority="3">
-		<property name="test.name.skip.portal.instance" value="Authentication#ViewAuthenticationGeneral" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="PortalSettings#viewAuthenticationGeneralCP" />
-	</command>
-
-	<command name="ViewAuthenticationLDAP" priority="3">
-		<property name="test.name.skip.portal.instance" value="Authentication#ViewAuthenticationLDAP" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="PortalSettings#viewAuthenticationLDAPCP" />
-	</command>
-
-	<command name="ViewAuthenticationNTLM" priority="3">
-		<property name="test.name.skip.portal.instance" value="Authentication#ViewAuthenticationNTLM" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="PortalSettings#viewAuthenticationNTLMCP" />
-	</command>
-
-	<command name="ViewAuthenticationOpenID" priority="3">
-		<property name="test.name.skip.portal.instance" value="Authentication#ViewAuthenticationOpenID" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="PortalSettings#viewAuthenticationOpenIDCP" />
-	</command>
-
-	<command name="ViewAuthenticationOpenSSO" priority="3">
-		<property name="test.name.skip.portal.instance" value="Authentication#ViewAuthenticationOpenSSO" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="PortalSettings#viewAuthenticationOpenSSOCP" />
-	</command>
-
-	<command name="ViewInstanceSettingEnableLDAPAuthNotAffectSystemSetting" priority="3">
-		<property name="test.name.skip.portal.instance" value="Authentication#ViewInstanceSettingEnableLDAPAuthNotAffectSystemSetting" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="System Settings" />
-		</execute>
-
-		<execute macro="SystemSettings#gotoCategory">
-			<var name="category" value="Foundation" />
-		</execute>
-
-		<execute macro="SystemSettings#viewConfiguration">
-			<var name="configurationName" value="LDAP Auth" />
-			<var name="enableLDAP" value="false" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="PortalSettingsNavigator#gotoLDAP" />
-
-		<execute macro="PortalSettings#enableLDAPSetting">
-			<var name="enableCheckboxKey" value="ENABLED" />
-		</execute>
-
-		<execute macro="PortalSettingsNavigator#gotoLDAP" />
-
-		<execute macro="PortalSettings#viewEnabledLDAPSetting">
-			<var name="enableCheckboxKey" value="ENABLED" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="System Settings" />
-		</execute>
-
-		<execute macro="SystemSettings#gotoCategory">
-			<var name="category" value="Foundation" />
-		</execute>
-
-		<execute macro="SystemSettings#viewConfiguration">
-			<var name="configurationName" value="LDAP Auth" />
-			<var name="enableLDAP" value="false" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Test LDAP Connection And Entries
+Priority: 3
+	Given these properties
+		|apacheds.enabled|true|
+	When these properties
+		|test.name.skip.portal.instance|Authentication#TestLDAPConnectionAndEntries|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	And PortalSettingsNavigator goto LDAP
+	And PortalSettings add LDAP Server
+		|LDAPServerName|ApacheDS Server|
+	And PortalSettingsNavigator goto LDAP
+	And PortalSettings edit LDAP Server
+		|LDAPServerName|ApacheDS Server|
+	Then PortalSettings test LDAP Connection
+Scenario: View Authentication CAS
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|Authentication#ViewAuthenticationCAS|
+	When ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	Then PortalSettings view Authentication CASCP
+Scenario: View Authentication General
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|Authentication#ViewAuthenticationGeneral|
+	When ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	Then PortalSettings view Authentication General CP
+Scenario: View Authentication LDAP
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|Authentication#ViewAuthenticationLDAP|
+	When ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	Then PortalSettings view Authentication LDAPCP
+Scenario: View Authentication NTLM
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|Authentication#ViewAuthenticationNTLM|
+	When ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	Then PortalSettings view Authentication NTLMCP
+Scenario: View Authentication Open ID
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|Authentication#ViewAuthenticationOpenID|
+	When ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	Then PortalSettings view Authentication Open IDCP
+Scenario: View Authentication Open SSO
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|Authentication#ViewAuthenticationOpenSSO|
+	When ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	Then PortalSettings view Authentication Open SSOCP
+Scenario: View Instance Setting Enable LDAP Auth Not Affect System Setting
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|Authentication#ViewInstanceSettingEnableLDAPAuthNotAffectSystemSetting|
+	When ProductMenu goto Control Panel Configuration
+		|portlet|System Settings|
+	And SystemSettings goto Category
+		|category|Foundation|
+	And SystemSettings view Configuration
+		|configurationName|LDAP Auth|
+		|enableLDAP|false|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	And PortalSettingsNavigator goto LDAP
+	And PortalSettings enable LDAP Setting
+		|enableCheckboxKey|ENABLED|
+	And PortalSettingsNavigator goto LDAP
+	And PortalSettings view Enabled LDAP Setting
+		|enableCheckboxKey|ENABLED|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|System Settings|
+	And SystemSettings goto Category
+		|category|Foundation|
+	Then SystemSettings view Configuration
+		|configurationName|LDAP Auth|
+		|enableLDAP|false|

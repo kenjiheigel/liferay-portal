@@ -1,455 +1,597 @@
-<definition component-name="portal-collaboration">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column" />
-	<property name="testray.main.component.name" value="Announcements" />
-
-	<var name="pageName" value="Announcements Page" />
-	<var name="portletName" value="Announcements" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Announcements" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="ViewAnnouncementsEntryWithDistributedScope" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-			<var name="entryURL" value="http://www.google.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewPG">
-			<var name="announcementType" value="General" />
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addCP">
-			<var name="siteName" value="Community Site Name" />
-			<var name="siteType" value="Community" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Community Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Community Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Announcements" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewPG">
-			<var name="announcementType" value="General" />
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-		</execute>
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addPG">
-			<var name="distributionScope" value="${siteName}" />
-			<var name="entryContent" value="Announcements Entry2 Scoped Content" />
-			<var name="entryTitle" value="Announcements Entry2 Scoped Title" />
-			<var name="entryURL" value="http://www.yahoo.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Community Site Name" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewNoPG">
-			<var name="entryTitle" value="Announcements Entry2 Scoped Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Announcements Page" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewPG">
-			<var name="announcementType" value="General" />
-			<var name="distributionScope" value="${siteName}" />
-			<var name="entryContent" value="Announcements Entry2 Scoped Content" />
-			<var name="entryTitle" value="Announcements Entry2 Scoped Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Announcements Page" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewViaEntriesPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewViaEntriesPG">
-			<var name="distributionScope" value="${siteName}" />
-			<var name="entryContent" value="Announcements Entry2 Scoped Content" />
-			<var name="entryTitle" value="Announcements Entry2 Scoped Title" />
-		</execute>
-	</command>
-
-	<command name="ViewAnnouncementsPagination" priority="3">
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addPG">
-			<var name="announcementType" value="General" />
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content 1" />
-			<var name="entryTitle" value="Announcements Entry Title 1" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addPG">
-			<var name="announcementType" value="General" />
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content 2" />
-			<var name="entryTitle" value="Announcements Entry Title 2" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addPG">
-			<var name="announcementType" value="General" />
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content 3" />
-			<var name="entryTitle" value="Announcements Entry Title 3" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addPG">
-			<var name="announcementType" value="General" />
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content 4" />
-			<var name="entryTitle" value="Announcements Entry Title 4" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addPG">
-			<var name="announcementType" value="General" />
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content 5" />
-			<var name="entryTitle" value="Announcements Entry Title 5" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addPG">
-			<var name="announcementType" value="General" />
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content 6" />
-			<var name="entryTitle" value="Announcements Entry Title 6" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addPG">
-			<var name="announcementType" value="General" />
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content 7" />
-			<var name="entryTitle" value="Announcements Entry Title 7" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsPortlet#configureDisplayCountPG">
-			<var name="maxDisplayItems" value="5" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewViaEntriesPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content 3" />
-			<var name="entryTitle" value="Announcements Entry Title 3" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewViaEntriesPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content 4" />
-			<var name="entryTitle" value="Announcements Entry Title 4" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewViaEntriesPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content 5" />
-			<var name="entryTitle" value="Announcements Entry Title 5" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewViaEntriesPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content 6" />
-			<var name="entryTitle" value="Announcements Entry Title 6" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewViaEntriesPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content 7" />
-			<var name="entryTitle" value="Announcements Entry Title 7" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<var name="key_entryTitle" value="Announcements Entry Title" />
-
-		<execute function="AssertTextNotPresent" locator1="Announcements#CARD_VIEW_ENTRY_TITLE" value1="Announcements Entry Title 1" />
-		<execute function="AssertTextNotPresent" locator1="Announcements#CARD_VIEW_ENTRY_TITLE" value1="Announcements Entry Title 2" />
-		<execute function="AssertClick" locator1="Pagination#NEXT_LINK" value1="Next" />
-
-		<execute macro="AnnouncementsEntry#viewViaEntriesPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content 1" />
-			<var name="entryTitle" value="Announcements Entry Title 1" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewViaEntriesPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content 2" />
-			<var name="entryTitle" value="Announcements Entry Title 2" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<var name="key_entryTitle" value="Announcements Entry Title" />
-
-		<execute function="AssertTextNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="Announcements Entry Title 3" />
-		<execute function="AssertTextNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="Announcements Entry Title 4" />
-		<execute function="AssertTextNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="Announcements Entry Title 5" />
-		<execute function="AssertTextNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="Announcements Entry Title 6" />
-		<execute function="AssertTextNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="Announcements Entry Title 7" />
-
-		<execute function="AssertClick" locator1="Pagination#PREVIOUS_LINK" value1="Previous" />
-
-		<execute macro="AnnouncementsEntry#viewViaEntriesPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content 3" />
-			<var name="entryTitle" value="Announcements Entry Title 3" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewViaEntriesPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content 4" />
-			<var name="entryTitle" value="Announcements Entry Title 4" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewViaEntriesPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content 5" />
-			<var name="entryTitle" value="Announcements Entry Title 5" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewViaEntriesPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content 6" />
-			<var name="entryTitle" value="Announcements Entry Title 6" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewViaEntriesPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content 7" />
-			<var name="entryTitle" value="Announcements Entry Title 7" />
-			<var name="entryURL" value="http://www.liferay.com" />
-		</execute>
-
-		<var name="key_entryTitle" value="Announcements Entry Title" />
-
-		<execute function="AssertTextNotPresent" locator1="Announcements#CARD_VIEW_ENTRY_TITLE" value1="Announcements Entry Title 1" />
-		<execute function="AssertTextNotPresent" locator1="Announcements#CARD_VIEW_ENTRY_TITLE" value1="Announcements Entry Title 2" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Announcements and Alerts" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="Dropdown#FILTER" value1="General" />
-
-		<execute macro="AnnouncementsPortlet#configurePaginationCP">
-			<var name="distributionScope" value="General" />
-			<var name="itemsPerPage" value="5" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewList">
-			<var name="distributionScope" value="General" />
-			<var name="entryTitle" value="Announcements Entry Title 1" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewList">
-			<var name="distributionScope" value="General" />
-			<var name="entryTitle" value="Announcements Entry Title 2" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewList">
-			<var name="distributionScope" value="General" />
-			<var name="entryTitle" value="Announcements Entry Title 3" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewList">
-			<var name="distributionScope" value="General" />
-			<var name="entryTitle" value="Announcements Entry Title 4" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewList">
-			<var name="distributionScope" value="General" />
-			<var name="entryTitle" value="Announcements Entry Title 5" />
-		</execute>
-
-		<execute function="AssertTextNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="Announcements Entry Title 6" />
-		<execute function="AssertTextNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="Announcements Entry Title 7" />
-
-		<execute function="Click" locator1="Pagination#NEXT_LINK" />
-
-		<execute macro="AnnouncementsEntry#viewList">
-			<var name="distributionScope" value="General" />
-			<var name="entryTitle" value="Announcements Entry Title 6" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewList">
-			<var name="distributionScope" value="General" />
-			<var name="entryTitle" value="Announcements Entry Title 7" />
-		</execute>
-
-		<execute function="AssertTextNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="Announcements Entry Title 1" />
-		<execute function="AssertTextNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="Announcements Entry Title 2" />
-		<execute function="AssertTextNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="Announcements Entry Title 3" />
-		<execute function="AssertTextNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="Announcements Entry Title 4" />
-		<execute function="AssertTextNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="Announcements Entry Title 5" />
-
-		<execute function="Click" locator1="Pagination#PREVIOUS_LINK" />
-
-		<execute macro="AnnouncementsEntry#viewList">
-			<var name="distributionScope" value="General" />
-			<var name="entryTitle" value="Announcements Entry Title 1" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewList">
-			<var name="distributionScope" value="General" />
-			<var name="entryTitle" value="Announcements Entry Title 2" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewList">
-			<var name="distributionScope" value="General" />
-			<var name="entryTitle" value="Announcements Entry Title 3" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewList">
-			<var name="distributionScope" value="General" />
-			<var name="entryTitle" value="Announcements Entry Title 4" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewList">
-			<var name="distributionScope" value="General" />
-			<var name="entryTitle" value="Announcements Entry Title 5" />
-		</execute>
-
-		<execute function="AssertTextNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="Announcements Entry Title 6" />
-		<execute function="AssertTextNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE" value1="Announcements Entry Title 7" />
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Announcements|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Announcements|
+		|pageName|Announcements Page|
+		|portletName|Announcements|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Announcements Page|
+	Then Portlet add PG
+		|portletName|Announcements|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View Announcements Entry With Distributed Scope
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Announcements Page|
+	When AnnouncementsEntry add PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.google.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry view PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add CP
+		|siteName|Community Site Name|
+		|siteType|Community|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page Name|
+		|siteName|Community Site Name|
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Community Site Name|
+	And Portlet add PG
+		|portletName|Announcements|
+	And AnnouncementsEntry view PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+	And TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And AnnouncementsEntry add PG
+		|distributionScope|${siteName}|
+		|entryContent|Announcements Entry2 Scoped Content|
+		|entryTitle|Announcements Entry2 Scoped Title|
+		|entryURL|http://www.yahoo.com|
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Community Site Name|
+	And AnnouncementsEntry view No PG
+		|entryTitle|Announcements Entry2 Scoped Title|
+	And Navigator goto Site Page
+		|pageName|Announcements Page|
+		|siteName|${siteName}|
+	And AnnouncementsEntry view PG
+		|announcementType|General|
+		|distributionScope|${siteName}|
+		|entryContent|Announcements Entry2 Scoped Content|
+		|entryTitle|Announcements Entry2 Scoped Title|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Site Page
+		|pageName|Announcements Page|
+		|siteName|${siteName}|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+	Then AnnouncementsEntry view Via Entries PG
+		|distributionScope|${siteName}|
+		|entryContent|Announcements Entry2 Scoped Content|
+		|entryTitle|Announcements Entry2 Scoped Title|
+Scenario: View Announcements Pagination
+Priority: 3
+	Given Navigator goto Page
+		|pageName|Announcements Page|
+	When AnnouncementsEntry add PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 1|
+		|entryTitle|Announcements Entry Title 1|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry add PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 2|
+		|entryTitle|Announcements Entry Title 2|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry add PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 3|
+		|entryTitle|Announcements Entry Title 3|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry add PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 4|
+		|entryTitle|Announcements Entry Title 4|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry add PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 5|
+		|entryTitle|Announcements Entry Title 5|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry add PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 6|
+		|entryTitle|Announcements Entry Title 6|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry add PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 7|
+		|entryTitle|Announcements Entry Title 7|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsPortlet configure Display Count PG
+		|maxDisplayItems|5|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 3|
+		|entryTitle|Announcements Entry Title 3|
+		|entryURL|http://www.liferay.com|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 4|
+		|entryTitle|Announcements Entry Title 4|
+		|entryURL|http://www.liferay.com|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 5|
+		|entryTitle|Announcements Entry Title 5|
+		|entryURL|http://www.liferay.com|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 6|
+		|entryTitle|Announcements Entry Title 6|
+		|entryURL|http://www.liferay.com|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 7|
+		|entryTitle|Announcements Entry Title 7|
+		|entryURL|http://www.liferay.com|
+	And these variables
+		|key_entryTitle|Announcements Entry Title|
+	And AssertTextNotPresent the value 'Announcements Entry Title 1' at locator 'Announcements#CARD_VIEW_ENTRY_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 2' at locator 'Announcements#CARD_VIEW_ENTRY_TITLE'
+	And AssertClick the value 'Next' at locator 'Pagination#NEXT_LINK'
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 1|
+		|entryTitle|Announcements Entry Title 1|
+		|entryURL|http://www.liferay.com|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 2|
+		|entryTitle|Announcements Entry Title 2|
+		|entryURL|http://www.liferay.com|
+	And these variables
+		|key_entryTitle|Announcements Entry Title|
+	And AssertTextNotPresent the value 'Announcements Entry Title 3' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 4' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 5' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 6' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 7' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And AssertClick the value 'Previous' at locator 'Pagination#PREVIOUS_LINK'
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 3|
+		|entryTitle|Announcements Entry Title 3|
+		|entryURL|http://www.liferay.com|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 4|
+		|entryTitle|Announcements Entry Title 4|
+		|entryURL|http://www.liferay.com|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 5|
+		|entryTitle|Announcements Entry Title 5|
+		|entryURL|http://www.liferay.com|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 6|
+		|entryTitle|Announcements Entry Title 6|
+		|entryURL|http://www.liferay.com|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 7|
+		|entryTitle|Announcements Entry Title 7|
+		|entryURL|http://www.liferay.com|
+	And these variables
+		|key_entryTitle|Announcements Entry Title|
+	And AssertTextNotPresent the value 'Announcements Entry Title 1' at locator 'Announcements#CARD_VIEW_ENTRY_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 2' at locator 'Announcements#CARD_VIEW_ENTRY_TITLE'
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Announcements and Alerts|
+	And AssertTextEquals the value 'General' at locator 'Dropdown#FILTER'
+	And AnnouncementsPortlet configure Pagination CP
+		|distributionScope|General|
+		|itemsPerPage|5|
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 1|
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 2|
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 3|
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 4|
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 5|
+	And AssertTextNotPresent the value 'Announcements Entry Title 6' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 7' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And Click at locator 'Pagination#NEXT_LINK'
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 6|
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 7|
+	And AssertTextNotPresent the value 'Announcements Entry Title 1' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 2' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 3' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 4' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 5' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And Click at locator 'Pagination#PREVIOUS_LINK'
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 1|
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 2|
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 3|
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 4|
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 5|
+	And AssertTextNotPresent the value 'Announcements Entry Title 6' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	Then AssertTextNotPresent the value 'Announcements Entry Title 7' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Announcements Page|
+	Then Portlet add PG
+		|portletName|Announcements|
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View Announcements Entry With Distributed Scope
+Priority: 4
+	Given Navigator goto Page
+		|pageName|Announcements Page|
+	When AnnouncementsEntry add PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+		|entryURL|http://www.google.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry view PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add CP
+		|siteName|Community Site Name|
+		|siteType|Community|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page Name|
+		|siteName|Community Site Name|
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Community Site Name|
+	And Portlet add PG
+		|portletName|Announcements|
+	And AnnouncementsEntry view PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+	And TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And AnnouncementsEntry add PG
+		|distributionScope|${siteName}|
+		|entryContent|Announcements Entry2 Scoped Content|
+		|entryTitle|Announcements Entry2 Scoped Title|
+		|entryURL|http://www.yahoo.com|
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Community Site Name|
+	And AnnouncementsEntry view No PG
+		|entryTitle|Announcements Entry2 Scoped Title|
+	And Navigator goto Site Page
+		|pageName|Announcements Page|
+		|siteName|${siteName}|
+	And AnnouncementsEntry view PG
+		|announcementType|General|
+		|distributionScope|${siteName}|
+		|entryContent|Announcements Entry2 Scoped Content|
+		|entryTitle|Announcements Entry2 Scoped Title|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And User logout PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Site Page
+		|pageName|Announcements Page|
+		|siteName|${siteName}|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content|
+		|entryTitle|Announcements Entry Title|
+	Then AnnouncementsEntry view Via Entries PG
+		|distributionScope|${siteName}|
+		|entryContent|Announcements Entry2 Scoped Content|
+		|entryTitle|Announcements Entry2 Scoped Title|
+Scenario: View Announcements Pagination
+Priority: 3
+	Given Navigator goto Page
+		|pageName|Announcements Page|
+	When AnnouncementsEntry add PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 1|
+		|entryTitle|Announcements Entry Title 1|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry add PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 2|
+		|entryTitle|Announcements Entry Title 2|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry add PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 3|
+		|entryTitle|Announcements Entry Title 3|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry add PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 4|
+		|entryTitle|Announcements Entry Title 4|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry add PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 5|
+		|entryTitle|Announcements Entry Title 5|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry add PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 6|
+		|entryTitle|Announcements Entry Title 6|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry add PG
+		|announcementType|General|
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 7|
+		|entryTitle|Announcements Entry Title 7|
+		|entryURL|http://www.liferay.com|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsPortlet configure Display Count PG
+		|maxDisplayItems|5|
+	And Navigator goto Page
+		|pageName|Announcements Page|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 3|
+		|entryTitle|Announcements Entry Title 3|
+		|entryURL|http://www.liferay.com|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 4|
+		|entryTitle|Announcements Entry Title 4|
+		|entryURL|http://www.liferay.com|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 5|
+		|entryTitle|Announcements Entry Title 5|
+		|entryURL|http://www.liferay.com|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 6|
+		|entryTitle|Announcements Entry Title 6|
+		|entryURL|http://www.liferay.com|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 7|
+		|entryTitle|Announcements Entry Title 7|
+		|entryURL|http://www.liferay.com|
+	And these variables
+		|key_entryTitle|Announcements Entry Title|
+	And AssertTextNotPresent the value 'Announcements Entry Title 1' at locator 'Announcements#CARD_VIEW_ENTRY_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 2' at locator 'Announcements#CARD_VIEW_ENTRY_TITLE'
+	And AssertClick the value 'Next' at locator 'Pagination#NEXT_LINK'
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 1|
+		|entryTitle|Announcements Entry Title 1|
+		|entryURL|http://www.liferay.com|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 2|
+		|entryTitle|Announcements Entry Title 2|
+		|entryURL|http://www.liferay.com|
+	And these variables
+		|key_entryTitle|Announcements Entry Title|
+	And AssertTextNotPresent the value 'Announcements Entry Title 3' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 4' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 5' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 6' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 7' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And AssertClick the value 'Previous' at locator 'Pagination#PREVIOUS_LINK'
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 3|
+		|entryTitle|Announcements Entry Title 3|
+		|entryURL|http://www.liferay.com|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 4|
+		|entryTitle|Announcements Entry Title 4|
+		|entryURL|http://www.liferay.com|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 5|
+		|entryTitle|Announcements Entry Title 5|
+		|entryURL|http://www.liferay.com|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 6|
+		|entryTitle|Announcements Entry Title 6|
+		|entryURL|http://www.liferay.com|
+	And AnnouncementsEntry view Via Entries PG
+		|distributionScope|General|
+		|entryContent|Announcements Entry Content 7|
+		|entryTitle|Announcements Entry Title 7|
+		|entryURL|http://www.liferay.com|
+	And these variables
+		|key_entryTitle|Announcements Entry Title|
+	And AssertTextNotPresent the value 'Announcements Entry Title 1' at locator 'Announcements#CARD_VIEW_ENTRY_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 2' at locator 'Announcements#CARD_VIEW_ENTRY_TITLE'
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Announcements and Alerts|
+	And AssertTextEquals the value 'General' at locator 'Dropdown#FILTER'
+	And AnnouncementsPortlet configure Pagination CP
+		|distributionScope|General|
+		|itemsPerPage|5|
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 1|
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 2|
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 3|
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 4|
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 5|
+	And AssertTextNotPresent the value 'Announcements Entry Title 6' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 7' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And Click at locator 'Pagination#NEXT_LINK'
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 6|
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 7|
+	And AssertTextNotPresent the value 'Announcements Entry Title 1' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 2' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 3' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 4' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And AssertTextNotPresent the value 'Announcements Entry Title 5' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	And Click at locator 'Pagination#PREVIOUS_LINK'
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 1|
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 2|
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 3|
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 4|
+	And AnnouncementsEntry view List
+		|distributionScope|General|
+		|entryTitle|Announcements Entry Title 5|
+	And AssertTextNotPresent the value 'Announcements Entry Title 6' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'
+	Then AssertTextNotPresent the value 'Announcements Entry Title 7' at locator 'AnnouncementsManageEntries#ENTRY_TABLE_TITLE'

@@ -1,193 +1,121 @@
-<definition component-name="portal-authentication-ee">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="app.server.bundles.size" value="1" />
-	<property name="databases.size" value="1" />
-	<property name="portlet.plugins.includes" value="saml-portlet" />
-	<property name="test.run.environment" value="EE" />
-	<property name="testray.main.component.name" value="SAML" />
+Feature:
 
-	<!-- All test cases are currently configured to run Liferay SAML as the IdP and Liferay SAML as the SP. This will change as more SAML implmentations are added to this test suite (ie Shibboleth) -->
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|app.server.bundles.size|1|
+		|databases.size|1|
+		|portlet.plugins.includes|saml-portlet|
+		|test.run.environment|EE|
+		|testray.main.component.name|SAML|
 
-	<set-up>
-		<execute macro="User#firstLoginPG">
-			<var name="rememberMeChecked" value="false" />
-		</execute>
+Setup: This executes before each scenario 
+	Given User first Login PG
+		|rememberMeChecked|false|
+	When SAML configure Liferay SAML As Id P And Liferay SAM Las SP
+	Then User logout PG
 
-		<execute macro="SAML#configureLiferaySAMLAsIdPAndLiferaySAMLasSP" />
-
-		<execute macro="User#logoutPG" />
-	</set-up>
-
-	<command name="ViewIdPInitiatedSSO" priority="4">
-		<description message="Sign into portal by executing a IdP initiated SSO login. After a successful login, the IdP will redirect to the SP. If the same users with the same email address are present on both instances, it will authenticate and show the SP. SAML can authenticate across major portal versions, that is, the IdP can be Portal 6.1 EE GA3 and the SP can be Portal 6.2. EE GA1. For testing purposes, it is obvious if the authentication succeeds or fails if the IdP and SP are different portal versions." />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<!-- Verify SP is logged in -->
-
-		<execute macro="SAML#executeIdPInitiatedSSO">
-			<var name="idpInitiatedSSOURL" value="${portalURL}/c/portal/saml/sso?entityId=samlsp&amp;RelayState=http://www.able.com:9080" />
-			<var name="password" value="test" />
-			<var name="rememberMeChecked" value="false" />
-			<var name="samlEnabled" value="true" />
-			<var name="spURL" value="http://www.able.com:9080/" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="User#viewLoggedInPG">
-			<var name="userFirstName" value="Test" />
-			<var name="userLastName" value="Test" />
-		</execute>
-
-		<!-- Verify IdP is logged in -->
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="User#viewLoggedInPG">
-			<var name="userFirstName" value="Test" />
-			<var name="userLastName" value="Test" />
-		</execute>
-
-		<!-- Logout SP and verify SP is logged out-->
-
-		<execute macro="User#logoutPG">
-			<var name="specificURL" value="http://www.able.com:9080" />
-		</execute>
-
-		<execute macro="User#viewLoggedOutPG" />
-
-		<!-- Verify IdP is also logged out -->
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="User#viewLoggedOutPG" />
-	</command>
-
-	<command name="ViewIdPInitiatedSSOWithRememberMeChecked" priority="4">
-		<description message="LPS-50220 - IdP initiated SSO login should work regardless if 'Remember Me' is checked or not." />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<!-- Verify SP is logged in -->
-
-		<execute macro="SAML#executeIdPInitiatedSSO">
-			<var name="idpInitiatedSSOURL" value="${portalURL}/c/portal/saml/sso?entityId=samlsp&amp;RelayState=http://www.able.com:9080" />
-			<var name="password" value="test" />
-			<var name="rememberMeChecked" value="true" />
-			<var name="samlEnabled" value="true" />
-			<var name="spURL" value="http://www.able.com:9080/" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="User#viewLoggedInPG">
-			<var name="userFirstName" value="Test" />
-			<var name="userLastName" value="Test" />
-		</execute>
-
-		<!-- Verify IdP is logged in -->
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="User#viewLoggedInPG">
-			<var name="userFirstName" value="Test" />
-			<var name="userLastName" value="Test" />
-		</execute>
-
-		<!-- Logout SP and verify SP is logged out-->
-
-		<execute macro="User#logoutPG">
-			<var name="specificURL" value="http://www.able.com:9080" />
-		</execute>
-
-		<execute macro="User#viewLoggedOutPG" />
-
-		<!-- Verify IdP is also logged out -->
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="User#viewLoggedOutPG" />
-	</command>
-
-	<command name="ViewSingleLogoutHTTPPostBindingInConsole" priority="4">
-		<description message="LPS-49666 - SAML Single Logout should support HTTP-POST binding." />
-
-		<property name="test.name.skip.portal.instance" value="CPSAML#ViewSingleLogoutHTTPPostBindingInConsole" />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Server Administration" />
-		</execute>
-
-		<execute macro="ServerAdministration#addCategoryLogLevels">
-			<var name="catagoryName" value="com.liferay.saml" />
-			<var name="categoryPriority" value="DEBUG" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="SAML#executeIdPInitiatedSSO">
-			<var name="idpInitiatedSSOURL" value="${portalURL}/c/portal/saml/sso?entityId=samlsp&amp;RelayState=http://www.able.com:9080" />
-			<var name="password" value="test" />
-			<var name="rememberMeChecked" value="true" />
-			<var name="samlEnabled" value="true" />
-			<var name="spURL" value="http://www.able.com:9080/" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute function="AssertConsoleTextPresent" value1="Sending SAML message &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;_&lt;saml2p:Response Destination=&quot;http://www.able.com:9080/c/portal/saml/acs&quot;" />
-
-		<execute macro="User#logoutPG">
-			<var name="specificURL" value="http://www.able.com:9080" />
-		</execute>
-
-		<execute function="AssertConsoleTextPresent" value1="Validation of protocol message signature succeeded, message type: {urn:oasis:names:tc:SAML:2.0:protocol}LogoutRequest" />
-	</command>
-
-	<command name="ViewSPInitiatedSSO" priority="4">
-		<description message="Sign into portal by executing a SP initiated SSO login. This is done by clicking on the 'Sign In' link in the dockbar on the SP. After the SP is logged in, and if both instances has the same user and email address, the IdP will also be logged in." />
-
-		<!-- Verify SP is logged in -->
-
-		<execute macro="SAML#executeSPInitiatedSSO">
-			<var name="password" value="test" />
-			<var name="specificURL" value="http://www.able.com:9080" />
-			<var name="spURL" value="http://www.able.com:9080/" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="User#viewLoggedInPG">
-			<var name="userFirstName" value="Test" />
-			<var name="userLastName" value="Test" />
-		</execute>
-
-		<!-- Verify IdP is logged in -->
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="User#viewLoggedInPG">
-			<var name="userFirstName" value="Test" />
-			<var name="userLastName" value="Test" />
-		</execute>
-
-		<!-- Logout SP and verify SP is logged out-->
-
-		<execute macro="User#logoutPG">
-			<var name="specificURL" value="http://www.able.com:9080" />
-		</execute>
-
-		<execute macro="User#viewLoggedOutPG" />
-
-		<!-- Verify IdP is also logged out -->
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="User#viewLoggedOutPG" />
-	</command>
-</definition>
+Scenario: View Id P Initiated SSO
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And SAML execute Id P Initiated SSO
+		|idpInitiatedSSOURL|${portalURL}/c/portal/saml/sso?entityId=samlsp&RelayState=http://www.able.com:9080|
+		|password|test|
+		|rememberMeChecked|false|
+		|samlEnabled|true|
+		|spURL|http://www.able.com:9080/|
+		|userEmailAddress|test@liferay.com|
+	And User view Logged In PG
+		|userFirstName|Test|
+		|userLastName|Test|
+	And Navigator open URL
+	And User view Logged In PG
+		|userFirstName|Test|
+		|userLastName|Test|
+	And User logout PG
+		|specificURL|http://www.able.com:9080|
+	And User view Logged Out PG
+	And Navigator open URL
+	Then User view Logged Out PG
+Scenario: View Id P Initiated SSO With Remember Me Checked
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And SAML execute Id P Initiated SSO
+		|idpInitiatedSSOURL|${portalURL}/c/portal/saml/sso?entityId=samlsp&RelayState=http://www.able.com:9080|
+		|password|test|
+		|rememberMeChecked|true|
+		|samlEnabled|true|
+		|spURL|http://www.able.com:9080/|
+		|userEmailAddress|test@liferay.com|
+	And User view Logged In PG
+		|userFirstName|Test|
+		|userLastName|Test|
+	And Navigator open URL
+	And User view Logged In PG
+		|userFirstName|Test|
+		|userLastName|Test|
+	And User logout PG
+		|specificURL|http://www.able.com:9080|
+	And User view Logged Out PG
+	And Navigator open URL
+	Then User view Logged Out PG
+Scenario: View Single Logout HTTP Post Binding In Console
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When these properties
+		|test.name.skip.portal.instance|CPSAML#ViewSingleLogoutHTTPPostBindingInConsole|
+	And these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And User login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Server Administration|
+	And ServerAdministration add Category Log Levels
+		|catagoryName|com.liferay.saml|
+		|categoryPriority|DEBUG|
+	And User logout PG
+	And SAML execute Id P Initiated SSO
+		|idpInitiatedSSOURL|${portalURL}/c/portal/saml/sso?entityId=samlsp&RelayState=http://www.able.com:9080|
+		|password|test|
+		|rememberMeChecked|true|
+		|samlEnabled|true|
+		|spURL|http://www.able.com:9080/|
+		|userEmailAddress|test@liferay.com|
+	And AssertConsoleTextPresent the value 'Sending SAML message <?xml version="1.0" encoding="UTF-8"?>_<saml2p:Response Destination="http://www.able.com:9080/c/portal/saml/acs"'
+	And User logout PG
+		|specificURL|http://www.able.com:9080|
+	Then AssertConsoleTextPresent the value 'Validation of protocol message signature succeeded, message type: {urn:oasis:names:tc:SAML:2.0:protocol}LogoutRequest'
+Scenario: View SP Initiated SSO
+Priority: 4
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When SAML execute SP Initiated SSO
+		|password|test|
+		|specificURL|http://www.able.com:9080|
+		|spURL|http://www.able.com:9080/|
+		|userEmailAddress|test@liferay.com|
+	And User view Logged In PG
+		|userFirstName|Test|
+		|userLastName|Test|
+	And Navigator open URL
+	And User view Logged In PG
+		|userFirstName|Test|
+		|userLastName|Test|
+	And User logout PG
+		|specificURL|http://www.able.com:9080|
+	And User view Logged Out PG
+	And Navigator open URL
+	Then User view Logged Out PG

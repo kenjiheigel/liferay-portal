@@ -1,877 +1,544 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Site Localization" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="AvailableSiteLocalesSubsetOfAvailablePortalLocales" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="test.name.skip.portal.instance" value="SitelocalizationUsecase#AvailableSiteLocalesSubsetOfAvailablePortalLocales" />
-		<property name="testray.component.names" value="Site Localization" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Language Test Page" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#configureCurrentLanguagesCP">
-			<var name="currentSiteLanguages" value="English (United States),German (Germany),Spanish (Spain)" />
-			<var name="defaultSiteLanguage" value="Spanish (Spain)" />
-			<var name="displaySettings" value="Display Settings" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="PortalSettings#configureCurrentLanguagesCP">
-			<var name="currentPortalLanguages" value="Arabic (Saudi Arabia),Czech (Czech Republic),French (France)" />
-		</execute>
-
-		<execute function="Refresh" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#viewCurrentLanguagesCP">
-			<var name="availableSiteLanguages" value="Arabic (Saudi Arabia),Czech (Czech Republic),French (France)" />
-			<var name="currentSiteLanguages" value="English (United States),German (Germany),Spanish (Spain)" />
-			<var name="defaultSiteLanguage" value="English (United States)" />
-			<var name="displaySettings" value="Display Settings" />
-		</execute>
-
-		<execute macro="Page#viewPageLocalization">
-			<var name="category" value="Navigation" />
-			<var name="defaultSiteLanguageKey" value="es_ES" />
-			<var name="page" value="Language Test Page" />
-		</execute>
-	</command>
-
-	<command name="LocalizationStyle0" priority="3">
-		<property name="custom.properties" value="locale.prepend.friendly.url.style=0" />
-		<property name="test.name.skip.portal.instance" value="SitelocalizationUsecase#LocalizationStyle0" />
-		<property name="testray.component.names" value="Site Localization" />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Language Test Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language Selector" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Language Test Page" />
-		</execute>
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="English (United States)" />
-		</execute>
-
-		<execute function="AssertLocation" value1="${portalURL}/web/guest/language-test-page" />
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="Spanish (Spain)" />
-		</execute>
-
-		<execute function="AssertLocation" value1="${portalURL}/web/guest/language-test-page" />
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="Japanese (Japan)" />
-		</execute>
-
-		<execute function="AssertLocation" value1="${portalURL}/web/guest/language-test-page" />
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="English (United States)" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Language Test Page" />
-		</execute>
-	</command>
-
-	<command name="LocalizationStyle1" priority="3">
-		<property name="custom.properties" value="locale.prepend.friendly.url.style=1" />
-		<property name="test.name.skip.portal.instance" value="SitelocalizationUsecase#LocalizationStyle1" />
-		<property name="testray.component.names" value="Site Localization" />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Language Test Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language Selector" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Language Test Page" />
-		</execute>
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="English (United States)" />
-		</execute>
-
-		<execute function="AssertLocation" value1="${portalURL}/web/guest/language-test-page" />
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="Spanish (Spain)" />
-		</execute>
-
-		<execute function="AssertLocation" value1="${portalURL}/es/web/guest/language-test-page" />
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="Japanese (Japan)" />
-		</execute>
-
-		<execute function="AssertLocation" value1="${portalURL}/ja/web/guest/language-test-page" />
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="English (United States)" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Language Test Page" />
-		</execute>
-	</command>
-
-	<command name="LocalizationStyle2" priority="3">
-		<property name="custom.properties" value="locale.prepend.friendly.url.style=2" />
-		<property name="test.name.skip.portal.instance" value="SitelocalizationUsecase#LOcalizationStyle2" />
-		<property name="testray.component.names" value="Site Localization" />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Language Test Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language Selector" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Language Test Page" />
-		</execute>
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="English (United States)" />
-		</execute>
-
-		<execute function="AssertLocation" value1="${portalURL}/en/web/guest/language-test-page" />
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="Spanish (Spain)" />
-		</execute>
-
-		<execute function="AssertLocation" value1="${portalURL}/es/web/guest/language-test-page" />
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="Japanese (Japan)" />
-		</execute>
-
-		<execute function="AssertLocation" value1="${portalURL}/ja/web/guest/language-test-page" />
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="English (United States)" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Language Test Page" />
-		</execute>
-	</command>
-
-	<command name="LocalizeCountryName" priority="3">
-		<property name="testray.component.names" value="Site Localization,Users and Organizations" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editDisplaySettingsCP">
-			<var name="languageName" value="español (España)" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#assignRegularRoleCP">
-			<var name="roleTitle" value="Administrator" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoLocalizedControlPanel">
-			<var name="category" value="Usuarios" />
-			<var name="portlet" value="Usuarios y Organizaciones" />
-		</execute>
-
-		<execute macro="Organization#addWithLocalizedCountryCP">
-			<var name="countryName" value="Estados Unidos" />
-			<var name="localizedOption" value="Organización" />
-			<var name="navItem" value="Organizaciones" />
-			<var name="orgName" value="Organization Name" />
-			<var name="saveButton" value="Guardar" />
-		</execute>
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoLocalizedControlPanel">
-			<var name="category" value="Usuarios" />
-			<var name="portlet" value="Usuarios y Organizaciones" />
-		</execute>
-
-		<execute macro="Organization#viewLocalizedCountryCP">
-			<var name="countryName" value="Estados Unidos" />
-			<var name="editLocalized" value="Editar" />
-			<var name="navItem" value="Organizaciones" />
-			<var name="orgName" value="Organization Name" />
-		</execute>
-	</command>
-
-	<command name="NoLocalePrependedWhenLocaleMatchMyPreferredLocalization" priority="3">
-		<property name="test.name.skip.portal.instance" value="SitelocalizationUsecase#NoLocalePrependedWhenLocaleMatchMyPreferredLocalization" />
-		<property name="testray.component.names" value="Site Localization" />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site2 Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site2 Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#configureCurrentLanguagesCP">
-			<var name="defaultSiteLanguage" value="English (United States)" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site2 Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#configureCurrentLanguagesCP">
-			<var name="defaultSiteLanguage" value="Spanish (Spain)" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editUserSiteCP">
-			<var name="siteName" value="Site Name" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editUserSiteCP">
-			<var name="siteName" value="Site2 Name" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editDisplaySettingsCP">
-			<var name="languageName" value="español (España)" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Page#openURLLocale">
-			<var name="localizationPageURL" value="${portalURL}/web/site2-name" />
-		</execute>
-
-		<execute macro="Page#viewURLLocale">
-			<var name="localizationPageURL" value="${portalURL}/web/site2-name" />
-		</execute>
-
-		<execute macro="Page#openURLLocale">
-			<var name="localizationPageURL" value="${portalURL}/web/site-name" />
-		</execute>
-
-		<execute macro="Page#viewURLLocale">
-			<var name="localizationPageURL" value="${portalURL}/web/site-name" />
-		</execute>
-
-		<execute macro="User#firstLoginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="Page#openURLLocale">
-			<var name="localizationPageURL" value="${portalURL}/es/web/site2-name" />
-		</execute>
-
-		<execute macro="Page#viewURLLocale">
-			<var name="localizationOption" value="Display the page in English (United States)." />
-			<var name="localizationPageURL" value="${portalURL}/web/site2-name" />
-		</execute>
-	</command>
-
-	<command name="PortletInteractionLocalization" priority="4">
-		<property name="test.name.skip.portal.instance" value="SitelocalizationUsecase#PortletInteractionLocalization" />
-		<property name="testray.component.names" value="Site Localization" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page 2" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language Selector" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#configureCurrentLanguagesCP">
-			<var name="currentSiteLanguages" value="Spanish (Spain),German (Germany)" />
-			<var name="defaultSiteLanguage" value="Spanish (Spain)" />
-			<var name="displaySettings" value="Display Settings" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#viewPageLocalization">
-			<var name="category" value="Navegación" />
-			<var name="defaultSiteLanguageKey" value="es_ES" />
-			<var name="page" value="Site Page 1" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page 2" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#viewPageLocalization">
-			<var name="category" value="Navegación" />
-			<var name="defaultSiteLanguageKey" value="es_ES" />
-			<var name="page" value="Site Page 2" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoLocalizedControlPanel">
-			<var name="category" value="Configuración" />
-			<var name="portlet" value="Configuración de la instancia" />
-		</execute>
-
-		<execute macro="PortalSettings#viewCurrentDefaultPortalLanguageCP">
-			<var name="defaultPortalLanguage" value="English (United States)" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoLocalizedSitesAdministration">
-			<var name="category" value="Configuración" />
-			<var name="portlet" value="Ajustes del sitio" />
-		</execute>
-
-		<execute macro="Site#configureCurrentLanguagesCP">
-			<var name="currentSiteLanguages" value="Spanish (Spain),German (Germany)" />
-			<var name="displaySettings" value="Display Settings" />
-			<var name="localizedSuccessMessage" value="Your request completed successfully." />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="WebContent#addLocalizedPGViaWCD">
-			<var name="localizedBasicWebContent" value="Contenido web básico" />
-			<var name="webContentContent" value="Web Content1 Content" />
-			<var name="webContentTitle" value="Web Content1 Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="Web Content1 Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoLocalizedEditPGViaWCD">
-			<var name="localizedPortletName" value="Visor de contenido web" />
-			<var name="localizedPortletOption" value="Editar contenido web" />
-		</execute>
-
-		<execute macro="WebContent#viewAvailableLanguagesPGViaWCD">
-			<var name="webContentTranslationLanguage1" value="German (Germany)" />
-			<var name="webContentTranslationLanguage2" value="English (United States)" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoLocalizedSitesAdministration">
-			<var name="category" value="Configuración" />
-			<var name="portlet" value="Ajustes del sitio" />
-		</execute>
-
-		<execute macro="Site#configureCurrentLanguagesCP">
-			<var name="currentSiteLanguages" value="Spanish (Spain),German (Germany),English (United States)" />
-			<var name="displaySettings" value="Display Settings" />
-			<var name="localizedSuccessMessage" value="Your request completed successfully." />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page 1" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="language" value="English (United States)" />
-		</execute>
-	</command>
-
-	<command name="SiteTemplateLocalization" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="test.name.skip.portal.instance" value="SitelocalizationUsecase#SiteTemplateLocalization" />
-		<property name="testray.component.names" value="Site and Page Templates,Site Localization" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#addCP">
-			<var name="siteTemplateActive" value="Yes" />
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Site Templates" />
-		</execute>
-
-		<execute macro="SiteTemplates#viewNoSiteOrWorkflowLinksCP" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addCP">
-			<var name="portletNames" value="Site Settings,Social Activities,Workflow Configuration" />
-			<var name="siteName" value="Site Name from Template" />
-			<var name="siteTemplateActive" value="Yes" />
-			<var name="siteTemplateName" value="Site Template Name" />
-			<var name="siteType" value="Site Template" />
-			<var name="uncheckPropagation" value="true" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name from Template" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#configureCurrentLanguagesCP">
-			<var name="currentSiteLanguages" value="English (United States),German (Germany),Spanish (Spain)" />
-			<var name="defaultSiteLanguage" value="Spanish (Spain)" />
-			<var name="displaySettings" value="Display Settings" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name from Template" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#viewSiteClonedFromSiteTemplateCP">
-			<var name="clonedFromTemplate" value="true" />
-			<var name="siteTemplateName" value="Site Template Name" />
-		</execute>
-	</command>
-
-	<command name="ViewAvailableSiteLocaleAlternatives" priority="4">
-		<property name="test.name.skip.portal.instance" value="SitelocalizationUsecase#ViewAvailableSiteLocaleAlternatives" />
-		<property name="testray.component.names" value="Site Localization" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editDisplaySettingsCP">
-			<var name="languageName" value="español (España)" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addCP">
-			<var name="siteName" value="Site Name" />
-			<var name="siteType" value="Blank" />
-		</execute>
-
-		<execute macro="Site#configureCurrentLanguagesCP">
-			<var name="currentSiteLanguages" value="English (United States)" />
-			<var name="defaultSiteLanguage" value="English (United States)" />
-			<var name="displaySettings" value="Display Settings" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="Message#PORTAL_LOCALIZATION" value1="× Esta página se muestra en inglés (Estados Unidos). Mostrar la página en español (España). Establecer inglés (Estados Unidos) como su idioma preferido." />
-
-		<execute function="AssertTextEquals" locator1="Home#PORTAL_LOCALIZATION_CONFIRMATION_MESSAGE" value1="Mostrar la página en español (España)." />
-
-		<execute function="AssertTextEquals" locator1="Home#PORTAL_LOCALIZATION_PREFERRED_MESSAGE" value1="Establecer inglés (Estados Unidos) como su idioma preferido." />
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG" />
-	</command>
-
-	<command name="ViewEditURLLocale" priority="4">
-		<property name="testray.component.names" value="Site Localization" />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#configureCurrentLanguagesCP">
-			<var name="currentSiteLanguages" value="English (United States),Hungarian (Hungary)" />
-			<var name="defaultSiteLanguage" value="English (United States)" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Language Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#configureCurrentLanguagesCP">
-			<var name="currentSiteLanguages" value="English (United States),Hungarian (Hungary)" />
-			<var name="defaultSiteLanguage" value="English (United States)" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${portalURL}/fr/web/site-name/language-page" />
-		</execute>
-
-		<execute macro="Alert#closePortalLocalizationWarning" />
-
-		<execute function="AssertLocation" value1="${portalURL}/en/web/site-name/language-page" />
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${portalURL}/fr" />
-		</execute>
-
-		<execute macro="Alert#closePortalLocalizationWarning" />
-
-		<execute function="AssertLocation" value1="${portalURL}/en/web/guest/home" />
-
-		<execute macro="User#loginPG">
-			<var name="specificURL" value="${portalURL}/fr" />
-		</execute>
-
-		<execute function="AssertLocation" value1="${portalURL}/web/guest/home" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#addVirtualHostsURLCP">
-			<var name="publicPageVirtualHostURL" value="www.able.com" />
-			<var name="publicVirtualHosts" value="true" />
-		</execute>
-
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="http://www.able.com:8080/fr/" />
-		</execute>
-
-		<execute macro="Site#viewVirtualHostsURLPG">
-			<var name="pageName" value="Language Page" />
-			<var name="siteName" value="Site Name" />
-			<var name="sitePageURL" value="http://www.able.com:8080/en/" />
-		</execute>
-	</command>
-
-	<command name="ViewSiteLocalizationAfterDeletingOriginalLocale" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="test.name.skip.portal.instance" value="SitelocalizationUsecase#ViewSiteLocalizationAfterDeletingOriginalLocale" />
-		<property name="testray.component.names" value="Site Localization" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="PortalSettings#viewDefaultLanguageCP">
-			<var name="defaultPortalLanguage" value="English (United States)" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addCP">
-			<var name="siteName" value="Site Name" />
-			<var name="siteType" value="Blank" />
-		</execute>
-
-		<execute macro="Site#configureCurrentLanguagesCP">
-			<var name="currentSiteLanguages" value="Portuguese (Brazil),Spanish (Spain)" />
-			<var name="defaultSiteLanguage" value="Spanish (Spain)" />
-			<var name="displaySettings" value="Display Settings" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="localized" value="La página ha sido creada con éxito" />
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoLocalizedEditPage">
-			<var name="category" value="Navegación" />
-			<var name="page" value="Site Page Name" />
-		</execute>
-
-		<execute macro="Page#viewFriendlyURLLanguageOptionsPG">
-			<var name="assertUnavailableLanguages" value="true" />
-			<var name="currentLanguageList" value="FRIENDLY_URL_PORTUGUESE_BRAZIL,FRIENDLY_URL_SPANISH_SPAIN" />
-			<var name="unavailableLanguageList" value="FRIENDLY_URL_ENGLISH_UNITED_STATES" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Site Localization|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Available Site Locales Subset Of Available Portal Locales
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|test.name.skip.portal.instance|SitelocalizationUsecase#AvailableSiteLocalesSubsetOfAvailablePortalLocales|
+	And these properties
+		|testray.component.names|Site Localization|
+	And Page add
+		|pageName|Language Test Page|
+	And Navigator open URL
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Site configure Current Languages CP
+		|currentSiteLanguages|English (United States),German (Germany),Spanish (Spain)|
+		|defaultSiteLanguage|Spanish (Spain)|
+		|displaySettings|Display Settings|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	And PortalSettings configure Current Languages CP
+		|currentPortalLanguages|Arabic (Saudi Arabia),Czech (Czech Republic),French (France)|
+	And Refresh
+	And Navigator open URL
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Site view Current Languages CP
+		|availableSiteLanguages|Arabic (Saudi Arabia),Czech (Czech Republic),French (France)|
+		|currentSiteLanguages|English (United States),German (Germany),Spanish (Spain)|
+		|defaultSiteLanguage|English (United States)|
+		|displaySettings|Display Settings|
+	Then Page view Page Localization
+		|category|Navigation|
+		|defaultSiteLanguageKey|es_ES|
+		|page|Language Test Page|
+Scenario: Localization Style 0
+Priority: 3
+	Given these properties
+		|custom.properties|locale.prepend.friendly.url.style=0|
+	When these properties
+		|test.name.skip.portal.instance|SitelocalizationUsecase#LocalizationStyle0|
+	And these properties
+		|testray.component.names|Site Localization|
+	And these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And Page add
+		|pageName|Language Test Page|
+	And Portlet add PG
+		|portletName|Language Selector|
+	And Navigator goto Page
+		|pageName|Language Test Page|
+	And LanguagePortlet select Language PG
+		|language|English (United States)|
+	And AssertLocation the value '${portalURL}/web/guest/language-test-page'
+	And LanguagePortlet select Language PG
+		|language|Spanish (Spain)|
+	And AssertLocation the value '${portalURL}/web/guest/language-test-page'
+	And LanguagePortlet select Language PG
+		|language|Japanese (Japan)|
+	And AssertLocation the value '${portalURL}/web/guest/language-test-page'
+	And LanguagePortlet select Language PG
+		|language|English (United States)|
+	Then Navigator goto Page
+		|pageName|Language Test Page|
+Scenario: Localization Style 1
+Priority: 3
+	Given these properties
+		|custom.properties|locale.prepend.friendly.url.style=1|
+	When these properties
+		|test.name.skip.portal.instance|SitelocalizationUsecase#LocalizationStyle1|
+	And these properties
+		|testray.component.names|Site Localization|
+	And these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And Page add
+		|pageName|Language Test Page|
+	And Portlet add PG
+		|portletName|Language Selector|
+	And Navigator goto Page
+		|pageName|Language Test Page|
+	And LanguagePortlet select Language PG
+		|language|English (United States)|
+	And AssertLocation the value '${portalURL}/web/guest/language-test-page'
+	And LanguagePortlet select Language PG
+		|language|Spanish (Spain)|
+	And AssertLocation the value '${portalURL}/es/web/guest/language-test-page'
+	And LanguagePortlet select Language PG
+		|language|Japanese (Japan)|
+	And AssertLocation the value '${portalURL}/ja/web/guest/language-test-page'
+	And LanguagePortlet select Language PG
+		|language|English (United States)|
+	Then Navigator goto Page
+		|pageName|Language Test Page|
+Scenario: Localization Style 2
+Priority: 3
+	Given these properties
+		|custom.properties|locale.prepend.friendly.url.style=2|
+	When these properties
+		|test.name.skip.portal.instance|SitelocalizationUsecase#LOcalizationStyle2|
+	And these properties
+		|testray.component.names|Site Localization|
+	And these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And Page add
+		|pageName|Language Test Page|
+	And Portlet add PG
+		|portletName|Language Selector|
+	And Navigator goto Page
+		|pageName|Language Test Page|
+	And LanguagePortlet select Language PG
+		|language|English (United States)|
+	And AssertLocation the value '${portalURL}/en/web/guest/language-test-page'
+	And LanguagePortlet select Language PG
+		|language|Spanish (Spain)|
+	And AssertLocation the value '${portalURL}/es/web/guest/language-test-page'
+	And LanguagePortlet select Language PG
+		|language|Japanese (Japan)|
+	And AssertLocation the value '${portalURL}/ja/web/guest/language-test-page'
+	And LanguagePortlet select Language PG
+		|language|English (United States)|
+	Then Navigator goto Page
+		|pageName|Language Test Page|
+Scenario: Localize Country Name
+Priority: 3
+	Given these properties
+		|testray.component.names|Site Localization,Users and Organizations|
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Display Settings CP
+		|languageName|español (España)|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User assign Regular Role CP
+		|roleTitle|Administrator|
+		|userScreenName|usersn|
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And ProductMenu goto Localized Control Panel
+		|category|Usuarios|
+		|portlet|Usuarios y Organizaciones|
+	And Organization add With Localized Country CP
+		|countryName|Estados Unidos|
+		|localizedOption|Organización|
+		|navItem|Organizaciones|
+		|orgName|Organization Name|
+		|saveButton|Guardar|
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And ProductMenu goto Localized Control Panel
+		|category|Usuarios|
+		|portlet|Usuarios y Organizaciones|
+	Then Organization view Localized Country CP
+		|countryName|Estados Unidos|
+		|editLocalized|Editar|
+		|navItem|Organizaciones|
+		|orgName|Organization Name|
+Scenario: No Locale Prepended When Locale Match My Preferred Localization
+Priority: 3
+	Given these properties
+		|test.name.skip.portal.instance|SitelocalizationUsecase#NoLocalePrependedWhenLocaleMatchMyPreferredLocalization|
+	When these properties
+		|testray.component.names|Site Localization|
+	And these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site2 Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page Name|
+		|siteName|Site2 Name|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Site configure Current Languages CP
+		|defaultSiteLanguage|English (United States)|
+	And ProductMenu goto Site
+		|site|Site2 Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Site configure Current Languages CP
+		|defaultSiteLanguage|Spanish (Spain)|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit User Site CP
+		|siteName|Site Name|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit User Site CP
+		|siteName|Site2 Name|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Display Settings CP
+		|languageName|español (España)|
+		|userScreenName|usersn|
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Page open URL Locale
+		|localizationPageURL|${portalURL}/web/site2-name|
+	And Page view URL Locale
+		|localizationPageURL|${portalURL}/web/site2-name|
+	And Page open URL Locale
+		|localizationPageURL|${portalURL}/web/site-name|
+	And Page view URL Locale
+		|localizationPageURL|${portalURL}/web/site-name|
+	And User first Login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Page open URL Locale
+		|localizationPageURL|${portalURL}/es/web/site2-name|
+	Then Page view URL Locale
+		|localizationOption|Display the page in English (United States).|
+		|localizationPageURL|${portalURL}/web/site2-name|
+Scenario: Portlet Interaction Localization
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|SitelocalizationUsecase#PortletInteractionLocalization|
+	When these properties
+		|testray.component.names|Site Localization|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page 1|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page 2|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Site Page 1|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Language Selector|
+	And Navigator goto Site Page
+		|pageName|Site Page 1|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Site configure Current Languages CP
+		|currentSiteLanguages|Spanish (Spain),German (Germany)|
+		|defaultSiteLanguage|Spanish (Spain)|
+		|displaySettings|Display Settings|
+	And Navigator goto Site Page
+		|pageName|Site Page 1|
+		|siteName|Site Name|
+	And Page view Page Localization
+		|category|Navegación|
+		|defaultSiteLanguageKey|es_ES|
+		|page|Site Page 1|
+	And Navigator goto Site Page
+		|pageName|Site Page 2|
+		|siteName|Site Name|
+	And Page view Page Localization
+		|category|Navegación|
+		|defaultSiteLanguageKey|es_ES|
+		|page|Site Page 2|
+	And Navigator goto Site Page
+		|pageName|Site Page 1|
+		|siteName|Site Name|
+	And ProductMenu goto Localized Control Panel
+		|category|Configuración|
+		|portlet|Configuración de la instancia|
+	And PortalSettings view Current Default Portal Language CP
+		|defaultPortalLanguage|English (United States)|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Localized Sites Administration
+		|category|Configuración|
+		|portlet|Ajustes del sitio|
+	And Site configure Current Languages CP
+		|currentSiteLanguages|Spanish (Spain),German (Germany)|
+		|displaySettings|Display Settings|
+		|localizedSuccessMessage|Your request completed successfully.|
+	And Navigator goto Site Page
+		|pageName|Site Page 1|
+		|siteName|Site Name|
+	And WebContent add Localized PG Via WCD
+		|localizedBasicWebContent|Contenido web básico|
+		|webContentContent|Web Content1 Content|
+		|webContentTitle|Web Content1 Title|
+	And WebContent view PG Via WCD
+		|webContentContent|Web Content1 Content|
+	And WebContentNavigator goto Localized Edit PG Via WCD
+		|localizedPortletName|Visor de contenido web|
+		|localizedPortletOption|Editar contenido web|
+	And WebContent view Available Languages PG Via WCD
+		|webContentTranslationLanguage1|German (Germany)|
+		|webContentTranslationLanguage2|English (United States)|
+	And Navigator goto Site Page
+		|pageName|Site Page 1|
+		|siteName|Site Name|
+	And ProductMenu goto Localized Sites Administration
+		|category|Configuración|
+		|portlet|Ajustes del sitio|
+	And Site configure Current Languages CP
+		|currentSiteLanguages|Spanish (Spain),German (Germany),English (United States)|
+		|displaySettings|Display Settings|
+		|localizedSuccessMessage|Your request completed successfully.|
+	And Navigator goto Site Page
+		|pageName|Site Page 1|
+		|siteName|Site Name|
+	Then LanguagePortlet select Language PG
+		|language|English (United States)|
+Scenario: Site Template Localization
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|test.name.skip.portal.instance|SitelocalizationUsecase#SiteTemplateLocalization|
+	And these properties
+		|testray.component.names|Site and Page Templates,Site Localization|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	And SiteTemplates add CP
+		|siteTemplateActive|Yes|
+		|siteTemplateName|Site Template Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Site Templates|
+	And SiteTemplates view No Site Or Workflow Links CP
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add CP
+		|portletNames|Site Settings,Social Activities,Workflow Configuration|
+		|siteName|Site Name from Template|
+		|siteTemplateActive|Yes|
+		|siteTemplateName|Site Template Name|
+		|siteType|Site Template|
+		|uncheckPropagation|true|
+	And ProductMenu goto Site
+		|site|Site Name from Template|
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Site configure Current Languages CP
+		|currentSiteLanguages|English (United States),German (Germany),Spanish (Spain)|
+		|defaultSiteLanguage|Spanish (Spain)|
+		|displaySettings|Display Settings|
+	And ProductMenu goto Site
+		|site|Site Name from Template|
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	Then Site view Site Cloned From Site Template CP
+		|clonedFromTemplate|true|
+		|siteTemplateName|Site Template Name|
+Scenario: View Available Site Locale Alternatives
+Priority: 4
+	Given these properties
+		|test.name.skip.portal.instance|SitelocalizationUsecase#ViewAvailableSiteLocaleAlternatives|
+	When these properties
+		|testray.component.names|Site Localization|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Display Settings CP
+		|languageName|español (España)|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add CP
+		|siteName|Site Name|
+		|siteType|Blank|
+	And Site configure Current Languages CP
+		|currentSiteLanguages|English (United States)|
+		|defaultSiteLanguage|English (United States)|
+		|displaySettings|Display Settings|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And User logout PG
+	And User login PG
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And AssertTextEquals the value '× Esta página se muestra en inglés (Estados Unidos). Mostrar la página en español (España). Establecer inglés (Estados Unidos) como su idioma preferido.' at locator 'Message#PORTAL_LOCALIZATION'
+	And AssertTextEquals the value 'Mostrar la página en español (España).' at locator 'Home#PORTAL_LOCALIZATION_CONFIRMATION_MESSAGE'
+	And AssertTextEquals the value 'Establecer inglés (Estados Unidos) como su idioma preferido.' at locator 'Home#PORTAL_LOCALIZATION_PREFERRED_MESSAGE'
+	And User logout PG
+	Then User login PG
+Scenario: View Edit URL Locale
+Priority: 4
+	Given these properties
+		|testray.component.names|Site Localization|
+	When these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Site configure Current Languages CP
+		|currentSiteLanguages|English (United States),Hungarian (Hungary)|
+		|defaultSiteLanguage|English (United States)|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Language Page|
+		|siteName|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Site configure Current Languages CP
+		|currentSiteLanguages|English (United States),Hungarian (Hungary)|
+		|defaultSiteLanguage|English (United States)|
+	And User logout PG
+	And Navigator open Specific URL
+		|url|${portalURL}/fr/web/site-name/language-page|
+	And Alert close Portal Localization Warning
+	And AssertLocation the value '${portalURL}/en/web/site-name/language-page'
+	And Navigator open Specific URL
+		|url|${portalURL}/fr|
+	And Alert close Portal Localization Warning
+	And AssertLocation the value '${portalURL}/en/web/guest/home'
+	And User login PG
+		|specificURL|${portalURL}/fr|
+	And AssertLocation the value '${portalURL}/web/guest/home'
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Site add Virtual Hosts URLCP
+		|publicPageVirtualHostURL|www.able.com|
+		|publicVirtualHosts|true|
+	And Navigator open Specific URL
+		|url|http://www.able.com:8080/fr/|
+	Then Site view Virtual Hosts URLPG
+		|pageName|Language Page|
+		|siteName|Site Name|
+		|sitePageURL|http://www.able.com:8080/en/|
+Scenario: View Site Localization After Deleting Original Locale
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|test.name.skip.portal.instance|SitelocalizationUsecase#ViewSiteLocalizationAfterDeletingOriginalLocale|
+	And these properties
+		|testray.component.names|Site Localization|
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	And PortalSettings view Default Language CP
+		|defaultPortalLanguage|English (United States)|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add CP
+		|siteName|Site Name|
+		|siteType|Blank|
+	And Site configure Current Languages CP
+		|currentSiteLanguages|Portuguese (Brazil),Spanish (Spain)|
+		|defaultSiteLanguage|Spanish (Spain)|
+		|displaySettings|Display Settings|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|localized|La página ha sido creada con éxito|
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+	And ProductMenu goto Localized Edit Page
+		|category|Navegación|
+		|page|Site Page Name|
+	Then Page view Friendly URL Language Options PG
+		|assertUnavailableLanguages|true|
+		|currentLanguageList|FRIENDLY_URL_PORTUGUESE_BRAZIL,FRIENDLY_URL_SPANISH_SPAIN|
+		|unavailableLanguageList|FRIENDLY_URL_ENGLISH_UNITED_STATES|

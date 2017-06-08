@@ -1,384 +1,231 @@
-<definition component-name="portal-security">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="XSS" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="ValidateXSSVulnerabilities" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<var name="maliciousURL1">
-			<![CDATA[
-				${portalURL}/group/guest/home?p_p_id=82&p_p_lifecycle=1&p_p_state=normal&p_p_mode=view&p_p_col_id=column-1&p_p_col_pos=1&p_p_col_count=2&_82_struts_action=%2Flanguage%2Fview&languageId=&lt;/script&gt;&lt;script&gt;alert(document.domain)&lt;/script>
-			]]>
-		</var>
-
-		<var name="maliciousURL2">
-			<![CDATA[
-				${portalURL}/group/guest/home?p_p_id=82&p_p_lifecycle=1&p_p_state=normal&p_p_mode=view&p_p_col_id=column-1&p_p_col_pos=1&p_p_col_count=2&_82_struts_action=%2Flanguage%2Fview&languageId=&lt;/script&gt;&lt;script&gt;alert(document.domain)&lt;/script&gt;
-			]]>
-		</var>
-
-		<var name="maliciousURL3">
-			<![CDATA[
-				${portalURL}/group/guest/home?p_p_id=82&p_p_lifecycle=1&p_p_state=normal&p_p_mode=view&p_p_col_id=column-1&p_p_col_pos=1&p_p_col_count=2&_82_struts_action=%2Flanguage%2Fview&languageId=%3C/script%3E%3Cscript%3Ealert(document.domain)%3C/script%3E
-			]]>
-		</var>
-
-		<var name="maliciousURL4">
-			<![CDATA[
-				${portalURL}/group/guest/home?p_p_id=82&p_p_lifecycle=1&p_p_state=normal&p_p_mode=view&p_p_col_id=column-1&p_p_col_pos=1&p_p_col_count=2&_82_struts_action=%2Flanguage%2Fview&languageId=</script><script>alert(document.domain)</script>
-			]]>
-		</var>
-
-		<execute function="Open" locator1="${maliciousURL1}" />
-
-		<execute function="AssertTextEquals" locator1="Home#ERROR_MESSAGE_ALERT_ERROR" value1="Not Found" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Home#ERROR_MESSAGE_RESOURCE_NOT_FOUND" value1="The requested resource could not be found." />
-		<execute function="AssertElementPresent" locator1="Home#URL_ERROR_MESSAGE" />
-
-		<execute function="Open" locator1="${maliciousURL2}" />
-
-		<execute function="AssertTextEquals" locator1="Home#ERROR_MESSAGE_ALERT_ERROR" value1="Not Found" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Home#ERROR_MESSAGE_RESOURCE_NOT_FOUND" value1="The requested resource could not be found." />
-		<execute function="AssertElementPresent" locator1="Home#URL_ERROR_MESSAGE" />
-
-		<execute function="Open" locator1="${maliciousURL3}" />
-
-		<execute function="AssertTextEquals" locator1="Home#ERROR_MESSAGE_ALERT_ERROR" value1="Not Found" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Home#ERROR_MESSAGE_RESOURCE_NOT_FOUND" value1="The requested resource could not be found." />
-		<execute function="AssertElementPresent" locator1="Home#URL_ERROR_MESSAGE" />
-
-		<execute function="Open" locator1="${maliciousURL4}" />
-
-		<execute function="AssertTextEquals" locator1="Home#ERROR_MESSAGE_ALERT_ERROR" value1="Not Found" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Home#ERROR_MESSAGE_RESOURCE_NOT_FOUND" value1="The requested resource could not be found." />
-		<execute function="AssertElementPresent" locator1="Home#URL_ERROR_MESSAGE" />
-	</command>
-
-	<command name="ViewBookmarkNoXSS" priority="4">
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="Account Settings" />
-		</execute>
-
-		<execute macro="User#editDetailsViaMyAccount">
-			<var name="userLastNameEdit"><![CDATA[><script>alert(document.cookie)</script>]]></var>
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Bookmarks" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="RelatedAssets#gotoBookmarksSelectionPG">
-			<var name="assetType" value="Bookmarks Entry" />
-		</execute>
-
-		<execute macro="Bookmark#addRelatedAssetBookmarksEntryPG">
-			<var name="bookmarkName" value="Test Bookmark Name" />
-			<var name="bookmarkURL" value="http://www.liferay.com" />
-		</execute>
-
-		<execute function="AssertAlertNotPresent" />
-	</command>
-
-	<command name="ViewControlPanelNoXSS" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<var name="siteName"><![CDATA[<script>alert(123)</script>]]></var>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute function="Type" locator1="NavBar#BASIC_SEARCH_FIELD" value1="${siteName}" />
-
-		<execute function="Click" locator1="Icon#BASIC_SEARCH" />
-
-		<var name="key_rowEntry" value="${siteName}" />
-
-		<execute function="AssertClick" locator1="ContentRow#ENTRY_CONTENT_ENTRY_NAME_LINK" value1="${siteName}" />
-
-		<execute function="AssertAlertNotPresent" />
-
-		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="Public Pages" />
-
-		<var name="key_siteName" value="${siteName}" />
-
-		<execute function="AssertTextEquals" locator1="ProductMenu#PRODUCT_MENU_PANEL_SITE_ADMINISTRATION_SITE_NAME" value1="${siteName}" />
-	</command>
-
-	<command name="ViewGoogleAnalyticsIDNoXSS" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#editGoogleAnalyticsIDCP">
-			<var name="googleAnalyticsID"><![CDATA[']);alert(/googleAnalyticsId/);//]]></var>
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-		<execute function="AssertAlertNotPresent" />
-	</command>
-
-	<command name="ViewJSONWSNoXSS" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute function="Open" locator1="${portalURL}/api/jsonws?contextPath=%22%3E%3Cimg%20src=x%20onerror=alert%28/contextPath/%29%3E" />
-		<execute function="AssertAlertNotPresent" />
-	</command>
-
-	<command name="ViewLiferayPortletListNoXSS" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute function="Open" locator1="${portalURL}/web/guest/home?p_p_id=com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet&amp;p_p_state=pop_up&amp;_com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet_mvcPath=%2Fedit_configuration.jsp&amp;_com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet_portletResource=com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_7awylRgVDERT;alert(1)//%22;alert(2)//%22;alert(3)//%E2%80%93%3E%3C/script%3E%22%3E%27%3E%3Cscript%3Ealert(4)%3C/script%3E&amp;_com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet_resourcePrimKey=asdfxxx" />
-
-		<execute function="AssertAlertNotPresent" />
-
-		<execute function="Refresh" />
-
-		<execute function="AssertAlertNotPresent" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute function="AssertAlertNotPresent" />
-	</command>
-
-	<command name="ViewLookAndFeelNoXSS" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Page#add">
-			<var name="pageName"><![CDATA[<script>alert(123)</script>]]></var>
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName"><![CDATA[<script>alert(123)</script>]]></var>
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Blogs" />
-			<var name="portletOption" value="Look and Feel Configuration" />
-		</execute>
-
-		<execute function="AssertAlertNotPresent" />
-	</command>
-
-	<command name="ViewRecycleBinNoXSS" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<var name="entryTitle"><![CDATA[<script>alert(123)</script>]]></var>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoAddEntry" />
-
-		<execute function="Type#typeAceEditor" locator1="AlloyEditor#TITLE_FIELD" value1="${entryTitle}" />
-
-		<execute macro="BlogsEntry#addContent">
-			<var name="entryContent" value="Blogs Entry Content" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="Portlet#changeDisplayStyle">
-			<var name="displayStyle" value="Descriptive" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinCP">
-			<var name="assetType" value="Blogs Entry" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="${entryTitle}" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#restoreCP">
-			<var name="assetName" value="${entryTitle}" />
-			<var name="assetRestoreLocation" value="Blogs" />
-			<var name="assetType" value="Blogs Entry" />
-		</execute>
-
-		<execute function="AssertAlertNotPresent" />
-	</command>
-
-	<command name="ViewRolesNoXSS" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#add">
-			<var name="roleTitle"><![CDATA[<script>document.write("XSS"); window.stop();</script>]]></var>
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Roles" />
-		</execute>
-
-		<execute macro="Role#viewCP">
-			<var name="roleTitle"><![CDATA[<script>document.write("XSS"); window.stop();</script>]]></var>
-			<var name="roleType" value="Regular" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Sign In" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoConfigurationPG">
-			<var name="portletName" value="Sign In" />
-		</execute>
-
-		<execute function="AssertElementNotPresent" locator1="//body[.='XSS']" />
-	</command>
-
-	<command name="ViewURLValidateNoXSS" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="test.name.skip.portal.instance" value="XSSUsecase#ViewURLValidateNoXSS" />
-
-		<var name="maliciousURL1">
-			<![CDATA[
-				http://localhost:8080/c/portal/flash?title=abc</title><script%0d%0a>alert(3.1415926)</script%0d%0a><title>aaa
-			]]>
-		</var>
-
-		<var name="maliciousURL2">
-			<![CDATA[
-				http://localhost:8080/group/control_panel/manage?p_p_id=132&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_132_struts_action=%2Fplugins_admin%2Fedit_plugin&_132_pluginId=116&_132_pluginType=portlet&_132_title=Activities&_132_moduleId=%3Cscript%3Ealert(%22xss%22);%3C/script%3E
-			]]>
-		</var>
-
-		<var name="maliciousURL3">
-			<![CDATA[
-				http://localhost:8080/group/control_panel/manage?p_p_id=132&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_132_struts_action=%2Fplugins_admin%2Fedit_plugin&_132_pluginId=116&_132_pluginType=portlet&_132_title=Activities&_132_moduleId=%3Cscript%3Ealert(%22xss%22);%3C/script%3E&_2_backURL=%22%3E%3Cscript%3Ealert%28%27xss%27%29;%3C/script%3E
-			]]>
-		</var>
-
-		<var name="maliciousURL4">
-			<![CDATA[
-				http://localhost:8080/group/control_panel/manage?p_p_id=132&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_132_struts_action=%2Fplugins_admin%2Fedit_plugin&_132_pluginId=116&_132_pluginType=portlet&_132_title=Activities&_132_moduleId=%3Cscript%3Ealert(%22xss%22);%3C/script%3E&_2_backURL=alert%28%27xss%27%29
-			]]>
-		</var>
-
-		<var name="maliciousURL5">
-			<![CDATA[
-				http://localhost:8080/html/portal/progress_poller.jsp?ProgressId=a%3D1%3Balert(document.cookie)%3B%2F%2F
-			]]>
-		</var>
-
-		<execute function="Open" locator1="${maliciousURL1}" />
-		<execute function="AssertAlertNotPresent" />
-
-		<execute function="Open" locator1="${maliciousURL2}" />
-		<execute function="AssertAlertNotPresent" />
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="Account Settings" />
-		</execute>
-
-		<execute function="Open" locator1="${maliciousURL3}" />
-		<execute function="AssertAlertNotPresent" />
-
-		<execute function="Open" locator1="${maliciousURL4}" />
-		<execute function="AssertAlertNotPresent" />
-
-		<execute function="Open" locator1="${maliciousURL5}" />
-		<execute function="AssertAlertNotPresent" />
-	</command>
-
-	<command name="ViewWikiNoXSS" priority="5">
-		<property name="portal.acceptance" value="quarantine" />
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="Account Settings" />
-		</execute>
-
-		<execute macro="User#editDetailsViaMyAccount">
-			<var name="userFirstNameEdit"><![CDATA[<script>document.write("XSS"); window.stop();</script>]]></var>
-			<var name="userLastNameEdit"><![CDATA[<script>document.write("XSS"); window.stop();</script>]]></var>
-			<var name="userMiddleNameEdit"><![CDATA[<script>document.write("XSS"); window.stop();</script>]]></var>
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Wiki" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoNode">
-			<var name="wikiNodeName" value="Main" />
-		</execute>
-
-		<execute macro="WikiPage#addCP">
-			<var name="wikiPageContent" value="Wiki Page Content" />
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-
-		<execute macro="WikiNavigator#gotoCP">
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
-
-		<execute function="AssertElementNotPresent" locator1="//body[.='XSS']" />
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|XSS|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Validate XSS Vulnerabilities
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And these variables
+		|maliciousURL1||
+	And these variables
+		|maliciousURL2||
+	And these variables
+		|maliciousURL3||
+	And these variables
+		|maliciousURL4||
+	And Open at locator '${maliciousURL1}'
+	And AssertTextEquals the value 'Not Found' at locator 'Home#ERROR_MESSAGE_ALERT_ERROR'
+	And AssertTextEquals assert Partial Text the value 'The requested resource could not be found.' at locator 'Home#ERROR_MESSAGE_RESOURCE_NOT_FOUND'
+	And AssertElementPresent at locator 'Home#URL_ERROR_MESSAGE'
+	And Open at locator '${maliciousURL2}'
+	And AssertTextEquals the value 'Not Found' at locator 'Home#ERROR_MESSAGE_ALERT_ERROR'
+	And AssertTextEquals assert Partial Text the value 'The requested resource could not be found.' at locator 'Home#ERROR_MESSAGE_RESOURCE_NOT_FOUND'
+	And AssertElementPresent at locator 'Home#URL_ERROR_MESSAGE'
+	And Open at locator '${maliciousURL3}'
+	And AssertTextEquals the value 'Not Found' at locator 'Home#ERROR_MESSAGE_ALERT_ERROR'
+	And AssertTextEquals assert Partial Text the value 'The requested resource could not be found.' at locator 'Home#ERROR_MESSAGE_RESOURCE_NOT_FOUND'
+	And AssertElementPresent at locator 'Home#URL_ERROR_MESSAGE'
+	And Open at locator '${maliciousURL4}'
+	And AssertTextEquals the value 'Not Found' at locator 'Home#ERROR_MESSAGE_ALERT_ERROR'
+	And AssertTextEquals assert Partial Text the value 'The requested resource could not be found.' at locator 'Home#ERROR_MESSAGE_RESOURCE_NOT_FOUND'
+	Then AssertElementPresent at locator 'Home#URL_ERROR_MESSAGE'
+Scenario: View Bookmark No XSS
+Priority: 4
+	Given Page goto My Account
+		|portletName|Account Settings|
+	When User edit Details Via My Account
+		|userLastNameEdit||
+	And Navigator open URL
+	And Portlet add PG
+		|portletName|Bookmarks|
+	And Navigator open URL
+	And RelatedAssets goto Bookmarks Selection PG
+		|assetType|Bookmarks Entry|
+	And Bookmark add Related Asset Bookmarks Entry PG
+		|bookmarkName|Test Bookmark Name|
+		|bookmarkURL|http://www.liferay.com|
+	Then AssertAlertNotPresent
+Scenario: View Control Panel No XSS
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these variables
+		|siteName||
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|${siteName}|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Type the value '${siteName}' at locator 'NavBar#BASIC_SEARCH_FIELD'
+	And Click at locator 'Icon#BASIC_SEARCH'
+	And these variables
+		|key_rowEntry|${siteName}|
+	And AssertClick the value '${siteName}' at locator 'ContentRow#ENTRY_CONTENT_ENTRY_NAME_LINK'
+	And AssertAlertNotPresent
+	And AssertTextEquals the value 'Public Pages' at locator 'Portlet#HEADER'
+	And these variables
+		|key_siteName|${siteName}|
+	Then AssertTextEquals the value '${siteName}' at locator 'ProductMenu#PRODUCT_MENU_PANEL_SITE_ADMINISTRATION_SITE_NAME'
+Scenario: View Google Analytics ID No XSS
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Navigator open URL
+	And ProductMenu goto Sites Configuration
+		|portlet|Site Settings|
+	And Site edit Google Analytics IDCP
+		|googleAnalyticsID||
+	And Navigator open URL
+	Then AssertAlertNotPresent
+Scenario: View JSONWS No XSS
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And Open at locator '${portalURL}/api/jsonws?contextPath=%22%3E%3Cimg%20src=x%20onerror=alert%28/contextPath/%29%3E'
+	Then AssertAlertNotPresent
+Scenario: View Liferay Portlet List No XSS
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these variables
+		|portalURL|TestPropsUtil#get('portal.url')|
+	And Page add
+		|pageName|Asset Publisher Page|
+	And Navigator goto Page
+		|pageName|Asset Publisher Page|
+	And Portlet add PG
+		|portletName|Asset Publisher|
+	And Open at locator '${portalURL}/web/guest/home?p_p_id=com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet&p_p_state=pop_up&_com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet_mvcPath=%2Fedit_configuration.jsp&_com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet_portletResource=com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_7awylRgVDERT;alert(1)//%22;alert(2)//%22;alert(3)//%E2%80%93%3E%3C/script%3E%22%3E%27%3E%3Cscript%3Ealert(4)%3C/script%3E&_com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet_resourcePrimKey=asdfxxx'
+	And AssertAlertNotPresent
+	And Refresh
+	And AssertAlertNotPresent
+	And Navigator open URL
+	Then AssertAlertNotPresent
+Scenario: View Look And Feel No XSS
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Page add
+		|pageName||
+	And Navigator goto Page
+		|pageName||
+	And Portlet add PG
+		|portletName|Blogs|
+	And Portlet goto Portlet Options
+		|portletName|Blogs|
+		|portletOption|Look and Feel Configuration|
+	Then AssertAlertNotPresent
+Scenario: View Recycle Bin No XSS
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these variables
+		|entryTitle||
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And BlogsNavigator goto Add Entry
+	And Type type Ace Editor the value '${entryTitle}' at locator 'AlloyEditor#TITLE_FIELD'
+	And BlogsEntry add Content
+		|entryContent|Blogs Entry Content|
+	And PortletEntry publish
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And Portlet change Display Style
+		|displayStyle|Descriptive|
+	And BlogsEntry move To Recycle Bin CP
+		|assetType|Blogs Entry|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|${entryTitle}|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin restore CP
+		|assetName|${entryTitle}|
+		|assetRestoreLocation|Blogs|
+		|assetType|Blogs Entry|
+	Then AssertAlertNotPresent
+Scenario: View Roles No XSS
+Priority: 4
+	Given ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	When Role add
+		|roleTitle||
+	And ProductMenu goto Control Panel Users
+		|portlet|Roles|
+	And Role view CP
+		|roleTitle||
+		|roleType|Regular|
+	And Navigator open URL
+	And Portlet add PG
+		|portletName|Sign In|
+	And PermissionsInline goto Configuration PG
+		|portletName|Sign In|
+	Then AssertElementNotPresent at locator '//body[.='XSS']'
+Scenario: View URL Validate No XSS
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|test.name.skip.portal.instance|XSSUsecase#ViewURLValidateNoXSS|
+	And these variables
+		|maliciousURL1||
+	And these variables
+		|maliciousURL2||
+	And these variables
+		|maliciousURL3||
+	And these variables
+		|maliciousURL4||
+	And these variables
+		|maliciousURL5||
+	And Open at locator '${maliciousURL1}'
+	And AssertAlertNotPresent
+	And Open at locator '${maliciousURL2}'
+	And AssertAlertNotPresent
+	And Page goto My Account
+		|portletName|Account Settings|
+	And Open at locator '${maliciousURL3}'
+	And AssertAlertNotPresent
+	And Open at locator '${maliciousURL4}'
+	And AssertAlertNotPresent
+	And Open at locator '${maliciousURL5}'
+	Then AssertAlertNotPresent
+Scenario: View Wiki No XSS
+Priority: 5
+	Given these properties
+		|portal.acceptance|quarantine|
+	When Page goto My Account
+		|portletName|Account Settings|
+	And User edit Details Via My Account
+		|userFirstNameEdit||
+		|userLastNameEdit||
+		|userMiddleNameEdit||
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Wiki|
+	And WikiNavigator goto Node
+		|wikiNodeName|Main|
+	And WikiPage add CP
+		|wikiPageContent|Wiki Page Content|
+		|wikiPageTitle|Wiki Page Title|
+	And WikiNavigator goto CP
+		|wikiPageTitle|Wiki Page Title|
+	Then AssertElementNotPresent at locator '//body[.='XSS']'

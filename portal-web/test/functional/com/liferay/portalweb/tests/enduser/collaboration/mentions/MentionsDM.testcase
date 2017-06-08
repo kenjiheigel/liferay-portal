@@ -1,193 +1,120 @@
-<definition component-name="portal-collaboration">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column" />
-	<property name="testray.main.component.name" value="Mentions" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column|
+		|testray.main.component.name|Mentions|
 
-		<execute macro="User#firstLoginPG" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|password|password|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	Then User assign Regular Role CP
+		|roleTitle|Administrator|
+		|userScreenName|usersn|
 
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="password" value="password" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#assignRegularRoleCP">
-			<var name="roleTitle" value="Administrator" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="ViewMentionViaDMComment" priority="5">
-		<execute macro="Page#add">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_1.txt" />
-			<var name="dmDocumentSize" value="0KB" />
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute function="Click" locator1="Icon#DISPLAY_STYLE_DESCRIPTIVE" />
-
-		<execute macro="DMDocument#viewPG">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="Mentions#addMentionViaComments">
-			<var name="entryComment" value="Comment mentioning" />
-			<var name="mentionsUserFullName" value="Test Test" />
-			<var name="mentionsUserScreenName" value="test" />
-		</execute>
-
-		<execute macro="Mentions#viewCommentMentionTagLink">
-			<var name="mentionsUserFullName" value="Test Test" />
-			<var name="mentionsUserScreenName" value="test" />
-		</execute>
-	</command>
-
-	<command name="ViewReplyMentionViaDMComment" priority="5">
-		<execute macro="Page#add">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_1.txt" />
-			<var name="dmDocumentSize" value="0KB" />
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute function="Click" locator1="Icon#DISPLAY_STYLE_DESCRIPTIVE" />
-
-		<execute macro="DMDocument#viewPG">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="Mentions#addMentionViaComments">
-			<var name="entryComment" value="Comment mentioning" />
-			<var name="mentionsUserFullName" value="Test Test" />
-			<var name="mentionsUserScreenName" value="test" />
-		</execute>
-
-		<execute macro="Mentions#viewCommentMentionTagLink">
-			<var name="mentionsUserFullName" value="Test Test" />
-			<var name="mentionsUserScreenName" value="test" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginUserPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute function="Click" locator1="Icon#DISPLAY_STYLE_DESCRIPTIVE" />
-
-		<execute macro="DMDocument#viewPG">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<var name="key_entryComment" value="Comment mentioning" />
-
-		<execute function="AssertClick" locator1="Comments#REPLY_TO_COMMENT" value1="Reply" />
-
-		<execute macro="Mentions#addMentionViaComments">
-			<var name="entryComment" value="Comment reply mentioning" />
-			<var name="mentionsUserFullName" value="userfn userln" />
-			<var name="mentionsUserScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Mentions#viewCommentMentionTagLink">
-			<var name="mentionsUserFullName" value="userfn userln" />
-			<var name="mentionsUserScreenName" value="usersn" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View Mention Via DM Comment
+Priority: 5
+	Given Page add
+		|pageName|Documents and Media Page|
+	When Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Portlet add PG
+		|portletName|Documents and Media|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMDocument add CP
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_1.txt|
+		|dmDocumentSize|0KB|
+		|dmDocumentTitle|DM Document Title|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Click at locator 'Icon#DISPLAY_STYLE_DESCRIPTIVE'
+	And DMDocument view PG
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentTitle|DM Document Title|
+	And Mentions add Mention Via Comments
+		|entryComment|Comment mentioning|
+		|mentionsUserFullName|Test Test|
+		|mentionsUserScreenName|test|
+	Then Mentions view Comment Mention Tag Link
+		|mentionsUserFullName|Test Test|
+		|mentionsUserScreenName|test|
+Scenario: View Reply Mention Via DM Comment
+Priority: 5
+	Given Page add
+		|pageName|Documents and Media Page|
+	When Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Portlet add PG
+		|portletName|Documents and Media|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMDocument add CP
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_1.txt|
+		|dmDocumentSize|0KB|
+		|dmDocumentTitle|DM Document Title|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|userea@liferay.com|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Click at locator 'Icon#DISPLAY_STYLE_DESCRIPTIVE'
+	And DMDocument view PG
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentTitle|DM Document Title|
+	And Mentions add Mention Via Comments
+		|entryComment|Comment mentioning|
+		|mentionsUserFullName|Test Test|
+		|mentionsUserScreenName|test|
+	And Mentions view Comment Mention Tag Link
+		|mentionsUserFullName|Test Test|
+		|mentionsUserScreenName|test|
+	And User logout PG
+	And User login User PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And Click at locator 'Icon#DISPLAY_STYLE_DESCRIPTIVE'
+	And DMDocument view PG
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentTitle|DM Document Title|
+	And these variables
+		|key_entryComment|Comment mentioning|
+	And AssertClick the value 'Reply' at locator 'Comments#REPLY_TO_COMMENT'
+	And Mentions add Mention Via Comments
+		|entryComment|Comment reply mentioning|
+		|mentionsUserFullName|userfn userln|
+		|mentionsUserScreenName|usersn|
+	Then Mentions view Comment Mention Tag Link
+		|mentionsUserFullName|userfn userln|
+		|mentionsUserScreenName|usersn|

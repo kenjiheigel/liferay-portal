@@ -1,398 +1,243 @@
-<definition component-name="portal-workflow">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles" />
-	<property name="testray.main.component.name" value="Workflow" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Calendar" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Workflow Configuration" />
-		</execute>
-
-		<execute macro="Workflow#configureWorkflow">
-			<var name="workflowDefinition" value="Single Approver (Version 1)" />
-			<var name="workflowResourceValue" value="Calendar Event" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#add">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="eventType" value="Regular" />
-			<var name="optionSet" value="true" />
-			<var name="optionSetValue" value="inviteResource" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="specificOptionSetValue" value="Test Test" />
-			<var name="workflow" value="true" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="ApproveEventWithInvitedUser" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Day" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewSiteRSVPWithUnapprovedWorkflow">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="siteCalendarName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Week" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewNoUserInviteWithUnapprovedWorkflow">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="siteCalendarName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="workflowAssetTitle" value="Calendar Event Title" />
-			<var name="workflowAssetType" value="Calendar Event" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#approveTaskByActions">
-			<var name="workflowAssetTitle" value="Calendar Event Title" />
-			<var name="workflowAssetType" value="Calendar Event" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Week" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewSiteRSVPWithApprovedWorkflow">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="rsvp" value="Yes" />
-			<var name="userCalendarName" value="Test Test" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewInvitedUserRSVPWithApprovedWorkflow">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="siteCalendarName" value="${siteName}" />
-			<var name="userCalendarName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="DeleteAndRestoreEvent" priority="3">
-		<description message="This is a use case for LPS-59572." />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Week" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewSiteRSVPWithUnapprovedWorkflow">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="siteCalendarName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#viewTaskAssignedToMyRoles">
-			<var name="workflowAssetTitle" value="Calendar Event Title" />
-			<var name="workflowAssetType" value="Calendar Event" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Week" />
-		</execute>
-
-		<execute macro="CalendarEvent#deleteSpecific">
-			<var name="eventTitle" value="Calendar Event Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Week" />
-		</execute>
-
-		<execute macro="CalendarScheduler#viewDefault">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#viewDefaultMyWorkflowTasksCP" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#restoreCP">
-			<var name="assetName" value="Calendar Event Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Week" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewSiteRSVPWithUnapprovedWorkflow">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="siteCalendarName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="workflowAssetTitle" value="Calendar Event Title" />
-			<var name="workflowAssetType" value="Calendar Event" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Workflow#viewTaskAssignedToMe">
-			<var name="workflowAssetTitle" value="Calendar Event Title" />
-			<var name="workflowAssetType" value="Calendar Event" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Week" />
-		</execute>
-
-		<execute macro="CalendarEvent#deleteSpecific">
-			<var name="eventTitle" value="Calendar Event Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Week" />
-		</execute>
-
-		<execute macro="CalendarScheduler#viewDefault">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#viewDefaultMyWorkflowTasksCP" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#restoreCP">
-			<var name="assetName" value="Calendar Event Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewSiteRSVPWithUnapprovedWorkflow">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="siteCalendarName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="workflowAssetTitle" value="Calendar Event Title" />
-			<var name="workflowAssetType" value="Calendar Event" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Workflow#approveTaskByActions">
-			<var name="workflowAssetTitle" value="Calendar Event Title" />
-			<var name="workflowAssetType" value="Calendar Event" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Week" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewSiteRSVPWithApprovedWorkflow">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="rsvp" value="Yes" />
-			<var name="userCalendarName" value="Test Test" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewInvitedUserRSVPWithApprovedWorkflow">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="siteCalendarName" value="${siteName}" />
-			<var name="userCalendarName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="RejectEventWithInvitedUser" priority="4">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Week" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewSiteRSVPWithUnapprovedWorkflow">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="siteCalendarName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Week" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewNoUserInviteWithUnapprovedWorkflow">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="siteCalendarName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByActions">
-			<var name="workflowAssetTitle" value="Calendar Event Title" />
-			<var name="workflowAssetType" value="Calendar Event" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#rejectTaskByActions">
-			<var name="workflowAssetTitle" value="Calendar Event Title" />
-			<var name="workflowAssetType" value="Calendar Event" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Week" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewSiteRSVPWithUnapprovedWorkflow">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="siteCalendarName" value="${siteName}" />
-		</execute>
-
-		<execute macro="CalendarEvent#viewNoUserInviteWithUnapprovedWorkflow">
-			<var name="eventTitle" value="Calendar Event Title" />
-			<var name="siteCalendarName" value="${siteName}" />
-			<var name="userCalendarName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="ViewPendingStatusInEventDetails" priority="2">
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Week" />
-		</execute>
-
-		<execute macro="CalendarScheduler#addEventToday">
-			<var name="eventTitle" value="Calendar Event Today Week" />
-			<var name="viewType" value="Week" />
-		</execute>
-
-		<execute macro="CalendarScheduler#selectSpecificEvent">
-			<var name="eventTitle" value="Calendar Event Title" />
-		</execute>
-
-		<execute macro="CalendarScheduler#gotoDetailsViaDialogBox" />
-
-		<execute macro="CalendarEvent#viewStatusViaDetails">
-			<var name="status" value="Pending" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles|
+		|testray.main.component.name|Workflow|
+
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Calendar Page|
+	And Portlet add PG
+		|portletName|Calendar|
+	And ProductMenu goto Sites Configuration
+		|portlet|Workflow Configuration|
+	And Workflow configure Workflow
+		|workflowDefinition|Single Approver (Version 1)|
+		|workflowResourceValue|Calendar Event|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent add
+		|eventTitle|Calendar Event Title|
+		|eventType|Regular|
+		|optionSet|true|
+		|optionSetValue|inviteResource|
+		|pageName|Calendar Page|
+		|specificOptionSetValue|Test Test|
+		|workflow|true|
+	Then Navigator goto Page
+		|pageName|Calendar Page|
+
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Approve Event With Invited User
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+	And CalendarNavigator goto View
+		|viewType|Day|
+	And CalendarEvent view Site RSVP With Unapproved Workflow
+		|eventTitle|Calendar Event Title|
+		|siteCalendarName|${siteName}|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto View
+		|viewType|Week|
+	And CalendarEvent view No User Invite With Unapproved Workflow
+		|eventTitle|Calendar Event Title|
+		|siteCalendarName|${siteName}|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|Calendar Event Title|
+		|workflowAssetType|Calendar Event|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow approve Task By Actions
+		|workflowAssetTitle|Calendar Event Title|
+		|workflowAssetType|Calendar Event|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto View
+		|viewType|Week|
+	And CalendarEvent view Site RSVP With Approved Workflow
+		|eventTitle|Calendar Event Title|
+		|rsvp|Yes|
+		|userCalendarName|Test Test|
+	Then CalendarEvent view Invited User RSVP With Approved Workflow
+		|eventTitle|Calendar Event Title|
+		|siteCalendarName|${siteName}|
+		|userCalendarName|Test Test|
+Scenario: Delete And Restore Event
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And CalendarNavigator goto View
+		|viewType|Week|
+	And CalendarEvent view Site RSVP With Unapproved Workflow
+		|eventTitle|Calendar Event Title|
+		|siteCalendarName|${siteName}|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow view Task Assigned To My Roles
+		|workflowAssetTitle|Calendar Event Title|
+		|workflowAssetType|Calendar Event|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto View
+		|viewType|Week|
+	And CalendarEvent delete Specific
+		|eventTitle|Calendar Event Title|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto View
+		|viewType|Week|
+	And CalendarScheduler view Default
+		|eventTitle|Calendar Event Title|
+		|pageName|Calendar Page|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow view Default My Workflow Tasks CP
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin restore CP
+		|assetName|Calendar Event Title|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto View
+		|viewType|Week|
+	And CalendarEvent view Site RSVP With Unapproved Workflow
+		|eventTitle|Calendar Event Title|
+		|siteCalendarName|${siteName}|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|Calendar Event Title|
+		|workflowAssetType|Calendar Event|
+		|workflowTask|Review|
+	And Workflow view Task Assigned To Me
+		|workflowAssetTitle|Calendar Event Title|
+		|workflowAssetType|Calendar Event|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto View
+		|viewType|Week|
+	And CalendarEvent delete Specific
+		|eventTitle|Calendar Event Title|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto View
+		|viewType|Week|
+	And CalendarScheduler view Default
+		|eventTitle|Calendar Event Title|
+		|pageName|Calendar Page|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow view Default My Workflow Tasks CP
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin restore CP
+		|assetName|Calendar Event Title|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarEvent view Site RSVP With Unapproved Workflow
+		|eventTitle|Calendar Event Title|
+		|siteCalendarName|${siteName}|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|Calendar Event Title|
+		|workflowAssetType|Calendar Event|
+		|workflowTask|Review|
+	And Workflow approve Task By Actions
+		|workflowAssetTitle|Calendar Event Title|
+		|workflowAssetType|Calendar Event|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto View
+		|viewType|Week|
+	And CalendarEvent view Site RSVP With Approved Workflow
+		|eventTitle|Calendar Event Title|
+		|rsvp|Yes|
+		|userCalendarName|Test Test|
+	Then CalendarEvent view Invited User RSVP With Approved Workflow
+		|eventTitle|Calendar Event Title|
+		|siteCalendarName|${siteName}|
+		|userCalendarName|Test Test|
+Scenario: Reject Event With Invited User
+Priority: 4
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When CalendarNavigator goto View
+		|viewType|Week|
+	And CalendarEvent view Site RSVP With Unapproved Workflow
+		|eventTitle|Calendar Event Title|
+		|siteCalendarName|${siteName}|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto View
+		|viewType|Week|
+	And CalendarEvent view No User Invite With Unapproved Workflow
+		|eventTitle|Calendar Event Title|
+		|siteCalendarName|${siteName}|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow assign To Me Task By Actions
+		|workflowAssetTitle|Calendar Event Title|
+		|workflowAssetType|Calendar Event|
+		|workflowTask|Review|
+	And Page goto My Account
+		|portletName|My Workflow Tasks|
+	And Workflow reject Task By Actions
+		|workflowAssetTitle|Calendar Event Title|
+		|workflowAssetType|Calendar Event|
+		|workflowTask|Review|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And CalendarNavigator goto View
+		|viewType|Week|
+	And CalendarEvent view Site RSVP With Unapproved Workflow
+		|eventTitle|Calendar Event Title|
+		|siteCalendarName|${siteName}|
+	Then CalendarEvent view No User Invite With Unapproved Workflow
+		|eventTitle|Calendar Event Title|
+		|siteCalendarName|${siteName}|
+		|userCalendarName|Test Test|
+Scenario: View Pending Status In Event Details
+Priority: 2
+	Given CalendarNavigator goto View
+		|viewType|Week|
+	When CalendarScheduler add Event Today
+		|eventTitle|Calendar Event Today Week|
+		|viewType|Week|
+	And CalendarScheduler select Specific Event
+		|eventTitle|Calendar Event Title|
+	And CalendarScheduler goto Details Via Dialog Box
+	Then CalendarEvent view Status Via Details
+		|status|Pending|

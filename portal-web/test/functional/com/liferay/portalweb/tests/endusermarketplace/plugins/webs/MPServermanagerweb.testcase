@@ -1,29 +1,23 @@
-<definition component-name="portal-plugins-deployment">
-	<property name="testray.main.component.name" value="Plugin Installer" />
+Feature:
 
-	<set-up>
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Background: This executes once per feature file
+	Given these properties
+		|testray.main.component.name|Plugin Installer|
 
-	<command name="ServerManagerWebSmoke" priority="4">
-		<property name="web.plugins.includes" value="server-manager-web" />
+Setup: This executes before each scenario 
+	Given User first Login PG
 
-		<var name="appName" value="Remote IDE Connector" />
-
-		<execute macro="ProductMenu#gotoControlPanelApps">
-			<var name="portlet" value="App Manager" />
-		</execute>
-
-		<execute macro="AppManager#uninstallAppCP">
-			<var name="appName" value="${appName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelApps">
-			<var name="portlet" value="App Manager" />
-		</execute>
-
-		<execute macro="AppManager#viewUninstallAppCP">
-			<var name="appName" value="${appName}" />
-		</execute>
-	</command>
-</definition>
+Scenario: Server Manager Web Smoke
+Priority: 4
+	Given these properties
+		|web.plugins.includes|server-manager-web|
+	When these variables
+		|appName|Remote IDE Connector|
+	And ProductMenu goto Control Panel Apps
+		|portlet|App Manager|
+	And AppManager uninstall App CP
+		|appName|${appName}|
+	And ProductMenu goto Control Panel Apps
+		|portlet|App Manager|
+	Then AppManager view Uninstall App CP
+		|appName|${appName}|

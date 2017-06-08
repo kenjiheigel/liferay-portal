@@ -1,53 +1,39 @@
-<definition component-name="portal-util-misc">
-	<property name="osgi.app.includes" value="dictionary" />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Util" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|osgi.app.includes|dictionary|
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Util|
 
-		<execute macro="User#firstLoginPG" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Dictionary Page|
+	And Navigator goto Page
+		|pageName|Dictionary Page|
+	Then Portlet add PG
+		|portletName|Dictionary|
 
-		<execute macro="Page#add">
-			<var name="pageName" value="Dictionary Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Dictionary Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Dictionary" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="FindDictionaryWord" priority="2">
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Dictionary Page" />
-		</execute>
-
-		<execute macro="Dictionary#findPG">
-			<var name="dictionaryWord" value="dog" />
-		</execute>
-
-		<var name="key_dictionaryTerm" value="dog" />
-
-		<execute function="SelectWindow" locator1="title=Dog | Define Dog at Dictionary.com" />
-		<execute function="AssertTextEquals" locator1="Portlet#WORD" value1="dog" />
-
-		<execute function="Close" locator1="title=Dog | Define Dog at Dictionary.com" />
-		<execute function="SelectWindow" locator1="title=Dictionary Page - ${siteName}" />
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Find Dictionary Word
+Priority: 2
+	Given TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	When Navigator goto Page
+		|pageName|Dictionary Page|
+	And Dictionary find PG
+		|dictionaryWord|dog|
+	And these variables
+		|key_dictionaryTerm|dog|
+	And SelectWindow at locator 'title=Dog | Define Dog at Dictionary.com'
+	And AssertTextEquals the value 'dog' at locator 'Portlet#WORD'
+	And Close at locator 'title=Dog | Define Dog at Dictionary.com'
+	Then SelectWindow at locator 'title=Dictionary Page - ${siteName}'

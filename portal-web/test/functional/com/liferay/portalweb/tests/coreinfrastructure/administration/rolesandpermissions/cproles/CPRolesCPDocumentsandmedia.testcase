@@ -1,126 +1,97 @@
-<definition component-name="portal-permissions">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Permissions" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Permissions|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="ViewDocumentsAndMediaPortletRegRole" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="test.name.skip.portal.instance" value="CPRolesCPDocumentsandmedia#ViewDocumentsAndMediaPortletRegRole" />
-
-		<execute macro="Permissions#setUpRegRoleLoginUserCP">
-			<var name="portletName" value="Documents and Media" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Access in Site Administration" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMPortlet#viewNoPermissionCP" />
-
-		<execute macro="Permissions#removePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_SITE_GO_TO_SITE_ADMINISTRATION_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Go to Site Administration" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Permissions#removePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Access in Site Administration" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-	</command>
-
-	<command name="ViewDocumentsAndMediaPortletSiteRole" priority="4">
-		<execute macro="Permissions#setUpSiteRoleLoginUserCP">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="portletName" value="Documents and Media" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="siteName" value="Site Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Access in Site Administration" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMPortlet#viewNoPermissionCP" />
-
-		<execute macro="Permissions#removePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_SITE_GO_TO_SITE_ADMINISTRATION_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Go to Site Administration" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Permissions#removePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Access in Site Administration" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: View Documents And Media Portlet Reg Role
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|test.name.skip.portal.instance|CPRolesCPDocumentsandmedia#ViewDocumentsAndMediaPortletRegRole|
+	And Permissions set Up Reg Role Login User CP
+		|portletName|Documents and Media|
+		|roleTitle|Regrole Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+		|userScreenName|usersn|
+	And Navigator open URL
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION_CHECKBOX|
+		|permissionDefinitionValue|Access in Site Administration|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMPortlet view No Permission CP
+	And Permissions remove Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_SITE_GO_TO_SITE_ADMINISTRATION_CHECKBOX|
+		|permissionDefinitionValue|Go to Site Administration|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	Then Permissions remove Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION_CHECKBOX|
+		|permissionDefinitionValue|Access in Site Administration|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+Scenario: View Documents And Media Portlet Site Role
+Priority: 4
+	Given Permissions set Up Site Role Login User CP
+		|page|Public Pages|
+		|pageName|Documents and Media Page|
+		|portletName|Documents and Media|
+		|roleTitle|Roles Siterole Name|
+		|roleType|Site|
+		|siteName|Site Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+		|userScreenName|usersn|
+	When Navigator goto Site Page
+		|pageName|Documents and Media Page|
+		|siteName|Site Name|
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION_CHECKBOX|
+		|permissionDefinitionValue|Access in Site Administration|
+		|roleTitle|Roles Siterole Name|
+		|roleType|Site|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMPortlet view No Permission CP
+	And Permissions remove Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_PAGES_SITE_PAGES_RESOURCE_PERMISSIONS_SITE_GO_TO_SITE_ADMINISTRATION_CHECKBOX|
+		|permissionDefinitionValue|Go to Site Administration|
+		|roleTitle|Roles Siterole Name|
+		|roleType|Site|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	Then Permissions remove Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_GENERAL_PERMISSIONS_ACCESS_IN_SITE_ADMINISTRATION_CHECKBOX|
+		|permissionDefinitionValue|Access in Site Administration|
+		|roleTitle|Roles Siterole Name|
+		|roleType|Site|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|

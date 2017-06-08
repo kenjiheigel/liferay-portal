@@ -1,204 +1,283 @@
-<definition component-name="portal-calendar">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles" />
-	<property name="testray.main.component.name" value="Calendar" />
+Feature:
 
-	<var name="pageName" value="Calendar Page" />
-	<var name="portletName" value="Calendar" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles|
+		|testray.main.component.name|Calendar|
+	And these variables
+		|portal.release|true|
+		|portal.upstream|true|
+		|custom.properties|default.layout.template.id=1_column${line.separator}company.default.time.zone=America/Los_Angeles|
+		|testray.main.component.name|Calendar|
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Calendar Page|
+	And Portlet add PG
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Current Day Event|
+	And CalendarEvent set Times
+		|endDateTime|11:59 PM|
+		|startDateTime|11:58 PM|
+	And CalendarEvent set Dates Today
+	And CalendarEvent publish
+	Then Navigator goto Page
+		|pageName|Calendar Page|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Delete Event And View Feed
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And Calendar choose Site Calendar Menulist Option
+		|menuListOption|RSS|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	And Calendar view RSS Feed Event Present
+		|calendarName|${siteName}|
+		|eventTitle|Current Day Event|
+		|pageName|Calendar Page|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	And Navigator close Window
+	And CalendarEvent tear Down
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar choose Site Calendar Menulist Option
+		|menuListOption|RSS|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	And Calendar view RSS Feed Event Not Present
+		|calendarName|${siteName}|
+		|eventTitle|Current Day Event|
+		|pageName|Calendar Page|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	Then Navigator close Window
+Scenario: Disable Feed For Site Calendar
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And Calendar choose Site Calendar Menulist Option
+		|menuListOption|RSS|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	And Calendar view RSS Feed Event Present
+		|calendarName|${siteName}|
+		|eventTitle|Current Day Event|
+		|pageName|Calendar Page|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	And these variables
+		|rssURL|selenium#getLocation()|
+	And Navigator close Window
+	And CalendarNavigator goto Configuration
+	And CalendarConfiguration enable RSS
+	And CalendarConfiguration view RSS Options Disabled
+	And CalendarConfiguration save
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar view Site Calendar No Menulist Option
+		|menuListOption|RSS|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	Then Calendar view No RSS
+		|rssURL|${rssURL}|
+Scenario: View Site Calendar Feed
+Priority: 5
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And CalendarNavigator goto Previous Day
+	And CalendarEvent add Via Day View
+		|eventTitle|Previous Day Event|
+	And CalendarNavigator goto Next Day
+	And CalendarNavigator goto Next Day
+	And CalendarEvent add Via Day View
+		|eventTitle|Future Day Event|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar choose Site Calendar Menulist Option
+		|menuListOption|RSS|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	And Calendar view RSS Feed Event Not Present
+		|calendarName|${siteName}|
+		|eventTitle|Past Day Event|
+		|pageName|Calendar Page|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	And Calendar view RSS Feed Event Present
+		|calendarName|${siteName}|
+		|eventTitle|Current Day Event|
+		|pageName|Calendar Page|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	And Calendar view RSS Feed Event Present
+		|calendarName|${siteName}|
+		|eventTitle|Future Day Event|
+		|pageName|Calendar Page|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	Then Navigator close Window
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Calendar Page|
+	And Portlet add PG
+		|pageName|Calendar Page|
+		|portletName|Calendar|
+	And CalendarNavigator goto Add Event
+	And CalendarEvent edit Title
+		|eventTitle|Current Day Event|
+	And CalendarEvent set Times
+		|endDateTime|11:59 PM|
+		|startDateTime|11:58 PM|
+	And CalendarEvent set Dates Today
+	And CalendarEvent publish
+	Then Navigator goto Page
+		|pageName|Calendar Page|
 
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Calendar Page" />
-			<var name="portletName" value="Calendar" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoAddEvent" />
-
-		<execute macro="CalendarEvent#editTitle">
-			<var name="eventTitle" value="Current Day Event" />
-		</execute>
-
-		<execute macro="CalendarEvent#setTimes">
-			<var name="endDateTime" value="11:59 PM" />
-			<var name="startDateTime" value="11:58 PM" />
-		</execute>
-
-		<execute macro="CalendarEvent#setDatesToday" />
-
-		<execute macro="CalendarEvent#publish" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="DeleteEventAndViewFeed" priority="3">
-		<description message="This is a use case for LPS-67928." />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Calendar#chooseSiteCalendarMenulistOption">
-			<var name="menuListOption" value="RSS" />
-			<var name="siteCalendarName" value="${siteName}" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Calendar#viewRSSFeedEventPresent">
-			<var name="calendarName" value="${siteName}" />
-			<var name="eventTitle" value="Current Day Event" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="siteCalendarName" value="${siteName}" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Navigator#closeWindow" />
-
-		<execute macro="CalendarEvent#tearDown" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Calendar#chooseSiteCalendarMenulistOption">
-			<var name="menuListOption" value="RSS" />
-			<var name="siteCalendarName" value="${siteName}" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Calendar#viewRSSFeedEventNotPresent">
-			<var name="calendarName" value="${siteName}" />
-			<var name="eventTitle" value="Current Day Event" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="siteCalendarName" value="${siteName}" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Navigator#closeWindow" />
-	</command>
-
-	<command name="DisableFeedForSiteCalendar" priority="3">
-		<description message="This is a use case for LPS-67928." />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Calendar#chooseSiteCalendarMenulistOption">
-			<var name="menuListOption" value="RSS" />
-			<var name="siteCalendarName" value="${siteName}" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Calendar#viewRSSFeedEventPresent">
-			<var name="calendarName" value="${siteName}" />
-			<var name="eventTitle" value="Current Day Event" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="siteCalendarName" value="${siteName}" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<var method="selenium#getLocation()" name="rssURL" />
-
-		<execute macro="Navigator#closeWindow" />
-
-		<execute macro="CalendarNavigator#gotoConfiguration" />
-
-		<execute macro="CalendarConfiguration#enableRSS" />
-
-		<execute macro="CalendarConfiguration#viewRSSOptionsDisabled" />
-
-		<execute macro="CalendarConfiguration#save" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Calendar#viewSiteCalendarNoMenulistOption">
-			<var name="menuListOption" value="RSS" />
-			<var name="siteCalendarName" value="${siteName}" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Calendar#viewNoRSS">
-			<var name="rssURL" value="${rssURL}" />
-		</execute>
-	</command>
-
-	<command name="ViewSiteCalendarFeed" priority="5">
-		<description message="This is a use case for LPS-67928." />
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoPreviousDay" />
-
-		<execute macro="CalendarEvent#addViaDayView">
-			<var name="eventTitle" value="Previous Day Event" />
-		</execute>
-
-		<execute macro="CalendarNavigator#gotoNextDay" />
-
-		<execute macro="CalendarNavigator#gotoNextDay" />
-
-		<execute macro="CalendarEvent#addViaDayView">
-			<var name="eventTitle" value="Future Day Event" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Page" />
-		</execute>
-
-		<execute macro="Calendar#chooseSiteCalendarMenulistOption">
-			<var name="menuListOption" value="RSS" />
-			<var name="siteCalendarName" value="${siteName}" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Calendar#viewRSSFeedEventNotPresent">
-			<var name="calendarName" value="${siteName}" />
-			<var name="eventTitle" value="Past Day Event" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="siteCalendarName" value="${siteName}" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Calendar#viewRSSFeedEventPresent">
-			<var name="calendarName" value="${siteName}" />
-			<var name="eventTitle" value="Current Day Event" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="siteCalendarName" value="${siteName}" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Calendar#viewRSSFeedEventPresent">
-			<var name="calendarName" value="${siteName}" />
-			<var name="eventTitle" value="Future Day Event" />
-			<var name="pageName" value="Calendar Page" />
-			<var name="siteCalendarName" value="${siteName}" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="Navigator#closeWindow" />
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Delete Event And View Feed
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And Calendar choose Site Calendar Menulist Option
+		|menuListOption|RSS|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	And Calendar view RSS Feed Event Present
+		|calendarName|${siteName}|
+		|eventTitle|Current Day Event|
+		|pageName|Calendar Page|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	And Navigator close Window
+	And CalendarEvent tear Down
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar choose Site Calendar Menulist Option
+		|menuListOption|RSS|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	And Calendar view RSS Feed Event Not Present
+		|calendarName|${siteName}|
+		|eventTitle|Current Day Event|
+		|pageName|Calendar Page|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	Then Navigator close Window
+Scenario: Disable Feed For Site Calendar
+Priority: 3
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And Calendar choose Site Calendar Menulist Option
+		|menuListOption|RSS|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	And Calendar view RSS Feed Event Present
+		|calendarName|${siteName}|
+		|eventTitle|Current Day Event|
+		|pageName|Calendar Page|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	And these variables
+		|rssURL|selenium#getLocation()|
+	And Navigator close Window
+	And CalendarNavigator goto Configuration
+	And CalendarConfiguration enable RSS
+	And CalendarConfiguration view RSS Options Disabled
+	And CalendarConfiguration save
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar view Site Calendar No Menulist Option
+		|menuListOption|RSS|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	Then Calendar view No RSS
+		|rssURL|${rssURL}|
+Scenario: View Site Calendar Feed
+Priority: 5
+##########################################################
+The Poshi description element is not supported in the readable syntax. Please update this test.
+##########################################################
+	When TestCase get Site Name
+##########################################################
+The Poshi return element is not supported in the readable syntax. Please update this test.
+##########################################################
+		|siteName|${siteName}|
+	And CalendarNavigator goto Previous Day
+	And CalendarEvent add Via Day View
+		|eventTitle|Previous Day Event|
+	And CalendarNavigator goto Next Day
+	And CalendarNavigator goto Next Day
+	And CalendarEvent add Via Day View
+		|eventTitle|Future Day Event|
+	And Navigator goto Page
+		|pageName|Calendar Page|
+	And Calendar choose Site Calendar Menulist Option
+		|menuListOption|RSS|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	And Calendar view RSS Feed Event Not Present
+		|calendarName|${siteName}|
+		|eventTitle|Past Day Event|
+		|pageName|Calendar Page|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	And Calendar view RSS Feed Event Present
+		|calendarName|${siteName}|
+		|eventTitle|Current Day Event|
+		|pageName|Calendar Page|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	And Calendar view RSS Feed Event Present
+		|calendarName|${siteName}|
+		|eventTitle|Future Day Event|
+		|pageName|Calendar Page|
+		|siteCalendarName|${siteName}|
+		|siteName|${siteName}|
+	Then Navigator close Window

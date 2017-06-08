@@ -1,85 +1,99 @@
-<definition component-name="portal-knowledge-base">
-	<property name="custom.properties" value="default.layout.template.id=1_column" />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Knowledge Base" />
+Feature:
 
-	<var name="pageName" value="Knowledge Base Article Page" />
-	<var name="portletName" value="Knowledge Base Article" />
+Background: This executes once per feature file
+	Given these properties
+		|custom.properties|default.layout.template.id=1_column|
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Knowledge Base|
+	And these variables
+		|custom.properties|default.layout.template.id=1_column|
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Knowledge Base|
+		|pageName|Knowledge Base Article Page|
+		|portletName|Knowledge Base Article|
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|${pageName}|
+	And SitePageNavigator goto Edit Page
+		|page|${pageName}|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|${pageName}|
+	Then Portlet add PG
+		|portletName|${portletName}|
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Delete KB Article Via KB Article
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Article Page|
+	And KBArticle select PG Via KB Article
+		|kbArticleTitle|Knowledge Base Article Title|
+		|pageName|Knowledge Base Article Page|
+	And Navigator goto Page
+		|pageName|Knowledge Base Article Page|
+	And KBArticle view PG
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And KBArticle delete PG
+		|deleteViaKBArticle|true|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	Then KBArticle view Default CP
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|${pageName}|
+	And SitePageNavigator goto Edit Page
+		|page|${pageName}|
+	And Page edit Page Layout Column
+		|columnName|1 Column|
+	And Navigator goto Page
+		|pageName|${pageName}|
+	Then Portlet add PG
+		|portletName|${portletName}|
 
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="${pageName}" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
-			<var name="columnName" value="1 Column" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="${portletName}" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="DeleteKBArticleViaKBArticle" priority="3">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#addCP">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Article Page" />
-		</execute>
-
-		<execute macro="KBArticle#selectPGViaKBArticle">
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-			<var name="pageName" value="Knowledge Base Article Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Knowledge Base Article Page" />
-		</execute>
-
-		<execute macro="KBArticle#viewPG">
-			<var name="kbArticleContent" value="Knowledge Base Article Content" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="KBArticle#deletePG">
-			<var name="deleteViaKBArticle" value="true" />
-			<var name="kbArticleTitle" value="Knowledge Base Article Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Knowledge Base" />
-		</execute>
-
-		<execute macro="KBArticle#viewDefaultCP" />
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Delete KB Article Via KB Article
+Priority: 3
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	And KBArticle add CP
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator goto Page
+		|pageName|Knowledge Base Article Page|
+	And KBArticle select PG Via KB Article
+		|kbArticleTitle|Knowledge Base Article Title|
+		|pageName|Knowledge Base Article Page|
+	And Navigator goto Page
+		|pageName|Knowledge Base Article Page|
+	And KBArticle view PG
+		|kbArticleContent|Knowledge Base Article Content|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And KBArticle delete PG
+		|deleteViaKBArticle|true|
+		|kbArticleTitle|Knowledge Base Article Title|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Knowledge Base|
+	Then KBArticle view Default CP

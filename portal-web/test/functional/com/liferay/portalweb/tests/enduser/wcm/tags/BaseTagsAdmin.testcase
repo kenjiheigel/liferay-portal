@@ -1,56 +1,37 @@
-<definition component-name="portal-tags">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.component.names" value="Tags" />
-	<property name="testray.main.component.name" value="Tags" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.component.names|Tags|
+		|testray.main.component.name|Tags|
 
-		<execute macro="User#firstLoginPG" />
+Setup: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	Then ProductMenu goto Sites Content
+		|portlet|Tags|
 
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Tags" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="CannotAddEmptyTag" priority="4">
-		<execute macro="Tag#addWithNullTitleCP">
-			<var name="tagName" value=" " />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Tags" />
-		</execute>
-
-		<execute macro="Portlet#viewEmptyMessage">
-			<var name="message" value="There are no tags." />
-		</execute>
-	</command>
-
-	<command name="ViewTagsPagination" priority="4">
-		<execute macro="Tag#addMultipleCP">
-			<var name="tagNames" value="tagname01,tagname02,tagname03,tagname04,tagname05,tagname06,tagname07,tagname08,tagname09,tagname10,tagname11,tagname12,tagname13,tagname14,tagname15,tagname16,tagname17,tagname18,tagname19,tagname20,tagname21,tagname22,tagname23,tagname24,tagname25" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="Pagination#ITEMS_PER_PAGE_SELECT" value1="20 Entries" />
-
-		<execute macro="Pagination#viewResults">
-			<var name="results" value="Showing 1 to 20 of 25 entries." />
-		</execute>
-
-		<execute macro="Pagination#changePagination">
-			<var name="itemsPerPage" value="5" />
-		</execute>
-
-		<execute macro="Pagination#viewResults">
-			<var name="results" value="Showing 1 to 5 of 25 entries." />
-		</execute>
-	</command>
-</definition>
+Teardown: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+Scenario: Cannot Add Empty Tag
+Priority: 4
+	Given Tag add With Null Title CP
+		|tagName| |
+	When ProductMenu goto Sites Content
+		|portlet|Tags|
+	Then Portlet view Empty Message
+		|message|There are no tags.|
+Scenario: View Tags Pagination
+Priority: 4
+	Given Tag add Multiple CP
+		|tagNames|tagname01,tagname02,tagname03,tagname04,tagname05,tagname06,tagname07,tagname08,tagname09,tagname10,tagname11,tagname12,tagname13,tagname14,tagname15,tagname16,tagname17,tagname18,tagname19,tagname20,tagname21,tagname22,tagname23,tagname24,tagname25|
+	When AssertTextEquals the value '20 Entries' at locator 'Pagination#ITEMS_PER_PAGE_SELECT'
+	And Pagination view Results
+		|results|Showing 1 to 20 of 25 entries.|
+	And Pagination change Pagination
+		|itemsPerPage|5|
+	Then Pagination view Results
+		|results|Showing 1 to 5 of 25 entries.|
