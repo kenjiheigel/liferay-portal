@@ -1,524 +1,329 @@
-<definition component-name="extra-apps-content-targeting">
-	<property name="custom.properties" value="layout.parallel.render.enable=false" />
-	<property name="extraapps.plugins.includes" value="content-targeting" />
-	<property name="ignore.errors" value="IX_DC6100CC" />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="false" />
-	<property name="test.run.environment" value="EE" />
-	<property name="testray.component.names" value="Content Targeting" />
-	<property name="testray.main.component.name" value="Content Targeting" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="Portlet#shutdownServer" />
-
-		<execute macro="Portlet#startServer" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingUserSegment#addCP">
-			<var name="userSegmentDescription" value="User Segment Description" />
-			<var name="userSegmentName" value="User Segment Name" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="User#logoutAndLoginPG">
-					<var name="userLoginEmailAddress" value="test@liferay.com" />
-					<var name="userLoginFullName" value="Test Test" />
-				</execute>
-
-				<execute macro="Site#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="AddCampaignContentCP" priority="5">
-		<property name="content.targeting.release" value="true" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_1.jpg" />
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#addCP">
-			<var name="campaignDescription" value="Campaign Description" />
-			<var name="campaignEndDate" value="1/1/2099" />
-			<var name="campaignEndTime" value="12:00 PM" />
-			<var name="campaignName" value="Campaign Name" />
-			<var name="campaignPriorityField" value="3" />
-			<var name="campaignStartDate" value="1/1/2015" />
-			<var name="campaignStartTime" value="12:00 AM" />
-			<var name="userSegmentSelect" value="User Segment Name" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#gotoAddReport">
-			<var name="campaignName" value="Campaign Name" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#addReportName">
-			<var name="reportDescription" value="Content Report Description" />
-			<var name="reportName" value="Content Report Name" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#addTrackingActionContentCP">
-			<var name="contentMetricName" value="Content Metric Name" />
-			<var name="contentTitle" value="DM Document Title" />
-			<var name="contentTrackingActionSelect" value="View" />
-			<var name="menulistContent" value="Basic Document" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#gotoEditReport">
-			<var name="campaignName" value="Campaign Name" />
-			<var name="reportName" value="Content Report Name" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#viewTrackingActionsCP">
-			<var name="campaignName" value="Campaign Name" />
-			<var name="contentMetricName" value="Content Metric Name" />
-			<var name="contentTitle" value="DM Document Title" />
-			<var name="viewTrackingActionsList" value="Content" />
-		</execute>
-	</command>
-
-	<command name="AddCampaignCustomFormCP" priority="5">
-		<property name="content.targeting.release" value="true" />
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#addCP">
-			<var name="campaignDescription" value="Campaign Description" />
-			<var name="campaignEndDate" value="1/1/2099" />
-			<var name="campaignEndTime" value="12:00 PM" />
-			<var name="campaignName" value="Campaign Name" />
-			<var name="campaignPriorityField" value="3" />
-			<var name="campaignStartDate" value="1/1/2015" />
-			<var name="campaignStartTime" value="12:00 AM" />
-			<var name="userSegmentSelect" value="User Segment Name" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#gotoAddReport">
-			<var name="campaignName" value="Campaign Name" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#addReportName">
-			<var name="reportDescription" value="Content Report Description" />
-			<var name="reportName" value="Content Report Name" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#addTrackingActionCustomFormCP">
-			<var name="formAlias" value="Form Alias" />
-			<var name="formId" value="Form id" />
-			<var name="formTrackingActionSelect" value="Submit" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#gotoEditReport">
-			<var name="campaignName" value="Campaign Name" />
-			<var name="reportName" value="Content Report Name" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#viewTrackingActionsCP">
-			<var name="campaignName" value="Campaign Name" />
-			<var name="formAlias" value="Form Alias" />
-			<var name="formId" value="Form id" />
-			<var name="formTrackingActionSelect" value="Submit" />
-			<var name="viewTrackingActionsList" value="Custom Form" />
-		</execute>
-	</command>
-
-	<command name="AddCampaignDDLFormCP" priority="5">
-		<property name="content.targeting.release" value="true" />
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#addCP">
-			<var name="campaignDescription" value="Campaign Description" />
-			<var name="campaignEndDate" value="1/1/2099" />
-			<var name="campaignEndTime" value="12:00 PM" />
-			<var name="campaignName" value="Campaign Name" />
-			<var name="campaignPriorityField" value="3" />
-			<var name="campaignStartDate" value="1/1/2015" />
-			<var name="campaignStartTime" value="12:00 AM" />
-			<var name="userSegmentSelect" value="User Segment Name" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Forms" />
-		</execute>
-
-		<execute macro="FormsAdminNavigator#gotoAddForm" />
-
-		<execute macro="Form#editName" />
-
-		<execute macro="Form#editDescription" />
-
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Text Field" />
-		</execute>
-
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Text Field" />
-		</execute>
-
-		<execute macro="Form#closeSidebar" />
-
-		<execute macro="Form#save" />
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#gotoAddReport">
-			<var name="campaignName" value="Campaign Name" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#addReportName">
-			<var name="reportDescription" value="Content Report Description" />
-			<var name="reportName" value="Content Report Name" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#addTrackingActionDDLFormCP">
-			<var name="formAlias" value="Form Alias" />
-			<var name="formName" value="Created Form Name" />
-			<var name="formTrackingActionSelect" value="Submit" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#gotoEditReport">
-			<var name="campaignName" value="Campaign Name" />
-			<var name="reportName" value="Content Report Name" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#viewTrackingActionsCP">
-			<var name="campaignName" value="Campaign Name" />
-			<var name="formAlias" value="Form Alias" />
-			<var name="formName" value="Created Form Name" />
-			<var name="formTrackingActionSelect" value="Submit" />
-			<var name="viewTrackingActionsList" value="Form" />
-		</execute>
-	</command>
-
-	<command name="AddCampaignLinkCP" priority="5">
-		<property name="content.targeting.release" value="true" />
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#addCP">
-			<var name="campaignDescription" value="Campaign Description" />
-			<var name="campaignEndDate" value="1/1/2099" />
-			<var name="campaignEndTime" value="12:00 PM" />
-			<var name="campaignName" value="Campaign Name" />
-			<var name="campaignPriorityField" value="3" />
-			<var name="campaignStartDate" value="1/1/2015" />
-			<var name="campaignStartTime" value="12:00 AM" />
-			<var name="userSegmentSelect" value="User Segment Name" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="Navigator#gotoNavTab">
-			<var name="navTab" value="Configuration" />
-		</execute>
-
-		<execute macro="ContentTargeting#enableAnalytics">
-			<var name="analyticsList" value="Link,Link Clicks" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#gotoAddReport">
-			<var name="campaignName" value="Campaign Name" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#addReportName">
-			<var name="reportDescription" value="Content Report Description" />
-			<var name="reportName" value="Content Report Name" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#addTrackingActionLinkCP">
-			<var name="linkAlias" value="Link Alias" />
-			<var name="linkId" value="Link id" />
-			<var name="linkTrackingActionSelect" value="Click" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#gotoEditReport">
-			<var name="campaignName" value="Campaign Name" />
-			<var name="reportName" value="Content Report Name" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#viewTrackingActionsCP">
-			<var name="campaignName" value="Campaign Name" />
-			<var name="linkAlias" value="Link Alias" />
-			<var name="linkId" value="Link id" />
-			<var name="linkTrackingActionSelect" value="Click" />
-			<var name="viewTrackingActionsList" value="Link" />
-		</execute>
-	</command>
-
-	<command name="AddCampaignPageCP" priority="5">
-		<property name="content.targeting.release" value="true" />
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#addCP">
-			<var name="campaignDescription" value="Campaign Description" />
-			<var name="campaignEndDate" value="1/1/2099" />
-			<var name="campaignEndTime" value="12:00 PM" />
-			<var name="campaignName" value="Campaign Name" />
-			<var name="campaignPriorityField" value="3" />
-			<var name="campaignStartDate" value="1/1/2015" />
-			<var name="campaignStartTime" value="12:00 AM" />
-			<var name="userSegmentSelect" value="User Segment Name" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#gotoAddReport">
-			<var name="campaignName" value="Campaign Name" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#addReportName">
-			<var name="reportDescription" value="Content Report Description" />
-			<var name="reportName" value="Content Report Name" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#addTrackingActionPageCP">
-			<var name="pageAlias" value="Page Alias" />
-			<var name="pageFriendlyURL" value="/test-page-name" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#gotoEditReport">
-			<var name="campaignName" value="Campaign Name" />
-			<var name="reportName" value="Content Report Name" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#viewTrackingActionsCP">
-			<var name="campaignName" value="Campaign Name" />
-			<var name="pageAlias" value="Page Alias" />
-			<var name="pageFriendlyURL" value="/test-page-name" />
-			<var name="pageTrackingActionSelect" value="View" />
-			<var name="viewTrackingActionsList" value="Page" />
-		</execute>
-	</command>
-
-	<command name="AddCampaignYouTubeCP" priority="5">
-		<property name="content.targeting.release" value="true" />
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#addCP">
-			<var name="campaignDescription" value="Campaign Description" />
-			<var name="campaignEndDate" value="1/1/2099" />
-			<var name="campaignEndTime" value="12:00 PM" />
-			<var name="campaignName" value="Campaign Name" />
-			<var name="campaignPriorityField" value="3" />
-			<var name="campaignStartDate" value="1/1/2015" />
-			<var name="campaignStartTime" value="12:00 AM" />
-			<var name="userSegmentSelect" value="User Segment Name" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="ProductMenu#gotoControlPanelConfiguration">
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="Navigator#gotoNavTab">
-			<var name="navTab" value="Configuration" />
-		</execute>
-
-		<execute macro="ContentTargeting#enableAnalytics">
-			<var name="analyticsList" value="YouTube Videos" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#gotoAddReport">
-			<var name="campaignName" value="Campaign Name" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#addReportName">
-			<var name="reportDescription" value="Content Report Description" />
-			<var name="reportName" value="Content Report Name" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#addTrackingActionYoutubevideosCP">
-			<var name="youtubeAlias" value="YouTube Alias" />
-			<var name="youtubeTrackingActionSelect" value="Playing" />
-			<var name="youtubeVideoId" value="YouTube id" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#gotoEditReport">
-			<var name="campaignName" value="Campaign Name" />
-			<var name="reportName" value="Content Report Name" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#viewTrackingActionsCP">
-			<var name="campaignName" value="Campaign Name" />
-			<var name="viewTrackingActionsList" value="YouTube" />
-			<var name="youtubeAlias" value="YouTube Alias" />
-			<var name="youtubeTrackingActionSelect" value="Playing" />
-			<var name="youtubeVideoId" value="YouTube id" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|custom.properties|layout.parallel.render.enable=false|
+		|extraapps.plugins.includes|content-targeting|
+		|ignore.errors|IX_DC6100CC|
+		|portal.release|true|
+		|portal.upstream|false|
+		|test.run.environment|EE|
+		|testray.component.names|Content Targeting|
+		|testray.main.component.name|Content Targeting|
+
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When Portlet shutdown Server
+	And Portlet start Server
+	And User first Login PG
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Test Page Name|
+		|siteName|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	And ContentTargetingUserSegment add CP
+		|userSegmentDescription|User Segment Description|
+		|userSegmentName|User Segment Name|
+	Then PortletEntry save
+
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+
+Scenario: Add Campaign Content CP
+Priority: 5
+	Given these properties
+		|content.targeting.release|true|
+	When ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+	And DMDocument add CP
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_1.jpg|
+		|dmDocumentTitle|DM Document Title|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	And ContentTargetingCampaign add CP
+		|campaignDescription|Campaign Description|
+		|campaignEndDate|1/1/2099|
+		|campaignEndTime|12:00 PM|
+		|campaignName|Campaign Name|
+		|campaignPriorityField|3|
+		|campaignStartDate|1/1/2015|
+		|campaignStartTime|12:00 AM|
+		|userSegmentSelect|User Segment Name|
+	And PortletEntry save
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	And ContentTargetingCampaign goto Add Report
+		|campaignName|Campaign Name|
+	And ContentTargetingCampaign add Report Name
+		|reportDescription|Content Report Description|
+		|reportName|Content Report Name|
+	And ContentTargetingCampaign add Tracking Action Content CP
+		|contentMetricName|Content Metric Name|
+		|contentTitle|DM Document Title|
+		|contentTrackingActionSelect|View|
+		|menulistContent|Basic Document|
+	And PortletEntry save
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	And ContentTargetingCampaign goto Edit Report
+		|campaignName|Campaign Name|
+		|reportName|Content Report Name|
+	Then ContentTargetingCampaign view Tracking Actions CP
+		|campaignName|Campaign Name|
+		|contentMetricName|Content Metric Name|
+		|contentTitle|DM Document Title|
+		|viewTrackingActionsList|Content|
+
+Scenario: Add Campaign Custom Form CP
+Priority: 5
+	Given these properties
+		|content.targeting.release|true|
+	When ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	And ContentTargetingCampaign add CP
+		|campaignDescription|Campaign Description|
+		|campaignEndDate|1/1/2099|
+		|campaignEndTime|12:00 PM|
+		|campaignName|Campaign Name|
+		|campaignPriorityField|3|
+		|campaignStartDate|1/1/2015|
+		|campaignStartTime|12:00 AM|
+		|userSegmentSelect|User Segment Name|
+	And PortletEntry save
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	And ContentTargetingCampaign goto Add Report
+		|campaignName|Campaign Name|
+	And ContentTargetingCampaign add Report Name
+		|reportDescription|Content Report Description|
+		|reportName|Content Report Name|
+	And ContentTargetingCampaign add Tracking Action Custom Form CP
+		|formAlias|Form Alias|
+		|formId|Form id|
+		|formTrackingActionSelect|Submit|
+	And PortletEntry save
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	And ContentTargetingCampaign goto Edit Report
+		|campaignName|Campaign Name|
+		|reportName|Content Report Name|
+	Then ContentTargetingCampaign view Tracking Actions CP
+		|campaignName|Campaign Name|
+		|formAlias|Form Alias|
+		|formId|Form id|
+		|formTrackingActionSelect|Submit|
+		|viewTrackingActionsList|Custom Form|
+
+Scenario: Add Campaign DDL Form CP
+Priority: 5
+	Given these properties
+		|content.targeting.release|true|
+	When ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	And ContentTargetingCampaign add CP
+		|campaignDescription|Campaign Description|
+		|campaignEndDate|1/1/2099|
+		|campaignEndTime|12:00 PM|
+		|campaignName|Campaign Name|
+		|campaignPriorityField|3|
+		|campaignStartDate|1/1/2015|
+		|campaignStartTime|12:00 AM|
+		|userSegmentSelect|User Segment Name|
+	And PortletEntry save
+	And ProductMenu goto Sites Content
+		|portlet|Forms|
+	And FormsAdminNavigator goto Add Form
+	And Form edit Name
+	And Form edit Description
+	And Form goto Add Field
+		|fieldType|Text Field|
+	And Form edit Field Label
+		|fieldValue|Text Field|
+	And Form close Sidebar
+	And Form save
+	And ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	And ContentTargetingCampaign goto Add Report
+		|campaignName|Campaign Name|
+	And ContentTargetingCampaign add Report Name
+		|reportDescription|Content Report Description|
+		|reportName|Content Report Name|
+	And ContentTargetingCampaign add Tracking Action DDL Form CP
+		|formAlias|Form Alias|
+		|formName|Created Form Name|
+		|formTrackingActionSelect|Submit|
+	And PortletEntry save
+	And ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	And ContentTargetingCampaign goto Edit Report
+		|campaignName|Campaign Name|
+		|reportName|Content Report Name|
+	Then ContentTargetingCampaign view Tracking Actions CP
+		|campaignName|Campaign Name|
+		|formAlias|Form Alias|
+		|formName|Created Form Name|
+		|formTrackingActionSelect|Submit|
+		|viewTrackingActionsList|Form|
+
+Scenario: Add Campaign Link CP
+Priority: 5
+	Given these properties
+		|content.targeting.release|true|
+	When ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	And ContentTargetingCampaign add CP
+		|campaignDescription|Campaign Description|
+		|campaignEndDate|1/1/2099|
+		|campaignEndTime|12:00 PM|
+		|campaignName|Campaign Name|
+		|campaignPriorityField|3|
+		|campaignStartDate|1/1/2015|
+		|campaignStartTime|12:00 AM|
+		|userSegmentSelect|User Segment Name|
+	And PortletEntry save
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	And Navigator goto Nav Tab
+		|navTab|Configuration|
+	And ContentTargeting enable Analytics
+		|analyticsList|Link,Link Clicks|
+	And PortletEntry save
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	And ContentTargetingCampaign goto Add Report
+		|campaignName|Campaign Name|
+	And ContentTargetingCampaign add Report Name
+		|reportDescription|Content Report Description|
+		|reportName|Content Report Name|
+	And ContentTargetingCampaign add Tracking Action Link CP
+		|linkAlias|Link Alias|
+		|linkId|Link id|
+		|linkTrackingActionSelect|Click|
+	And PortletEntry save
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	And ContentTargetingCampaign goto Edit Report
+		|campaignName|Campaign Name|
+		|reportName|Content Report Name|
+	Then ContentTargetingCampaign view Tracking Actions CP
+		|campaignName|Campaign Name|
+		|linkAlias|Link Alias|
+		|linkId|Link id|
+		|linkTrackingActionSelect|Click|
+		|viewTrackingActionsList|Link|
+
+Scenario: Add Campaign Page CP
+Priority: 5
+	Given these properties
+		|content.targeting.release|true|
+	When ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	And ContentTargetingCampaign add CP
+		|campaignDescription|Campaign Description|
+		|campaignEndDate|1/1/2099|
+		|campaignEndTime|12:00 PM|
+		|campaignName|Campaign Name|
+		|campaignPriorityField|3|
+		|campaignStartDate|1/1/2015|
+		|campaignStartTime|12:00 AM|
+		|userSegmentSelect|User Segment Name|
+	And PortletEntry save
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	And ContentTargetingCampaign goto Add Report
+		|campaignName|Campaign Name|
+	And ContentTargetingCampaign add Report Name
+		|reportDescription|Content Report Description|
+		|reportName|Content Report Name|
+	And ContentTargetingCampaign add Tracking Action Page CP
+		|pageAlias|Page Alias|
+		|pageFriendlyURL|/test-page-name|
+	And PortletEntry save
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	And ContentTargetingCampaign goto Edit Report
+		|campaignName|Campaign Name|
+		|reportName|Content Report Name|
+	Then ContentTargetingCampaign view Tracking Actions CP
+		|campaignName|Campaign Name|
+		|pageAlias|Page Alias|
+		|pageFriendlyURL|/test-page-name|
+		|pageTrackingActionSelect|View|
+		|viewTrackingActionsList|Page|
+
+Scenario: Add Campaign You Tube CP
+Priority: 5
+	Given these properties
+		|content.targeting.release|true|
+	When ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	And ContentTargetingCampaign add CP
+		|campaignDescription|Campaign Description|
+		|campaignEndDate|1/1/2099|
+		|campaignEndTime|12:00 PM|
+		|campaignName|Campaign Name|
+		|campaignPriorityField|3|
+		|campaignStartDate|1/1/2015|
+		|campaignStartTime|12:00 AM|
+		|userSegmentSelect|User Segment Name|
+	And PortletEntry save
+	And ProductMenu goto Control Panel Configuration
+		|portlet|Instance Settings|
+	And Navigator goto Nav Tab
+		|navTab|Configuration|
+	And ContentTargeting enable Analytics
+		|analyticsList|YouTube Videos|
+	And PortletEntry save
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	And ContentTargetingCampaign goto Add Report
+		|campaignName|Campaign Name|
+	And ContentTargetingCampaign add Report Name
+		|reportDescription|Content Report Description|
+		|reportName|Content Report Name|
+	And ContentTargetingCampaign add Tracking Action Youtubevideos CP
+		|youtubeAlias|YouTube Alias|
+		|youtubeTrackingActionSelect|Playing|
+		|youtubeVideoId|YouTube id|
+	And PortletEntry save
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	And ContentTargetingCampaign goto Edit Report
+		|campaignName|Campaign Name|
+		|reportName|Content Report Name|
+	Then ContentTargetingCampaign view Tracking Actions CP
+		|campaignName|Campaign Name|
+		|viewTrackingActionsList|YouTube|
+		|youtubeAlias|YouTube Alias|
+		|youtubeTrackingActionSelect|Playing|
+		|youtubeVideoId|YouTube id|

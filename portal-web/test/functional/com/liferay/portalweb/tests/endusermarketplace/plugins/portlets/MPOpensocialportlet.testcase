@@ -1,55 +1,37 @@
-<definition component-name="portal-plugins-deployment">
-	<property name="testray.main.component.name" value="Plugin Installer" />
+Feature:
 
-	<set-up>
-		<execute macro="User#firstLoginPG" />
+Background: This executes once per feature file
+	Given these properties
+		|testray.main.component.name|Plugin Installer|
 
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page" />
-		</execute>
-	</set-up>
+Set Up: This executes before each scenario 
+	Given User first Login PG
+	When Page add
+		|pageName|Test Page|
 
-	<tear-down>
-		<execute macro="Page#tearDownPG" />
-	</tear-down>
+Tear Down: This executes after each scenario 
+	Given Page tear Down PG
 
-	<command name="OpenSocialPortletSmoke" priority="4">
-		<property name="portlet.plugins.includes" value="opensocial-portlet" />
-
-		<var name="appName" value="OpenSocial Gadget" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="OpenSocial Gadget" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="OpenSocial Gadget Editor" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelApps">
-			<var name="portlet" value="OpenSocial Gadget Publisher" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelApps">
-			<var name="portlet" value="App Manager" />
-		</execute>
-
-		<execute macro="AppManager#uninstallAppCP">
-			<var name="appName" value="${appName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelApps">
-			<var name="portlet" value="App Manager" />
-		</execute>
-
-		<execute macro="AppManager#viewUninstallAppCP">
-			<var name="appName" value="${appName}" />
-		</execute>
-	</command>
-</definition>
+Scenario: Open Social Portlet Smoke
+Priority: 4
+	Given these properties
+		|portlet.plugins.includes|opensocial-portlet|
+	When these variables
+		|appName|OpenSocial Gadget|
+	And Navigator goto Page
+		|pageName|Test Page|
+	And Portlet add PG
+		|portletName|OpenSocial Gadget|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|OpenSocial Gadget Editor|
+	And ProductMenu goto Control Panel Apps
+		|portlet|OpenSocial Gadget Publisher|
+	And ProductMenu goto Control Panel Apps
+		|portlet|App Manager|
+	And AppManager uninstall App CP
+		|appName|${appName}|
+	And ProductMenu goto Control Panel Apps
+		|portlet|App Manager|
+	Then AppManager view Uninstall App CP
+		|appName|${appName}|

@@ -1,224 +1,152 @@
-<definition component-name="portal-user-management-and-portal-configuration">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Users and Organizations" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Users and Organizations|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="User#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
+Scenario: Add Organization Member
+Priority: 5
+	Given ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	When User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto User My Account
+		|portlet|My Organizations|
+	And MyAccount add Organization
+		|organizationName|Organization Name|
+	And ProductMenu goto User My Account
+		|portlet|My Organizations|
+	And Organization add Member CP
+		|orgName|Organization Name|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userName|userfn userln|
+		|userScreenName|usersn|
+	And ProductMenu goto User My Account
+		|portlet|My Organizations|
+	And Organization goto CP
+		|orgName|Organization Name|
+		|searchToken|Organization|
+	Then Organization view Assign Member CP
+		|userName|userfn userln|
+		|userScreenName|usersn|
 
-	<command name="AddOrganizationMember" priority="5">
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
+Scenario: Add Organizations
+Priority: 4
+	Given ProductMenu goto User My Account
+		|portlet|My Organizations|
+	When MyAccount add Organization
+		|organizationName|Organization Name 1|
+	And ProductMenu goto User My Account
+		|portlet|My Organizations|
+	And Organization search CP
+		|orgName|Organization Name 1|
+		|searchTerm|Organization Name 1|
+	And MyAccount add Organization
+		|organizationName|Organization Name 2|
+	And ProductMenu goto User My Account
+		|portlet|My Organizations|
+	And Organization search CP
+		|orgName|Organization Name 2|
+		|searchTerm|Organization Name 2|
+	And MyAccount add Organization
+		|organizationName|Organization Name 3|
+	And ProductMenu goto User My Account
+		|portlet|My Organizations|
+	Then Organization search CP
+		|orgName|Organization Name 3|
+		|searchTerm|Organization Name 3|
 
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
+Scenario: Delete Organization
+Priority: 5
+	Given ProductMenu goto User My Account
+		|portlet|My Organizations|
+	When MyAccount add Organization
+		|organizationName|Organization Name|
+	And ProductMenu goto User My Account
+		|portlet|My Organizations|
+	And Organization delete CP
+		|orgName|Organization Name|
+	And ProductMenu goto User My Account
+		|portlet|My Organizations|
+	Then Organization view No Organizations Found CP
 
-		<execute macro="ProductMenu#gotoUserMyAccount">
-			<var name="portlet" value="My Organizations" />
-		</execute>
+Scenario: Edit Organization Site
+Priority: 5
+	Given ProductMenu goto User My Account
+		|portlet|My Organizations|
+	When MyAccount add Organization
+		|organizationName|Organization Name|
+	And ProductMenu goto User My Account
+		|portlet|My Organizations|
+	And Organization add Site CP
+		|orgName|Organization Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site view CP
+		|siteMember|Organization|
+		|siteName|Organization Name|
+		|siteType|Private|
+	And ProductMenu goto User My Account
+		|portlet|My Organizations|
+	And Organization edit Site CP
+		|orgName|Organization Name|
+		|orgNameEdit|Organization Name Edit|
+	And ProductMenu goto User My Account
+		|portlet|My Organizations|
+	And Organization search CP
+		|orgName|Organization Name Edit|
+		|searchTerm|Organization Name Edit|
+	Then Organization view CP
+		|orgName|Organization Name Edit|
+		|orgType|Organization|
 
-		<execute macro="MyAccount#addOrganization">
-			<var name="organizationName" value="Organization Name" />
-		</execute>
+Scenario: View My Account
+Priority: 4
+	Given Page goto My Account
+		|portletName|Account Settings|
+	When MyAccount view
 
-		<execute macro="ProductMenu#gotoUserMyAccount">
-			<var name="portlet" value="My Organizations" />
-		</execute>
+Scenario: View My Account User
+Priority: 4
+	Given ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	When User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Page goto My Account
+		|portletName|Account Settings|
+	And MyAccount view
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
 
-		<execute macro="Organization#addMemberCP">
-			<var name="orgName" value="Organization Name" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoUserMyAccount">
-			<var name="portlet" value="My Organizations" />
-		</execute>
-
-		<execute macro="Organization#gotoCP">
-			<var name="orgName" value="Organization Name" />
-			<var name="searchToken" value="Organization" />
-		</execute>
-
-		<execute macro="Organization#viewAssignMemberCP">
-			<var name="userName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-	</command>
-
-	<command name="AddOrganizations" priority="4">
-		<execute macro="ProductMenu#gotoUserMyAccount">
-			<var name="portlet" value="My Organizations" />
-		</execute>
-
-		<for list="1,2,3" param="i">
-			<execute macro="MyAccount#addOrganization">
-				<var name="organizationName" value="Organization Name ${i}" />
-			</execute>
-
-			<execute macro="ProductMenu#gotoUserMyAccount">
-				<var name="portlet" value="My Organizations" />
-			</execute>
-
-			<execute macro="Organization#searchCP">
-				<var name="orgName" value="Organization Name ${i}" />
-				<var name="searchTerm" value="Organization Name ${i}" />
-			</execute>
-		</for>
-	</command>
-
-	<command name="DeleteOrganization" priority="5">
-		<execute macro="ProductMenu#gotoUserMyAccount">
-			<var name="portlet" value="My Organizations" />
-		</execute>
-
-		<execute macro="MyAccount#addOrganization">
-			<var name="organizationName" value="Organization Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoUserMyAccount">
-			<var name="portlet" value="My Organizations" />
-		</execute>
-
-		<execute macro="Organization#deleteCP">
-			<var name="orgName" value="Organization Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoUserMyAccount">
-			<var name="portlet" value="My Organizations" />
-		</execute>
-
-		<execute macro="Organization#viewNoOrganizationsFoundCP" />
-	</command>
-
-	<command name="EditOrganizationSite" priority="5">
-		<execute macro="ProductMenu#gotoUserMyAccount">
-			<var name="portlet" value="My Organizations" />
-		</execute>
-
-		<execute macro="MyAccount#addOrganization">
-			<var name="organizationName" value="Organization Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoUserMyAccount">
-			<var name="portlet" value="My Organizations" />
-		</execute>
-
-		<execute macro="Organization#addSiteCP">
-			<var name="orgName" value="Organization Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#viewCP">
-			<var name="siteMember" value="Organization" />
-			<var name="siteName" value="Organization Name" />
-			<var name="siteType" value="Private" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoUserMyAccount">
-			<var name="portlet" value="My Organizations" />
-		</execute>
-
-		<execute macro="Organization#editSiteCP">
-			<var name="orgName" value="Organization Name" />
-			<var name="orgNameEdit" value="Organization Name Edit" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoUserMyAccount">
-			<var name="portlet" value="My Organizations" />
-		</execute>
-
-		<execute macro="Organization#searchCP">
-			<var name="orgName" value="Organization Name Edit" />
-			<var name="searchTerm" value="Organization Name Edit" />
-		</execute>
-
-		<execute macro="Organization#viewCP">
-			<var name="orgName" value="Organization Name Edit" />
-			<var name="orgType" value="Organization" />
-		</execute>
-	</command>
-
-	<command name="ViewMyAccount" priority="4">
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="Account Settings" />
-		</execute>
-
-		<execute macro="MyAccount#view" />
-	</command>
-
-	<command name="ViewMyAccountUser" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="Account Settings" />
-		</execute>
-
-		<execute macro="MyAccount#view" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="ViewMyAccountViaSignInPortlet" priority="4">
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Sign In" />
-		</execute>
-
-		<execute function="AssertClick" locator1="SignIn#PORTLET_CONTENT_USER_NAME" value1="Test Test" />
-
-		<execute macro="MyAccount#view" />
-	</command>
-</definition>
+Scenario: View My Account Via Sign In Portlet
+Priority: 4
+	Given Portlet add PG
+		|portletName|Sign In|
+	When AssertClick the value 'Test Test' at locator 'SignIn#PORTLET_CONTENT_USER_NAME'
+	Then MyAccount view

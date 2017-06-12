@@ -1,36 +1,27 @@
-<definition component-name="portal-test-plugins">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Test Plugins" />
-	<property name="portlet.plugins.includes" value="test-event-portlet" />
+Feature:
 
-	<set-up>
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Test Plugins|
+		|portlet.plugins.includes|test-event-portlet|
 
-	<tear-down>
-		<execute macro="Page#tearDownPG" />
-	</tear-down>
+Set Up: This executes before each scenario 
+	Given User first Login PG
 
-	<command name="ViewEvent" priority="4">
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Event Page" />
-		</execute>
+Tear Down: This executes after each scenario 
+	Given Page tear Down PG
 
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Event Consumer" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Event Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Event Producer" />
-		</execute>
-
-		<execute function="Click" locator1="TestEventProducer#EVENT_PRODUCER_PORTLET_LINK" />
-
-		<execute function="AssertTextEquals" locator1="TestEventConsumer#EVENT_CONSUMER_PORTLET_BODY" value1="PASSED" />
-	</command>
-</definition>
+Scenario: View Event
+Priority: 4
+	Given Page add
+		|pageName|Test Event Page|
+	When Portlet add PG
+		|portletName|Event Consumer|
+	And Navigator goto Page
+		|pageName|Test Event Page|
+	And Portlet add PG
+		|portletName|Event Producer|
+	And Click at locator 'TestEventProducer#EVENT_PRODUCER_PORTLET_LINK'
+	Then AssertTextEquals the value 'PASSED' at locator 'TestEventConsumer#EVENT_CONSUMER_PORTLET_BODY'

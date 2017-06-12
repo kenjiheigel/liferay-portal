@@ -1,72 +1,45 @@
-<definition component-name="portal-util-misc">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.component.names" value="Nested Portlets" />
-	<property name="testray.main.component.name" value="Nested Portlets" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.component.names|Nested Portlets|
+		|testray.main.component.name|Nested Portlets|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-		</if>
-	</tear-down>
-
-	<command name="ViewWCDNestedPortlets" priority="4">
-		<execute macro="Page#add">
-			<var name="pageName" value="Nested Portlets Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Nested Portlets Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="Portlet#dragAndDropPortletToColumnPG">
-			<var name="columnNumberFrom" value="1" />
-			<var name="columnNumberTo" value="2" />
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Nested Portlets Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Nested Portlets" />
-		</execute>
-
-		<execute macro="NestedPortlets#viewConfigurationDefaultLayoutTemplate" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Nested Portlets Page" />
-		</execute>
-
-		<execute macro="NestedPortlets#dragAndDropPortletToPortletColumnPG">
-			<var name="columnNumberFrom" value="2" />
-			<var name="portletColumnNumberTo" value="1" />
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Nested Portlets Page" />
-		</execute>
-
-		<execute macro="NestedPortlets#viewPG">
-			<var name="portletColumnNumberTo" value="1" />
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-	</command>
-</definition>
+Scenario: View WCD Nested Portlets
+Priority: 4
+	Given Page add
+		|pageName|Nested Portlets Page|
+	When Navigator goto Page
+		|pageName|Nested Portlets Page|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And Portlet drag And Drop Portlet To Column PG
+		|columnNumberFrom|1|
+		|columnNumberTo|2|
+		|portletName|Web Content Display|
+	And Navigator goto Page
+		|pageName|Nested Portlets Page|
+	And Portlet add PG
+		|portletName|Nested Portlets|
+	And NestedPortlets view Configuration Default Layout Template
+	And Navigator goto Page
+		|pageName|Nested Portlets Page|
+	And NestedPortlets drag And Drop Portlet To Portlet Column PG
+		|columnNumberFrom|2|
+		|portletColumnNumberTo|1|
+		|portletName|Web Content Display|
+	And Navigator goto Page
+		|pageName|Nested Portlets Page|
+	Then NestedPortlets view PG
+		|portletColumnNumberTo|1|
+		|portletName|Web Content Display|

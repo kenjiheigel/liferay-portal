@@ -1,85 +1,53 @@
-<definition component-name="portal-legacy">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="portlet.plugins.includes" value="wsrp-portlet" />
-	<property name="test.run.environment" value="EE" />
-	<property name="testray.main.component.name" value="WSRP" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|portlet.plugins.includes|wsrp-portlet|
+		|test.run.environment|EE|
+		|testray.main.component.name|WSRP|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Page#tearDownPG" />
-
-				<execute macro="WSRP#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="AddWSRPUnitConverter" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelApps">
-			<var name="portlet" value="WSRP Admin" />
-		</execute>
-
-		<execute macro="WSRP#addProducerCP">
-			<var name="portletsAvailableSelect" value="Unit Converter" />
-			<var name="producerName" value="Producer Demo" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelApps">
-			<var name="portlet" value="WSRP Admin" />
-		</execute>
-
-		<execute macro="WSRP#addConsumerCP">
-			<var name="consumerName" value="Consumer Demo" />
-			<var name="producerName" value="Producer Demo" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelApps">
-			<var name="portlet" value="WSRP Admin" />
-		</execute>
-
-		<execute macro="WSRP#addConsumerPortletCP">
-			<var name="consumerName" value="Consumer Demo" />
-			<var name="consumerPortletName" value="WSRP Unit Converter" />
-			<var name="consumerPortletType" value="Unit Converter" />
-		</execute>
-
-		<var name="key_consumerPortletName" value="WSRP Unit Converter" />
-
-		<execute function="AssertTextEquals" locator1="WSRPAdminManagePortlets#PORTLET_TABLE_NAME" value1="WSRP Unit Converter" />
-		<execute function="AssertTextEquals" locator1="WSRPAdminManagePortlets#PORTLET_TABLE_REMOTE_PORTLET" value1="Unit Converter" />
-		<execute function="AssertElementPresent" locator1="WSRPAdminManagePortlets#PORTLET_TABLE_DELETE" value1="Delete" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="WSRP Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="WSRP Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="WSRP Unit Converter" />
-		</execute>
-
-		<execute macro="WSRP#wsrpUnitConverterConvertPG">
-			<var name="initialUnit" value="Inch" />
-			<var name="initialValue" value="12" />
-			<var name="targetUnit" value="Foot" />
-			<var name="targetValue" value="1.0" />
-			<var name="unitType" value="Length" />
-		</execute>
-	</command>
-</definition>
+Scenario: Add WSRP Unit Converter
+Priority: 4
+	Given ProductMenu goto Control Panel Apps
+		|portlet|WSRP Admin|
+	When WSRP add Producer CP
+		|portletsAvailableSelect|Unit Converter|
+		|producerName|Producer Demo|
+	And ProductMenu goto Control Panel Apps
+		|portlet|WSRP Admin|
+	And WSRP add Consumer CP
+		|consumerName|Consumer Demo|
+		|producerName|Producer Demo|
+	And ProductMenu goto Control Panel Apps
+		|portlet|WSRP Admin|
+	And WSRP add Consumer Portlet CP
+		|consumerName|Consumer Demo|
+		|consumerPortletName|WSRP Unit Converter|
+		|consumerPortletType|Unit Converter|
+	And these variables
+		|key_consumerPortletName|WSRP Unit Converter|
+	And AssertTextEquals the value 'WSRP Unit Converter' at locator 'WSRPAdminManagePortlets#PORTLET_TABLE_NAME'
+	And AssertTextEquals the value 'Unit Converter' at locator 'WSRPAdminManagePortlets#PORTLET_TABLE_REMOTE_PORTLET'
+	And AssertElementPresent the value 'Delete' at locator 'WSRPAdminManagePortlets#PORTLET_TABLE_DELETE'
+	And Page add
+		|pageName|WSRP Page|
+	And Navigator goto Page
+		|pageName|WSRP Page|
+	And Portlet add PG
+		|portletName|WSRP Unit Converter|
+	Then WSRP wsrp Unit Converter Convert PG
+		|initialUnit|Inch|
+		|initialValue|12|
+		|targetUnit|Foot|
+		|targetValue|1.0|
+		|unitType|Length|

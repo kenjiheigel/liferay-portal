@@ -1,49 +1,33 @@
-<definition component-name="portal-util-misc">
-	<property name="osgi.app.includes" value="currency-converter" />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Util" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|osgi.app.includes|currency-converter|
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Util|
 
-		<execute macro="User#firstLoginPG" />
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Currency Converter Page|
+	And Navigator goto Page
+		|pageName|Currency Converter Page|
+	Then Portlet add PG
+		|portletName|Currency Converter|
 
-		<execute macro="Page#add">
-			<var name="pageName" value="Currency Converter Page" />
-		</execute>
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Currency Converter Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Currency Converter" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-		</if>
-	</tear-down>
-
-	<command name="ConvertCurrencyUSDToEUR" priority="2">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Currency Converter Page" />
-		</execute>
-
-		<execute macro="CurrencyConverter#convertPG">
-			<var name="currencyDataFrom" value="USD" />
-			<var name="currencyDataTo" value="EUR" />
-			<var name="currencyFrom" value="USD" />
-			<var name="currencyTo" value="EUR" />
-			<var name="currencyValue" value="4" />
-		</execute>
-	</command>
-</definition>
+Scenario: Convert Currency USD To EUR
+Priority: 2
+	Given Navigator goto Page
+		|pageName|Currency Converter Page|
+	When CurrencyConverter convert PG
+		|currencyDataFrom|USD|
+		|currencyDataTo|EUR|
+		|currencyFrom|USD|
+		|currencyTo|EUR|
+		|currencyValue|4|

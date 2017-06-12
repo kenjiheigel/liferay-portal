@@ -1,174 +1,105 @@
-<definition component-name="portal-collaboration">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Mentions" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Mentions|
 
-		<execute macro="User#firstLoginPG" />
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	Then User edit Password CP
+		|password|password|
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
 
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
+Scenario: View Mention Via Message Boards Thread
+Priority: 5
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And Mentions add Mention Via Message Board Thread
+		|mentionsUserFullName|userfn userln|
+		|mentionsUserScreenName|usersn|
+		|threadSubject|Thread Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread goto CP
+		|threadSubject|Thread Subject|
+	Then Mentions view Mention Tag Link
+		|mentionsUserFullName|userfn userln|
+		|mentionsUserScreenName|usersn|
 
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
+Scenario: View Mention Via Message Boards Thread Reply
+Priority: 5
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread add CP
+		|threadBody|Thread Body|
+		|threadSubject|Thread Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And Mentions add Mention Via Message Boards Reply
+		|mentionsUserFullName|userfn userln|
+		|mentionsUserScreenName|usersn|
+		|threadBody|Thread Reply Body|
+		|threadSubject|Thread Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread goto CP
+		|threadSubject|Thread Subject|
+	And MessageboardsThread view Reply CP
+		|postsNumber|2|
+		|threadBody|Thread Body|
+		|threadBody2|Thread Reply Body|
+		|threadSubject|Thread Subject|
+		|userName|Test Test|
+		|userName2|Test Test|
+	Then Mentions view Mention Tag Link
+		|mentionsUserFullName|userfn userln|
+		|mentionsUserScreenName|usersn|
 
-		<execute macro="User#editPasswordCP">
-			<var name="password" value="password" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="MessageboardsCategory#tearDownCP" />
-
-				<execute macro="MessageboardsThread#tearDownCP">
-					<var name="assetType" value="Message Boards Thread" />
-				</execute>
-
-				<execute macro="Page#tearDownPG" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="ViewMentionViaMessageBoardsThread" priority="5">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="Mentions#addMentionViaMessageBoardThread">
-			<var name="mentionsUserFullName" value="userfn userln" />
-			<var name="mentionsUserScreenName" value="usersn" />
-			<var name="threadSubject" value="Thread Subject" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoCP">
-			<var name="threadSubject" value="Thread Subject" />
-		</execute>
-
-		<execute macro="Mentions#viewMentionTagLink">
-			<var name="mentionsUserFullName" value="userfn userln" />
-			<var name="mentionsUserScreenName" value="usersn" />
-		</execute>
-	</command>
-
-	<command name="ViewMentionViaMessageBoardsThreadReply" priority="5">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addCP">
-			<var name="threadBody" value="Thread Body" />
-			<var name="threadSubject" value="Thread Subject" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="Mentions#addMentionViaMessageBoardsReply">
-			<var name="mentionsUserFullName" value="userfn userln" />
-			<var name="mentionsUserScreenName" value="usersn" />
-			<var name="threadBody" value="Thread Reply Body" />
-			<var name="threadSubject" value="Thread Subject" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#gotoCP">
-			<var name="threadSubject" value="Thread Subject" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewReplyCP">
-			<var name="postsNumber" value="2" />
-			<var name="threadBody" value="Thread Body" />
-			<var name="threadBody2" value="Thread Reply Body" />
-			<var name="threadSubject" value="Thread Subject" />
-			<var name="userName" value="Test Test" />
-			<var name="userName2" value="Test Test" />
-		</execute>
-
-		<execute macro="Mentions#viewMentionTagLink">
-			<var name="mentionsUserFullName" value="userfn userln" />
-			<var name="mentionsUserScreenName" value="usersn" />
-		</execute>
-	</command>
-
-	<command name="ViewMentionViaUpdatedMessageBoardsThread" priority="5">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#addCP">
-			<var name="threadBody" value="Thread Body" />
-			<var name="threadSubject" value="Thread Subject" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="Mentions#addMentionViaMessageBoardThreadEdit">
-			<var name="mentionsUserFullName" value="userfn userln" />
-			<var name="mentionsUserScreenName" value="usersn" />
-			<var name="threadBody" value="Thread Body" />
-			<var name="threadSubject" value="Thread Subject" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute macro="MessageboardsThread#viewCP">
-			<var name="postsNumber" value="1" />
-			<var name="threadBody" value="Thread Body" />
-			<var name="threadSubject" value="Thread Subject" />
-		</execute>
-
-		<execute macro="Mentions#viewMentionTagLink">
-			<var name="mentionsUserFullName" value="userfn userln" />
-			<var name="mentionsUserScreenName" value="usersn" />
-		</execute>
-	</command>
-</definition>
+Scenario: View Mention Via Updated Message Boards Thread
+Priority: 5
+	Given Navigator open URL
+	When ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread add CP
+		|threadBody|Thread Body|
+		|threadSubject|Thread Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And Mentions add Mention Via Message Board Thread Edit
+		|mentionsUserFullName|userfn userln|
+		|mentionsUserScreenName|usersn|
+		|threadBody|Thread Body|
+		|threadSubject|Thread Subject|
+	And Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Message Boards|
+	And MessageboardsThread view CP
+		|postsNumber|1|
+		|threadBody|Thread Body|
+		|threadSubject|Thread Subject|
+	Then Mentions view Mention Tag Link
+		|mentionsUserFullName|userfn userln|
+		|mentionsUserScreenName|usersn|

@@ -1,2324 +1,1555 @@
-<definition component-name="portal-permissions">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Permissions" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="User#firstLoginPG" />
-
-				<execute macro="User#tearDownCP" />
-
-				<execute macro="Role#tearDownCP" />
-
-				<execute macro="Organization#tearDownCP" />
-
-				<execute macro="Site#tearDownCP" />
-
-				<execute macro="BlogsEntry#tearDownCP" />
-
-				<execute macro="Page#tearDownPG" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="AddBlogsEntryNoGuestRole" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoAddPermissions" />
-	</command>
-
-	<command name="AddBlogsEntryOrgRole" priority="5">
-		<execute macro="Permissions#setUpOrgRoleLoginUserPG">
-			<var name="orgName" value="Organization Name" />
-			<var name="orgType" value="Organization" />
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Roles Orgrole Name" />
-			<var name="roleType" value="Organization" />
-			<var name="siteName" value="Organization Name" />
-			<var name="siteURL" value="true" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Organization Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoAddPermissions" />
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_ADD_ENTRY_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Add Entry" />
-			<var name="roleTitle" value="Roles Orgrole Name" />
-			<var name="roleType" value="Organization" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Organization Name" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Permissions#removePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_ADD_ENTRY_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Add Entry" />
-			<var name="roleTitle" value="Roles Orgrole Name" />
-			<var name="roleType" value="Organization" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Organization Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoAddPermissions" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="AddBlogsEntryOrgRoleInline" priority="4">
-		<execute macro="Permissions#setUpOrgRoleLoginUserPG">
-			<var name="orgName" value="Organization Name" />
-			<var name="orgType" value="Organization" />
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Roles Orgrole Name" />
-			<var name="roleType" value="Organization" />
-			<var name="siteName" value="Organization Name" />
-			<var name="siteURL" value="true" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Organization Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoAddPermissions" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsCP">
-			<var name="entriesPermissions" value="Entries Permissions" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Organization Name" />
-			<var name="siteURL" value="true" />
-		</execute>
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="INLINE_PERMISSIONS_ADD_ENTRY_CHECKBOX" />
-			<var name="roleTitle" value="Roles Orgrole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Organization Name" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsCP">
-			<var name="entriesPermissions" value="Entries Permissions" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Organization Name" />
-			<var name="siteURL" value="true" />
-		</execute>
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="INLINE_PERMISSIONS_ADD_ENTRY_CHECKBOX" />
-			<var name="roleTitle" value="Roles Orgrole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Organization Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoAddPermissions" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="AddBlogsEntryRegRole" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Permissions#setUpRegRoleLoginUserPG">
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoAddPermissions" />
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_ADD_ENTRY_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Add Entry" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Permissions#removePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_ADD_ENTRY_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Add Entry" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoAddPermissions" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="AddBlogsEntryRegRoleInline" priority="4">
-		<execute macro="Permissions#setUpRegRoleLoginUserPG">
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoAddPermissions" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsEntriesCP" />
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="INLINE_PERMISSIONS_ADD_ENTRY_CHECKBOX" />
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsEntriesCP" />
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="INLINE_PERMISSIONS_ADD_ENTRY_CHECKBOX" />
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoAddPermissions" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="AddBlogsEntrySiteRole" priority="5">
-		<execute macro="Permissions#setUpSiteRoleLoginUserPG">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteURL" value="true" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoAddPermissions" />
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_ADD_ENTRY_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Add Entry" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Permissions#removePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_ADD_ENTRY_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Add Entry" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoAddPermissions" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="AddBlogsEntrySiteRoleInline" priority="4">
-		<execute macro="Permissions#setUpSiteRoleLoginUserPG">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteURL" value="true" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoAddPermissions" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsEntriesCP" />
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="INLINE_PERMISSIONS_ADD_ENTRY_CHECKBOX" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsEntriesCP" />
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="INLINE_PERMISSIONS_ADD_ENTRY_CHECKBOX" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoAddPermissions" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="AddBlogsEntrySiteTeamRoleInline" priority="4">
-		<execute macro="Permissions#setUpSiteTeamRoleLoginUserPG">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="siteName" value="Site Name" />
-			<var name="teamDescription" value="Site Team Description" />
-			<var name="teamName" value="Site Team Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoAddPermissions" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsCP">
-			<var name="entriesPermissions" value="true" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Team#definePermissionPG">
-			<var name="permissionDefinitionKey" value="_ACTION_ADD_ENTRY" />
-			<var name="teamName" value="Site Team Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsCP">
-			<var name="entriesPermissions" value="true" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Team#removePermissionPG">
-			<var name="permissionDefinitionKey" value="_ACTION_ADD_ENTRY" />
-			<var name="teamName" value="Site Team Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoAddPermissions" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="DeleteBlogsEntryNoGuestRole" priority="4">
-		<execute macro="Page#add">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinNoPermissionPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="DeleteBlogsEntryOrgRoleDefaultPermission" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Permissions#setUpOrgRoleLoginUserPG">
-			<var name="orgName" value="Organization Name" />
-			<var name="orgType" value="Organization" />
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Roles Orgrole Name" />
-			<var name="roleType" value="Organization" />
-			<var name="siteName" value="Organization Name" />
-			<var name="siteURL" value="true" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Permissions#addBlogsEntryLoginUserPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Organization Name" />
-			<var name="siteURLTemp" value="true" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Organization Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinNoPermissionPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="DeleteBlogsEntryOrgRoleDefinePermission" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Permissions#setUpOrgRoleLoginUserPG">
-			<var name="orgName" value="Organization Name" />
-			<var name="orgType" value="Organization" />
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Roles Orgrole Name" />
-			<var name="roleType" value="Organization" />
-			<var name="siteName" value="Organization Name" />
-			<var name="siteURL" value="true" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Permissions#addBlogsEntryLoginUserPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Organization Name" />
-			<var name="siteURLTemp" value="true" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRY_DELETE_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Delete" />
-			<var name="roleTitle" value="Roles Orgrole Name" />
-			<var name="roleType" value="Organization" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Organization Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinPG">
-			<var name="assetType" value="Blogs Entry" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Permissions#removePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRY_DELETE_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Delete" />
-			<var name="roleTitle" value="Roles Orgrole Name" />
-			<var name="roleType" value="Organization" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Permissions#addBlogsEntryLoginUserPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Organization Name" />
-			<var name="siteURLTemp" value="true" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Organization Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinNoPermissionPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="DeleteBlogsEntryOrgRoleInline" priority="4">
-		<execute macro="Permissions#setUpOrgRoleLoginUserPG">
-			<var name="orgName" value="Organization Name" />
-			<var name="orgType" value="Organization" />
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Roles Orgrole Name" />
-			<var name="roleType" value="Organization" />
-			<var name="siteName" value="Organization Name" />
-			<var name="siteURL" value="true" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Permissions#addBlogsEntryLoginUserPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Organization Name" />
-			<var name="siteURLTemp" value="true" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Organization Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinNoPermissionPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Organization Name" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsEntryPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_DELETE_CHECKBOX" />
-			<var name="roleTitle" value="Roles Orgrole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Organization Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinPG">
-			<var name="assetType" value="Blogs Entry" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Permissions#addBlogsEntryLoginUserPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Organization Name" />
-			<var name="siteURLTemp" value="true" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Organization Name" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsEntryPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_DELETE_CHECKBOX" />
-			<var name="roleTitle" value="Roles Orgrole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Organization Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinNoPermissionPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="DeleteBlogsEntryOwnerRoleInline" priority="4">
-		<execute macro="Permissions#setUpRegRoleLoginUserPG">
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_ADD_ENTRY_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Add Entry" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsEntryPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_DELETE_CHECKBOX" />
-			<var name="roleTitle" value="Owner" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinNoPermissionPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsEntryPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_DELETE_CHECKBOX" />
-			<var name="roleTitle" value="Owner" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinPG">
-			<var name="assetType" value="Blogs Entry" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="DeleteBlogsEntryRegRole" priority="4">
-		<execute macro="Permissions#setUpRegRoleLoginUserPG">
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Permissions#addBlogsEntryLoginUserPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinNoPermissionPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRY_DELETE_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Delete" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinPG">
-			<var name="assetType" value="Blogs Entry" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Permissions#removePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRY_DELETE_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Delete" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Permissions#addBlogsEntryLoginUserPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinNoPermissionPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="DeleteBlogsEntryRegRoleInline" priority="4">
-		<execute macro="Permissions#setUpRegRoleLoginUserPG">
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Permissions#addBlogsEntryLoginUserPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinNoPermissionPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsEntryPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_DELETE_CHECKBOX" />
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinPG">
-			<var name="assetType" value="Blogs Entry" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Permissions#addBlogsEntryLoginUserPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsEntryPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_DELETE_CHECKBOX" />
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinNoPermissionPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="DeleteBlogsEntrySiteRole" priority="4">
-		<execute macro="Permissions#setUpSiteRoleLoginUserPG">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteURL" value="true" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Permissions#addBlogsEntryLoginUserPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteURLTemp" value="true" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinNoPermissionPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRY_DELETE_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Delete" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinPG">
-			<var name="assetType" value="Blogs Entry" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Permissions#removePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRY_DELETE_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Delete" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Permissions#addBlogsEntryLoginUserPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteURLTemp" value="true" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinNoPermissionPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="DeleteBlogsEntrySiteRoleInline" priority="4">
-		<execute macro="Permissions#setUpSiteRoleLoginUserPG">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteURL" value="true" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Permissions#addBlogsEntryLoginUserPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteURLTemp" value="true" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinNoPermissionPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsEntryPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_DELETE_CHECKBOX" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinPG">
-			<var name="assetType" value="Blogs Entry" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Permissions#addBlogsEntryLoginUserPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteURLTemp" value="true" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsEntryPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_DELETE_CHECKBOX" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinNoPermissionPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="DeleteBlogsEntrySiteTeamRoleInline" priority="4">
-		<execute macro="Permissions#setUpSiteTeamRoleLoginUserPG">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="siteName" value="Site Name" />
-			<var name="teamDescription" value="Site Team Description" />
-			<var name="teamName" value="Site Team Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Permissions#addBlogsEntryLoginUserPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteURLTemp" value="true" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinNoPermissionPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsEntryPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Team#definePermissionPG">
-			<var name="permissionDefinitionKey" value="_ACTION_DELETE" />
-			<var name="teamName" value="Site Team Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinPG">
-			<var name="assetType" value="Blogs Entry" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Permissions#addBlogsEntryLoginUserPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteURLTemp" value="true" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsEntryPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Team#removePermissionPG">
-			<var name="permissionDefinitionKey" value="_ACTION_DELETE" />
-			<var name="teamName" value="Site Team Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#moveToRecycleBinNoPermissionPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="EditBlogsEntryOwnerRoleInline" priority="4">
-		<execute macro="Permissions#setUpRegRoleLoginUserPG">
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_ADD_ENTRY_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Add Entry" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsEntryPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_UPDATE_CHECKBOX" />
-			<var name="roleTitle" value="Owner" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#editNoPermissionPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsEntryPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_UPDATE_CHECKBOX" />
-			<var name="roleTitle" value="Owner" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsNavigator#gotoEditPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="BlogsEntry#editTitle">
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="entryTitleEdit" value="Blogs Entry Title Edit" />
-		</execute>
-
-		<execute macro="BlogsEntry#editContent">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryContentEdit" value="Blogs Entry Content Edit" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content Edit" />
-			<var name="entryTitle" value="Blogs Entry Title Edit" />
-		</execute>
-	</command>
-
-	<command name="SubscribeBlogsRegRole" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Permissions#setUpRegRoleLoginUserPG">
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewNoPermissionPG" />
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_SUBSCRIBE_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Subscribe" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#subscribePG" />
-
-		<execute macro="Permissions#removePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_SUBSCRIBE_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Subscribe" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewNoPermissionPG" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="SubscribeBlogsRegRoleInline" priority="4">
-		<execute macro="Permissions#setUpRegRoleLoginUserPG">
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewNoPermissionPG" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsEntriesCP" />
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="INLINE_PERMISSIONS_SUBSCRIBE_CHECKBOX" />
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#subscribePG" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsEntriesCP" />
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="INLINE_PERMISSIONS_SUBSCRIBE_CHECKBOX" />
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewNoPermissionPG" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="SubscribeBlogsSiteRoleInline" priority="4">
-		<execute macro="Permissions#setUpSiteMemberRoleLoginUserPG">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Site Member" />
-			<var name="roleType" value="Site" />
-			<var name="siteName" value="Site Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewSubscribePG" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#subscribePG" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsCP">
-			<var name="entriesPermissions" value="true" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="INLINE_PERMISSIONS_SUBSCRIBE_CHECKBOX" />
-			<var name="roleTitle" value="Site Member" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewNoSubscribePG" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="ViewBlogsEntryPermissionsOwnerRoleInline" priority="5">
-		<execute macro="Permissions#setUpRegRoleLoginUserPG">
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_ADD_ENTRY_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Add Entry" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsEntryPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_PERMISSIONS_CHECKBOX" />
-			<var name="roleTitle" value="Owner" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewPermissionsNoPermissionPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoBlogsEntryPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_PERMISSIONS_CHECKBOX" />
-			<var name="roleTitle" value="Owner" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewPermissionsPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
-
-	<command name="ViewBlogsPermissionsRegRole" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Permissions#setUpRegRoleLoginUserPG">
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewNoPermissionPG" />
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_APPLICATIONS_BLOGS_APPLICATION_PERMISSIONS_CONFIGURATION_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Configuration" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_APPLICATIONS_BLOGS_APPLICATION_PERMISSIONS_PERMISSIONS_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Permissions" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewPermissionsPG" />
-
-		<execute macro="Permissions#removePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_APPLICATIONS_BLOGS_APPLICATION_PERMISSIONS_CONFIGURATION_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Configuration" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Permissions#removePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_APPLICATIONS_BLOGS_APPLICATION_PERMISSIONS_PERMISSIONS_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Permissions" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewNoPermissionPG" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="ViewBlogsPermissionsRegRoleInline" priority="4">
-		<execute macro="Permissions#setUpRegRoleLoginUserPG">
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewNoPermissionPG" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoConfigurationPG" >
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="CONFIGURATION_PERMISSIONS_CONFIGURATION_CHECKBOX" />
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoConfigurationPG" >
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="CONFIGURATION_PERMISSIONS_PERMISSIONS_CHECKBOX" />
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewPermissionsPG" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoConfigurationPG" >
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="CONFIGURATION_PERMISSIONS_PERMISSIONS_CHECKBOX" />
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewNoPermissionPG" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoConfigurationPG" >
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="CONFIGURATION_PERMISSIONS_CONFIGURATION_CHECKBOX" />
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewNoPermissionPG" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="ViewBlogsPermissionsSiteRole" priority="4">
-		<execute macro="Permissions#setUpSiteRoleLoginUserPG">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteURL" value="true" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewAsSiteMemberPG" />
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_APPLICATIONS_BLOGS_APPLICATION_PERMISSIONS_CONFIGURATION_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Configuration" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_APPLICATIONS_BLOGS_APPLICATION_PERMISSIONS_PERMISSIONS_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Permissions" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewPermissionsPG" />
-
-		<execute macro="Permissions#removePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_APPLICATIONS_BLOGS_APPLICATION_PERMISSIONS_PERMISSIONS_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Permissions" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewAsSiteMemberPG" />
-
-		<execute macro="Permissions#removePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_APPLICATIONS_BLOGS_APPLICATION_PERMISSIONS_CONFIGURATION_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Configuration" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewAsSiteMemberPG" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="ViewBlogsPermissionsSiteRoleInline" priority="4">
-		<execute macro="Permissions#setUpSiteRoleLoginUserPG">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteURL" value="true" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewAsSiteMemberPG" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoConfigurationPG" >
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="CONFIGURATION_PERMISSIONS_CONFIGURATION_CHECKBOX" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoConfigurationPG" >
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="CONFIGURATION_PERMISSIONS_PERMISSIONS_CHECKBOX" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewPermissionsPG" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoConfigurationPG" >
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="CONFIGURATION_PERMISSIONS_PERMISSIONS_CHECKBOX" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewAsSiteMemberPG" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoConfigurationPG" >
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="CONFIGURATION_PERMISSIONS_CONFIGURATION_CHECKBOX" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewAsSiteMemberPG" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-	</command>
-
-	<command name="ViewBlogsPortletNoGuestRole" priority="4">
-		<execute macro="Page#add">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewNoPermissionPG" />
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Permissions|
+
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+
+Scenario: Add Blogs Entry No Guest Role
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Page add
+		|pageName|Blogs Page|
+	And Portlet add PG
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	Then BlogsEntry view No Add Permissions
+
+Scenario: Add Blogs Entry Org Role
+Priority: 5
+	Given Permissions set Up Org Role Login User PG
+		|orgName|Organization Name|
+		|orgType|Organization|
+		|page|Public Pages|
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Roles Orgrole Name|
+		|roleType|Organization|
+		|siteName|Organization Name|
+		|siteURL|true|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+		|userScreenName|usersn|
+	When Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Organization Name|
+	And BlogsEntry view No Add Permissions
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_ADD_ENTRY_CHECKBOX|
+		|permissionDefinitionValue|Add Entry|
+		|roleTitle|Roles Orgrole Name|
+		|roleType|Organization|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Organization Name|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Permissions remove Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_ADD_ENTRY_CHECKBOX|
+		|permissionDefinitionValue|Add Entry|
+		|roleTitle|Roles Orgrole Name|
+		|roleType|Organization|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Organization Name|
+	And BlogsEntry view No Add Permissions
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: Add Blogs Entry Org Role Inline
+Priority: 4
+	Given Permissions set Up Org Role Login User PG
+		|orgName|Organization Name|
+		|orgType|Organization|
+		|page|Public Pages|
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Roles Orgrole Name|
+		|roleType|Organization|
+		|siteName|Organization Name|
+		|siteURL|true|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+		|userScreenName|usersn|
+	When Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Organization Name|
+	And BlogsEntry view No Add Permissions
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And PermissionsInline goto Blogs CP
+		|entriesPermissions|Entries Permissions|
+		|pageName|Blogs Page|
+		|siteName|Organization Name|
+		|siteURL|true|
+	And Role define Permission PG
+		|permissionDefinitionKey|INLINE_PERMISSIONS_ADD_ENTRY_CHECKBOX|
+		|roleTitle|Roles Orgrole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Organization Name|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And PermissionsInline goto Blogs CP
+		|entriesPermissions|Entries Permissions|
+		|pageName|Blogs Page|
+		|siteName|Organization Name|
+		|siteURL|true|
+	And Role remove Permission PG
+		|permissionDefinitionKey|INLINE_PERMISSIONS_ADD_ENTRY_CHECKBOX|
+		|roleTitle|Roles Orgrole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Organization Name|
+	And BlogsEntry view No Add Permissions
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: Add Blogs Entry Reg Role
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Permissions set Up Reg Role Login User PG
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Regrole Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry view No Add Permissions
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_ADD_ENTRY_CHECKBOX|
+		|permissionDefinitionValue|Add Entry|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Permissions remove Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_ADD_ENTRY_CHECKBOX|
+		|permissionDefinitionValue|Add Entry|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry view No Add Permissions
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: Add Blogs Entry Reg Role Inline
+Priority: 4
+	Given Permissions set Up Reg Role Login User PG
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Regrole Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+		|userScreenName|usersn|
+	When Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry view No Add Permissions
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And PermissionsInline goto Blogs Entries CP
+	And Role define Permission PG
+		|permissionDefinitionKey|INLINE_PERMISSIONS_ADD_ENTRY_CHECKBOX|
+		|roleTitle|Regrole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And PermissionsInline goto Blogs Entries CP
+	And Role remove Permission PG
+		|permissionDefinitionKey|INLINE_PERMISSIONS_ADD_ENTRY_CHECKBOX|
+		|roleTitle|Regrole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry view No Add Permissions
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: Add Blogs Entry Site Role
+Priority: 5
+	Given Permissions set Up Site Role Login User PG
+		|page|Public Pages|
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Roles Siterole Name|
+		|roleType|Site|
+		|siteName|Site Name|
+		|siteURL|true|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+		|userScreenName|usersn|
+	When Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsEntry view No Add Permissions
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_ADD_ENTRY_CHECKBOX|
+		|permissionDefinitionValue|Add Entry|
+		|roleTitle|Roles Siterole Name|
+		|roleType|Site|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Permissions remove Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_ADD_ENTRY_CHECKBOX|
+		|permissionDefinitionValue|Add Entry|
+		|roleTitle|Roles Siterole Name|
+		|roleType|Site|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsEntry view No Add Permissions
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: Add Blogs Entry Site Role Inline
+Priority: 4
+	Given Permissions set Up Site Role Login User PG
+		|page|Public Pages|
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Roles Siterole Name|
+		|roleType|Site|
+		|siteName|Site Name|
+		|siteURL|true|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+		|userScreenName|usersn|
+	When Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsEntry view No Add Permissions
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And PermissionsInline goto Blogs Entries CP
+	And Role define Permission PG
+		|permissionDefinitionKey|INLINE_PERMISSIONS_ADD_ENTRY_CHECKBOX|
+		|roleTitle|Roles Siterole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And PermissionsInline goto Blogs Entries CP
+	And Role remove Permission PG
+		|permissionDefinitionKey|INLINE_PERMISSIONS_ADD_ENTRY_CHECKBOX|
+		|roleTitle|Roles Siterole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsEntry view No Add Permissions
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: Add Blogs Entry Site Team Role Inline
+Priority: 4
+	Given Permissions set Up Site Team Role Login User PG
+		|page|Public Pages|
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|siteName|Site Name|
+		|teamDescription|Site Team Description|
+		|teamName|Site Team Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+		|userScreenName|usersn|
+	When Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsEntry view No Add Permissions
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And PermissionsInline goto Blogs CP
+		|entriesPermissions|true|
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And Team define Permission PG
+		|permissionDefinitionKey|_ACTION_ADD_ENTRY|
+		|teamName|Site Team Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And PermissionsInline goto Blogs CP
+		|entriesPermissions|true|
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And Team remove Permission PG
+		|permissionDefinitionKey|_ACTION_ADD_ENTRY|
+		|teamName|Site Team Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsEntry view No Add Permissions
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: Delete Blogs Entry No Guest Role
+Priority: 4
+	Given Page add
+		|pageName|Blogs Page|
+	When Portlet add PG
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	Then BlogsEntry move To Recycle Bin No Permission PG
+		|entryTitle|Blogs Entry Title|
+
+Scenario: Delete Blogs Entry Org Role Default Permission
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Permissions set Up Org Role Login User PG
+		|orgName|Organization Name|
+		|orgType|Organization|
+		|page|Public Pages|
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Roles Orgrole Name|
+		|roleType|Organization|
+		|siteName|Organization Name|
+		|siteURL|true|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+		|userScreenName|usersn|
+	And Permissions add Blogs Entry Login User PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+		|pageName|Blogs Page|
+		|siteName|Organization Name|
+		|siteURLTemp|true|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Organization Name|
+	And BlogsEntry move To Recycle Bin No Permission PG
+		|entryTitle|Blogs Entry Title|
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: Delete Blogs Entry Org Role Define Permission
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Permissions set Up Org Role Login User PG
+		|orgName|Organization Name|
+		|orgType|Organization|
+		|page|Public Pages|
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Roles Orgrole Name|
+		|roleType|Organization|
+		|siteName|Organization Name|
+		|siteURL|true|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+		|userScreenName|usersn|
+	And Permissions add Blogs Entry Login User PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+		|pageName|Blogs Page|
+		|siteName|Organization Name|
+		|siteURLTemp|true|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRY_DELETE_CHECKBOX|
+		|permissionDefinitionValue|Delete|
+		|roleTitle|Roles Orgrole Name|
+		|roleType|Organization|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Organization Name|
+	And BlogsEntry move To Recycle Bin PG
+		|assetType|Blogs Entry|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Permissions remove Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRY_DELETE_CHECKBOX|
+		|permissionDefinitionValue|Delete|
+		|roleTitle|Roles Orgrole Name|
+		|roleType|Organization|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Permissions add Blogs Entry Login User PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+		|pageName|Blogs Page|
+		|siteName|Organization Name|
+		|siteURLTemp|true|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Organization Name|
+	And BlogsEntry move To Recycle Bin No Permission PG
+		|entryTitle|Blogs Entry Title|
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: Delete Blogs Entry Org Role Inline
+Priority: 4
+	Given Permissions set Up Org Role Login User PG
+		|orgName|Organization Name|
+		|orgType|Organization|
+		|page|Public Pages|
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Roles Orgrole Name|
+		|roleType|Organization|
+		|siteName|Organization Name|
+		|siteURL|true|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+		|userScreenName|usersn|
+	When Permissions add Blogs Entry Login User PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+		|pageName|Blogs Page|
+		|siteName|Organization Name|
+		|siteURLTemp|true|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Organization Name|
+	And BlogsEntry move To Recycle Bin No Permission PG
+		|entryTitle|Blogs Entry Title|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Organization Name|
+	And PermissionsInline goto Blogs Entry PG
+		|entryTitle|Blogs Entry Title|
+	And Role define Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_DELETE_CHECKBOX|
+		|roleTitle|Roles Orgrole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Organization Name|
+	And BlogsEntry move To Recycle Bin PG
+		|assetType|Blogs Entry|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Permissions add Blogs Entry Login User PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+		|pageName|Blogs Page|
+		|siteName|Organization Name|
+		|siteURLTemp|true|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Organization Name|
+	And PermissionsInline goto Blogs Entry PG
+		|entryTitle|Blogs Entry Title|
+	And Role remove Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_DELETE_CHECKBOX|
+		|roleTitle|Roles Orgrole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Organization Name|
+	And BlogsEntry move To Recycle Bin No Permission PG
+		|entryTitle|Blogs Entry Title|
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: Delete Blogs Entry Owner Role Inline
+Priority: 4
+	Given Permissions set Up Reg Role Login User PG
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Regrole Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+		|userScreenName|usersn|
+	When Permissions define Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_ADD_ENTRY_CHECKBOX|
+		|permissionDefinitionValue|Add Entry|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And PermissionsInline goto Blogs Entry PG
+		|entryTitle|Blogs Entry Title|
+	And Role remove Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_DELETE_CHECKBOX|
+		|roleTitle|Owner|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry move To Recycle Bin No Permission PG
+		|entryTitle|Blogs Entry Title|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And PermissionsInline goto Blogs Entry PG
+		|entryTitle|Blogs Entry Title|
+	And Role define Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_DELETE_CHECKBOX|
+		|roleTitle|Owner|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	Then BlogsEntry move To Recycle Bin PG
+		|assetType|Blogs Entry|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+
+Scenario: Delete Blogs Entry Reg Role
+Priority: 4
+	Given Permissions set Up Reg Role Login User PG
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Regrole Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+		|userScreenName|usersn|
+	When Permissions add Blogs Entry Login User PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+		|pageName|Blogs Page|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry move To Recycle Bin No Permission PG
+		|entryTitle|Blogs Entry Title|
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRY_DELETE_CHECKBOX|
+		|permissionDefinitionValue|Delete|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry move To Recycle Bin PG
+		|assetType|Blogs Entry|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Permissions remove Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRY_DELETE_CHECKBOX|
+		|permissionDefinitionValue|Delete|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Permissions add Blogs Entry Login User PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+		|pageName|Blogs Page|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry move To Recycle Bin No Permission PG
+		|entryTitle|Blogs Entry Title|
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: Delete Blogs Entry Reg Role Inline
+Priority: 4
+	Given Permissions set Up Reg Role Login User PG
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Regrole Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+		|userScreenName|usersn|
+	When Permissions add Blogs Entry Login User PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+		|pageName|Blogs Page|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry move To Recycle Bin No Permission PG
+		|entryTitle|Blogs Entry Title|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And PermissionsInline goto Blogs Entry PG
+		|entryTitle|Blogs Entry Title|
+	And Role define Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_DELETE_CHECKBOX|
+		|roleTitle|Regrole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry move To Recycle Bin PG
+		|assetType|Blogs Entry|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Permissions add Blogs Entry Login User PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+		|pageName|Blogs Page|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And PermissionsInline goto Blogs Entry PG
+		|entryTitle|Blogs Entry Title|
+	And Role remove Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_DELETE_CHECKBOX|
+		|roleTitle|Regrole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry move To Recycle Bin No Permission PG
+		|entryTitle|Blogs Entry Title|
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: Delete Blogs Entry Site Role
+Priority: 4
+	Given Permissions set Up Site Role Login User PG
+		|page|Public Pages|
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Roles Siterole Name|
+		|roleType|Site|
+		|siteName|Site Name|
+		|siteURL|true|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+		|userScreenName|usersn|
+	When Permissions add Blogs Entry Login User PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+		|siteURLTemp|true|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsEntry move To Recycle Bin No Permission PG
+		|entryTitle|Blogs Entry Title|
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRY_DELETE_CHECKBOX|
+		|permissionDefinitionValue|Delete|
+		|roleTitle|Roles Siterole Name|
+		|roleType|Site|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsEntry move To Recycle Bin PG
+		|assetType|Blogs Entry|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Permissions remove Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRY_DELETE_CHECKBOX|
+		|permissionDefinitionValue|Delete|
+		|roleTitle|Roles Siterole Name|
+		|roleType|Site|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Permissions add Blogs Entry Login User PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+		|siteURLTemp|true|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsEntry move To Recycle Bin No Permission PG
+		|entryTitle|Blogs Entry Title|
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: Delete Blogs Entry Site Role Inline
+Priority: 4
+	Given Permissions set Up Site Role Login User PG
+		|page|Public Pages|
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Roles Siterole Name|
+		|roleType|Site|
+		|siteName|Site Name|
+		|siteURL|true|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+		|userScreenName|usersn|
+	When Permissions add Blogs Entry Login User PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+		|siteURLTemp|true|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsEntry move To Recycle Bin No Permission PG
+		|entryTitle|Blogs Entry Title|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And PermissionsInline goto Blogs Entry PG
+		|entryTitle|Blogs Entry Title|
+	And Role define Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_DELETE_CHECKBOX|
+		|roleTitle|Roles Siterole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsEntry move To Recycle Bin PG
+		|assetType|Blogs Entry|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Permissions add Blogs Entry Login User PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+		|siteURLTemp|true|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And PermissionsInline goto Blogs Entry PG
+		|entryTitle|Blogs Entry Title|
+	And Role remove Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_DELETE_CHECKBOX|
+		|roleTitle|Roles Siterole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsEntry move To Recycle Bin No Permission PG
+		|entryTitle|Blogs Entry Title|
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: Delete Blogs Entry Site Team Role Inline
+Priority: 4
+	Given Permissions set Up Site Team Role Login User PG
+		|page|Public Pages|
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|siteName|Site Name|
+		|teamDescription|Site Team Description|
+		|teamName|Site Team Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+		|userScreenName|usersn|
+	When Permissions add Blogs Entry Login User PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+		|siteURLTemp|true|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsEntry move To Recycle Bin No Permission PG
+		|entryTitle|Blogs Entry Title|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And PermissionsInline goto Blogs Entry PG
+		|entryTitle|Blogs Entry Title|
+	And Team define Permission PG
+		|permissionDefinitionKey|_ACTION_DELETE|
+		|teamName|Site Team Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsEntry move To Recycle Bin PG
+		|assetType|Blogs Entry|
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Permissions add Blogs Entry Login User PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+		|siteURLTemp|true|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And PermissionsInline goto Blogs Entry PG
+		|entryTitle|Blogs Entry Title|
+	And Team remove Permission PG
+		|permissionDefinitionKey|_ACTION_DELETE|
+		|teamName|Site Team Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsEntry move To Recycle Bin No Permission PG
+		|entryTitle|Blogs Entry Title|
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: Edit Blogs Entry Owner Role Inline
+Priority: 4
+	Given Permissions set Up Reg Role Login User PG
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Regrole Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+		|userScreenName|usersn|
+	When Permissions define Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_ADD_ENTRY_CHECKBOX|
+		|permissionDefinitionValue|Add Entry|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And PermissionsInline goto Blogs Entry PG
+		|entryTitle|Blogs Entry Title|
+	And Role remove Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_UPDATE_CHECKBOX|
+		|roleTitle|Owner|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry edit No Permission PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And PermissionsInline goto Blogs Entry PG
+		|entryTitle|Blogs Entry Title|
+	And Role define Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_UPDATE_CHECKBOX|
+		|roleTitle|Owner|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsNavigator goto Edit PG
+		|entryTitle|Blogs Entry Title|
+	And BlogsEntry edit Title
+		|entryTitle|Blogs Entry Title|
+		|entryTitleEdit|Blogs Entry Title Edit|
+	And BlogsEntry edit Content
+		|entryContent|Blogs Entry Content|
+		|entryContentEdit|Blogs Entry Content Edit|
+	Then BlogsEntry view Entry
+		|entryContent|Blogs Entry Content Edit|
+		|entryTitle|Blogs Entry Title Edit|
+
+Scenario: Subscribe Blogs Reg Role
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Permissions set Up Reg Role Login User PG
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Regrole Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsConfiguration view No Permission PG
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_SUBSCRIBE_CHECKBOX|
+		|permissionDefinitionValue|Subscribe|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry subscribe PG
+	And Permissions remove Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_SUBSCRIBE_CHECKBOX|
+		|permissionDefinitionValue|Subscribe|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsConfiguration view No Permission PG
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: Subscribe Blogs Reg Role Inline
+Priority: 4
+	Given Permissions set Up Reg Role Login User PG
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Regrole Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+		|userScreenName|usersn|
+	When Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsConfiguration view No Permission PG
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And PermissionsInline goto Blogs Entries CP
+	And Role define Permission PG
+		|permissionDefinitionKey|INLINE_PERMISSIONS_SUBSCRIBE_CHECKBOX|
+		|roleTitle|Regrole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry subscribe PG
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And ProductMenu goto Sites Content
+		|portlet|Blogs|
+	And PermissionsInline goto Blogs Entries CP
+	And Role remove Permission PG
+		|permissionDefinitionKey|INLINE_PERMISSIONS_SUBSCRIBE_CHECKBOX|
+		|roleTitle|Regrole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsConfiguration view No Permission PG
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: Subscribe Blogs Site Role Inline
+Priority: 4
+	Given Permissions set Up Site Member Role Login User PG
+		|page|Public Pages|
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Site Member|
+		|roleType|Site|
+		|siteName|Site Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+		|userScreenName|usersn|
+	When Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsConfiguration view Subscribe PG
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsEntry subscribe PG
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And PermissionsInline goto Blogs CP
+		|entriesPermissions|true|
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And Role remove Permission PG
+		|permissionDefinitionKey|INLINE_PERMISSIONS_SUBSCRIBE_CHECKBOX|
+		|roleTitle|Site Member|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsConfiguration view No Subscribe PG
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: View Blogs Entry Permissions Owner Role Inline
+Priority: 5
+	Given Permissions set Up Reg Role Login User PG
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Regrole Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+		|userScreenName|usersn|
+	When Permissions define Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_BLOGS_RESOURCE_PERMISSIONS_BLOGS_ENTRIES_ADD_ENTRY_CHECKBOX|
+		|permissionDefinitionValue|Add Entry|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And PermissionsInline goto Blogs Entry PG
+		|entryTitle|Blogs Entry Title|
+	And Role remove Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_PERMISSIONS_CHECKBOX|
+		|roleTitle|Owner|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsEntry view Permissions No Permission PG
+		|entryTitle|Blogs Entry Title|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And PermissionsInline goto Blogs Entry PG
+		|entryTitle|Blogs Entry Title|
+	And Role define Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_PERMISSIONS_CHECKBOX|
+		|roleTitle|Owner|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	Then BlogsEntry view Permissions PG
+		|entryTitle|Blogs Entry Title|
+
+Scenario: View Blogs Permissions Reg Role
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Permissions set Up Reg Role Login User PG
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Regrole Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsConfiguration view No Permission PG
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_APPLICATIONS_BLOGS_APPLICATION_PERMISSIONS_CONFIGURATION_CHECKBOX|
+		|permissionDefinitionValue|Configuration|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_APPLICATIONS_BLOGS_APPLICATION_PERMISSIONS_PERMISSIONS_CHECKBOX|
+		|permissionDefinitionValue|Permissions|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsConfiguration view Permissions PG
+	And Permissions remove Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_APPLICATIONS_BLOGS_APPLICATION_PERMISSIONS_CONFIGURATION_CHECKBOX|
+		|permissionDefinitionValue|Configuration|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Permissions remove Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_APPLICATIONS_BLOGS_APPLICATION_PERMISSIONS_PERMISSIONS_CHECKBOX|
+		|permissionDefinitionValue|Permissions|
+		|roleTitle|Regrole Name|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsConfiguration view No Permission PG
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: View Blogs Permissions Reg Role Inline
+Priority: 4
+	Given Permissions set Up Reg Role Login User PG
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Regrole Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+		|userScreenName|usersn|
+	When Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsConfiguration view No Permission PG
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And PermissionsInline goto Configuration PG
+		|portletName|Blogs|
+	And Role define Permission PG
+		|permissionDefinitionKey|CONFIGURATION_PERMISSIONS_CONFIGURATION_CHECKBOX|
+		|roleTitle|Regrole Name|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And PermissionsInline goto Configuration PG
+		|portletName|Blogs|
+	And Role define Permission PG
+		|permissionDefinitionKey|CONFIGURATION_PERMISSIONS_PERMISSIONS_CHECKBOX|
+		|roleTitle|Regrole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsConfiguration view Permissions PG
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And PermissionsInline goto Configuration PG
+		|portletName|Blogs|
+	And Role remove Permission PG
+		|permissionDefinitionKey|CONFIGURATION_PERMISSIONS_PERMISSIONS_CHECKBOX|
+		|roleTitle|Regrole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsConfiguration view No Permission PG
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And PermissionsInline goto Configuration PG
+		|portletName|Blogs|
+	And Role remove Permission PG
+		|permissionDefinitionKey|CONFIGURATION_PERMISSIONS_CONFIGURATION_CHECKBOX|
+		|roleTitle|Regrole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	And BlogsConfiguration view No Permission PG
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: View Blogs Permissions Site Role
+Priority: 4
+	Given Permissions set Up Site Role Login User PG
+		|page|Public Pages|
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Roles Siterole Name|
+		|roleType|Site|
+		|siteName|Site Name|
+		|siteURL|true|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+		|userScreenName|usersn|
+	When Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsConfiguration view As Site Member PG
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_APPLICATIONS_BLOGS_APPLICATION_PERMISSIONS_CONFIGURATION_CHECKBOX|
+		|permissionDefinitionValue|Configuration|
+		|roleTitle|Roles Siterole Name|
+		|roleType|Site|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_APPLICATIONS_BLOGS_APPLICATION_PERMISSIONS_PERMISSIONS_CHECKBOX|
+		|permissionDefinitionValue|Permissions|
+		|roleTitle|Roles Siterole Name|
+		|roleType|Site|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsConfiguration view Permissions PG
+	And Permissions remove Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_APPLICATIONS_BLOGS_APPLICATION_PERMISSIONS_PERMISSIONS_CHECKBOX|
+		|permissionDefinitionValue|Permissions|
+		|roleTitle|Roles Siterole Name|
+		|roleType|Site|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsConfiguration view As Site Member PG
+	And Permissions remove Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_APPLICATIONS_BLOGS_APPLICATION_PERMISSIONS_CONFIGURATION_CHECKBOX|
+		|permissionDefinitionValue|Configuration|
+		|roleTitle|Roles Siterole Name|
+		|roleType|Site|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsConfiguration view As Site Member PG
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: View Blogs Permissions Site Role Inline
+Priority: 4
+	Given Permissions set Up Site Role Login User PG
+		|page|Public Pages|
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+		|roleTitle|Roles Siterole Name|
+		|roleType|Site|
+		|siteName|Site Name|
+		|siteURL|true|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+		|userScreenName|usersn|
+	When Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsConfiguration view As Site Member PG
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And PermissionsInline goto Configuration PG
+		|portletName|Blogs|
+	And Role define Permission PG
+		|permissionDefinitionKey|CONFIGURATION_PERMISSIONS_CONFIGURATION_CHECKBOX|
+		|roleTitle|Roles Siterole Name|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And PermissionsInline goto Configuration PG
+		|portletName|Blogs|
+	And Role define Permission PG
+		|permissionDefinitionKey|CONFIGURATION_PERMISSIONS_PERMISSIONS_CHECKBOX|
+		|roleTitle|Roles Siterole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsConfiguration view Permissions PG
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And PermissionsInline goto Configuration PG
+		|portletName|Blogs|
+	And Role remove Permission PG
+		|permissionDefinitionKey|CONFIGURATION_PERMISSIONS_PERMISSIONS_CHECKBOX|
+		|roleTitle|Roles Siterole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsConfiguration view As Site Member PG
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And PermissionsInline goto Configuration PG
+		|portletName|Blogs|
+	And Role remove Permission PG
+		|permissionDefinitionKey|CONFIGURATION_PERMISSIONS_CONFIGURATION_CHECKBOX|
+		|roleTitle|Roles Siterole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Blogs Page|
+		|siteName|Site Name|
+	And BlogsConfiguration view As Site Member PG
+	Then User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+
+Scenario: View Blogs Portlet No Guest Role
+Priority: 4
+	Given Page add
+		|pageName|Blogs Page|
+	When Portlet add PG
+		|pageName|Blogs Page|
+		|portletName|Blogs|
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Blogs Page|
+	Then BlogsConfiguration view No Permission PG

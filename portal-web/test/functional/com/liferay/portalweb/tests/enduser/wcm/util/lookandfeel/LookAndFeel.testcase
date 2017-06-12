@@ -1,81 +1,51 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.component.names" value="Look And Feel" />
-	<property name="testray.main.component.name" value="Look And Feel" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.component.names|Look And Feel|
+		|testray.main.component.name|Look And Feel|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-		</if>
-	</tear-down>
-
-	<command name="ConfigureCustomStylesViaLookAndFeelPG" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="testray.component.names" value="Training" />
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Sign In" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Sign In" />
-			<var name="portletOption" value="Look and Feel Configuration" />
-		</execute>
-
-		<execute macro="Portlet#configureCustomStylesViaLookandfeelPG" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Portlet#viewCustomStylesViaLookandfeelPG" />
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="Portlet#viewApplicationDecorator">
-			<var name="decorator" value="decorate" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Web Content Display" />
-			<var name="portletOption" value="Look and Feel Configuration" />
-		</execute>
-
-		<execute macro="Portlet#selectApplicationDecorator">
-			<var name="decorator" value="Borderless" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Portlet#viewApplicationDecorator">
-			<var name="decorator" value="Borderless" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Web Content Display" />
-			<var name="portletOption" value="Look and Feel Configuration" />
-		</execute>
-
-		<execute macro="Portlet#selectApplicationDecorator">
-			<var name="decorator" value="Barebone" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Portlet#viewApplicationDecorator">
-			<var name="decorator" value="Barebone" />
-		</execute>
-	</command>
-</definition>
+Scenario: Configure Custom Styles Via Look And Feel PG
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|testray.component.names|Training|
+	And Portlet add PG
+		|portletName|Sign In|
+	And Portlet goto Portlet Options
+		|portletName|Sign In|
+		|portletOption|Look and Feel Configuration|
+	And Portlet configure Custom Styles Via Lookandfeel PG
+	And Navigator open URL
+	And Portlet view Custom Styles Via Lookandfeel PG
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And Portlet view Application Decorator
+		|decorator|decorate|
+	And Portlet goto Portlet Options
+		|portletName|Web Content Display|
+		|portletOption|Look and Feel Configuration|
+	And Portlet select Application Decorator
+		|decorator|Borderless|
+	And Navigator open URL
+	And Portlet view Application Decorator
+		|decorator|Borderless|
+	And Portlet goto Portlet Options
+		|portletName|Web Content Display|
+		|portletOption|Look and Feel Configuration|
+	And Portlet select Application Decorator
+		|decorator|Barebone|
+	And Navigator open URL
+	Then Portlet view Application Decorator
+		|decorator|Barebone|

@@ -1,45 +1,32 @@
-<definition component-name="portal-plugins-deployment">
-	<property name="testray.main.component.name" value="Plugin Installer" />
+Feature:
 
-	<set-up>
-		<execute macro="User#firstLoginPG" />
+Background: This executes once per feature file
+	Given these properties
+		|testray.main.component.name|Plugin Installer|
 
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page" />
-		</execute>
-	</set-up>
+Set Up: This executes before each scenario 
+	Given User first Login PG
+	When Page add
+		|pageName|Test Page|
 
-	<tear-down>
-		<execute macro="Page#tearDownPG" />
-	</tear-down>
+Tear Down: This executes after each scenario 
+	Given Page tear Down PG
 
-	<command name="ChatPortletSmoke" priority="4">
-		<property name="portlet.plugins.includes" value="chat-portlet" />
-
-		<var name="appName" value="Chat" />
-
-		<execute macro="ProductMenu#gotoControlPanelApps">
-			<var name="portlet" value="App Manager" />
-		</execute>
-
-		<execute macro="AppManager#deactivateAppCP">
-			<var name="appName" value="${appName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelApps">
-			<var name="portlet" value="App Manager" />
-		</execute>
-
-		<execute macro="AppManager#uninstallAppCP">
-			<var name="appName" value="${appName}" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelApps">
-			<var name="portlet" value="App Manager" />
-		</execute>
-
-		<execute macro="AppManager#viewUninstallAppCP">
-			<var name="appName" value="${appName}" />
-		</execute>
-	</command>
-</definition>
+Scenario: Chat Portlet Smoke
+Priority: 4
+	Given these properties
+		|portlet.plugins.includes|chat-portlet|
+	When these variables
+		|appName|Chat|
+	And ProductMenu goto Control Panel Apps
+		|portlet|App Manager|
+	And AppManager deactivate App CP
+		|appName|${appName}|
+	And ProductMenu goto Control Panel Apps
+		|portlet|App Manager|
+	And AppManager uninstall App CP
+		|appName|${appName}|
+	And ProductMenu goto Control Panel Apps
+		|portlet|App Manager|
+	Then AppManager view Uninstall App CP
+		|appName|${appName}|

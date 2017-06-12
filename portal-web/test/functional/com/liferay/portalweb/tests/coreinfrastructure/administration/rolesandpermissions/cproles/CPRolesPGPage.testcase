@@ -1,39 +1,28 @@
-<definition component-name="portal-permissions">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Permissions" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Permissions|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-		</if>
-	</tear-down>
-
-	<command name="RemoveNoGuestInlineView" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Welcome" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoPagePG">
-			<var name="pageName" value="Welcome" />
-		</execute>
-
-		<var name="key_roleTitle" value="guest" />
-
-		<execute function="Click" locator1="Permissions#INLINE_PERMISSIONS_VIEW_CHECKBOX" />
-		<execute function="AssertChecked" locator1="Permissions#INLINE_PERMISSIONS_VIEW_CHECKBOX" />
-	</command>
-</definition>
+Scenario: Remove No Guest Inline View
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Navigator goto Page
+		|pageName|Welcome|
+	And PermissionsInline goto Page PG
+		|pageName|Welcome|
+	And these variables
+		|key_roleTitle|guest|
+	And Click at locator 'Permissions#INLINE_PERMISSIONS_VIEW_CHECKBOX'
+	Then AssertChecked at locator 'Permissions#INLINE_PERMISSIONS_VIEW_CHECKBOX'

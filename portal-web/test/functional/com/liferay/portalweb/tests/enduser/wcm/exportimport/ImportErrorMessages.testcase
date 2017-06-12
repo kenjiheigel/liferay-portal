@@ -1,40 +1,26 @@
-<definition component-name="portal-staging">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Export/Import Framework" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Export/Import Framework|
 
-		<execute macro="User#firstLoginPG" />
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Navigator open URL
+	Then ProductMenu goto Sites Publishing
+		|portlet|Import|
 
-		<execute macro="Navigator#openURL" />
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Import" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Site#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="Import6210buildNumber" priority="4">
-		<execute macro="LAR#importSiteCP">
-			<var name="cannotImport" value="true" />
-			<var name="import6210buildNumber" value="true" />
-			<var name="importFail" value="true" />
-			<var name="larFileName" value="6210buildNumber.lar" />
-		</execute>
-	</command>
-</definition>
+Scenario: Import 6210build Number
+Priority: 4
+	Given LAR import Site CP
+		|cannotImport|true|
+		|import6210buildNumber|true|
+		|importFail|true|
+		|larFileName|6210buildNumber.lar|

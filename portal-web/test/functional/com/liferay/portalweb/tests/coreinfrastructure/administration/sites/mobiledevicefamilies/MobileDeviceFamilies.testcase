@@ -1,134 +1,77 @@
-<definition component-name="portal-mobile-device-rules">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Mobile Device Rules" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Mobile Device Rules|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="PortalInstances#tearDownCP" />
-
-				<execute macro="Page#tearDownPG" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="AssertMobileDeviceRuleActionOnSitePage" priority="5">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Page for Linux" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Page for Windows" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Mobile Device Families" />
-		</execute>
-
-		<execute macro="MobileDevice#addDeviceFamilyCP">
-			<var name="deviceFamilyName" value="Linux Family Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Mobile Device Families" />
-		</execute>
-
-		<execute macro="MobileDevice#addClassificationRuleCP">
-			<var name="classificationName" value="Classification Name" />
-			<var name="deviceType" value="Any" />
-			<var name="mobileDeviceFamilyName" value="Linux Family Name" />
-			<var name="ruleOSScope" value="Linux" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Mobile Device Families" />
-		</execute>
-
-		<execute macro="MobileDevice#addDeviceFamilyCP">
-			<var name="deviceFamilyName" value="Windows Device Family Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Mobile Device Families" />
-		</execute>
-
-		<execute macro="MobileDevice#addClassificationRuleCP">
-			<var name="classificationName" value="Classification Name" />
-			<var name="deviceType" value="Any" />
-			<var name="mobileDeviceFamilyName" value="Windows Device Family Name" />
-			<var name="ruleOSScope" value="Windows" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Mobile Device Family Test Page" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Mobile Device Family Test Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoNavTab">
-			<var name="navTab" value="Advanced" />
-		</execute>
-
-		<execute macro="Panel#expandPanel">
-			<var name="panelHeading" value="Mobile Device Rules" />
-		</execute>
-
-		<execute macro="Page#disableMobileDeviceRulesAreInheritedFromPublicPages" />
-
-		<execute macro="Page#selectMobileDeviceFamily">
-			<var name="deviceFamilyName" value="Linux Family Name" />
-		</execute>
-
-		<execute macro="Page#manageDeviceFamilyActions">
-			<var name="actionName" value="Mobile Device Family Test Action" />
-			<var name="actionType" value="Redirect to Site" />
-			<var name="pageName" value="Page for Linux" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#selectMobileDeviceFamily">
-			<var name="deviceFamilyName" value="Windows Device Family Name" />
-		</execute>
-
-		<execute macro="Page#manageDeviceFamilyActions">
-			<var name="actionName" value="Windows Device Family Test Action" />
-			<var name="actionType" value="Redirect to Site" />
-			<var name="pageName" value="Page for Windows" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="MobileDevice#assertRedirectActionPG">
-			<var name="pageName" value="Mobile Device Family Test Page" />
-			<var name="redirectPageName" value="Page for Linux" />
-		</execute>
-	</command>
-</definition>
+Scenario: Assert Mobile Device Rule Action On Site Page
+Priority: 5
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Site add Blank CP
+		|siteName|Site Name|
+	And Page add
+		|pageName|Page for Linux|
+	And Page add
+		|pageName|Page for Windows|
+	And Navigator open URL
+	And ProductMenu goto Sites Configuration
+		|portlet|Mobile Device Families|
+	And MobileDevice add Device Family CP
+		|deviceFamilyName|Linux Family Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Mobile Device Families|
+	And MobileDevice add Classification Rule CP
+		|classificationName|Classification Name|
+		|deviceType|Any|
+		|mobileDeviceFamilyName|Linux Family Name|
+		|ruleOSScope|Linux|
+	And ProductMenu goto Sites Configuration
+		|portlet|Mobile Device Families|
+	And MobileDevice add Device Family CP
+		|deviceFamilyName|Windows Device Family Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Mobile Device Families|
+	And MobileDevice add Classification Rule CP
+		|classificationName|Classification Name|
+		|deviceType|Any|
+		|mobileDeviceFamilyName|Windows Device Family Name|
+		|ruleOSScope|Windows|
+	And Page add
+		|pageName|Mobile Device Family Test Page|
+	And SitePageNavigator goto Edit Page
+		|page|Mobile Device Family Test Page|
+	And Navigator goto Nav Tab
+		|navTab|Advanced|
+	And Panel expand Panel
+		|panelHeading|Mobile Device Rules|
+	And Page disable Mobile Device Rules Are Inherited From Public Pages
+	And Page select Mobile Device Family
+		|deviceFamilyName|Linux Family Name|
+	And Page manage Device Family Actions
+		|actionName|Mobile Device Family Test Action|
+		|actionType|Redirect to Site|
+		|pageName|Page for Linux|
+		|siteName|Site Name|
+	And Page select Mobile Device Family
+		|deviceFamilyName|Windows Device Family Name|
+	And Page manage Device Family Actions
+		|actionName|Windows Device Family Test Action|
+		|actionType|Redirect to Site|
+		|pageName|Page for Windows|
+		|siteName|Site Name|
+	And PortletEntry save
+	And Navigator open URL
+	Then MobileDevice assert Redirect Action PG
+		|pageName|Mobile Device Family Test Page|
+		|redirectPageName|Page for Linux|

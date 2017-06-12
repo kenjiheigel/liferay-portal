@@ -1,490 +1,317 @@
-<definition component-name="portal-permissions">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Permissions" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="User#firstLoginPG" />
-
-				<execute macro="User#tearDownCP" />
-
-				<execute macro="Role#tearDownCP" />
-
-				<execute macro="Organization#tearDownCP" />
-
-				<execute macro="Site#tearDownCP" />
-
-				<execute macro="Page#tearDownPG" />
-
-				<execute macro="DMFolder#tearDownCP" />
-
-				<execute macro="DMDocument#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="AddDMDocumentRegRoleDefaultPermissions" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Permissions#setUpRegRolePG">
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="portletName" value="Documents and Media" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute function="AssertElementNotPresent" locator1="Toolbar#ADD" value1="Add" />
-	</command>
-
-	<command name="AddDMDocumentRegRoleDefinePermissions" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Permissions#setUpRegRolePG">
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="portletName" value="Documents and Media" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Permissions#definePermissionCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENTS_ADD_DOCUMENT_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Add Document" />
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMDocument#addPG">
-			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="Document_1.doc" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Permissions#removePermissionCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENTS_ADD_DOCUMENT_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Add Document" />
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute function="AssertElementNotPresent" locator1="Toolbar#ADD" value1="Add" />
-	</command>
-
-	<command name="AddDMDocumentSiteMemberRoleInline" priority="4">
-		<execute macro="Permissions#setUpSiteMemberRoleLoginUserPG">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="portletName" value="Documents and Media" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteURLTemp" value="true" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="DMDocument#addPG">
-			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="Document_1.doc" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="DMDocument#tearDownCP">
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="siteScopeName" value="Site Name" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoDocumentsAndMediaHomeFolderPG">
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteURLTemp" value="true" />
-		</execute>
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="INLINE_PERMISSIONS_ADD_DOCUMENT_CHECKBOX" />
-			<var name="roleTitle" value="Site Member" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#clickPortletPlusIconPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute function="AssertElementNotPresent" locator1="MenuItem#BASIC_DOCUMENT" value1="Basic Document" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoDocumentsAndMediaHomeFolderPG">
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteURLTemp" value="true" />
-		</execute>
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="INLINE_PERMISSIONS_ADD_DOCUMENT_CHECKBOX" />
-			<var name="roleTitle" value="Site Member" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="DMDocument#addPG">
-			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="Document_2.doc" />
-		</execute>
-	</command>
-
-	<command name="AddDMDocumentSiteRole" priority="4">
-		<execute macro="Permissions#setUpSiteRoleLoginUserPG">
-			<var name="page" value="Public Pages" />
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="portletName" value="Documents and Media" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="siteName" value="Site Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoDocumentsAndMediaHomeFolderPG">
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="siteName" value="Site Name" />
-			<var name="siteURLTemp" value="true" />
-		</execute>
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="INLINE_PERMISSIONS_ADD_DOCUMENT_CHECKBOX" />
-			<var name="roleTitle" value="Site Member" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#clickPortletPlusIconPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute function="AssertElementNotPresent" locator1="MenuItem#BASIC_DOCUMENT" value1="Basic Document" />
-
-		<execute macro="Permissions#definePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENTS_ADD_DOCUMENT_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Add Document" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="DMDocument#addPG">
-			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="Document_1.doc" />
-		</execute>
-
-		<execute macro="Permissions#removePermissionLoginUserCP">
-			<var name="permissionDefinitionKey" value="SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENTS_ADD_DOCUMENT_CHECKBOX" />
-			<var name="permissionDefinitionValue" value="Add Document" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#clickPortletPlusIconPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute function="AssertElementNotPresent" locator1="MenuItem#BASIC_DOCUMENT" value1="Basic Document" />
-	</command>
-
-	<command name="DeleteDMFolderRegRoleInline" priority="4">
-		<execute macro="Permissions#setUpRegRoleLoginUserPG">
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="portletName" value="Documents and Media" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Permissions#addDMFolderLoginUserPG">
-			<var name="dmFolderDescription" value="DM Folder Description" />
-			<var name="dmFolderName" value="DM Folder Name" />
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<var name="key_dmFolderName" value="DM Folder Name" />
-
-		<execute function="AssertElementNotPresent" locator1="DocumentsAndMedia#ICON_FOLDER_CHECKBOX" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMDocument#enableActionsMenuOnPortlet" />
-
-		<execute macro="PermissionsInline#gotoDMFolderPG">
-			<var name="dmFolderName" value="DM Folder Name" />
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_DELETE_CHECKBOX" />
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMFolder#deletePG">
-			<var name="dmFolderName" value="DM Folder Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="Permissions#addDMFolderLoginUserPG">
-			<var name="dmFolderDescription" value="DM Folder Description" />
-			<var name="dmFolderName" value="DM Folder Name" />
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoDMFolderPG">
-			<var name="dmFolderName" value="DM Folder Name" />
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_DELETE_CHECKBOX" />
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<var name="key_dmFolderName" value="DM Folder Name" />
-
-		<execute function="AssertElementNotPresent" locator1="DocumentsAndMedia#ICON_FOLDER_CHECKBOX" />
-	</command>
-
-	<command name="ViewDMFolderGuestInline" priority="4">
-		<execute macro="Page#add">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Permissions#addDMFolderLoginUserPG">
-			<var name="dmFolderDescription" value="DM Folder Description" />
-			<var name="dmFolderName" value="DM Folder Name" />
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<var name="key_dmFolderName" value="DM Folder Name" />
-
-		<execute function="AssertClick" locator1="DocumentsAndMedia#ICON_FOLDER_TITLE" value1="DM Folder Name" />
-
-		<var method="StringUtil#upperCase('DM Folder Name')" name="dmFolderNameUpperCase" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="DocumentsAndMedia#BREADCRUMB_FOLDER_NAME" value1="${dmFolderNameUpperCase}" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMDocument#enableActionsMenuOnPortlet" />
-
-		<execute macro="PermissionsInline#gotoDMFolderPG">
-			<var name="dmFolderName" value="DM Folder Name" />
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_VIEW_CHECKBOX" />
-			<var name="roleTitle" value="Guest" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="DMPortlet#viewDefaultPG" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="PermissionsInline#gotoDMFolderPG">
-			<var name="dmFolderName" value="DM Folder Name" />
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_VIEW_CHECKBOX" />
-			<var name="roleTitle" value="Guest" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
-
-		<var name="key_dmFolderName" value="DM Folder Name" />
-
-		<execute function="AssertClick" locator1="DocumentsAndMedia#ICON_FOLDER_TITLE" value1="DM Folder Name" />
-
-		<var method="StringUtil#upperCase('DM Folder Name')" name="dmFolderNameUpperCase" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="DocumentsAndMedia#BREADCRUMB_FOLDER_NAME" value1="${dmFolderNameUpperCase}" />
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Permissions|
+
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+
+Scenario: Add DM Document Reg Role Default Permissions
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Permissions set Up Reg Role PG
+		|pageName|Documents and Media Page|
+		|portletName|Documents and Media|
+		|roleTitle|Regrole Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	Then AssertElementNotPresent the value 'Add' at locator 'Toolbar#ADD'
+
+Scenario: Add DM Document Reg Role Define Permissions
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Permissions set Up Reg Role PG
+		|pageName|Documents and Media Page|
+		|portletName|Documents and Media|
+		|roleTitle|Regrole Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And Permissions define Permission CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENTS_ADD_DOCUMENT_CHECKBOX|
+		|permissionDefinitionValue|Add Document|
+		|roleTitle|Regrole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMDocument add PG
+		|dmDocumentFile|Document_1.doc|
+		|dmDocumentTitle|Document_1.doc|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Permissions remove Permission CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENTS_ADD_DOCUMENT_CHECKBOX|
+		|permissionDefinitionValue|Add Document|
+		|roleTitle|Regrole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	Then AssertElementNotPresent the value 'Add' at locator 'Toolbar#ADD'
+
+Scenario: Add DM Document Site Member Role Inline
+Priority: 4
+	Given Permissions set Up Site Member Role Login User PG
+		|page|Public Pages|
+		|pageName|Documents and Media Page|
+		|portletName|Documents and Media|
+		|siteName|Site Name|
+		|siteURLTemp|true|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+		|userScreenName|usersn|
+	When Navigator goto Site Page
+		|pageName|Documents and Media Page|
+		|siteName|Site Name|
+	And DMDocument add PG
+		|dmDocumentFile|Document_1.doc|
+		|dmDocumentTitle|Document_1.doc|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And DMDocument tear Down CP
+		|pageName|Documents and Media Page|
+		|siteScopeName|Site Name|
+	And PermissionsInline goto Documents And Media Home Folder PG
+		|pageName|Documents and Media Page|
+		|siteName|Site Name|
+		|siteURLTemp|true|
+	And Role remove Permission PG
+		|permissionDefinitionKey|INLINE_PERMISSIONS_ADD_DOCUMENT_CHECKBOX|
+		|roleTitle|Site Member|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Documents and Media Page|
+		|siteName|Site Name|
+	And Portlet click Portlet Plus Icon PG
+		|portletName|Documents and Media|
+	And AssertElementNotPresent the value 'Basic Document' at locator 'MenuItem#BASIC_DOCUMENT'
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And PermissionsInline goto Documents And Media Home Folder PG
+		|pageName|Documents and Media Page|
+		|siteName|Site Name|
+		|siteURLTemp|true|
+	And Role define Permission PG
+		|permissionDefinitionKey|INLINE_PERMISSIONS_ADD_DOCUMENT_CHECKBOX|
+		|roleTitle|Site Member|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Documents and Media Page|
+		|siteName|Site Name|
+	Then DMDocument add PG
+		|dmDocumentFile|Document_1.doc|
+		|dmDocumentTitle|Document_2.doc|
+
+Scenario: Add DM Document Site Role
+Priority: 4
+	Given Permissions set Up Site Role Login User PG
+		|page|Public Pages|
+		|pageName|Documents and Media Page|
+		|portletName|Documents and Media|
+		|roleTitle|Roles Siterole Name|
+		|roleType|Site|
+		|siteName|Site Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+		|userScreenName|usersn|
+	When PermissionsInline goto Documents And Media Home Folder PG
+		|pageName|Documents and Media Page|
+		|siteName|Site Name|
+		|siteURLTemp|true|
+	And Role remove Permission PG
+		|permissionDefinitionKey|INLINE_PERMISSIONS_ADD_DOCUMENT_CHECKBOX|
+		|roleTitle|Site Member|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Documents and Media Page|
+		|siteName|Site Name|
+	And Portlet click Portlet Plus Icon PG
+		|portletName|Documents and Media|
+	And AssertElementNotPresent the value 'Basic Document' at locator 'MenuItem#BASIC_DOCUMENT'
+	And Permissions define Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENTS_ADD_DOCUMENT_CHECKBOX|
+		|permissionDefinitionValue|Add Document|
+		|roleTitle|Roles Siterole Name|
+		|roleType|Site|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Documents and Media Page|
+		|siteName|Site Name|
+	And DMDocument add PG
+		|dmDocumentFile|Document_1.doc|
+		|dmDocumentTitle|Document_1.doc|
+	And Permissions remove Permission Login User CP
+		|permissionDefinitionKey|SITE_ADMIN_CONTENT_DOCUMENTS_AND_MEDIA_RESOURCE_PERMISSIONS_DOCUMENTS_ADD_DOCUMENT_CHECKBOX|
+		|permissionDefinitionValue|Add Document|
+		|roleTitle|Roles Siterole Name|
+		|roleType|Site|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Site Page
+		|pageName|Documents and Media Page|
+		|siteName|Site Name|
+	And Portlet click Portlet Plus Icon PG
+		|portletName|Documents and Media|
+	Then AssertElementNotPresent the value 'Basic Document' at locator 'MenuItem#BASIC_DOCUMENT'
+
+Scenario: Delete DM Folder Reg Role Inline
+Priority: 4
+	Given Permissions set Up Reg Role Login User PG
+		|pageName|Documents and Media Page|
+		|portletName|Documents and Media|
+		|roleTitle|Regrole Name|
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+		|userScreenName|usersn|
+	When Permissions add DM Folder Login User PG
+		|dmFolderDescription|DM Folder Description|
+		|dmFolderName|DM Folder Name|
+		|pageName|Documents and Media Page|
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And these variables
+		|key_dmFolderName|DM Folder Name|
+	And AssertElementNotPresent at locator 'DocumentsAndMedia#ICON_FOLDER_CHECKBOX'
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMDocument enable Actions Menu On Portlet
+	And PermissionsInline goto DM Folder PG
+		|dmFolderName|DM Folder Name|
+		|pageName|Documents and Media Page|
+	And Role define Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_DELETE_CHECKBOX|
+		|roleTitle|Regrole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMFolder delete PG
+		|dmFolderName|DM Folder Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And Permissions add DM Folder Login User PG
+		|dmFolderDescription|DM Folder Description|
+		|dmFolderName|DM Folder Name|
+		|pageName|Documents and Media Page|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And PermissionsInline goto DM Folder PG
+		|dmFolderName|DM Folder Name|
+		|pageName|Documents and Media Page|
+	And Role remove Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_DELETE_CHECKBOX|
+		|roleTitle|Regrole Name|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And these variables
+		|key_dmFolderName|DM Folder Name|
+	Then AssertElementNotPresent at locator 'DocumentsAndMedia#ICON_FOLDER_CHECKBOX'
+
+Scenario: View DM Folder Guest Inline
+Priority: 4
+	Given Page add
+		|pageName|Documents and Media Page|
+	When Portlet add PG
+		|pageName|Documents and Media Page|
+		|portletName|Documents and Media|
+	And Permissions add DM Folder Login User PG
+		|dmFolderDescription|DM Folder Description|
+		|dmFolderName|DM Folder Name|
+		|pageName|Documents and Media Page|
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And these variables
+		|key_dmFolderName|DM Folder Name|
+	And AssertClick the value 'DM Folder Name' at locator 'DocumentsAndMedia#ICON_FOLDER_TITLE'
+	And these variables
+		|dmFolderNameUpperCase|StringUtil#upperCase('DM Folder Name')|
+	And AssertTextEquals assert Partial Text the value '${dmFolderNameUpperCase}' at locator 'DocumentsAndMedia#BREADCRUMB_FOLDER_NAME'
+	And User login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+		|userScreenName|usersn|
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMDocument enable Actions Menu On Portlet
+	And PermissionsInline goto DM Folder PG
+		|dmFolderName|DM Folder Name|
+		|pageName|Documents and Media Page|
+	And Role remove Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|Guest|
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And DMPortlet view Default PG
+	And User login PG
+		|password|test|
+		|userEmailAddress|test@liferay.com|
+		|userScreenName|usersn|
+	And PermissionsInline goto DM Folder PG
+		|dmFolderName|DM Folder Name|
+		|pageName|Documents and Media Page|
+	And Role define Permission PG
+		|permissionDefinitionKey|CONTENT_PERMISSIONS_VIEW_CHECKBOX|
+		|roleTitle|Guest|
+	And User logout PG
+	And Navigator goto Page
+		|pageName|Documents and Media Page|
+	And these variables
+		|key_dmFolderName|DM Folder Name|
+	And AssertClick the value 'DM Folder Name' at locator 'DocumentsAndMedia#ICON_FOLDER_TITLE'
+	And these variables
+		|dmFolderNameUpperCase|StringUtil#upperCase('DM Folder Name')|
+	Then AssertTextEquals assert Partial Text the value '${dmFolderNameUpperCase}' at locator 'DocumentsAndMedia#BREADCRUMB_FOLDER_NAME'

@@ -1,88 +1,54 @@
-<definition component-name="portal-business-productivity-ee">
-	<property name="portal.release" value="false" />
-	<property name="portal.upstream" value="true" />
-	<property name="test.run.environment" value="EE" />
-	<property name="testray.main.component.name" value="Rules" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|false|
+		|portal.upstream|true|
+		|test.run.environment|EE|
+		|testray.main.component.name|Rules|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Page#tearDownPG" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="ViewWebContentInSampleDrools" priority="4">
-		<property name="osgi.modules.includes" value="portal-rules-engine-sample-web" />
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#gotoEditCP">
-			<var name="userScreenName" value="test" />
-		</execute>
-
-		<execute macro="Organization#gotoIdentificationCP" />
-
-		<execute macro="Organization#addAddressCP">
-			<var name="orgAddressCity" value="Diamond Bar" />
-			<var name="orgAddressCountry" value="United States" />
-			<var name="orgAddressPostal" value="91765" />
-			<var name="orgAddressRegion" value="California" />
-			<var name="orgAddressStreet" value="1400 Montefino Ave" />
-			<var name="orgAddressType" value="Personal" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Tags" />
-		</execute>
-
-		<execute macro="Tag#addCP">
-			<var name="tagName" value="americas" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addWithTagCP">
-			<var name="tagNameList" value="americas" />
-			<var name="webContentContent" value="Web Content Content" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Drools Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Drools Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Sample Drools" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="Web Content Content" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-	</command>
-</definition>
+Scenario: View Web Content In Sample Drools
+Priority: 4
+	Given these properties
+		|osgi.modules.includes|portal-rules-engine-sample-web|
+	When ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User goto Edit CP
+		|userScreenName|test|
+	And Organization goto Identification CP
+	And Organization add Address CP
+		|orgAddressCity|Diamond Bar|
+		|orgAddressCountry|United States|
+		|orgAddressPostal|91765|
+		|orgAddressRegion|California|
+		|orgAddressStreet|1400 Montefino Ave|
+		|orgAddressType|Personal|
+	And ProductMenu goto Sites Content
+		|portlet|Tags|
+	And Tag add CP
+		|tagName|americas|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Tag CP
+		|tagNameList|americas|
+		|webContentContent|Web Content Content|
+		|webContentTitle|Web Content Title|
+	And Navigator open URL
+	And Page add
+		|pageName|Drools Page|
+	And Navigator goto Page
+		|pageName|Drools Page|
+	And Portlet add PG
+		|portletName|Sample Drools|
+	Then WebContent view PG Via WCD
+		|webContentContent|Web Content Content|
+		|webContentTitle|Web Content Title|

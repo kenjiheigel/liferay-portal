@@ -1,19 +1,18 @@
-<definition component-name="portal-plugins-deployment">
-	<property name="testray.main.component.name" value="Plugin Installer" />
+Feature:
 
-	<set-up>
-		<execute macro="Portlet#shutdownServer" />
+Background: This executes once per feature file
+	Given these properties
+		|testray.main.component.name|Plugin Installer|
 
-		<execute macro="Portlet#startServer" />
+Set Up: This executes before each scenario 
+	Given Portlet shutdown Server
+	When Portlet start Server
+	Then User first Login PG
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
 
-	<command name="MarketplacePortletContentTargetingSmoke" priority="4">
-		<property name="extraapps.plugins.includes" value="content-targeting" />
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-	</command>
-</definition>
+Scenario: Marketplace Portlet Content Targeting Smoke
+Priority: 4
+	Given these properties
+		|extraapps.plugins.includes|content-targeting|
+	When ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|

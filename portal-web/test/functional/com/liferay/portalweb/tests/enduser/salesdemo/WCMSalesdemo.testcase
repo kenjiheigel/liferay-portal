@@ -1,157 +1,91 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Web Content Display" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Web Content Display|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="User#tearDownCP" />
+Scenario: I Frame Demo
+Priority: 4
+	Given these properties
+		|testray.component.names|IFrame Portlet|
+	When Page add
+		|columnName|1 Column|
+		|pageName|IFrame Page|
+		|sitePageType|Empty Page|
+	And Navigator goto Page
+		|pageName|IFrame Page|
+	And Portlet add PG
+		|portletName|IFrame|
+	And Portlet goto Portlet Options
+		|portletOption|Configuration|
+	And IFrame add CP
+		|sourceURL|http://iscaliforniaonfire.com|
+	And Navigator goto Page
+		|pageName|IFrame Page|
+	And SelectFrame at locator 'IFrame#IFRAME_PORTLET'
+	Then AssertTextEquals assert Partial Text the value 'updated' at locator 'Embedded#EMBEDDED_TEXT_UPDATED'
 
-				<execute macro="Site#tearDownCP" />
-
-				<execute macro="Page#tearDownPG" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="IFrameDemo" priority="4">
-		<property name="testray.component.names" value="IFrame Portlet" />
-
-		<execute macro="Page#add">
-			<var name="columnName" value="1 Column" />
-			<var name="pageName" value="IFrame Page" />
-			<var name="sitePageType" value="Empty Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="IFrame Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="IFrame" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="IFrame#addCP">
-			<var name="sourceURL" value="http://iscaliforniaonfire.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="IFrame Page" />
-		</execute>
-
-		<execute function="SelectFrame" locator1="IFrame#IFRAME_PORTLET" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Embedded#EMBEDDED_TEXT_UPDATED" value1="updated" />
-	</command>
-
-	<command name="SalesDemo" priority="4">
-		<property name="testray.component.names" value="Web Content Administration,Web Content Display" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="DHS Content" />
-			<var name="webContentTitle" value="DHS Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Welcome" />
-		</execute>
-
-		<execute macro="Page#editPageLayoutColumn">
-			<var name="columnName" value="2 Columns (50/50)" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Welcome" />
-		</execute>
-
-		<execute macro="Content#addPG">
-			<var name="assetTitle" value="DHS Title" />
-			<var name="webContentContent" value="DHS Content" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="DHS Content" />
-			<var name="webContentTitle" value="DHS Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelUsers">
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
-
-		<execute macro="WebContent#viewNoEditWCViaWCD" />
-
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-			<var name="webContentContent" value="DHS Content" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Sales Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Sales Page" />
-		</execute>
-
-		<execute macro="MobileDevice#previewPG">
-			<var name="deviceType" value="tablet" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="MobileDevice#previewPG">
-			<var name="deviceType" value="smartphone" />
-		</execute>
-	</command>
-</definition>
+Scenario: Sales Demo
+Priority: 4
+	Given these properties
+		|testray.component.names|Web Content Administration,Web Content Display|
+	When Navigator open URL
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|DHS Content|
+		|webContentTitle|DHS Title|
+	And PortletEntry publish
+	And Navigator open URL
+	And SitePageNavigator goto Edit Page
+		|page|Welcome|
+	And Page edit Page Layout Column
+		|columnName|2 Columns (50/50)|
+	And Navigator goto Page
+		|pageName|Welcome|
+	And Content add PG
+		|assetTitle|DHS Title|
+		|webContentContent|DHS Content|
+	And WebContent view PG Via WCD
+		|webContentContent|DHS Content|
+		|webContentTitle|DHS Title|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User add CP
+		|userEmailAddress|userea@liferay.com|
+		|userFirstName|userfn|
+		|userLastName|userln|
+		|userScreenName|usersn|
+	And ProductMenu goto Control Panel Users
+		|portlet|Users and Organizations|
+	And User edit Password CP
+		|userEmailAddress|userea@liferay.com|
+		|userScreenName|usersn|
+	And User logout And Login PG
+		|userLoginEmailAddress|userea@liferay.com|
+		|userLoginFullName|userfn userln|
+	And WebContent view No Edit WC Via WCD
+	And User logout And Login PG
+		|userLoginEmailAddress|test@liferay.com|
+		|userLoginFullName|Test Test|
+		|webContentContent|DHS Content|
+	And Page add
+		|pageName|Sales Page|
+	And Navigator goto Page
+		|pageName|Sales Page|
+	And MobileDevice preview PG
+		|deviceType|tablet|
+	And Navigator open URL
+	Then MobileDevice preview PG
+		|deviceType|smartphone|

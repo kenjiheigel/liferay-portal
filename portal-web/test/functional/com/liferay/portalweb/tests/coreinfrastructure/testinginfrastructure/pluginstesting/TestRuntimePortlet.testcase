@@ -1,34 +1,28 @@
-<definition component-name="portal-test-plugins">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Security" />
-	<property name="portlet.plugins.includes" value="test-runtime-action-portlet,test-runtime-parent-portlet" />
+Feature:
 
-	<set-up>
-		<execute macro="User#firstLoginPG" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Security|
+		|portlet.plugins.includes|test-runtime-action-portlet,test-runtime-parent-portlet|
 
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Runtime Page" />
-		</execute>
-	</set-up>
+Set Up: This executes before each scenario 
+	Given User first Login PG
+	When Page add
+		|pageName|Test Runtime Page|
 
-	<tear-down>
-		<execute macro="Page#tearDownPG" />
-	</tear-down>
+Tear Down: This executes after each scenario 
+	Given Page tear Down PG
 
-	<command description="This is a test case for LPS-56769." name="Smoke" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Runtime Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Test Runtime Parent" />
-		</execute>
-
-		<execute function="Click" locator1="Button#EXECUTE" />
-
-		<execute macro="Alert#viewSuccessMessage" />
-	</command>
-</definition>
+Scenario: Smoke
+Description: This is a test case for LPS-56769.
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Navigator goto Page
+		|pageName|Test Runtime Page|
+	And Portlet add PG
+		|portletName|Test Runtime Parent|
+	And Click at locator 'Button#EXECUTE'
+	Then Alert view Success Message

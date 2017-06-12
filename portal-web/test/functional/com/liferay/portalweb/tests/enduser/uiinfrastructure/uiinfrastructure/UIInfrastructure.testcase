@@ -1,55 +1,43 @@
-<definition component-name="portal-user-interface">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.component.names" value="Mobile Web" />
-	<property name="testray.main.component.name" value="User Interface" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.component.names|Mobile Web|
+		|testray.main.component.name|User Interface|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-		</if>
-	</tear-down>
+Scenario: Preview Custom Default
+Priority: 3
+	Given MobileDevice preview PG
+		|deviceType|custom|
 
-	<command name="PreviewCustomDefault" priority="3">
-		<execute macro="MobileDevice#previewPG">
-			<var name="deviceType" value="custom" />
-		</execute>
-	</command>
+Scenario: Preview Custom Height Width
+Priority: 3
+	Given MobileDevice preview PG
+		|deviceType|custom|
+		|height|500|
+		|width|500|
 
-	<command name="PreviewCustomHeightWidth" priority="3">
-		<execute macro="MobileDevice#previewPG">
-			<var name="deviceType" value="custom" />
-			<var name="height" value="500" />
-			<var name="width" value="500" />
-		</execute>
-	</command>
+Scenario: Preview Desktop
+Priority: 3
+	Given MobileDevice preview PG
+		|deviceType|desktop|
 
-	<command name="PreviewDesktop" priority="3">
-		<execute macro="MobileDevice#previewPG">
-			<var name="deviceType" value="desktop" />
-		</execute>
-	</command>
+Scenario: Preview Smartphone
+Priority: 3
+	Given MobileDevice preview PG
+		|deviceType|smartphone|
 
-	<command name="PreviewSmartphone" priority="3">
-		<execute macro="MobileDevice#previewPG">
-			<var name="deviceType" value="smartphone" />
-		</execute>
-	</command>
-
-	<command name="PreviewTablet" priority="3">
-		<execute macro="MobileDevice#previewPG">
-			<var name="deviceType" value="tablet" />
-		</execute>
-	</command>
-</definition>
+Scenario: Preview Tablet
+Priority: 3
+	Given MobileDevice preview PG
+		|deviceType|tablet|

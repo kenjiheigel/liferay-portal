@@ -1,109 +1,67 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.component.names" value="Site Pages Administration" />
-	<property name="testray.main.component.name" value="Site Pages Administration" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.component.names|Site Pages Administration|
+		|testray.main.component.name|Site Pages Administration|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="WebContent#tearDownCP" />
+Scenario: Add Page From Existing Page
+Priority: 3
+	Given Navigator open URL
+	When Page add
+		|pageName|Site Page|
+	And Navigator goto Page
+		|pageName|Site Page|
+	And Page add
+		|pageName|Site Page Name|
+		|pageTemplateName|Content Display Page|
+	And Navigator goto Page
+		|pageName|Site Page Name|
+	And Portlet view Specific PG
+		|portletName|Tags Navigation|
+	And Portlet view Specific PG
+		|portletName|Categories Navigation|
+	Then Portlet view Specific PG
+		|portletName|Asset Publisher|
 
-				<execute macro="Page#tearDownPG" />
-			</else>
-		</if>
-	</tear-down>
+Scenario: Delete Pages
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Page add
+		|pageName|Page1|
+	And Page add
+		|pageName|Page2|
+	And Page delete PG
+		|pageName|Page1|
+	And Page view Deleted Page
+		|pageName|Page1|
+	And Navigator open URL
+	And Page delete Via X
+		|pageName|Page2|
+	Then Page view Deleted Page
+		|pageName|Page2|
 
-	<command name="AddPageFromExistingPage" priority="3">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Site Page" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page Name" />
-			<var name="pageTemplateName" value="Content Display Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Site Page Name" />
-		</execute>
-
-		<for list="Tags Navigation,Categories Navigation,Asset Publisher" param="portletName">
-			<execute macro="Portlet#viewSpecificPG">
-				<var name="portletName" value="${portletName}" />
-			</execute>
-		</for>
-	</command>
-
-	<command name="DeletePages" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Page1" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Page2" />
-		</execute>
-
-		<execute macro="Page#deletePG">
-			<var name="pageName" value="Page1" />
-		</execute>
-
-		<execute macro="Page#viewDeletedPage">
-			<var name="pageName" value="Page1" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Page#deleteViaX">
-			<var name="pageName" value="Page2" />
-		</execute>
-
-		<execute macro="Page#viewDeletedPage">
-			<var name="pageName" value="Page2" />
-		</execute>
-	</command>
-
-	<command name="EditSitePage" priority="4">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Site Page" />
-		</execute>
-
-		<execute macro="Page#editName">
-			<var name="pageNameEdit" value="Site Page Edit" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Site Page Edit" />
-		</execute>
-
-		<execute macro="Page#view">
-			<var name="pageName" value="Site Page Edit" />
-		</execute>
-	</command>
-</definition>
+Scenario: Edit Site Page
+Priority: 4
+	Given Navigator open URL
+	When Page add
+		|pageName|Site Page|
+	And SitePageNavigator goto Edit Page
+		|page|Site Page|
+	And Page edit Name
+		|pageNameEdit|Site Page Edit|
+	And Navigator goto Page
+		|pageName|Site Page Edit|
+	Then Page view
+		|pageName|Site Page Edit|
