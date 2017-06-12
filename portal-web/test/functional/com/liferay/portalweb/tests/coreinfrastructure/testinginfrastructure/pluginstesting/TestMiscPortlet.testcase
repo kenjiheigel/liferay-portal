@@ -1,29 +1,25 @@
-<definition component-name="portal-acceptance">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Test Plugins" />
-	<property name="portlet.plugins.includes" value="test-misc-portlet" />
+Feature:
 
-	<set-up>
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Test Plugins|
+		|portlet.plugins.includes|test-misc-portlet|
 
-	<tear-down>
-		<execute macro="Page#tearDownPG" />
-	</tear-down>
+Set Up: This executes before each scenario 
+	Given User first Login PG
 
-	<command name="ViewTestMiscPortlet" priority="5">
-		<property name="portal.acceptance" value="true" />
+Tear Down: This executes after each scenario 
+	Given Page tear Down PG
 
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Misc Localized Title Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Test Misc Localized Title" />
-		</execute>
-
-		<execute function="AssertVisible" locator1="TestBlob#TEST_PORTLET_BODY_PASSED" />
-		<execute function="AssertTextNotPresent" value1="FAILED" />
-	</command>
-</definition>
+Scenario: View Test Misc Portlet
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Page add
+		|pageName|Test Misc Localized Title Page|
+	And Portlet add PG
+		|portletName|Test Misc Localized Title|
+	And AssertVisible at locator 'TestBlob#TEST_PORTLET_BODY_PASSED'
+	Then AssertTextNotPresent the value 'FAILED'

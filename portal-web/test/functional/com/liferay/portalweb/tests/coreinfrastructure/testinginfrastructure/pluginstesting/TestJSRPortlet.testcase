@@ -1,41 +1,31 @@
-<definition component-name="portal-acceptance">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Test Plugins" />
-	<property name="portlet.plugins.includes" value="test-jsr-286-plt-26-6-portlet" />
+Feature:
 
-	<set-up>
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Test Plugins|
+		|portlet.plugins.includes|test-jsr-286-plt-26-6-portlet|
 
-	<tear-down>
-		<execute macro="Page#tearDownPG" />
-	</tear-down>
+Set Up: This executes before each scenario 
+	Given User first Login PG
 
-	<command name="ViewJSR" priority="4">
-		<execute macro="Page#add">
-			<var name="pageName" value="Test JSR 286 PLT.26.6 Page" />
-		</execute>
+Tear Down: This executes after each scenario 
+	Given Page tear Down PG
 
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Test JSR 286 PLT.26.6" />
-		</execute>
-
-		<execute function="Click" locator1="TestJSR#TEST_ACTION_URL" />
-		<execute function="AssertElementNotPresent" locator1="TestJSR#TEST_PORTLET_BODY_FAILED" value1="FAILED" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test JSR 286 PLT.26.6 Page" />
-		</execute>
-
-		<execute function="Click" locator1="TestJSR#TEST_RENDER_URL" />
-		<execute function="AssertElementNotPresent" locator1="TestJSR#TEST_PORTLET_BODY_FAILED" value1="FAILED" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test JSR 286 PLT.26.6 Page" />
-		</execute>
-
-		<execute function="Click" locator1="TestJSR#TEST_RESOURCE_URL" />
-		<execute function="AssertElementNotPresent" locator1="TestJSR#TEST_PORTLET_BODY_FAILED" value1="FAILED" />
-	</command>
-</definition>
+Scenario: View JSR
+Priority: 4
+	Given Page add
+		|pageName|Test JSR 286 PLT.26.6 Page|
+	When Portlet add PG
+		|portletName|Test JSR 286 PLT.26.6|
+	And Click at locator 'TestJSR#TEST_ACTION_URL'
+	And AssertElementNotPresent the value 'FAILED' at locator 'TestJSR#TEST_PORTLET_BODY_FAILED'
+	And Navigator goto Page
+		|pageName|Test JSR 286 PLT.26.6 Page|
+	And Click at locator 'TestJSR#TEST_RENDER_URL'
+	And AssertElementNotPresent the value 'FAILED' at locator 'TestJSR#TEST_PORTLET_BODY_FAILED'
+	And Navigator goto Page
+		|pageName|Test JSR 286 PLT.26.6 Page|
+	And Click at locator 'TestJSR#TEST_RESOURCE_URL'
+	Then AssertElementNotPresent the value 'FAILED' at locator 'TestJSR#TEST_PORTLET_BODY_FAILED'

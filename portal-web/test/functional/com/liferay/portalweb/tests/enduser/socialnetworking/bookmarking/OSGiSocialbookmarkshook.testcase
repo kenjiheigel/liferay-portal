@@ -1,21 +1,23 @@
-<definition component-name="portal-acceptance">
-	<property name="osgi.app.includes" value="social-bookmarks" />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="plugins.deployment.type" value="osgi" />
-	<property name="testray.main.component.name" value="Social Networking" />
+Feature:
 
-	<set-up>
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Background: This executes once per feature file
+	Given these properties
+		|osgi.app.includes|social-bookmarks|
+		|portal.release|true|
+		|portal.upstream|true|
+		|plugins.deployment.type|osgi|
+		|testray.main.component.name|Social Networking|
 
-	<command name="SocialBookmarksHookSmoke" priority="4">
-		<var name="appName" value="Social Bookmarks" />
-		<var name="portletName" value="social-bookmarks-hook" />
+Set Up: This executes before each scenario 
+	Given User first Login PG
 
-		<execute macro="OSGiSmoke#Smoke">
-			<var name="appName" value="${portletName}" />
-			<var name="portletName" value="${portletName}" />
-		</execute>
-	</command>
-</definition>
+
+Scenario: Social Bookmarks Hook Smoke
+Priority: 4
+	Given these variables
+		|appName|Social Bookmarks|
+	When these variables
+		|portletName|social-bookmarks-hook|
+	Then OSGiSmoke Smoke
+		|appName|${portletName}|
+		|portletName|${portletName}|

@@ -1,162 +1,105 @@
-<definition component-name="portal-acceptance">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Staging" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Staging|
 
-		<execute macro="User#firstLoginPG" />
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging activate Staging CP
+		|pageVersioningEnabled|true|
+		|siteName|Site Name|
+	Then Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
 
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
+Scenario: Add Event Repeat Daily
+Priority: 4
+	Given Staging add Event Repeat Daily
+		|scheduleTitleName|Event Daily Name|
+		|siteName|Site Name|
 
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
+Scenario: Add Page Variation
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Staging add Page Variation PG
+		|pageVariationName|Page Variation Name|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Staging view Page Variation PG
+		|pageVariationName|Page Variation Name|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And SitePageNavigator goto Edit Page
+		|page|Staging Test Page|
+	And Page add Friendly URL Localized PG
+		|friendlyUrlLocalized|de_DE|
+		|localizedFriendlyURL|/german|
+	And Page hide From Navigation Menu
+	And SitePageNavigator goto Edit Page
+		|page|Staging Test Page|
+	Then Page view Page Friendly URLPG
+		|friendlyUrlLocalized|de_DE|
+		|pageName|german|
 
-		<execute macro="Page#add">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
+Scenario: Add Page With Page Versioning Enabled
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Staging Page Versioning|
+		|pageStaging|true|
+		|siteName|Site Name|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Page Versioning|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Hello World|
+	And Staging mark As Ready For Publication
+	And ProductMenu goto Site
+		|site|Site Name|
+	And Navigator goto Staged View
+	And Staging goto Publish To Live
+	And Staging publish To Live
+	And Navigator goto Staged Site Page
+		|pageName|Staging Page Versioning|
+		|siteName|Site Name|
+	Then Portlet view Specific PG
+		|portletName|Hello World|
 
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#activateStagingCP">
-			<var name="pageVersioningEnabled" value="true" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="AddEventRepeatDaily" priority="4">
-		<execute macro="Staging#addEventRepeatDaily">
-			<var name="scheduleTitleName" value="Event Daily Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-	</command>
-
-	<command name="AddPageVariation" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Staging#addPageVariationPG">
-			<var name="pageVariationName" value="Page Variation Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#viewPageVariationPG">
-			<var name="pageVariationName" value="Page Variation Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Staging Test Page" />
-		</execute>
-
-		<execute macro="Page#addFriendlyURLLocalizedPG">
-			<var name="friendlyUrlLocalized" value="de_DE" />
-			<var name="localizedFriendlyURL" value="/german" />
-		</execute>
-
-		<execute macro="Page#hideFromNavigationMenu" />
-
-		<execute macro="SitePageNavigator#gotoEditPage">
-			<var name="page" value="Staging Test Page" />
-		</execute>
-
-		<execute macro="Page#viewPageFriendlyURLPG">
-			<var name="friendlyUrlLocalized" value="de_DE" />
-			<var name="pageName" value="german" />
-		</execute>
-	</command>
-
-	<command name="AddPageWithPageVersioningEnabled" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Staging Page Versioning" />
-			<var name="pageStaging" value="true" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Page Versioning" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Hello World" />
-		</execute>
-
-		<execute macro="Staging#markAsReadyForPublication" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedView" />
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#publishToLive" />
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Page Versioning" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#viewSpecificPG">
-			<var name="portletName" value="Hello World" />
-		</execute>
-	</command>
-
-	<command name="AddSitePagesVariation" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="Staging#addSitePagesVariationPG">
-			<var name="sitePagesVariationName" value="Site Pages Variation Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#viewSitePagesVariationPG">
-			<var name="sitePagesVariationName" value="Site Pages Variation Name" />
-		</execute>
-	</command>
-</definition>
+Scenario: Add Site Pages Variation
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When Staging add Site Pages Variation PG
+		|sitePagesVariationName|Site Pages Variation Name|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	Then Staging view Site Pages Variation PG
+		|sitePagesVariationName|Site Pages Variation Name|

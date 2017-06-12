@@ -1,45 +1,34 @@
-<definition component-name="portal-acceptance">
-	<property name="osgi.app.includes" value="loan-calculator" />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Util" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|osgi.app.includes|loan-calculator|
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Util|
 
-		<execute macro="User#firstLoginPG" />
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Loan Calculator Page|
+	And Navigator goto Page
+		|pageName|Loan Calculator Page|
+	Then Portlet add PG
+		|portletName|Loan Calculator|
 
-		<execute macro="Page#add">
-			<var name="pageName" value="Loan Calculator Page" />
-		</execute>
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Loan Calculator Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Loan Calculator" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="CalculateLoanAmounts" priority="2">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Loan Calculator Page" />
-		</execute>
-
-		<execute macro="LoanCalculator#calculatePG">
-			<var name="loanAmount" value="400,000" />
-			<var name="loanInterestPaid" value="526,421" />
-			<var name="loanInterestRate" value="10.00" />
-			<var name="loanMonthlyPayment" value="3,860" />
-			<var name="loanTotalPaid" value="926,421" />
-			<var name="loanYears" value="20" />
-		</execute>
-	</command>
-</definition>
+Scenario: Calculate Loan Amounts
+Priority: 2
+	Given Navigator goto Page
+		|pageName|Loan Calculator Page|
+	When LoanCalculator calculate PG
+		|loanAmount|400,000|
+		|loanInterestPaid|526,421|
+		|loanInterestRate|10.00|
+		|loanMonthlyPayment|3,860|
+		|loanTotalPaid|926,421|
+		|loanYears|20|

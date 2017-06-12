@@ -1,37 +1,29 @@
-<definition component-name="portal-acceptance">
-	<property name="osgi.app.includes" value="my-subscriptions" />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="plugins.deployment.type" value="osgi" />
-	<property name="testray.main.component.name" value="My Subscriptions" />
+Feature:
 
-	<set-up>
-		<execute macro="User#firstLoginPG" />
+Background: This executes once per feature file
+	Given these properties
+		|osgi.app.includes|my-subscriptions|
+		|portal.release|true|
+		|portal.upstream|true|
+		|plugins.deployment.type|osgi|
+		|testray.main.component.name|My Subscriptions|
 
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page" />
-		</execute>
-	</set-up>
+Set Up: This executes before each scenario 
+	Given User first Login PG
+	When Page add
+		|pageName|Test Page|
 
-	<tear-down>
-		<execute macro="Page#tearDownPG" />
-	</tear-down>
+Tear Down: This executes after each scenario 
+	Given Page tear Down PG
 
-	<command name="MySubscriptionsPortletSmoke" priority="4">
-		<var name="appName" value="My Subscriptions" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="My Subscriptions" />
-		</execute>
-
-		<execute macro="Page#gotoMyAccount">
-			<var name="portletName" value="My Subscriptions" />
-		</execute>
-
-		<execute function="AntCommand#antCommand" locator1="build-test.xml" value1="remove-plugin -Dplugin.name=my-subscriptions-portlet" />
-	</command>
-</definition>
+Scenario: My Subscriptions Portlet Smoke
+Priority: 4
+	Given these variables
+		|appName|My Subscriptions|
+	When Navigator goto Page
+		|pageName|Test Page|
+	And Portlet add PG
+		|portletName|My Subscriptions|
+	And Page goto My Account
+		|portletName|My Subscriptions|
+	Then AntCommand ant Command the value 'remove-plugin -Dplugin.name=my-subscriptions-portlet' at locator 'build-test.xml'

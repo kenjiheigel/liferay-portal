@@ -1,41 +1,30 @@
-<definition component-name="portal-acceptance">
-	<property name="osgi.app.includes" value="network-utilities" />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Util" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|osgi.app.includes|network-utilities|
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Util|
 
-		<execute macro="User#firstLoginPG" />
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Network Utilities Page|
+	And Navigator goto Page
+		|pageName|Network Utilities Page|
+	Then Portlet add PG
+		|portletName|Network Utilities|
 
-		<execute macro="Page#add">
-			<var name="pageName" value="Network Utilities Page" />
-		</execute>
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Network Utilities Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Network Utilities" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="SearchDNSDomain" priority="2">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Network Utilities Page" />
-		</execute>
-
-		<execute macro="NetworkUtilities#searchPG">
-			<var name="dnsDomain" value="" />
-			<var name="networkDomain" value="localhost" />
-		</execute>
-	</command>
-</definition>
+Scenario: Search DNS Domain
+Priority: 2
+	Given Navigator goto Page
+		|pageName|Network Utilities Page|
+	When NetworkUtilities search PG
+		|dnsDomain||
+		|networkDomain|localhost|

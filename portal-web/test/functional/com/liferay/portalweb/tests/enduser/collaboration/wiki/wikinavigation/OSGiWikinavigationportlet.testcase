@@ -1,40 +1,30 @@
-<definition component-name="portal-acceptance">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="plugins.deployment.type" value="osgi" />
-	<property name="testray.main.component.name" value="Wiki" />
+Feature:
 
-	<set-up>
-		<execute macro="User#firstLoginPG" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|plugins.deployment.type|osgi|
+		|testray.main.component.name|Wiki|
 
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page" />
-		</execute>
-	</set-up>
+Set Up: This executes before each scenario 
+	Given User first Login PG
+	When Page add
+		|pageName|Test Page|
 
-	<tear-down>
-		<execute macro="Page#tearDownPG" />
-	</tear-down>
+Tear Down: This executes after each scenario 
+	Given Page tear Down PG
 
-	<command name="WikiNavigationPortletSmoke" priority="4">
-		<var name="appName" value="Wiki Navigation" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Page Menu" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Tree Menu" />
-		</execute>
-
-		<execute function="AntCommand#antCommand" locator1="build-test.xml" value1="remove-plugin -Dplugin.name=wiki-navigation-portlet" />
-	</command>
-</definition>
+Scenario: Wiki Navigation Portlet Smoke
+Priority: 4
+	Given these variables
+		|appName|Wiki Navigation|
+	When Navigator goto Page
+		|pageName|Test Page|
+	And Portlet add PG
+		|portletName|Page Menu|
+	And Navigator goto Page
+		|pageName|Test Page|
+	And Portlet add PG
+		|portletName|Tree Menu|
+	Then AntCommand ant Command the value 'remove-plugin -Dplugin.name=wiki-navigation-portlet' at locator 'build-test.xml'

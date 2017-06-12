@@ -1,41 +1,30 @@
-<definition component-name="portal-acceptance">
-	<property name="osgi.app.includes" value="amazon-rankings" />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Util" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|osgi.app.includes|amazon-rankings|
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Util|
 
-		<execute macro="User#firstLoginPG" />
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And Page add
+		|pageName|Amazon Rankings Page|
+	And Navigator goto Page
+		|pageName|Amazon Rankings Page|
+	Then Portlet add PG
+		|portletName|Amazon Rankings|
 
-		<execute macro="Page#add">
-			<var name="pageName" value="Amazon Rankings Page" />
-		</execute>
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Amazon Rankings Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Amazon Rankings" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="ViewAmazonRankingsPortlet" priority="2">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Amazon Rankings Page" />
-		</execute>
-
-		<execute macro="Portlet#viewPG">
-			<var name="portletBody" value="Please contact the administrator to configure an Amazon license." />
-			<var name="portletName" value="Amazon Rankings" />
-		</execute>
-	</command>
-</definition>
+Scenario: View Amazon Rankings Portlet
+Priority: 2
+	Given Navigator goto Page
+		|pageName|Amazon Rankings Page|
+	When Portlet view PG
+		|portletBody|Please contact the administrator to configure an Amazon license.|
+		|portletName|Amazon Rankings|

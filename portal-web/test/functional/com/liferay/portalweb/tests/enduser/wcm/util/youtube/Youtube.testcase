@@ -1,73 +1,49 @@
-<definition component-name="portal-acceptance">
-	<property name="portal.release" value="false" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.component.names" value="YouTube" />
-	<property name="testray.main.component.name" value="YouTube" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|false|
+		|portal.upstream|true|
+		|testray.component.names|YouTube|
+		|testray.main.component.name|YouTube|
 
-		<execute macro="User#firstLoginPG" />
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	Then Page add
+		|pageName|Test Page Name|
 
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page Name" />
-		</execute>
-	</set-up>
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
+Scenario: Add Youtube Video
+Priority: 4
+	Given Portlet add PG
+		|portletName|YouTube|
+	When Navigator goto Page
+		|pageName|Test Page Name|
+	And Portlet goto Portlet Options
+		|portletName|YouTube|
+		|portletOption|Configuration|
+	And YoutubePortlet add Video Id
+		|videoId|PiObSymqSdo|
+	And PortletEntry save
+	And Navigator goto Page
+		|pageName|Test Page Name|
+	And YoutubePortlet assert Video Title
+		|videoTitle|The Gospel in 6 Minutes - John Piper|
+	And Portlet goto Portlet Options
+		|portletName|YouTube|
+		|portletOption|Configuration|
+	And YoutubePortlet view Portlet Configuration
+		|videoId|PiObSymqSdo|
+	Then IFrame close Frame
 
-	<command name="AddYoutubeVideo" priority="4">
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="YouTube" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page Name" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="YouTube" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="YoutubePortlet#addVideoId">
-			<var name="videoId" value="PiObSymqSdo" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Test Page Name" />
-		</execute>
-
-		<execute macro="YoutubePortlet#assertVideoTitle">
-			<var name="videoTitle" value="The Gospel in 6 Minutes - John Piper" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="YouTube" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="YoutubePortlet#viewPortletConfiguration">
-			<var name="videoId" value="PiObSymqSdo" />
-		</execute>
-
-		<execute macro="IFrame#closeFrame" />
-	</command>
-
-	<command name="YoutubePortletSmoke" priority="4">
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="YouTube" />
-		</execute>
-
-		<execute macro="Portlet#viewPG">
-			<var name="portletBody" value="Please configure this portlet to make it visible to all users." />
-			<var name="portletName" value="YouTube" />
-		</execute>
-	</command>
-</definition>
+Scenario: Youtube Portlet Smoke
+Priority: 4
+	Given Portlet add PG
+		|portletName|YouTube|
+	When Portlet view PG
+		|portletBody|Please configure this portlet to make it visible to all users.|
+		|portletName|YouTube|

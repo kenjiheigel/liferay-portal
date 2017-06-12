@@ -1,57 +1,63 @@
-<definition component-name="portal-acceptance">
-	<property name="ignore.errors" value="Plugin security management is not enabled. Enable a security manager, then restart." />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.component.names" value="Staging,Upgrades WEM,Web Content Administration" />
-	<property name="testray.main.component.name" value="Upgrades WEM" />
+Feature:
 
-	<set-up>
-		<execute macro="SignIn#signIn" />
+Background: This executes once per feature file
+	Given these properties
+		|ignore.errors|Plugin security management is not enabled. Enable a security manager, then restart.|
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.component.names|Staging,Upgrades WEM,Web Content Administration|
+		|testray.main.component.name|Upgrades WEM|
 
-		<execute macro="Smoke#viewWelcomePage" />
+Set Up: This executes before each scenario 
+	Given SignIn sign In
+	When Smoke view Welcome Page
+	Then Upgrade reindex Searches
 
-		<execute macro="Upgrade#reindexSearches" />
-	</set-up>
 
-	<command name="PublishStagingArchiveAfterUpgrade6012" priority="5">
-		<property name="data.archive.type" value="data-archive-staging-unpublished" />
-		<property name="portal.version" value="6.0.12" />
+Scenario: Publish Staging Archive After Upgrade 6012
+Priority: 5
+	Given these properties
+		|data.archive.type|data-archive-staging-unpublished|
+	When these properties
+		|portal.version|6.0.12|
+	Then Upgrade publish Staged Site
 
-		<execute macro="Upgrade#publishStagedSite" />
-	</command>
+Scenario: Publish Staging Archive After Upgrade 612
+Priority: 5
+	Given these properties
+		|data.archive.type|data-archive-staging-unpublished|
+	When these properties
+		|portal.version|6.1.2|
+	Then Upgrade publish Staged Site
 
-	<command name="PublishStagingArchiveAfterUpgrade612" priority="5">
-		<property name="data.archive.type" value="data-archive-staging-unpublished" />
-		<property name="portal.version" value="6.1.2" />
+Scenario: Publish Staging Archive After Upgrade 6130
+Priority: 5
+	Given these properties
+		|data.archive.type|data-archive-staging-unpublished|
+	When these properties
+		|portal.version|6.1.30|
+	Then Upgrade publish Staged Site
 
-		<execute macro="Upgrade#publishStagedSite" />
-	</command>
+Scenario: Publish Staging Archive After Upgrade 621015
+Priority: 5
+	Given these properties
+		|data.archive.type|data-archive-staging-unpublished|
+	When these properties
+		|portal.version|6.2.10.15|
+	Then Upgrade publish Staged Site
 
-	<command name="PublishStagingArchiveAfterUpgrade6130" priority="5">
-		<property name="data.archive.type" value="data-archive-staging-unpublished" />
-		<property name="portal.version" value="6.1.30" />
+Scenario: Publish Staging Archive After Upgrade 623
+Priority: 5
+	Given these properties
+		|data.archive.type|data-archive-staging-unpublished|
+	When these properties
+		|portal.version|6.2.3|
+	Then Upgrade publish Staged Site
 
-		<execute macro="Upgrade#publishStagedSite" />
-	</command>
-
-	<command name="PublishStagingArchiveAfterUpgrade621015" priority="5">
-		<property name="data.archive.type" value="data-archive-staging-unpublished" />
-		<property name="portal.version" value="6.2.10.15" />
-
-		<execute macro="Upgrade#publishStagedSite" />
-	</command>
-
-	<command name="PublishStagingArchiveAfterUpgrade623" priority="5">
-		<property name="data.archive.type" value="data-archive-staging-unpublished" />
-		<property name="portal.version" value="6.2.3" />
-
-		<execute macro="Upgrade#publishStagedSite" />
-	</command>
-
-	<command name="PublishStagingArchiveAfterUpgrade625" priority="5">
-		<property name="data.archive.type" value="data-archive-staging-unpublished" />
-		<property name="portal.version" value="6.2.5" />
-
-		<execute macro="Upgrade#publishStagedSite" />
-	</command>
-</definition>
+Scenario: Publish Staging Archive After Upgrade 625
+Priority: 5
+	Given these properties
+		|data.archive.type|data-archive-staging-unpublished|
+	When these properties
+		|portal.version|6.2.5|
+	Then Upgrade publish Staged Site

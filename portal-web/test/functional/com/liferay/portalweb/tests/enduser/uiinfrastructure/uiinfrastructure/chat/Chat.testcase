@@ -1,23 +1,21 @@
-<definition component-name="portal-acceptance">
-	<property name="blacklist.portal.profile.names.remove" value="com.liferay.chat.service,com.liferay.chat.web" />
-	<property name="portal.release" value="false" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="User Interface" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|blacklist.portal.profile.names.remove|com.liferay.chat.service,com.liferay.chat.web|
+		|portal.release|false|
+		|portal.upstream|true|
+		|testray.main.component.name|User Interface|
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
 
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-	<command name="AssertChatBar" priority="3">
-		<execute function="AssertVisible" locator1="Chat#CHAT_BAR" />
-		<execute function="AssertVisible" locator1="Chat#CHAT_BAR_BUDDY_LIST" />
-	</command>
-</definition>
+Scenario: Assert Chat Bar
+Priority: 3
+	Given AssertVisible at locator 'Chat#CHAT_BAR'
+	When AssertVisible at locator 'Chat#CHAT_BAR_BUDDY_LIST'

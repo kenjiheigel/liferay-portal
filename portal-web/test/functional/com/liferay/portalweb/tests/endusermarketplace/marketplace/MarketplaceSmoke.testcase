@@ -1,40 +1,28 @@
-<definition component-name="portal-acceptance">
-	<property name="marketplace.app.acceptance" value="true" />
-	<property name="testray.main.component.name" value="Marketplace" />
+Feature:
 
-	<set-up>
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+Background: This executes once per feature file
+	Given these properties
+		|marketplace.app.acceptance|true|
+		|testray.main.component.name|Marketplace|
 
-	<tear-down>
-		<execute macro="ProductMenu#gotoSite">
-			<var name="portletName" value="Sites" />
-		</execute>
+Set Up: This executes before each scenario 
+	Given User first Login PG
 
-		<execute macro="Site#tearDownCP" />
+Tear Down: This executes after each scenario 
+	Given ProductMenu goto Site
+		|portletName|Sites|
+	When Site tear Down CP
+	And BlogsEntry tear Down CP
+	And BookmarksFolder tear Down CP
+	And WikiPage tear Down CP
+	And Page tear Down PG
+	And DMFolder tear Down CP
+	And DMDocument tear Down CP
+	And Navigator goto Page
+		|pageName|Calendar Test Page|
+	And CalendarEvent tear Down
+	Then Calendar tear Down
 
-		<execute macro="BlogsEntry#tearDownCP" />
-
-		<execute macro="BookmarksFolder#tearDownCP" />
-
-		<execute macro="WikiPage#tearDownCP" />
-
-		<execute macro="Page#tearDownPG" />
-
-		<execute macro="DMFolder#tearDownCP" />
-
-		<execute macro="DMDocument#tearDownCP" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Calendar Test Page" />
-		</execute>
-
-		<execute macro="CalendarEvent#tearDown" />
-
-		<execute macro="Calendar#tearDown" />
-	</tear-down>
-
-	<command name="MarketplaceSmoke" priority="5">
-		<execute macro="Marketplace#smoke" />
-	</command>
-</definition>
+Scenario: Marketplace Smoke
+Priority: 5
+	Given Marketplace smoke

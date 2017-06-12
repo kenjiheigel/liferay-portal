@@ -1,19 +1,25 @@
-<definition component-name="portal-acceptance">
-	<property name="testray.main.component.name" value="Deployment" />
+Feature:
 
-	<set-up>
-		<execute macro="SignIn#signInTestSetup" />
-	</set-up>
+Background: This executes once per feature file
+	Given these properties
+		|testray.main.component.name|Deployment|
 
-	<command description="Runs the smoke test on a non-root portal context." name="Smoke" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="portal.context" value="liferay" />
-		<property name="skip.clean-app-server-deploy-dir" value="true" />
-		<property name="test.assert.warning.exceptions" value="true" />
-		<property name="test.name.skip.portal.instance" value="PortalContext#Smoke" />
+Set Up: This executes before each scenario 
+	Given SignIn sign In Test Setup
 
-		<execute macro="Smoke#viewWelcomePage" />
 
-		<execute macro="Smoke#runSmoke" />
-	</command>
-</definition>
+Scenario: Smoke
+Description: Runs the smoke test on a non-root portal context.
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When these properties
+		|portal.context|liferay|
+	And these properties
+		|skip.clean-app-server-deploy-dir|true|
+	And these properties
+		|test.assert.warning.exceptions|true|
+	And these properties
+		|test.name.skip.portal.instance|PortalContext#Smoke|
+	And Smoke view Welcome Page
+	Then Smoke run Smoke

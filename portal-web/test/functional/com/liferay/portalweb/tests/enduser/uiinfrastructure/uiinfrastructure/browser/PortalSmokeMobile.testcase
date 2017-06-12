@@ -1,25 +1,23 @@
-<definition component-name="portal-acceptance">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="browser.type" value="android" />
-	<property name="testray.main.component.name" value="User Interface" />
-	<property name="timeout.explicit.wait" value="180" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|browser.type|android|
+		|testray.main.component.name|User Interface|
+		|timeout.explicit.wait|180|
 
-		<execute macro="SignIn#signInTestSetup" />
-	</set-up>
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When SignIn sign In Test Setup
 
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-	<command description="Ensure that the super admin can add pages, add portlets, navigate to the product menu, use the WYSIWYG editor, and view alert messages." name="Smoke" priority="5">
-		<execute macro="Smoke#viewWelcomePage" />
-
-		<execute macro="Smoke#runSmoke" />
-	</command>
-</definition>
+Scenario: Smoke
+Description: Ensure that the super admin can add pages, add portlets, navigate to the product menu, use the WYSIWYG editor, and view alert messages.
+Priority: 5
+	Given Smoke view Welcome Page
+	When Smoke run Smoke

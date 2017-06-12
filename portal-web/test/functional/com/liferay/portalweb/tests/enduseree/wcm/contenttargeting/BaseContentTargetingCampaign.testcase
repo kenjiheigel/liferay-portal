@@ -1,98 +1,67 @@
-<definition component-name="portal-acceptance">
-	<property name="custom.properties" value="layout.parallel.render.enable=false" />
-	<property name="extraapps.plugins.includes" value="content-targeting" />
-	<property name="ignore.errors" value="IX_DC6100CC" />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="false" />
-	<property name="test.run.environment" value="EE" />
-	<property name="testray.component.names" value="Content Targeting" />
-	<property name="testray.main.component.name" value="Content Targeting" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|custom.properties|layout.parallel.render.enable=false|
+		|extraapps.plugins.includes|content-targeting|
+		|ignore.errors|IX_DC6100CC|
+		|portal.release|true|
+		|portal.upstream|false|
+		|test.run.environment|EE|
+		|testray.component.names|Content Targeting|
+		|testray.main.component.name|Content Targeting|
 
-		<execute macro="Portlet#shutdownServer" />
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When Portlet shutdown Server
+	And Portlet start Server
+	And User first Login PG
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	Then Page add
+		|pageName|Test Page Name|
+		|siteName|Site Name|
 
-		<execute macro="Portlet#startServer" />
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="AddBlankCP" priority="5">
-		<property name="content.targeting.release" value="true" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingUserSegment#addCP">
-			<var name="userSegmentDescription" value="User Segment Description" />
-			<var name="userSegmentName" value="User Segment Name" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#addCP">
-			<var name="campaignDescription" value="Campaign Description" />
-			<var name="campaignEndDate" value="1/1/2099" />
-			<var name="campaignEndTime" value="12:00 PM" />
-			<var name="campaignName" value="Campaign Name" />
-			<var name="campaignPriorityField" value="3" />
-			<var name="campaignStartDate" value="1/1/2015" />
-			<var name="campaignStartTime" value="12:00 AM" />
-			<var name="userSegmentSelect" value="User Segment Name" />
-		</execute>
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesConfiguration">
-			<var name="portlet" value="Audience Targeting" />
-		</execute>
-
-		<execute macro="ContentTargetingCampaign#viewCampaignCP">
-			<var name="campaignDescription" value="Campaign Description" />
-			<var name="campaignName" value="Campaign Name" />
-			<var name="campaignPriority" value="3" />
-			<var name="campaignStatus" value="Started" />
-		</execute>
-	</command>
-</definition>
+Scenario: Add Blank CP
+Priority: 5
+	Given these properties
+		|content.targeting.release|true|
+	When ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	And ContentTargetingUserSegment add CP
+		|userSegmentDescription|User Segment Description|
+		|userSegmentName|User Segment Name|
+	And PortletEntry save
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	And ContentTargetingCampaign add CP
+		|campaignDescription|Campaign Description|
+		|campaignEndDate|1/1/2099|
+		|campaignEndTime|12:00 PM|
+		|campaignName|Campaign Name|
+		|campaignPriorityField|3|
+		|campaignStartDate|1/1/2015|
+		|campaignStartTime|12:00 AM|
+		|userSegmentSelect|User Segment Name|
+	And PortletEntry save
+	And ProductMenu goto Site
+		|site|Site Name|
+	And ProductMenu goto Sites Configuration
+		|portlet|Audience Targeting|
+	Then ContentTargetingCampaign view Campaign CP
+		|campaignDescription|Campaign Description|
+		|campaignName|Campaign Name|
+		|campaignPriority|3|
+		|campaignStatus|Started|

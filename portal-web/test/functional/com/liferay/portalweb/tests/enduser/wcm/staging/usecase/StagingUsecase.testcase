@@ -1,905 +1,536 @@
-<definition component-name="portal-acceptance">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Staging" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#activateStagingCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="DeleteLivePage" priority="5">
-		<property name="portal.acceptance" value="true" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Delete Live Page" />
-			<var name="pageStaging" value="true" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#publishToLive" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Delete Live Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#deletePG">
-			<var name="pageName" value="Delete Live Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#viewNoPG">
-			<var name="pageName" value="Delete Live Page" />
-		</execute>
-	</command>
-
-	<command name="EditPublishTemplate" priority="4">
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Page Name 2" />
-			<var name="pageStaging" value="true" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Page Name 2" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#addPublishTemplate">
-			<var name="publishTemplateDescription" value="Publish Template Description" />
-			<var name="publishTemplateName" value="Publish Template Name" />
-		</execute>
-
-		<execute macro="Staging#configurePublishToLive">
-			<var name="checkPageName" value="Staging Test Page" />
-			<var name="uncheckContentNameList" value="Blogs" />
-		</execute>
-
-		<execute macro="Staging#savePublishTemplate">
-			<var name="publishTemplateDescription" value="Publish Template Description" />
-			<var name="publishTemplateName" value="Publish Template Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedView" />
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#publishToLivePublishTemplate">
-			<var name="publishTemplateName" value="Publish Template Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#viewSpecificPG">
-			<var name="pageNameList" value="Staging Test Page" />
-		</execute>
-
-		<execute macro="Page#viewNoPG">
-			<var name="pageName" value="Page Name 2" />
-		</execute>
-
-		<execute macro="Portlet#viewPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewNoPG">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Portlet#viewNoSpecificPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedView" />
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#viewPublishTemplate">
-			<var name="publishTemplateDescription" value="Publish Template Description" />
-			<var name="publishTemplateName" value="Publish Template Name" />
-		</execute>
-
-		<execute macro="Staging#editPublishTemplate">
-			<var name="publishTemplateDescriptionEdit" value="Publish Template Description Edit" />
-			<var name="publishTemplateName" value="Publish Template Name" />
-			<var name="publishTemplateNameEdit" value="Publish Template Name Edit" />
-		</execute>
-
-		<execute macro="Staging#configurePublishToLive">
-			<var name="checkAllContent" value="true" />
-			<var name="checkPageName" value="Public Pages" />
-		</execute>
-
-		<execute macro="Staging#savePublishTemplate">
-			<var name="publishTemplateDescription" value="Publish Template Description Edit" />
-			<var name="publishTemplateName" value="Publish Template Name Edit" />
-		</execute>
-
-		<execute macro="Staging#publishToLivePublishTemplate">
-			<var name="publishTemplateName" value="Publish Template Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#viewSpecificPG">
-			<var name="pageNameList" value="Staging Test Page" />
-		</execute>
-
-		<execute macro="Portlet#viewPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsEntry#viewPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Page#viewSpecificPG">
-			<var name="pageNameList" value="Page Name 2" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Page Name 2" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
-	</command>
-
-	<command name="MoveToTheRecycleBinAndRestorePublishTemplate" priority="4">
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedView" />
-
-		<execute function="Pause" locator1="30000" />
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#addPublishTemplate">
-			<var name="publishTemplateDescription" value="Publish Template Description" />
-			<var name="publishTemplateName" value="Publish Template Name" />
-		</execute>
-
-		<execute macro="Staging#savePublishTemplate">
-			<var name="publishTemplateDescription" value="Publish Template Description" />
-			<var name="publishTemplateName" value="Publish Template Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedView" />
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#viewPublishTemplate">
-			<var name="publishTemplateDescription" value="Publish Template Description" />
-			<var name="publishTemplateName" value="Publish Template Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedView" />
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#moveToTheRecycleBinPublishTemplate">
-			<var name="publishTemplateName" value="Publish Template Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedView" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
-
-		<execute macro="RecycleBin#viewCP">
-			<var name="assetName" value="Publish Template Name" />
-			<var name="assetType" value="Export Import Template" />
-			<var name="deleteUser" value="Test Test" />
-		</execute>
-
-		<execute macro="RecycleBin#restoreCP">
-			<var name="assetName" value="Publish Template Name" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedView" />
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#viewPublishTemplate">
-			<var name="publishTemplateDescription" value="Publish Template Description" />
-			<var name="publishTemplateName" value="Publish Template Name" />
-		</execute>
-	</command>
-
-	<command name="PublishPortlet" priority="4">
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedView" />
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="Web Content Content" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="Staging#publishToLiveNowViaPortletCP" />
-	</command>
-
-	<command name="PublishSiteTeams" priority="3">
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Teams" />
-		</execute>
-
-		<execute macro="Team#addCP">
-			<var name="teamDescription" value="Site Team Description" />
-			<var name="teamName" value="Site Team Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Teams" />
-		</execute>
-
-		<execute macro="Staging#publishToLiveNowViaPortletCP" />
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesMembers">
-			<var name="portlet" value="Site Teams" />
-		</execute>
-
-		<execute macro="Team#viewCP">
-			<var name="teamDescription" value="Site Team Description" />
-			<var name="teamName" value="Site Team Name" />
-		</execute>
-	</command>
-
-	<command name="SearchPublishTemplate" priority="4">
-		<execute macro="SitePageNavigator#gotoPages">
-			<var name="page" value="Public Pages" />
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#addPublishTemplate">
-			<var name="publishTemplateDescription" value="Publish Template Description" />
-			<var name="publishTemplateName" value="First Template" />
-		</execute>
-
-		<execute macro="Staging#savePublishTemplate">
-			<var name="publishTemplateDescription" value="Publish Template Description" />
-			<var name="publishTemplateName" value="First Template" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#addPublishTemplate">
-			<var name="publishTemplateDescription" value="Publish Template Description 2" />
-			<var name="publishTemplateName" value="Second Template" />
-		</execute>
-
-		<execute macro="Staging#savePublishTemplate">
-			<var name="publishTemplateDescription" value="Publish Template Description 2" />
-			<var name="publishTemplateName" value="Second Template" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedView" />
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#searchPublishTemplate">
-			<var name="searchTerm" value="Second" />
-		</execute>
-	</command>
-
-	<command name="StagingLocalLiveLock" priority="4">
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
-
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#publishToLive" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="BlogsEntry#editNoPermissionPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedView" />
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#editStagingConfiguration">
-			<var name="isNotEditable" value="Blogs" />
-		</execute>
-	</command>
-
-	<command name="StagingPublishChildSiteWithReference" priority="4">
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="Web Content Content" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#publishToLive" />
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="parentSiteName" value="Site Name" />
-			<var name="siteName" value="Child Site" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#searchInputCP">
-			<var name="siteName" value="Child Site" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Page 1" />
-			<var name="siteName" value="Child Site" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Page 1" />
-			<var name="siteName" value="Child Site" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#selectParentSiteWebContent">
-			<var name="parentSiteName" value="Site Name" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#activateStagingCP">
-			<var name="siteName" value="Child Site" />
-		</execute>
-	</command>
-
-	<command name="StagingPublishOnlySelectedPage" priority="4">
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Page 1" />
-			<var name="pageStaging" value="true" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Page 2" />
-			<var name="pageStaging" value="true" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Page 3" />
-			<var name="pageStaging" value="true" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedView" />
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#configurePublishToLive">
-			<var name="checkPageName" value="Page 2" />
-		</execute>
-
-		<execute macro="Staging#publishToLive" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Page#viewSpecificPG">
-			<var name="pageNameList" value="Page 2" />
-		</execute>
-
-		<execute macro="Page#viewNoPG">
-			<var name="pageName" value="Page 1" />
-		</execute>
-
-		<execute macro="Page#viewNoPG">
-			<var name="pageName" value="Page 3" />
-		</execute>
-	</command>
-
-	<command name="StagingWithPublishTemplateSmoke" priority="4">
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="Web Content Content" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="Web Content Content" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesPublishing">
-			<var name="portlet" value="Staging" />
-		</execute>
-
-		<execute macro="Staging#addPublishTemplate">
-			<var name="publishTemplateDescription" value="Publish Template Description" />
-			<var name="publishTemplateName" value="Publish Template Name" />
-		</execute>
-
-		<execute macro="Staging#savePublishTemplate">
-			<var name="publishTemplateDescription" value="Publish Template Description" />
-			<var name="publishTemplateName" value="Publish Template Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#publishToLivePublishTemplate">
-			<var name="publishTemplateName" value="Publish Template Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="Web Content Content" />
-		</execute>
-	</command>
-
-	<command name="TrashEntryReferencePublishing" priority="5">
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-			<var name="siteScopeName" value="Site Name" />
-		</execute>
-
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_1.jpg" />
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Web Content" />
-			<var name="siteScopeName" value="Site Name" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addWithDocumentCP">
-			<var name="dmDocumentTitle" value="DM Document Title" />
-			<var name="webContentContent" value="Web Content Content" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#selectWebContent">
-			<var name="portletName" value="Web Content Display" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#configurePublishToLive">
-			<var name="checkContentNameList" value="Documents and Media" />
-			<var name="contentDateRange" value="All" />
-		</execute>
-
-		<execute macro="Staging#publishToLive" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-			<var name="siteScopeName" value="Site Name" />
-		</execute>
-
-		<execute macro="DMDocument#deleteCP">
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#configurePublishToLive">
-			<var name="contentDateRange" value="All" />
-			<var name="uncheckContentNameList" value="Documents and Media" />
-			<var name="uncheckSubContent" value="Web Content" />
-		</execute>
-
-		<execute macro="Staging#publishToLive">
-			<var name="failureExpected" value="true" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#configurePublishToLive">
-			<var name="checkContentNameList" value="Documents and Media" />
-			<var name="contentDateRange" value="All" />
-		</execute>
-
-		<execute macro="Staging#publishToLive" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSitesContent">
-			<var name="portlet" value="Documents and Media" />
-			<var name="siteScopeName" value="Site Name" />
-		</execute>
-
-		<execute macro="DMDocument#viewPG">
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-	</command>
-
-	<command name="ViewPublishDMWithModifiedTitle" priority="4">
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
-
-		<execute function="Pause" locator1="3000" />
-
-		<execute macro="DMDocument#addPGViaAP">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="DM Document Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#publishToLive" />
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="DMDocument#editPGViaAP">
-			<var name="assetTitle" value="DM Document Title" />
-			<var name="dmDocumentTitleEdit" value="DM Document Title Edit" />
-		</execute>
-
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Staging#gotoPublishToLive" />
-
-		<execute macro="Staging#publishToLive" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Staging Test Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="DMDocument#viewPGViaAP">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentTitle" value="DM Document Title Edit" />
-		</execute>
-	</command>
-</definition>
+Feature:
+
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Staging|
+
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	Then Staging activate Staging CP
+		|siteName|Site Name|
+
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
+
+Scenario: Delete Live Page
+Priority: 5
+	Given these properties
+		|portal.acceptance|true|
+	When ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Delete Live Page|
+		|pageStaging|true|
+		|siteName|Site Name|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Staging goto Publish To Live
+	And Staging publish To Live
+	And Navigator goto Site Page
+		|pageName|Delete Live Page|
+		|siteName|Site Name|
+	And Page delete PG
+		|pageName|Delete Live Page|
+	And Navigator goto Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	Then Page view No PG
+		|pageName|Delete Live Page|
+
+Scenario: Edit Publish Template
+Priority: 4
+	Given Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	When Portlet add PG
+		|portletName|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Page Name 2|
+		|pageStaging|true|
+		|siteName|Site Name|
+	And Navigator goto Staged Site Page
+		|pageName|Page Name 2|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And WebContent add PG Via WCD
+		|webContentContent|WC WebContent Content|
+		|webContentTitle|WC WebContent Title|
+	And WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+		|site|Site Name|
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging add Publish Template
+		|publishTemplateDescription|Publish Template Description|
+		|publishTemplateName|Publish Template Name|
+	And Staging configure Publish To Live
+		|checkPageName|Staging Test Page|
+		|uncheckContentNameList|Blogs|
+	And Staging save Publish Template
+		|publishTemplateDescription|Publish Template Description|
+		|publishTemplateName|Publish Template Name|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And Navigator goto Staged View
+	And Staging goto Publish To Live
+	And Staging publish To Live Publish Template
+		|publishTemplateName|Publish Template Name|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Page view Specific PG
+		|pageNameList|Staging Test Page|
+	And Page view No PG
+		|pageName|Page Name 2|
+	And Portlet view PG
+		|portletName|Blogs|
+	And BlogsEntry view No PG
+		|entryTitle|Blogs Entry Title|
+	And Portlet view No Specific PG
+		|portletName|Web Content Display|
+	And SitePageNavigator goto Pages
+		|page|Public Pages|
+		|site|Site Name|
+	And Navigator goto Staged View
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging view Publish Template
+		|publishTemplateDescription|Publish Template Description|
+		|publishTemplateName|Publish Template Name|
+	And Staging edit Publish Template
+		|publishTemplateDescriptionEdit|Publish Template Description Edit|
+		|publishTemplateName|Publish Template Name|
+		|publishTemplateNameEdit|Publish Template Name Edit|
+	And Staging configure Publish To Live
+		|checkAllContent|true|
+		|checkPageName|Public Pages|
+	And Staging save Publish Template
+		|publishTemplateDescription|Publish Template Description Edit|
+		|publishTemplateName|Publish Template Name Edit|
+	And Staging publish To Live Publish Template
+		|publishTemplateName|Publish Template Name|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Page view Specific PG
+		|pageNameList|Staging Test Page|
+	And Portlet view PG
+		|portletName|Blogs|
+	And BlogsEntry view PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Page view Specific PG
+		|pageNameList|Page Name 2|
+	And Navigator goto Site Page
+		|pageName|Page Name 2|
+		|siteName|Site Name|
+	Then WebContent view PG Via WCD
+		|webContentContent|WC WebContent Content|
+
+Scenario: Move To The Recycle Bin And Restore Publish Template
+Priority: 4
+	Given Navigator open Site URL
+		|siteName|Site Name|
+	When Navigator goto Staged View
+	And Pause at locator '30000'
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging add Publish Template
+		|publishTemplateDescription|Publish Template Description|
+		|publishTemplateName|Publish Template Name|
+	And Staging save Publish Template
+		|publishTemplateDescription|Publish Template Description|
+		|publishTemplateName|Publish Template Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Navigator goto Staged View
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging view Publish Template
+		|publishTemplateDescription|Publish Template Description|
+		|publishTemplateName|Publish Template Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Navigator goto Staged View
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging move To The Recycle Bin Publish Template
+		|publishTemplateName|Publish Template Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Navigator goto Staged View
+	And ProductMenu goto Sites Content
+		|portlet|Recycle Bin|
+	And RecycleBin view CP
+		|assetName|Publish Template Name|
+		|assetType|Export Import Template|
+		|deleteUser|Test Test|
+	And RecycleBin restore CP
+		|assetName|Publish Template Name|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Navigator goto Staged View
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	Then Staging view Publish Template
+		|publishTemplateDescription|Publish Template Description|
+		|publishTemplateName|Publish Template Name|
+
+Scenario: Publish Portlet
+Priority: 4
+	Given ProductMenu goto Site
+		|site|Site Name|
+	When Navigator goto Staged View
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|Web Content Content|
+		|webContentTitle|Web Content Title|
+	And PortletEntry publish
+	Then Staging publish To Live Now Via Portlet CP
+
+Scenario: Publish Site Teams
+Priority: 3
+	Given Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	When ProductMenu goto Sites Members
+		|portlet|Site Teams|
+	And Team add CP
+		|teamDescription|Site Team Description|
+		|teamName|Site Team Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Teams|
+	And Staging publish To Live Now Via Portlet CP
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And ProductMenu goto Sites Members
+		|portlet|Site Teams|
+	Then Team view CP
+		|teamDescription|Site Team Description|
+		|teamName|Site Team Name|
+
+Scenario: Search Publish Template
+Priority: 4
+	Given SitePageNavigator goto Pages
+		|page|Public Pages|
+		|site|Site Name|
+	When ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging add Publish Template
+		|publishTemplateDescription|Publish Template Description|
+		|publishTemplateName|First Template|
+	And Staging save Publish Template
+		|publishTemplateDescription|Publish Template Description|
+		|publishTemplateName|First Template|
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging add Publish Template
+		|publishTemplateDescription|Publish Template Description 2|
+		|publishTemplateName|Second Template|
+	And Staging save Publish Template
+		|publishTemplateDescription|Publish Template Description 2|
+		|publishTemplateName|Second Template|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And Navigator goto Staged View
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	Then Staging search Publish Template
+		|searchTerm|Second|
+
+Scenario: Staging Local Live Lock
+Priority: 4
+	Given Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	When Portlet add PG
+		|portletName|Blogs|
+	And Blogs add Entry
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Staging goto Publish To Live
+	And Staging publish To Live
+	And Navigator goto Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And BlogsEntry edit No Permission PG
+		|entryContent|Blogs Entry Content|
+		|entryTitle|Blogs Entry Title|
+	And Navigator open Site URL
+		|siteName|Site Name|
+	And Navigator goto Staged View
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	Then Staging edit Staging Configuration
+		|isNotEditable|Blogs|
+
+Scenario: Staging Publish Child Site With Reference
+Priority: 4
+	Given Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	When ProductMenu goto Sites Content
+		|portlet|Web Content|
+	And WebContentNavigator goto Add CP
+	And WebContent add CP
+		|webContentContent|Web Content Content|
+		|webContentTitle|Web Content Title|
+	And PortletEntry publish
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Staging goto Publish To Live
+	And Staging publish To Live
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|parentSiteName|Site Name|
+		|siteName|Child Site|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site search Input CP
+		|siteName|Child Site|
+	And Page add
+		|pageName|Page 1|
+		|siteName|Child Site|
+	And Navigator goto Site Page
+		|pageName|Page 1|
+		|siteName|Child Site|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And WebContentDisplayPortlet select Parent Site Web Content
+		|parentSiteName|Site Name|
+		|webContentTitle|Web Content Title|
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	Then Staging activate Staging CP
+		|siteName|Child Site|
+
+Scenario: Staging Publish Only Selected Page
+Priority: 4
+	Given ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	When Page add
+		|pageName|Page 1|
+		|pageStaging|true|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Page 2|
+		|pageStaging|true|
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Page 3|
+		|pageStaging|true|
+		|siteName|Site Name|
+	And ProductMenu goto Site
+		|site|Site Name|
+	And Navigator goto Staged View
+	And Staging goto Publish To Live
+	And Staging configure Publish To Live
+		|checkPageName|Page 2|
+	And Staging publish To Live
+	And Navigator goto Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Page view Specific PG
+		|pageNameList|Page 2|
+	And Page view No PG
+		|pageName|Page 1|
+	Then Page view No PG
+		|pageName|Page 3|
+
+Scenario: Staging With Publish Template Smoke
+Priority: 4
+	Given Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	When Portlet add PG
+		|portletName|Web Content Display|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And WebContent add PG Via WCD
+		|webContentContent|Web Content Content|
+		|webContentTitle|Web Content Title|
+	And WebContent view PG Via WCD
+		|webContentContent|Web Content Content|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And ProductMenu goto Sites Publishing
+		|portlet|Staging|
+	And Staging add Publish Template
+		|publishTemplateDescription|Publish Template Description|
+		|publishTemplateName|Publish Template Name|
+	And Staging save Publish Template
+		|publishTemplateDescription|Publish Template Description|
+		|publishTemplateName|Publish Template Name|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Staging goto Publish To Live
+	And Staging publish To Live Publish Template
+		|publishTemplateName|Publish Template Name|
+		|siteName|Site Name|
+	And Navigator goto Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	Then WebContent view PG Via WCD
+		|webContentContent|Web Content Content|
+
+Scenario: Trash Entry Reference Publishing
+Priority: 5
+	Given Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	When ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+		|siteScopeName|Site Name|
+	And DMDocument add CP
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_1.jpg|
+		|dmDocumentTitle|DM Document Title|
+	And ProductMenu goto Sites Content
+		|portlet|Web Content|
+		|siteScopeName|Site Name|
+	And WebContentNavigator goto Add CP
+	And WebContent add With Document CP
+		|dmDocumentTitle|DM Document Title|
+		|webContentContent|Web Content Content|
+		|webContentTitle|Web Content Title|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Web Content Display|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And WebContentDisplayPortlet select Web Content
+		|portletName|Web Content Display|
+		|webContentTitle|Web Content Title|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Portlet add PG
+		|portletName|Documents and Media|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Staging goto Publish To Live
+	And Staging configure Publish To Live
+		|checkContentNameList|Documents and Media|
+		|contentDateRange|All|
+	And Staging publish To Live
+	And Navigator goto Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+		|siteScopeName|Site Name|
+	And DMDocument delete CP
+		|dmDocumentTitle|DM Document Title|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Staging goto Publish To Live
+	And Staging configure Publish To Live
+		|contentDateRange|All|
+		|uncheckContentNameList|Documents and Media|
+		|uncheckSubContent|Web Content|
+	And Staging publish To Live
+		|failureExpected|true|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Staging goto Publish To Live
+	And Staging configure Publish To Live
+		|checkContentNameList|Documents and Media|
+		|contentDateRange|All|
+	And Staging publish To Live
+	And Navigator goto Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And ProductMenu goto Sites Content
+		|portlet|Documents and Media|
+		|siteScopeName|Site Name|
+	Then DMDocument view PG
+		|dmDocumentTitle|DM Document Title|
+
+Scenario: View Publish DM With Modified Title
+Priority: 4
+	Given Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	When Portlet add PG
+		|portletName|Asset Publisher|
+	And Pause at locator '3000'
+	And DMDocument add PG Via AP
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentFile|Document_1.doc|
+		|dmDocumentTitle|DM Document Title|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Staging goto Publish To Live
+	And Staging publish To Live
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And DMDocument edit PG Via AP
+		|assetTitle|DM Document Title|
+		|dmDocumentTitleEdit|DM Document Title Edit|
+	And Navigator goto Staged Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	And Staging goto Publish To Live
+	And Staging publish To Live
+	And Navigator goto Site Page
+		|pageName|Staging Test Page|
+		|siteName|Site Name|
+	Then DMDocument view PG Via AP
+		|dmDocumentDescription|DM Document Description|
+		|dmDocumentTitle|DM Document Title Edit|

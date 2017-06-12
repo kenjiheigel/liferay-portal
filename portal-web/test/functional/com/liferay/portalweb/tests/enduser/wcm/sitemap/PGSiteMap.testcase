@@ -1,65 +1,44 @@
-<definition component-name="portal-acceptance">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Sitemap" />
+Feature:
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+Background: This executes once per feature file
+	Given these properties
+		|portal.release|true|
+		|portal.upstream|true|
+		|testray.main.component.name|Sitemap|
 
-		<execute macro="User#firstLoginPG" />
+Set Up: This executes before each scenario 
+	Given TestCase set Up Portal Instance
+	When User first Login PG
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Site add Blank CP
+		|siteName|Site Name|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And Page add
+		|pageName|Site Page Name|
+		|siteName|Site Name|
+		|sitePagePrivacy|Private|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	And ProductMenu goto Control Panel Sites
+		|portlet|Sites|
+	Then Page add Child
+		|page|Private Pages|
+		|pageName|Site Page Name|
+		|siteChildPageName|Child Page Name|
+		|siteName|Site Name|
 
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
+Tear Down: This executes after each scenario 
+	Given PortalInstances tear Down CP
+		|testPortalInstance|TestPropsUtil#get('test.portal.instance')|
 
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#add">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Site Name" />
-			<var name="sitePagePrivacy" value="Private" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoControlPanelSites">
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Page#addChild">
-			<var name="page" value="Private Pages" />
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteChildPageName" value="Child Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
-	</tear-down>
-
-	<command name="DisplayPrivatePageWithChildPage" priority="4">
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Site Map" />
-		</execute>
-
-		<execute macro="Portlet#viewSpecificPG">
-			<var name="portletName" value="Site Map" />
-		</execute>
-
-		<execute macro="SiteMapPortlet#viewDefaultPG">
-			<var name="listChildPageName" value="Child Page Name" />
-			<var name="listPageName" value="Site Page Name" />
-		</execute>
-	</command>
-</definition>
+Scenario: Display Private Page With Child Page
+Priority: 4
+	Given Portlet add PG
+		|portletName|Site Map|
+	When Portlet view Specific PG
+		|portletName|Site Map|
+	Then SiteMapPortlet view Default PG
+		|listChildPageName|Child Page Name|
+		|listPageName|Site Page Name|
