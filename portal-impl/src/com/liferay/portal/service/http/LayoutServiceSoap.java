@@ -551,6 +551,21 @@ public class LayoutServiceSoap {
 		}
 	}
 
+	public static boolean hasLayout(java.lang.String uuid, long groupId,
+		boolean privateLayout) throws RemoteException {
+		try {
+			boolean returnValue = LayoutServiceUtil.hasLayout(uuid, groupId,
+					privateLayout);
+
+			return returnValue;
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	/**
 	* Sets the layouts for the group, replacing and prioritizing all layouts of
 	* the parent layout.

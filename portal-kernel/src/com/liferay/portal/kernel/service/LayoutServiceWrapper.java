@@ -30,6 +30,13 @@ public class LayoutServiceWrapper implements LayoutService,
 		_layoutService = layoutService;
 	}
 
+	@Override
+	public boolean hasLayout(java.lang.String uuid, long groupId,
+		boolean privateLayout)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _layoutService.hasLayout(uuid, groupId, privateLayout);
+	}
+
 	/**
 	* Exports all layouts that match the criteria as a byte array.
 	*

@@ -946,6 +946,13 @@ public class LayoutServiceImpl extends LayoutServiceBaseImpl {
 			DigesterUtil.digestHex(Digester.SHA_256, folderName));
 	}
 
+	@Override
+	public boolean hasLayout(String uuid, long groupId, boolean privateLayout)
+		throws PortalException {
+
+		return layoutLocalService.hasLayout(uuid, groupId, privateLayout);
+	}
+
 	/**
 	 * @deprecated As of 7.0.0, replaced by {@link
 	 *             com.liferay.exportimport.kernel.service.ExportImportService#importLayouts(
