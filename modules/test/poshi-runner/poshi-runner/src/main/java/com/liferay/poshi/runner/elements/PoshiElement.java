@@ -190,6 +190,10 @@ public abstract class PoshiElement extends DefaultElement {
 	protected boolean isValidReadableBlock(String readableSyntax) {
 		readableSyntax = readableSyntax.trim();
 
+		if (readableSyntax.isEmpty()) {
+			return true;
+		}
+
 		if (readableSyntax.startsWith("property") ||
 			readableSyntax.startsWith("var")) {
 
