@@ -15,6 +15,7 @@
 package com.liferay.poshi.runner.elements;
 
 import com.liferay.poshi.runner.util.RegexUtil;
+import com.liferay.poshi.runner.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,9 +101,59 @@ public class CommandElement extends PoshiElement {
 			sb.append(poshiElementAttribute.toReadableSyntax());
 		}
 
-		String readableSyntax = super.toReadableSyntax();
+		List<String> readableBlocks = new ArrayList<>();
 
-		sb.append(createReadableBlock(readableSyntax));
+		for (PoshiElement poshiElement : toPoshiElements(elements())) {
+			readableBlocks.add(poshiElement.toReadableSyntax());
+		}
+
+		sb.append(createReadableBlock(readableBlocks));
+
+		return sb.toString();
+	}
+
+	protected String createReadableBlock(List<String> items) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("\n");
+
+		String pad = getPad();
+
+		sb.append(pad);
+
+		sb.append(getBlockName());
+		sb.append(" {");
+
+		for (int i = 0; i < items.size(); i++) {
+			String item = items.get(i);
+
+			if (i == 0) {
+				if (item.startsWith("\n\n")) {
+					item = item.replaceFirst("\n\n", "\n");
+				}
+			}
+
+			String trimmedItem = item.trim();
+
+			if (!item.contains("return(\n") &&
+				(StringUtil.count(item, "\n") > 1) &&
+				trimmedItem.startsWith("var ")) {
+
+				item = item.replaceFirst("var ", pad + "var ");
+
+				sb.append(item);
+
+				continue;
+			}
+
+			item = item.replaceAll("\n", "\n" + pad);
+
+			sb.append(item.replaceAll("\n\t\n", "\n\n"));
+		}
+
+		sb.append("\n");
+		sb.append(pad);
+		sb.append("}");
 
 		return sb.toString();
 	}

@@ -115,10 +115,6 @@ public class DefinitionElement extends PoshiElement {
 		for (String line : readableSyntax.split("\n")) {
 			line = line.trim();
 
-			if (line.length() == 0) {
-				continue;
-			}
-
 			if (line.startsWith("@") && !line.startsWith("@description") &&
 				!line.startsWith("@priority")) {
 
