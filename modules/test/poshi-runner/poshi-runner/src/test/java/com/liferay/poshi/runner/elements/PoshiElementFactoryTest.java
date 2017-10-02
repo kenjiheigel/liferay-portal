@@ -58,6 +58,11 @@ public class PoshiElementFactoryTest {
 		Element baselineElement = _getBaselineElement();
 
 		if (!_areElementsEqual(baselineElement, elementFromReadableSyntax)) {
+			System.out.println("Baseline XML:");
+			System.out.println(Dom4JUtil.format(baselineElement));
+			System.out.println("XML from readable syntax:");
+			System.out.println(Dom4JUtil.format(elementFromReadableSyntax));
+
 			throw new Exception("Readable syntax does not translate to XML");
 		}
 	}
