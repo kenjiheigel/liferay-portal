@@ -534,9 +534,30 @@
 	</target>
 
 	<target name="build-dist-tomcat">
-		<build-dist-tomcat-bare />
+		<get-only-modified-modules-current-branch-dirs />
 
-		<ant inheritAll="false" target="deploy" />
+		<if>
+			<equals arg1="${only.modules.modified}" arg2="false" />
+			<then>
+				<build-dist-tomcat-bare />
+
+				<ant inheritAll="false" target="deploy" />
+			</then>
+			<else>
+				<trycatch>
+					<try>
+						<ant inheritAll="false" target="deploy-diff" />
+					</try>
+					<catch>
+						<build-dist-tomcat-bare />
+
+						<ant inheritAll="false" target="clean" />
+
+						<ant inheritAll="false" target="deploy" />
+					</catch>
+				</trycatch>
+			</else>
+		</if>
 
 		<if>
 			<not>
