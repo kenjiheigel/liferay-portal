@@ -274,18 +274,25 @@ message.
 			</then>
 		</if>
 
-		<ant dir="portal-kernel" inheritAll="false" target="deploy" />
+		<get-only-modified-modules-current-branch-dirs />
 
-		<ant dir="util-bridges" inheritAll="false" target="deploy" />
-		<ant dir="util-java" inheritAll="false" target="deploy" />
-		<ant dir="util-slf4j" inheritAll="false" target="deploy" />
-		<ant dir="util-taglib" inheritAll="false" target="deploy" />
+		<if>
+			<equals arg1="${only.modules.modified}" arg2="false" />
+			<then>
+				<ant dir="portal-kernel" inheritAll="false" target="deploy" />
 
-		<ant dir="portal-impl" inheritAll="false" target="deploy" />
-		<ant dir="portal-test" inheritAll="false" target="deploy" />
-		<ant dir="portal-test-integration" inheritAll="false" target="deploy" />
+				<ant dir="util-bridges" inheritAll="false" target="deploy" />
+				<ant dir="util-java" inheritAll="false" target="deploy" />
+				<ant dir="util-slf4j" inheritAll="false" target="deploy" />
+				<ant dir="util-taglib" inheritAll="false" target="deploy" />
 
-		<ant dir="portal-web" inheritAll="false" target="deploy" />
+				<ant dir="portal-impl" inheritAll="false" target="deploy" />
+				<ant dir="portal-test" inheritAll="false" target="deploy" />
+				<ant dir="portal-test-integration" inheritAll="false" target="deploy" />
+
+				<ant dir="portal-web" inheritAll="false" target="deploy" />
+			</then>
+		</if>
 
 		<touch file="${liferay.home}/.liferay-home" />
 
@@ -298,7 +305,12 @@ message.
 
 		<deploy-properties />
 
-		<antcall target="deploy-additional-jars" />
+		<if>
+			<equals arg1="${only.modules.modified}" arg2="false" />
+			<then>
+				<antcall target="deploy-additional-jars" />
+			</then>
+		</if>
 
 		<antcall target="update-app-server-scripts" />
 
@@ -342,18 +354,32 @@ message.
 		<if>
 			<equals arg1="${build.marketplace.apps.enabled}" arg2="true" />
 			<then>
-				<gradle-execute dir="${project.dir}/modules" task="deploy">
-					<arg value="--parallel" />
-					<arg value="-Dbuild.profile=portal-pre" />
-				</gradle-execute>
+				<if>
+					<isset property="only.modules.modified.current.branch.dirs" />
+					<then>
+						<for delimiter="${line.separator}" list="${only.modules.modified.current.branch.dirs}" parallel="true" param="module.dir">
+							<sequential>
+								<gradle-execute dir="@{module.dir}" task="deploy">
+									<arg value="clean" />
+								</gradle-execute>
+							</sequential>
+						</for>
+					</then>
+					<else>
+						<gradle-execute dir="${project.dir}/modules" task="deploy">
+							<arg value="--parallel" />
+							<arg value="-Dbuild.profile=portal-pre" />
+						</gradle-execute>
 
-				<gradle-execute dir="${project.dir}/modules" task="deploy">
-					<arg value="--parallel" />
-					<arg value="-Dbuild.exclude.dirs=${build.exclude.dirs}" />
-					<arg value="-Dbuild.include.dirs=${build.include.dirs}" />
-					<arg value="-Dbuild.profile=${build.profile}" />
-					<env key="WAS_HOME" value="${app.server.websphere.dir}" />
-				</gradle-execute>
+						<gradle-execute dir="${project.dir}/modules" task="deploy">
+							<arg value="--parallel" />
+							<arg value="-Dbuild.exclude.dirs=${build.exclude.dirs}" />
+							<arg value="-Dbuild.include.dirs=${build.include.dirs}" />
+							<arg value="-Dbuild.profile=${build.profile}" />
+							<env key="WAS_HOME" value="${app.server.websphere.dir}" />
+						</gradle-execute>
+					</else>
+				</if>
 			</then>
 			<else>
 				<gradle-execute dir="${project.dir}/modules/core" task="deploy">
@@ -398,29 +424,43 @@ message.
 			<equals arg1="${jsp.precompile.modules}" arg2="on" />
 			<then>
 				<if>
-					<equals arg1="${jsp.precompile.parallel}" arg2="on" />
+					<isset property="only.modules.modified.current.branch.dirs" />
 					<then>
-						<gradle-execute dir="${project.dir}/modules" task="compileJSP">
-							<arg value="--parallel" />
-							<arg value="-Dbuild.exclude.dirs=${build.exclude.dirs}" />
-							<arg value="-Dbuild.include.dirs=${build.include.dirs}" />
-							<arg value="-Dbuild.profile=${build.profile}" />
-						</gradle-execute>
+						<for delimiter="${line.separator}" list="${only.modules.modified.current.branch.dirs}" parallel="true" param="module.dir">
+							<sequential>
+								<gradle-execute dir="@{module.dir}" task="compileJSP" />
+
+								<gradle-execute dir="@{module.dir}" task="copyCompiledJSP" />
+							</sequential>
+						</for>
 					</then>
 					<else>
-						<gradle-execute dir="${project.dir}/modules" task="compileJSP">
+						<if>
+							<equals arg1="${jsp.precompile.parallel}" arg2="on" />
+							<then>
+								<gradle-execute dir="${project.dir}/modules" task="compileJSP">
+									<arg value="--parallel" />
+									<arg value="-Dbuild.exclude.dirs=${build.exclude.dirs}" />
+									<arg value="-Dbuild.include.dirs=${build.include.dirs}" />
+									<arg value="-Dbuild.profile=${build.profile}" />
+								</gradle-execute>
+							</then>
+							<else>
+								<gradle-execute dir="${project.dir}/modules" task="compileJSP">
+									<arg value="-Dbuild.exclude.dirs=${build.exclude.dirs}" />
+									<arg value="-Dbuild.include.dirs=${build.include.dirs}" />
+									<arg value="-Dbuild.profile=${build.profile}" />
+								</gradle-execute>
+							</else>
+						</if>
+
+						<gradle-execute dir="${project.dir}/modules" task="copyCompiledJSP">
 							<arg value="-Dbuild.exclude.dirs=${build.exclude.dirs}" />
 							<arg value="-Dbuild.include.dirs=${build.include.dirs}" />
 							<arg value="-Dbuild.profile=${build.profile}" />
 						</gradle-execute>
 					</else>
 				</if>
-
-				<gradle-execute dir="${project.dir}/modules" task="copyCompiledJSP">
-					<arg value="-Dbuild.exclude.dirs=${build.exclude.dirs}" />
-					<arg value="-Dbuild.include.dirs=${build.include.dirs}" />
-					<arg value="-Dbuild.profile=${build.profile}" />
-				</gradle-execute>
 			</then>
 		</if>
 
