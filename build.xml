@@ -359,6 +359,13 @@ message.
 					<then>
 						<for delimiter="${line.separator}" list="${only.modules.modified.current.branch.dirs}" parallel="true" param="module.dir">
 							<sequential>
+								<if>
+									<available file="@{module.dir}/../settings.gradle" />
+									<then>
+										<move file="@{module.dir}/../settings.gradle" tofile="@{module.dir}/../settings" />
+									</then>
+								</if>
+
 								<gradle-execute dir="@{module.dir}" task="deploy">
 									<arg value="clean" />
 								</gradle-execute>
@@ -431,6 +438,13 @@ message.
 								<gradle-execute dir="@{module.dir}" task="compileJSP" />
 
 								<gradle-execute dir="@{module.dir}" task="copyCompiledJSP" />
+
+								<if>
+									<available file="@{module.dir}/../settings" />
+									<then>
+										<move file="@{module.dir}/../settings" tofile="@{module.dir}/../settings.gradle" />
+									</then>
+								</if>
 							</sequential>
 						</for>
 					</then>
