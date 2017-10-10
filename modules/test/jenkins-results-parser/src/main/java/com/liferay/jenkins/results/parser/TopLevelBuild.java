@@ -142,6 +142,19 @@ public class TopLevelBuild extends BaseBuild {
 		}
 	}
 
+	@Override
+	public Element getJenkinsReportElement() {
+		Element headElement = JenkinsReportUtil.getHTMLHeadElement();
+
+		Element bodyElement = JenkinsReportUtil.getHTMLBodyElement(this);
+
+		Element jenkinsReportElement = Dom4JUtil.getNewElement("html");
+
+		Dom4JUtil.addToElement(jenkinsReportElement, headElement, bodyElement);
+
+		return jenkinsReportElement;
+	}
+
 	public String getJenkinsReportURL() {
 		if (fromArchive) {
 			return getBuildURL() + "/jenkins-report.html";
