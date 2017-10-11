@@ -54,6 +54,8 @@ public interface BlogsEntry extends BlogsEntryModel, PersistedModel {
 			}
 		};
 
+	// Dummy comment
+
 	public java.lang.String getCoverImageURL(
 		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay)
 		throws com.liferay.portal.kernel.exception.PortalException;
