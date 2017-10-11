@@ -37,6 +37,8 @@ public class AMEmbeddedReferenceSet {
 		_embeddedReferences = embeddedReferences;
 	}
 
+	// adaptive-media-blogs
+
 	public boolean containsReference(String path) {
 		return _embeddedReferences.containsKey(path);
 	}
