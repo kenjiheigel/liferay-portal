@@ -52,6 +52,8 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class MyAccountPortlet extends MVCPortlet {
 
+	// my-account-web
+
 	@Reference(
 		target = "(&(release.bundle.symbolic.name=com.liferay.my.account.web)(release.schema.version=1.0.0))",
 		unbind = "-"

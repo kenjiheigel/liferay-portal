@@ -22,4 +22,6 @@ public class RolesAdminPortletKeys {
 	public static final String ROLES_ADMIN =
 		"com_liferay_roles_admin_web_portlet_RolesAdminPortlet";
 
+	// roles-admin-api
+
 }
