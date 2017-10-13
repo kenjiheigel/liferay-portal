@@ -85,6 +85,8 @@ public class BlogsEntryAssetRenderer
 		return _entry;
 	}
 
+	// blogs-web
+
 	@Override
 	public String getClassName() {
 		return BlogsEntry.class.getName();

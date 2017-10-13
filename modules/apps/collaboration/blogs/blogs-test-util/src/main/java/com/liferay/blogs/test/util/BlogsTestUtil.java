@@ -46,6 +46,8 @@ public class BlogsTestUtil {
 
 		boolean workflowEnabled = WorkflowThreadLocal.isEnabled();
 
+		// blogs-test-util
+
 		try {
 			WorkflowThreadLocal.setEnabled(true);
 

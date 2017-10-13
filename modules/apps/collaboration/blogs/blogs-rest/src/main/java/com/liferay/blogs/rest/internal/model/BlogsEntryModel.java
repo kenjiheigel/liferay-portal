@@ -34,6 +34,8 @@ public class BlogsEntryModel {
 		_title = blogsEntry.getTitle();
 	}
 
+	// blogs-rest
+
 	public String getContent() {
 		return _content;
 	}

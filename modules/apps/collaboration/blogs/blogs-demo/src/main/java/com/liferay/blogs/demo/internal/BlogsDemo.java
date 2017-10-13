@@ -43,6 +43,8 @@ import org.osgi.service.component.annotations.Reference;
 @Component(immediate = true, service = PortalInstanceLifecycleListener.class)
 public class BlogsDemo extends BasePortalInstanceLifecycleListener {
 
+	// blogs-demo
+
 	@Override
 	public void portalInstanceRegistered(Company company) throws Exception {
 		BlogsEntryDemoDataCreator randomBlogsEntryDemoDataCreator =

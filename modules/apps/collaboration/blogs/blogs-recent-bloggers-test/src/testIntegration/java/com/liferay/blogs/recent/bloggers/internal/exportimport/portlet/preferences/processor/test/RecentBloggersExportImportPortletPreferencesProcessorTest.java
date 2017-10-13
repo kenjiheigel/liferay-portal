@@ -122,6 +122,8 @@ public class RecentBloggersExportImportPortletPreferencesProcessorTest {
 			RecentBloggersPortletKeys.RECENT_BLOGGERS);
 	}
 
+	// blogs-recent-bloggers-test
+
 	@Test
 	public void testProcessOrganizationId() throws Exception {
 		PortletPreferences portletPreferences =

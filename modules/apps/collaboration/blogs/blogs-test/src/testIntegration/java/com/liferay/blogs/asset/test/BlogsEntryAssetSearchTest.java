@@ -61,6 +61,8 @@ public class BlogsEntryAssetSearchTest extends BaseAssetSearchTestCase {
 		super.setUp();
 	}
 
+	// blogs-test
+
 	@Ignore
 	@Override
 	@Test

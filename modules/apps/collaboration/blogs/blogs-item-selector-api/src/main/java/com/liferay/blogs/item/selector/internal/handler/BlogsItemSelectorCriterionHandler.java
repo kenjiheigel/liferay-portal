@@ -35,6 +35,8 @@ public class BlogsItemSelectorCriterionHandler
 		return BlogsItemSelectorCriterion.class;
 	}
 
+	// blogs-item-selector-api
+
 	@Activate
 	@Override
 	protected void activate(BundleContext bundleContext) {
