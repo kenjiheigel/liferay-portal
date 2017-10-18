@@ -15,25 +15,32 @@
 
 	<macrodef name="build-dist-tomcat-bare" >
 		<sequential>
+			<get-only-modified-modules-current-branch-dirs />
+
 			<if>
-				<equals arg1="${tomcat.keep.app.server.properties}" arg2="true" />
+				<equals arg1="${only.modules.modified}" arg2="false" />
 				<then>
-					<antcall inheritAll="false" target="update-sdk-properties" />
+					<if>
+						<equals arg1="${tomcat.keep.app.server.properties}" arg2="true" />
+						<then>
+							<antcall inheritAll="false" target="update-sdk-properties" />
 
-					<antcall inheritAll="false" target="unzip-tomcat" />
+							<antcall inheritAll="false" target="unzip-tomcat" />
+						</then>
+						<else>
+							<app-server-properties-update>
+								app.server.type=tomcat
+							</app-server-properties-update>
+
+							<antcall inheritAll="false" target="update-sdk-properties" />
+
+							<antcall target="unzip-tomcat" />
+						</else>
+					</if>
+
+					<delete dir="${project.dir}/portal-web/classes" />
 				</then>
-				<else>
-					<app-server-properties-update>
-						app.server.type=tomcat
-					</app-server-properties-update>
-
-					<antcall inheritAll="false" target="update-sdk-properties" />
-
-					<antcall target="unzip-tomcat" />
-				</else>
 			</if>
-
-			<delete dir="${project.dir}/portal-web/classes" />
 		</sequential>
 	</macrodef>
 
