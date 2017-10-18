@@ -26,6 +26,8 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = Editor.class)
 public class AlloyEditorEditor implements Editor {
 
+	// frontend-editor-alloy-editor-web
+
 	@Override
 	public String[] getJavaScriptModules() {
 		return new String[] {"liferay-alloy-editor"};

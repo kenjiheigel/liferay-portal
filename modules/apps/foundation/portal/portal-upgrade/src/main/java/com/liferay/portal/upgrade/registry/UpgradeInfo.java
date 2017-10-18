@@ -39,6 +39,8 @@ public class UpgradeInfo {
 		_upgradeStep = upgradeStep;
 	}
 
+	// portal-upgrade
+
 	/**
 	 * @deprecated As of 2.7.0, replace by {@link #UpgradeInfo(String, String,
 	 *             int, UpgradeStep)}
