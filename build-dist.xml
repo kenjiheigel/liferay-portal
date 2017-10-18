@@ -540,19 +540,29 @@
 		<if>
 			<equals arg1="${only.modules.modified}" arg2="false" />
 			<then>
+				<echo>only.modules.modified was set to false</echo>
+
 				<build-dist-tomcat-bare />
 
 				<ant inheritAll="false" target="deploy" />
 			</then>
 			<else>
+				<echo>only.modules.modified was set to true</echo>
+
 				<trycatch>
 					<try>
-						<ant inheritAll="false" target="deploy-diff" />
+						<echo>in the try</echo>
+
+						<ant inheritAll="false" target="deploy-diffs" />
 					</try>
 					<catch>
+						<echo>in the catch</echo>
+
 						<build-dist-tomcat-bare />
 
 						<ant inheritAll="false" target="clean" />
+
+						<ant inheritAll="false" target="compile" />
 
 						<ant inheritAll="false" target="deploy" />
 					</catch>
