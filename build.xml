@@ -461,6 +461,280 @@ message.
 		<print-current-time />
 	</target>
 
+	<target name="deploy-diffs">
+		<setup-libs />
+		<setup-sdk />
+
+		<if>
+			<or>
+				<equals arg1="${app.server.type}" arg2="glassfish" />
+				<equals arg1="${app.server.type}" arg2="websphere" />
+			</or>
+			<then>
+				<delete file="${app.server.portal.war.name}" />
+			</then>
+		</if>
+
+		<if>
+			<and>
+				<equals arg1="${app.server.type}" arg2="tomcat" />
+				<not>
+					<available file="${app.server.tomcat.classes.global.dir}/catalina.jar" />
+				</not>
+			</and>
+			<then>
+				<ant antfile="build-dist.xml" target="unzip-tomcat" />
+			</then>
+		</if>
+
+		<get-only-modified-modules-current-branch-dirs />
+
+		<if>
+			<equals arg1="${only.modules.modified}" arg2="false" />
+			<then>
+				<ant dir="portal-kernel" inheritAll="false" target="deploy" />
+
+				<ant dir="util-bridges" inheritAll="false" target="deploy" />
+				<ant dir="util-java" inheritAll="false" target="deploy" />
+				<ant dir="util-slf4j" inheritAll="false" target="deploy" />
+				<ant dir="util-taglib" inheritAll="false" target="deploy" />
+
+				<ant dir="portal-impl" inheritAll="false" target="deploy" />
+				<ant dir="portal-test" inheritAll="false" target="deploy" />
+				<ant dir="portal-test-integration" inheritAll="false" target="deploy" />
+
+				<ant dir="portal-web" inheritAll="false" target="deploy" />
+			</then>
+		</if>
+
+		<touch file="${liferay.home}/.liferay-home" />
+
+		<copy todir="${liferay.home}/data/hypersonic">
+			<fileset dir="sql">
+				<include name="${database.name}.properties" />
+				<include name="${database.name}.script" />
+			</fileset>
+		</copy>
+
+		<deploy-properties />
+
+		<if>
+			<equals arg1="${only.modules.modified}" arg2="false" />
+			<then>
+				<antcall target="deploy-additional-jars" />
+			</then>
+		</if>
+
+		<antcall target="update-app-server-scripts" />
+
+		<mkdir dir="${app.server.log.dir}" />
+		<mkdir dir="${app.server.temp.dir}" />
+		<mkdir dir="${app.server.work.dir}" />
+
+		<if>
+			<and>
+				<equals arg1="${app.server.type}" arg2="glassfish" />
+				<not>
+					<available file="${app.server.portal.dir}" type="dir" />
+				</not>
+			</and>
+			<then>
+				<move file="${app.server.portal.war.name}" tofile="${app.server.portal.war.name}-tmp" />
+
+				<mkdir dir="${app.server.portal.dir}" />
+
+				<unzip dest="${app.server.portal.dir}" src="${app.server.portal.war.name}-tmp" />
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${app.server.type}" arg2="websphere" />
+			<then>
+				<replace file="${app.server.websphere.instance.dir}/config/cells/liferay-cell/applications/liferay-portal.ear/deployments/liferay-portal/liferay-portal.war/WEB-INF/ibm-web-ext.xml">
+					<replacetoken><![CDATA[</web-ext>]]></replacetoken>
+					<replacevalue><![CDATA[  <jsp-attribute name="jdkSourceLevel" value="18" />
+</web-ext>]]></replacevalue>
+				</replace>
+			</then>
+		</if>
+
+		<ant dir="portal-web" inheritAll="false" target="war" />
+
+		<antcall target="install-portal-snapshots" />
+
+		<stopwatch name="modules.stopwatch" />
+
+		<if>
+			<equals arg1="${build.marketplace.apps.enabled}" arg2="true" />
+			<then>
+				<if>
+					<isset property="only.modules.modified.current.branch.dirs" />
+					<then>
+						<for delimiter="${line.separator}" list="${only.modules.modified.current.branch.dirs}" parallel="true" param="module.dir">
+							<sequential>
+								<if>
+									<available file="@{module.dir}/../settings.gradle" />
+									<then>
+										<move failonerror="false" file="@{module.dir}/../settings.gradle" tofile="@{module.dir}/../settings" />
+									</then>
+								</if>
+
+								<echo>@{module.dir}</echo>
+
+								<gradle-execute dir="@{module.dir}" task="deploy">
+									<arg value="clean" />
+								</gradle-execute>
+							</sequential>
+						</for>
+					</then>
+					<else>
+						<gradle-execute dir="${project.dir}/modules" task="deploy">
+							<arg value="--parallel" />
+							<arg value="-Dbuild.profile=portal-pre" />
+						</gradle-execute>
+
+						<gradle-execute dir="${project.dir}/modules" task="deploy">
+							<arg value="--parallel" />
+							<arg value="-Dbuild.exclude.dirs=${build.exclude.dirs}" />
+							<arg value="-Dbuild.include.dirs=${build.include.dirs}" />
+							<arg value="-Dbuild.profile=${build.profile}" />
+							<env key="WAS_HOME" value="${app.server.websphere.dir}" />
+						</gradle-execute>
+					</else>
+				</if>
+			</then>
+			<else>
+				<gradle-execute dir="${project.dir}/modules/core" task="deploy">
+					<arg value="--parallel" />
+					<arg value="-Dbuild.exclude.dirs=${build.exclude.dirs}" />
+					<arg value="-Dbuild.include.dirs=${build.include.dirs}" />
+					<arg value="-Dbuild.profile=${build.profile}" />
+				</gradle-execute>
+
+				<pathconvert property="build.app.server.lib.marker.files" setonempty="false">
+					<fileset dir="${project.dir}/modules" includes="**/.lfrbuild-app-server-lib" />
+				</pathconvert>
+
+				<if>
+					<isset property="build.app.server.lib.marker.files" />
+					<then>
+						<gradle-execute dir="${project.dir}/modules" task="deployTool">
+							<arg value="--parallel" />
+							<arg value="-Dbuild.exclude.dirs=${build.exclude.dirs}" />
+							<arg value="-Dbuild.include.dirs=${build.include.dirs}" />
+							<arg value="-Dbuild.profile=${build.profile}" />
+							<arg value="deployAppServerLib" />
+							<arg value="deployAppServerPortalFile" />
+							<arg value="deployConfigs" />
+						</gradle-execute>
+					</then>
+					<else>
+						<gradle-execute dir="${project.dir}/modules" task="deployTool">
+							<arg value="--parallel" />
+							<arg value="-Dbuild.exclude.dirs=${build.exclude.dirs}" />
+							<arg value="-Dbuild.include.dirs=${build.include.dirs}" />
+							<arg value="-Dbuild.profile=${build.profile}" />
+							<arg value="deployAppServerPortalFile" />
+							<arg value="deployConfigs" />
+						</gradle-execute>
+					</else>
+				</if>
+			</else>
+		</if>
+
+		<if>
+			<equals arg1="${jsp.precompile.modules}" arg2="on" />
+			<then>
+				<if>
+					<isset property="only.modules.modified.current.branch.dirs" />
+					<then>
+						<for delimiter="${line.separator}" list="${only.modules.modified.current.branch.dirs}" parallel="true" param="module.dir">
+							<sequential>
+								<gradle-execute dir="@{module.dir}" task="compileJSP" />
+
+								<if>
+									<contains string="@{module.dir}" substring="users-admin-web" />
+									<then>
+										<gradle-execute dir="@{module.dir}" task="copyCompiledJSP" />
+									</then>
+								</if>
+
+								<if>
+									<available file="@{module.dir}/../settings" />
+									<then>
+										<move failonerror="false" file="@{module.dir}/../settings" tofile="@{module.dir}/../settings.gradle" />
+									</then>
+								</if>
+							</sequential>
+						</for>
+					</then>
+					<else>
+						<if>
+							<equals arg1="${jsp.precompile.parallel}" arg2="on" />
+							<then>
+								<gradle-execute dir="${project.dir}/modules" task="compileJSP">
+									<arg value="--parallel" />
+									<arg value="-Dbuild.exclude.dirs=${build.exclude.dirs}" />
+									<arg value="-Dbuild.include.dirs=${build.include.dirs}" />
+									<arg value="-Dbuild.profile=${build.profile}" />
+								</gradle-execute>
+							</then>
+							<else>
+								<gradle-execute dir="${project.dir}/modules" task="compileJSP">
+									<arg value="-Dbuild.exclude.dirs=${build.exclude.dirs}" />
+									<arg value="-Dbuild.include.dirs=${build.include.dirs}" />
+									<arg value="-Dbuild.profile=${build.profile}" />
+								</gradle-execute>
+							</else>
+						</if>
+
+						<gradle-execute dir="${project.dir}/modules" task="copyCompiledJSP">
+							<arg value="-Dbuild.exclude.dirs=${build.exclude.dirs}" />
+							<arg value="-Dbuild.include.dirs=${build.include.dirs}" />
+							<arg value="-Dbuild.profile=${build.profile}" />
+						</gradle-execute>
+					</else>
+				</if>
+			</then>
+		</if>
+
+		<if>
+			<isset property="env.JENKINS_HOME" />
+			<then>
+				<if>
+					<resourcecount count="0" when="gt">
+						<fileset dir="${project.dir}/modules" includes="**/.lfrbuild-ci" />
+					</resourcecount>
+					<then>
+						<gradle-execute dir="${project.dir}/modules" task="deploy">
+							<arg value="--parallel" />
+							<arg value="-Dbuild.profile=ci" />
+						</gradle-execute>
+					</then>
+				</if>
+			</then>
+		</if>
+
+		<stopwatch action="elapsed" name="modules.stopwatch" />
+
+		<if>
+			<and>
+				<available file="${app.server.portal.dir}" type="dir" />
+				<available file="${app.server.portal.war.name}-tmp" type="file" />
+				<equals arg1="${app.server.type}" arg2="glassfish" />
+			</and>
+			<then>
+				<delete dir="${app.server.portal.dir}" />
+
+				<move file="${app.server.portal.war.name}-tmp" tofile="${app.server.portal.war.name}" />
+			</then>
+		</if>
+
+		<copy file="tools/osgi-marketplace-override-README.markdown" tofile="${liferay.home}/osgi/marketplace/override/README.markdown" />
+
+		<print-current-time />
+	</target>
+
 	<target name="deploy-additional-jars">
 		<copy todir="${app.server.lib.global.dir}">
 			<fileset dir="lib/development" includes="hsql.jar,mariadb.jar,mysql.jar,postgresql.jar" />
