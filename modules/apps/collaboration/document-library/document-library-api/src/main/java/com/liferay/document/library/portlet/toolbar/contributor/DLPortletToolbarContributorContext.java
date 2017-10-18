@@ -28,6 +28,8 @@ import javax.portlet.PortletResponse;
  */
 public interface DLPortletToolbarContributorContext {
 
+	// document-library-api
+
 	public void updatePortletTitleMenuItems(
 		List<MenuItem> menuItems, Folder folder, ThemeDisplay themeDisplay,
 		PortletRequest portletRequest, PortletResponse portletResponse);
