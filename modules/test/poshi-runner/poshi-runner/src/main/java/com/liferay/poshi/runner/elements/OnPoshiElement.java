@@ -22,12 +22,12 @@ import org.dom4j.Element;
 /**
  * @author Kenji Heigel
  */
-public class IfPoshiElement extends BasePoshiElement {
+public class OnPoshiElement extends BasePoshiElement {
 
 	@Override
 	public PoshiElement clone(Element element) {
 		if (isElementType(_ELEMENT_NAME, element)) {
-			return new IfPoshiElement(element);
+			return new OnPoshiElement(_ELEMENT_NAME, element);
 		}
 
 		return null;
@@ -37,8 +37,8 @@ public class IfPoshiElement extends BasePoshiElement {
 	public PoshiElement clone(
 		PoshiElement parentPoshiElement, String readableSyntax) {
 
-		if (_isElementType(readableSyntax)) {
-			return new IfPoshiElement(readableSyntax);
+		if (isElementType(readableSyntax)) {
+			return new OnPoshiElement(_ELEMENT_NAME, readableSyntax);
 		}
 
 		return null;
@@ -47,11 +47,7 @@ public class IfPoshiElement extends BasePoshiElement {
 	@Override
 	public void parseReadableSyntax(String readableSyntax) {
 		for (String readableBlock : getReadableBlocks(readableSyntax)) {
-			if (readableBlock.startsWith(getName() + " (")) {
-				add(
-					PoshiElementFactory.newPoshiElement(
-						this, getParentheticalContent(readableBlock)));
-
+			if (readableBlock.startsWith(getBlockName() + " {")) {
 				continue;
 			}
 
@@ -65,66 +61,55 @@ public class IfPoshiElement extends BasePoshiElement {
 
 		sb.append("\n");
 
-		PoshiElement thenElement = (PoshiElement)element("then");
+		sb.append(getPad());
+		sb.append(getBlockName());
 
-		String thenReadableSyntax = thenElement.toReadableSyntax();
+		sb.append(" {");
 
-		sb.append(createReadableBlock(thenReadableSyntax));
+		List<PoshiElement> poshiElements = toPoshiElements(elements());
 
-		for (PoshiElement elseifElement :
-				(List<PoshiElement>)elements("elseif")) {
+		for (int i = 0; i < poshiElements.size(); i++) {
+			PoshiElement poshiElement = poshiElements.get(i);
 
-			sb.append(elseifElement.toReadableSyntax());
+			String readableSyntax = poshiElement.toReadableSyntax();
+
+			if (i == 0) {
+				if (readableSyntax.startsWith("\n\n")) {
+					readableSyntax = readableSyntax.replaceFirst("\n\n", "\n");
+				}
+			}
+
+			readableSyntax = readableSyntax.replaceAll("\n", "\n" + getPad());
+
+			sb.append(readableSyntax.replaceAll("\n\t\n", "\n\n"));
 		}
 
-		if (element("else") != null) {
-			PoshiElement elseElement = (PoshiElement)element("else");
-
-			sb.append(elseElement.toReadableSyntax());
-		}
+		sb.append("\n");
+		sb.append(getPad());
+		sb.append("}");
 
 		return sb.toString();
 	}
 
-	protected IfPoshiElement() {
+	protected OnPoshiElement() {
 	}
 
-	protected IfPoshiElement(Element element) {
-		super("if", element);
-	}
-
-	protected IfPoshiElement(String readableSyntax) {
-		super("if", readableSyntax);
-	}
-
-	protected IfPoshiElement(String name, Element element) {
+	protected OnPoshiElement(String name, Element element) {
 		super(name, element);
 	}
 
-	protected IfPoshiElement(String name, String readableSyntax) {
+	protected OnPoshiElement(String name, String readableSyntax) {
 		super(name, readableSyntax);
 	}
 
 	@Override
 	protected String getBlockName() {
-		StringBuilder sb = new StringBuilder();
+		return "on";
+	}
 
-		sb.append(getReadableName());
-
-		for (String conditionName : _conditionNames) {
-			if (element(conditionName) != null) {
-				PoshiElement poshiElement = (PoshiElement)element(
-					conditionName);
-
-				sb.append(" (");
-				sb.append(poshiElement.toReadableSyntax());
-				sb.append(")");
-
-				break;
-			}
-		}
-
-		return sb.toString();
+	@Override
+	protected String getPad() {
+		return super.getPad() + "\t";
 	}
 
 	protected List<String> getReadableBlocks(String readableSyntax) {
@@ -142,23 +127,21 @@ public class IfPoshiElement extends BasePoshiElement {
 
 				readableBlocks.add(line);
 
-				sb.append("{\n");
-
 				continue;
 			}
 
-			sb.append(line);
-			sb.append("\n");
-
-			readableBlock = sb.toString();
-
-			readableBlock = readableBlock.trim();
+			if (line.endsWith("{") && readableBlocks.isEmpty()) {
+				continue;
+			}
 
 			if (isValidReadableBlock(readableBlock)) {
 				readableBlocks.add(readableBlock);
 
 				sb.setLength(0);
 			}
+
+			sb.append(line);
+			sb.append("\n");
 		}
 
 		return readableBlocks;
@@ -168,14 +151,14 @@ public class IfPoshiElement extends BasePoshiElement {
 		return getName();
 	}
 
-	private boolean _isElementType(String readableSyntax) {
+	protected boolean isElementType(String readableSyntax) {
 		readableSyntax = readableSyntax.trim();
 
 		if (!isBalancedReadableSyntax(readableSyntax)) {
 			return false;
 		}
 
-		if (!readableSyntax.startsWith("if (")) {
+		if (!readableSyntax.startsWith(getBlockName() + " {")) {
 			return false;
 		}
 
@@ -186,9 +169,6 @@ public class IfPoshiElement extends BasePoshiElement {
 		return true;
 	}
 
-	private static final String _ELEMENT_NAME = "if";
-
-	private static final String[] _conditionNames =
-		{"and", "condition", "equals", "isset", "not", "or"};
+	private static final String _ELEMENT_NAME = "on";
 
 }
