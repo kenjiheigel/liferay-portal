@@ -25,4 +25,6 @@ public interface PoshiComment extends Comment, PoshiNode {
 
 	public PoshiComment clone(String readableSyntax);
 
+	public boolean isReadableSyntaxComment(String readableSyntax);
+
 }

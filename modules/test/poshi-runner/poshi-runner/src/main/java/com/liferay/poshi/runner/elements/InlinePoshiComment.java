@@ -30,7 +30,7 @@ public class InlinePoshiComment extends BasePoshiComment {
 
 	@Override
 	public PoshiComment clone(String readableSyntax) {
-		if (readableSyntax.startsWith("//")) {
+		if (isReadableSyntaxComment(readableSyntax)) {
 			return new InlinePoshiComment(readableSyntax);
 		}
 
@@ -38,8 +38,17 @@ public class InlinePoshiComment extends BasePoshiComment {
 	}
 
 	@Override
-	public void parseReadableSyntax(String readableSyntax) {
+	public boolean isReadableSyntaxComment(String readableSyntax) {
 		if (readableSyntax.startsWith("//")) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public void parseReadableSyntax(String readableSyntax) {
+		if (isReadableSyntaxComment(readableSyntax)) {
 			String text = readableSyntax.substring(2);
 
 			setText(" " + text.trim() + " ");

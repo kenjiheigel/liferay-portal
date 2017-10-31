@@ -31,6 +31,16 @@ import org.dom4j.Comment;
  */
 public class PoshiCommentFactory {
 
+	public static boolean isReadableSyntaxComment(String readableSyntax) {
+		for (PoshiComment poshiComment : _poshiComments) {
+			if (poshiComment.isReadableSyntaxComment(readableSyntax)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public static PoshiComment newPoshiComment(Comment comment) {
 		for (PoshiComment poshiComment : _poshiComments) {
 			PoshiComment newPoshiComment = poshiComment.clone(comment);
