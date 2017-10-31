@@ -14,16 +14,15 @@
 
 package com.liferay.poshi.runner.elements;
 
-import org.dom4j.Element;
+import org.dom4j.Comment;
 
 /**
- * @author Kenji Heigel
+ * @author Michael Hashimoto
  */
-public interface PoshiElement extends Element, PoshiNode {
+public interface PoshiComment extends Comment, PoshiNode {
 
-	public PoshiElement clone(Element element);
+	public PoshiComment clone(Comment comment);
 
-	public PoshiElement clone(
-		PoshiElement parentPoshiElement, String readableSyntax);
+	public PoshiComment clone(String readableSyntax);
 
 }
