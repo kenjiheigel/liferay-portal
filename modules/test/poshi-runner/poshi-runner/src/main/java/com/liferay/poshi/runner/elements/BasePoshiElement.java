@@ -24,7 +24,9 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.dom4j.Attribute;
+import org.dom4j.Comment;
 import org.dom4j.Element;
+import org.dom4j.Node;
 import org.dom4j.tree.DefaultElement;
 
 /**
@@ -85,7 +87,7 @@ public abstract class BasePoshiElement
 		}
 
 		_addAttributes(element);
-		_addElements(element);
+		_addNodes(element);
 	}
 
 	protected BasePoshiElement(String name, String readableSyntax) {
@@ -273,11 +275,14 @@ public abstract class BasePoshiElement
 		}
 	}
 
-	private void _addElements(Element element) {
-		for (Element childElement :
-				Dom4JUtil.toElementList(element.elements())) {
-
-			add(PoshiElementFactory.newPoshiElement(childElement));
+	private void _addNodes(Element element) {
+		for (Node node : Dom4JUtil.toNodeList(element.content())) {
+			if (node instanceof Comment) {
+				add(PoshiCommentFactory.newPoshiComment((Comment)node));
+			}
+			else if (node instanceof Element) {
+				add(PoshiElementFactory.newPoshiElement((Element)node));
+			}
 		}
 	}
 
