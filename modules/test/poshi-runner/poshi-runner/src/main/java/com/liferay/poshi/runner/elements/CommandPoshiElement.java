@@ -14,6 +14,7 @@
 
 package com.liferay.poshi.runner.elements;
 
+import com.liferay.poshi.runner.util.Dom4JUtil;
 import com.liferay.poshi.runner.util.RegexUtil;
 import com.liferay.poshi.runner.util.StringUtil;
 
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.dom4j.Element;
+import org.dom4j.Node;
 
 /**
  * @author Kenji Heigel
@@ -103,8 +105,17 @@ public class CommandPoshiElement extends BasePoshiElement {
 
 		List<String> readableBlocks = new ArrayList<>();
 
-		for (PoshiElement poshiElement : toPoshiElements(elements())) {
-			readableBlocks.add(poshiElement.toReadableSyntax());
+		for (Node node : Dom4JUtil.toNodeList(content())) {
+			if (node instanceof PoshiComment) {
+				PoshiComment poshiComment = (PoshiComment)node;
+
+				readableBlocks.add(poshiComment.toReadableSyntax());
+			}
+			else if (node instanceof PoshiElement) {
+				PoshiElement poshiElement = (PoshiElement)node;
+
+				readableBlocks.add(poshiElement.toReadableSyntax());
+			}
 		}
 
 		sb.append(createReadableBlock(readableBlocks));

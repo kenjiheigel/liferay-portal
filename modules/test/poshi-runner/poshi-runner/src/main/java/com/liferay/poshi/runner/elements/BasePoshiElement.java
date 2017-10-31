@@ -67,11 +67,21 @@ public abstract class BasePoshiElement
 		return false;
 	}
 
+	@Override
 	public String toReadableSyntax() {
 		StringBuilder sb = new StringBuilder();
 
-		for (PoshiElement poshiElement : toPoshiElements(elements())) {
-			sb.append(poshiElement.toReadableSyntax());
+		for (Node node : Dom4JUtil.toNodeList(content())) {
+			if (node instanceof PoshiComment) {
+				PoshiComment poshiComment = (PoshiComment)node;
+
+				sb.append(poshiComment.toReadableSyntax());
+			}
+			else if (node instanceof PoshiElement) {
+				PoshiElement poshiElement = (PoshiElement)node;
+
+				sb.append(poshiElement.toReadableSyntax());
+			}
 		}
 
 		return sb.toString();
