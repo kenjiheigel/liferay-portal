@@ -27,6 +27,8 @@ import java.io.IOException;
 @ProviderType
 public interface BlogsEntryDemoDataCreator {
 
+	// blogs-demo-data-creator-api
+
 	public BlogsEntry create(long userId, long groupId)
 		throws IOException, PortalException;
 

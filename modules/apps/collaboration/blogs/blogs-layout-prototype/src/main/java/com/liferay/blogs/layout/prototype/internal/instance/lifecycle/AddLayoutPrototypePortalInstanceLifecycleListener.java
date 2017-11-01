@@ -63,6 +63,8 @@ public class AddLayoutPrototypePortalInstanceLifecycleListener
 		addBlogPage(company.getCompanyId(), defaultUserId, layoutPrototypes);
 	}
 
+	// blogs-layout-prototype
+
 	protected void addBlogPage(
 			long companyId, long defaultUserId,
 			List<LayoutPrototype> layoutPrototypes)

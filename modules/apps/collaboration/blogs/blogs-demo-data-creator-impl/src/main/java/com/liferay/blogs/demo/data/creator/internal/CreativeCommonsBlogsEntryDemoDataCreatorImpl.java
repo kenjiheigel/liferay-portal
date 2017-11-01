@@ -41,6 +41,8 @@ import org.osgi.service.component.annotations.Component;
 public class CreativeCommonsBlogsEntryDemoDataCreatorImpl
 	extends BaseBlogsEntryDemoDataCreator {
 
+	// blogs-demo-data-creator-impl
+
 	@Activate
 	public void activate(BundleContext bundleContext) {
 		Collections.addAll(

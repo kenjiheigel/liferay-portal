@@ -74,6 +74,8 @@ public class BlogsItemSelectorView
 		return _supportedItemSelectorReturnTypes;
 	}
 
+	// blogs-item-selector-web
+
 	@Override
 	public String getTitle(Locale locale) {
 		return LanguageUtil.get(locale, "blog-images");

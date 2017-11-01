@@ -43,6 +43,8 @@ import org.osgi.service.component.annotations.Component;
 public class BlogsContentEditorOptionsContributor
 	implements EditorOptionsContributor {
 
+	// blogs-editor-configuration
+
 	@Override
 	public void populateEditorOptions(
 		EditorOptions editorOptions,

@@ -56,6 +56,8 @@ public class BlogsEntryAtomCollectionAdapter
 		return _COLLECTION_NAME;
 	}
 
+	// blogs-service
+
 	@Override
 	public List<String> getEntryAuthors(BlogsEntry blogsEntry) {
 		List<String> authors = new ArrayList<>();

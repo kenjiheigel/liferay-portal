@@ -28,6 +28,8 @@ import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClass
 )
 public interface BlogsConfiguration {
 
+	// blogs-configuration
+
 	/**
 	 * Set the location of the XML file containing the configuration of the
 	 * default display templates for the Blogs portlet.

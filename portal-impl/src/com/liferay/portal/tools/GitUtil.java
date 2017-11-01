@@ -115,6 +115,8 @@ public class GitUtil {
 
 		String baseDirName = ArgumentsUtil.getString(
 			arguments, "git.base.dir", "./");
+		String includeBaseDirFileNames = ArgumentsUtil.getString(
+			arguments, "include.base.dir.file.names", null);
 		String markerFileName = ArgumentsUtil.getString(
 			arguments, "git.marker.file", null);
 		String type = ArgumentsUtil.getString(
@@ -141,7 +143,29 @@ public class GitUtil {
 			}
 
 			if (Validator.isNotNull(markerFileName)) {
-				fileNames = getDirNames(baseDirName, fileNames, markerFileName);
+				Set<String> dirNames =
+					getDirNames(baseDirName, fileNames, markerFileName);
+
+				if (Validator.isNotNull(includeBaseDirFileNames) &&
+					includeBaseDirFileNames.equals("true")) {
+
+					Set<String> baseDirFileNames = new HashSet<>();
+
+					for (String fileName : fileNames) {
+						if (fileName.contains("/")) {
+							continue;
+						}
+
+						baseDirFileNames.add(fileName);
+					}
+
+					baseDirFileNames.addAll(dirNames);
+
+					fileNames = baseDirFileNames;
+				}
+				else {
+					fileNames = dirNames;
+				}
 			}
 
 			for (String fileName : fileNames) {
