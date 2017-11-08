@@ -102,7 +102,7 @@ public class AutoCloseRule {
 
 	@Override
 	public String toString() {
-		return ruleData;
+			return ruleData;
 	}
 
 	protected String getBatchName(Build build) {
