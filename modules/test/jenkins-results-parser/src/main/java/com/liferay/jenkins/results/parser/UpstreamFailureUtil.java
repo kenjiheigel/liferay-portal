@@ -183,6 +183,7 @@ public class UpstreamFailureUtil {
 		"https://test-1-0.liferay.com/userContent/testResults/";
 
 	protected static JSONObject upstreamFailuresJobJSONObject = new JSONObject(
-		"{\"SHA\":\"\",\"failedBatches\":[]}");
+		"{\"SHA\":\"\",\"failedBatches\":[{\"result\":\"FAILURE\",\"" +
+			"failedTests\":[],\"jobVariant\":\"source-format-jdk8\"}]}");
 
 }
