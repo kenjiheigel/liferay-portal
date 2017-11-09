@@ -62,6 +62,8 @@ public class AutoCloseRule {
 				continue;
 			}
 
+			System.out.println("build is not failing in upstream");
+
 			boolean containsUniqueTestFailure = false;
 
 			for (TestResult testResult : downstreamBuild.getTestResults(null)) {
@@ -93,6 +95,8 @@ public class AutoCloseRule {
 			}
 		}
 
+		System.out.println("after evaluating downstream for upstream failures");
+
 		downstreamBuilds.removeAll(failingInUpstreamJobDownstreamBuilds);
 
 		if (downstreamBuilds.isEmpty()) {
@@ -115,6 +119,8 @@ public class AutoCloseRule {
 			failLimit = maxFailCount;
 		}
 
+		System.out.println("before evaluating downstream builds");
+
 		for (Build downstreamBuild : downstreamBuilds) {
 			String status = downstreamBuild.getStatus();
 
@@ -129,9 +135,13 @@ public class AutoCloseRule {
 			}
 		}
 
+		System.out.println("before returning failed downstream");
+
 		if (failedDownstreamBuilds.size() > failLimit) {
 			return failedDownstreamBuilds;
 		}
+
+		System.out.println("before returning empty");
 
 		return Collections.emptyList();
 	}
