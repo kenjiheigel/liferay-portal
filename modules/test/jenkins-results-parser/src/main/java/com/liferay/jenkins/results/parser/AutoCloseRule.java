@@ -50,10 +50,14 @@ public class AutoCloseRule {
 			downstreamBuilds.size());
 
 		for (Build downstreamBuild : downstreamBuilds) {
+			System.out.println("evaluting downstream for upstream failures");
+
 			if (UpstreamFailureUtil.isBuildFailingInUpstreamJob(
 					downstreamBuild)) {
 
 				failingInUpstreamJobDownstreamBuilds.add(downstreamBuild);
+
+				System.out.println("build is failing in upstream");
 
 				continue;
 			}
@@ -61,7 +65,11 @@ public class AutoCloseRule {
 			boolean containsUniqueTestFailure = false;
 
 			for (TestResult testResult : downstreamBuild.getTestResults(null)) {
+				System.out.println(testResult.getTestName());
+
 				String testStatus = testResult.getStatus();
+
+				System.out.println(testStatus);
 
 				if (testStatus.equals("PASSED") ||
 					testStatus.equals("SKIPPED")) {
@@ -80,6 +88,8 @@ public class AutoCloseRule {
 
 			if (!containsUniqueTestFailure) {
 				failingInUpstreamJobDownstreamBuilds.add(downstreamBuild);
+
+				System.out.println("tests are failing in upstream");
 			}
 		}
 
