@@ -184,6 +184,9 @@ public class UpstreamFailureUtil {
 
 	protected static JSONObject upstreamFailuresJobJSONObject = new JSONObject(
 		"{\"SHA\":\"\",\"failedBatches\":[{\"result\":\"FAILURE\",\"" +
-			"failedTests\":[],\"jobVariant\":\"source-format-jdk8\"}]}");
+			"failedTests\":[],\"jobVariant\":\"source-format-jdk8\"}], " +
+			"{\"result\":\"UNSTABLE\",\"failedTests\":" +
+			"[\"PoshiElementFactoryTest.testPoshiToReadable\",]" +
+			"\"jobVariant\":\"modules-unit-jdk8\"}}");
 
 }
