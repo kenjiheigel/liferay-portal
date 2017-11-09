@@ -14,16 +14,15 @@
 
 package com.liferay.poshi.runner.elements;
 
-import org.dom4j.Element;
+import org.dom4j.Node;
 
 /**
- * @author Kenji Heigel
+* @author Michael Hashimoto
  */
-public interface PoshiElement extends Element, PoshiNode {
+public interface PoshiNode extends Node {
 
-	public PoshiElement clone(Element element);
+	public void parseReadableSyntax(String readableSyntax);
 
-	public PoshiElement clone(
-		PoshiElement parentPoshiElement, String readableSyntax);
+	public String toReadableSyntax();
 
 }

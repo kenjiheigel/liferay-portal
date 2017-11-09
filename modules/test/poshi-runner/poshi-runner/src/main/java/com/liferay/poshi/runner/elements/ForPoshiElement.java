@@ -66,6 +66,12 @@ public class ForPoshiElement extends BasePoshiElement {
 				continue;
 			}
 
+			if (PoshiCommentFactory.isReadableSyntaxComment(readableBlock)) {
+				add(PoshiCommentFactory.newPoshiComment(readableBlock));
+
+				continue;
+			}
+
 			add(PoshiElementFactory.newPoshiElement(this, readableBlock));
 		}
 	}
