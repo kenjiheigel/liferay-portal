@@ -80,11 +80,15 @@ public class UpstreamFailureUtil {
 	}
 
 	protected static boolean isBuildFailingInUpstreamJob(Build build) {
+		System.out.println("UpstreamFailureUtil.isBuildFailingInUpstreamJob");
+
 		try {
 			List<TestResult> testResults = new ArrayList<>();
 
 			testResults.addAll(build.getTestResults("FAILED"));
 			testResults.addAll(build.getTestResults("REGRESSION"));
+
+			System.out.println("after test results");
 
 			if (testResults.isEmpty()) {
 				String jobVariant = build.getJobVariant();
