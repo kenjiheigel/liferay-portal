@@ -68,6 +68,8 @@ public class AutoCloseRule {
 
 			boolean containsUniqueTestFailure = false;
 
+			System.out.println(downstreamBuild.getTestResults(null).size());
+
 			for (TestResult testResult : downstreamBuild.getTestResults(null)) {
 				System.out.println(testResult.getTestName());
 
