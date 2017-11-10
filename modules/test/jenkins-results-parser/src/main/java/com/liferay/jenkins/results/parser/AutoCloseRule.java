@@ -52,6 +52,8 @@ public class AutoCloseRule {
 		for (Build downstreamBuild : downstreamBuilds) {
 			System.out.println("evaluting downstream for upstream failures");
 
+			System.out.println(UpstreamFailureUtil.isBuildFailingInUpstreamJob(downstreamBuild));
+
 			if (UpstreamFailureUtil.isBuildFailingInUpstreamJob(
 					downstreamBuild)) {
 
