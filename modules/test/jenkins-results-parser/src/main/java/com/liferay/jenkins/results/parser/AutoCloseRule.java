@@ -49,54 +49,59 @@ public class AutoCloseRule {
 		List<Build> failingInUpstreamJobDownstreamBuilds = new ArrayList<>(
 			downstreamBuilds.size());
 
-		for (Build downstreamBuild : downstreamBuilds) {
-			System.out.println("evaluting downstream for upstream failures");
+		try {
+			for (Build downstreamBuild : downstreamBuilds) {
+				System.out.println("evaluting downstream for upstream failures");
 
-			System.out.println(UpstreamFailureUtil.isBuildFailingInUpstreamJob(downstreamBuild));
+				System.out.println(UpstreamFailureUtil.isBuildFailingInUpstreamJob(downstreamBuild));
 
-			if (UpstreamFailureUtil.isBuildFailingInUpstreamJob(
-					downstreamBuild)) {
+				if (UpstreamFailureUtil.isBuildFailingInUpstreamJob(
+				downstreamBuild)) {
 
-				failingInUpstreamJobDownstreamBuilds.add(downstreamBuild);
+					failingInUpstreamJobDownstreamBuilds.add(downstreamBuild);
 
-				System.out.println("build is failing in upstream");
-
-				continue;
-			}
-
-			System.out.println("build is not failing in upstream");
-
-			boolean containsUniqueTestFailure = false;
-
-			System.out.println(downstreamBuild.getTestResults(null).size());
-
-			for (TestResult testResult : downstreamBuild.getTestResults(null)) {
-				System.out.println(testResult.getTestName());
-
-				String testStatus = testResult.getStatus();
-
-				System.out.println(testStatus);
-
-				if (testStatus.equals("PASSED") ||
-					testStatus.equals("SKIPPED")) {
+					System.out.println("build is failing in upstream");
 
 					continue;
 				}
 
-				if (!UpstreamFailureUtil.isTestFailingInUpstreamJob(
-						testResult)) {
+				System.out.println("build is not failing in upstream");
 
-					containsUniqueTestFailure = true;
+				boolean containsUniqueTestFailure = false;
 
-					break;
+				System.out.println(downstreamBuild.getTestResults(null).size());
+
+				for (TestResult testResult : downstreamBuild.getTestResults(null)) {
+					System.out.println(testResult.getTestName());
+
+					String testStatus = testResult.getStatus();
+
+					System.out.println(testStatus);
+
+					if (testStatus.equals("PASSED") ||
+					testStatus.equals("SKIPPED")) {
+
+						continue;
+					}
+
+					if (!UpstreamFailureUtil.isTestFailingInUpstreamJob(
+					testResult)) {
+
+						containsUniqueTestFailure = true;
+
+						break;
+					}
+				}
+
+				if (!containsUniqueTestFailure) {
+					failingInUpstreamJobDownstreamBuilds.add(downstreamBuild);
+
+					System.out.println("tests are failing in upstream");
 				}
 			}
-
-			if (!containsUniqueTestFailure) {
-				failingInUpstreamJobDownstreamBuilds.add(downstreamBuild);
-
-				System.out.println("tests are failing in upstream");
-			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		System.out.println("after evaluating downstream for upstream failures");
