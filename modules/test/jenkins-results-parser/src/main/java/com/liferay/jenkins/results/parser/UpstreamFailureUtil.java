@@ -80,11 +80,15 @@ public class UpstreamFailureUtil {
 	}
 
 	protected static boolean isBuildFailingInUpstreamJob(Build build) {
+		System.out.println("UpstreamFailureUtil.isBuildFailingInUpstreamJob");
+
 		try {
 			List<TestResult> testResults = new ArrayList<>();
 
 			testResults.addAll(build.getTestResults("FAILED"));
 			testResults.addAll(build.getTestResults("REGRESSION"));
+
+			System.out.println("after test results");
 
 			if (testResults.isEmpty()) {
 				String jobVariant = build.getJobVariant();
@@ -183,6 +187,10 @@ public class UpstreamFailureUtil {
 		"https://test-1-0.liferay.com/userContent/testResults/";
 
 	protected static JSONObject upstreamFailuresJobJSONObject = new JSONObject(
-		"{\"SHA\":\"\",\"failedBatches\":[]}");
+		"{\"SHA\":\"\",\"failedBatches\":[{\"result\":\"FAILURE\",\"" +
+			"failedTests\":[],\"jobVariant\":\"source-format-jdk8\"}, " +
+			"{\"result\":\"UNSTABLE\",\"failedTests\":" +
+			"[\"PoshiElementFactoryTest.testPoshiToReadable\"]," +
+			"\"jobVariant\":\"modules-unit-jdk8\"}]}");
 
 }

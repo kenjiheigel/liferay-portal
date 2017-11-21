@@ -49,13 +49,62 @@ public class AutoCloseRule {
 		List<Build> failingInUpstreamJobDownstreamBuilds = new ArrayList<>(
 			downstreamBuilds.size());
 
-		for (Build downstreamBuild : downstreamBuilds) {
-			if (UpstreamFailureUtil.isBuildFailingInUpstreamJob(
-					downstreamBuild)) {
+		try {
+			for (Build downstreamBuild : downstreamBuilds) {
+				System.out.println("evaluting downstream for upstream failures");
 
-				failingInUpstreamJobDownstreamBuilds.add(downstreamBuild);
+				System.out.println(UpstreamFailureUtil.isBuildFailingInUpstreamJob(downstreamBuild));
+
+				if (UpstreamFailureUtil.isBuildFailingInUpstreamJob(
+				downstreamBuild)) {
+
+					failingInUpstreamJobDownstreamBuilds.add(downstreamBuild);
+
+					System.out.println("build is failing in upstream");
+
+					continue;
+				}
+
+				System.out.println("build is not failing in upstream");
+
+				boolean containsUniqueTestFailure = false;
+
+				System.out.println(downstreamBuild.getTestResults(null).size());
+
+				for (TestResult testResult : downstreamBuild.getTestResults(null)) {
+					System.out.println(testResult.getTestName());
+
+					String testStatus = testResult.getStatus();
+
+					System.out.println(testStatus);
+
+					if (testStatus.equals("PASSED") ||
+					testStatus.equals("SKIPPED")) {
+
+						continue;
+					}
+
+					if (!UpstreamFailureUtil.isTestFailingInUpstreamJob(
+					testResult)) {
+
+						containsUniqueTestFailure = true;
+
+						break;
+					}
+				}
+
+				if (!containsUniqueTestFailure) {
+					failingInUpstreamJobDownstreamBuilds.add(downstreamBuild);
+
+					System.out.println("tests are failing in upstream");
+				}
 			}
 		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("after evaluating downstream for upstream failures");
 
 		downstreamBuilds.removeAll(failingInUpstreamJobDownstreamBuilds);
 
@@ -79,6 +128,8 @@ public class AutoCloseRule {
 			failLimit = maxFailCount;
 		}
 
+		System.out.println("before evaluating downstream builds");
+
 		for (Build downstreamBuild : downstreamBuilds) {
 			String status = downstreamBuild.getStatus();
 
@@ -93,16 +144,20 @@ public class AutoCloseRule {
 			}
 		}
 
+		System.out.println("before returning failed downstream");
+
 		if (failedDownstreamBuilds.size() > failLimit) {
 			return failedDownstreamBuilds;
 		}
+
+		System.out.println("before returning empty");
 
 		return Collections.emptyList();
 	}
 
 	@Override
 	public String toString() {
-		return ruleData;
+			return ruleData;
 	}
 
 	protected String getBatchName(Build build) {
