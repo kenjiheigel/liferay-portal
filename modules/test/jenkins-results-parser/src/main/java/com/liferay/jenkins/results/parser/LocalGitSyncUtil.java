@@ -79,6 +79,19 @@ public class LocalGitSyncUtil {
 			senderUsername, senderBranchSHA, upstreamBranchSHA);
 	}
 
+	public static String synchronizeToLocalGit(
+			LocalGitSyncValues localGitSyncValues)
+		throws IOException {
+
+		return synchronizeToLocalGit(
+			localGitSyncValues.getGitWorkingDirectory(),
+			localGitSyncValues.getReceiverUsername(),
+			localGitSyncValues.getSenderBranchName(),
+			localGitSyncValues.getSenderUserName(),
+			localGitSyncValues.getSenderBranchSHA(),
+			localGitSyncValues.getUpstreamBranchSHA());
+	}
+
 	protected static void cacheBranch(
 		GitWorkingDirectory gitWorkingDirectory,
 		GitWorkingDirectory.Branch localBranch,
