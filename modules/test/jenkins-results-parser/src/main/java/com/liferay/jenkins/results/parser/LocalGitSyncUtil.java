@@ -125,8 +125,7 @@ public class LocalGitSyncUtil {
 
 		final long start = System.currentTimeMillis();
 
-		ExecutorService executorService = Executors.newFixedThreadPool(
-			_MAX_THREAD_POOL_SIZE);
+		ExecutorService executorService = getExecutorService();
 
 		final GitWorkingDirectory.Branch upstreamBranch =
 			gitWorkingDirectory.getBranch(
@@ -272,8 +271,7 @@ public class LocalGitSyncUtil {
 
 		final long start = System.currentTimeMillis();
 
-		ExecutorService executorService = Executors.newFixedThreadPool(
-			_MAX_THREAD_POOL_SIZE);
+		ExecutorService executorService = getExecutorService();
 
 		for (final GitWorkingDirectory.Remote localGitRemote :
 				localGitRemotes) {
@@ -508,8 +506,7 @@ public class LocalGitSyncUtil {
 				new HashMap<GitWorkingDirectory.Remote, Boolean>(
 					remotes.size()));
 
-		ExecutorService executorService = Executors.newFixedThreadPool(
-			_MAX_THREAD_POOL_SIZE);
+		ExecutorService executorService = getExecutorService();
 
 		for (final GitWorkingDirectory.Remote remote : remotes) {
 			executorService.execute(
