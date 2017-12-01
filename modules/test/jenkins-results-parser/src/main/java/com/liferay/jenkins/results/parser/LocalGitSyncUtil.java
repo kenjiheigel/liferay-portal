@@ -363,6 +363,10 @@ public class LocalGitSyncUtil {
 			"-", senderSHA);
 	}
 
+	protected static ExecutorService getExecutorService() {
+		return _executorService;
+	}
+
 	protected static String getGitHubRemoteURL(
 		String repositoryName, String userName) {
 
@@ -919,5 +923,7 @@ public class LocalGitSyncUtil {
 	private static final String _cacheBranchRegex = ".*cache-.+-.+-.+-[^-]+";
 	private static final Pattern _cacheTimestampBranchPattern = Pattern.compile(
 		"(?<name>cache-[^-]+-[^-]+-[^-]+-[^-]+)-(?<timestamp>\\d+)");
+	private static final ExecutorService _executorService =
+		ExecutorServiceUtil.getNewThreadPoolExecutor(_MAX_THREAD_POOL_SIZE);
 
 }
