@@ -27,9 +27,9 @@ public class LocalGitSyncValues {
 		String senderBranchName, String senderUsername, String senderBranchSHA,
 		String upstreamBranchSHA) {
 
-		setLocalGitSyncValues(gitWorkingDirectory, receiverUsername,
-			senderBranchName, senderUsername, senderBranchSHA,
-			upstreamBranchSHA);
+		setLocalGitSyncValues(
+			gitWorkingDirectory, receiverUsername, senderBranchName,
+			senderUsername, senderBranchSHA, upstreamBranchSHA);
 	}
 
 	public LocalGitSyncValues copy(LocalGitSyncValues localGitSyncValues) {
