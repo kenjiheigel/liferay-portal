@@ -79,6 +79,33 @@ public class LocalGitSyncUtil {
 	}
 
 	public static String synchronizeToLocalGit(
+		List<LocalGitSyncValues> localGitSyncValuesList) {
+
+		List<Callable<String>> callables = new ArrayList<>();
+
+		for (final LocalGitSyncValues localGitSyncValues :
+				localGitSyncValuesList) {
+
+			Callable<String> callable = new Callable<String>() {
+
+				public String call() throws IOException {
+					return synchronizeToLocalGit(localGitSyncValues);
+				}
+
+			};
+
+			callables.add(callable);
+		}
+
+		ParallelExecutor<String> parallelExecutor = new ParallelExecutor<>(
+			callables, getExecutorService());
+
+		List<String> cachedBranchNames = parallelExecutor.execute();
+
+		return cachedBranchNames.toString();
+	}
+
+	public static String synchronizeToLocalGit(
 			LocalGitSyncValues localGitSyncValues)
 		throws IOException {
 
