@@ -62,15 +62,15 @@ public class LocalGitSyncValues {
 		return _senderUserName;
 	}
 
+	public List<LocalGitSyncValues> getStoredLocalGitSyncValues() {
+		return _storedLocalGitSyncValues;
+	}
+
 	public String getUpstreamBranchSHA() {
 		return _upstreamBranchSHA;
 	}
 
-	protected List<LocalGitSyncValues> getStoredLocalGitSyncValues() {
-		return _storedLocalGitSyncValues;
-	}
-
-	protected void setLocalGitSyncValues(
+	public void setLocalGitSyncValues(
 		GitWorkingDirectory gitWorkingDirectory, String receiverUsername,
 		String senderBranchName, String senderUsername, String senderBranchSHA,
 		String upstreamBranchSHA) {
@@ -83,7 +83,7 @@ public class LocalGitSyncValues {
 		_upstreamBranchSHA = upstreamBranchSHA;
 	}
 
-	protected void storeLocalGitSyncValues() {
+	public void storeLocalGitSyncValues() {
 		_storedLocalGitSyncValues.add(copy(this));
 	}
 
