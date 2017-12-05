@@ -14,10 +14,12 @@
 
 package com.liferay.jenkins.results.parser;
 
+import java.io.File;
 import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -155,11 +157,37 @@ public class UpstreamFailureUtil {
 		}
 	}
 
-	public static void loadUpstreamJobFailuresJSONObject(Build build) {
-		String jobName = build.getJobName();
+	public static void loadUpstreamJobFailuresJSONObject(
+		TopLevelBuild topLevelBuild) {
+
+		String fileContent = null;
+		String jobName = topLevelBuild.getJobName();
 
 		try {
 			if (jobName.contains("pullrequest")) {
+				Properties buildProperties =
+					JenkinsResultsParserUtil.getBuildProperties();
+
+				String jenkinsDir = buildProperties.getProperty(
+					"jenkins.dir[master]");
+
+				File upstreamJobFailuresJSONFile = new File(
+					jenkinsDir, "upstream-failures.json");
+
+				fileContent = JenkinsResultsParserUtil.read(
+					upstreamJobFailuresJSONFile);
+
+				if (fileContent != null) {
+					_upstreamFailuresJobJSONObject = new JSONObject(
+						fileContent);
+
+					System.out.println(
+						"Using upstream failures at: " +
+							getUpstreamJobFailuresSHA());
+
+					return;
+				}
+
 				String upstreamJobName = jobName.replace(
 					"pullrequest", "upstream");
 
@@ -180,13 +208,15 @@ public class UpstreamFailureUtil {
 				"Unable to set upstream acceptance failure data.");
 
 			ioe.printStackTrace();
+
+			_upstreamFailuresJobJSONObject = new JSONObject(
+				"{\"SHA\":\"\",\"failedBatches\":[]}");
 		}
 	}
 
 	private static final String _UPSTREAM_FAILURES_JOB_BASE_URL =
 		"https://test-1-0.liferay.com/userContent/testResults/";
 
-	private static JSONObject _upstreamFailuresJobJSONObject = new JSONObject(
-		"{\"SHA\":\"\",\"failedBatches\":[]}");
+	private static JSONObject _upstreamFailuresJobJSONObject;
 
 }
