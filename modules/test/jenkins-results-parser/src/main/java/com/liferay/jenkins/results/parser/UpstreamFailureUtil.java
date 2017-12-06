@@ -14,6 +14,7 @@
 
 package com.liferay.jenkins.results.parser;
 
+import java.io.File;
 import java.io.IOException;
 
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class UpstreamFailureUtil {
 		List<String> upstreamFailures = new ArrayList<>();
 
 		JSONArray failedBatchesJSONArray =
-			upstreamFailuresJobJSONObject.getJSONArray("failedBatches");
+			_upstreamFailuresJobJSONObject.getJSONArray("failedBatches");
 
 		for (int i = 0; i < failedBatchesJSONArray.length(); i++) {
 			JSONObject failedBatchJSONObject =
@@ -65,9 +66,13 @@ public class UpstreamFailureUtil {
 		return upstreamFailures;
 	}
 
+	public static JSONObject getUpstreamJobFailuresJSONObject() {
+		return _upstreamFailuresJobJSONObject;
+	}
+
 	public static String getUpstreamJobFailuresSHA() {
 		try {
-			return upstreamFailuresJobJSONObject.getString("SHA");
+			return _upstreamFailuresJobJSONObject.getString("SHA");
 		}
 		catch (JSONException jsone) {
 			System.out.println(
@@ -161,6 +166,25 @@ public class UpstreamFailureUtil {
 		loadUpstreamJobFailuresJSONObject(jobName);
 	}
 
+	public static void loadUpstreamJobFailuresJSONObject(File file) {
+		String fileContent = null;
+
+		try {
+			fileContent = JenkinsResultsParserUtil.read(file);
+		}
+		catch (IOException ioe) {
+			System.out.println(
+				"Unable to load upstream acceptance failure data from file: " +
+					file.getAbsolutePath());
+
+			ioe.printStackTrace();
+		}
+
+		if (fileContent != null) {
+			_upstreamFailuresJobJSONObject = new JSONObject(fileContent);
+		}
+	}
+
 	public static void loadUpstreamJobFailuresJSONObject(String jobName) {
 		try {
 			if (jobName.contains("pullrequest")) {
@@ -168,25 +192,25 @@ public class UpstreamFailureUtil {
 					"pullrequest", "upstream");
 
 				String url = JenkinsResultsParserUtil.getLocalURL(
-					UPSTREAM_FAILURES_JOB_BASE_URL + upstreamJobName +
+					_UPSTREAM_FAILURES_JOB_BASE_URL + upstreamJobName +
 						"/builds/latest/test.results.json");
 
-				upstreamFailuresJobJSONObject =
+				_upstreamFailuresJobJSONObject =
 					JenkinsResultsParserUtil.toJSONObject(url);
 			}
 		}
 		catch (IOException ioe) {
 			System.out.println(
-				"Unable to set upstream acceptance failure data.");
+				"Unable to load upstream acceptance failure data from url.");
 
 			ioe.printStackTrace();
 		}
 	}
 
-	protected static final String UPSTREAM_FAILURES_JOB_BASE_URL =
+	private static final String _UPSTREAM_FAILURES_JOB_BASE_URL =
 		"https://test-1-0.liferay.com/userContent/testResults/";
 
-	protected static JSONObject upstreamFailuresJobJSONObject = new JSONObject(
+	private static JSONObject _upstreamFailuresJobJSONObject = new JSONObject(
 		"{\"SHA\":\"\",\"failedBatches\":[]}");
 
 }
