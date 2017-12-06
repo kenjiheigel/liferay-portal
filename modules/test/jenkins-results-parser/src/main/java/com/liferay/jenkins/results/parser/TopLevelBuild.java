@@ -1125,10 +1125,14 @@ public class TopLevelBuild extends BaseBuild {
 				if ((upstreamJobFailuresJSONFile != null) &&
 					upstreamJobFailuresJSONFile.exists()) {
 
+					System.out.println("Using failure file");
+
 					UpstreamFailureUtil.loadUpstreamJobFailuresJSONObject(
 						upstreamJobFailuresJSONFile);
 				}
 				else {
+					System.out.println("Using failure url");
+
 					UpstreamFailureUtil.loadUpstreamJobFailuresJSONObject(this);
 				}
 			}
