@@ -32,7 +32,7 @@ public class UpstreamFailureUtil {
 		List<String> upstreamFailures = new ArrayList<>();
 
 		JSONArray failedBatchesJSONArray =
-			upstreamFailuresJobJSONObject.getJSONArray("failedBatches");
+			_upstreamFailuresJobJSONObject.getJSONArray("failedBatches");
 
 		for (int i = 0; i < failedBatchesJSONArray.length(); i++) {
 			JSONObject failedBatchJSONObject =
@@ -67,7 +67,7 @@ public class UpstreamFailureUtil {
 
 	public static String getUpstreamJobFailuresSHA() {
 		try {
-			return upstreamFailuresJobJSONObject.getString("SHA");
+			return _upstreamFailuresJobJSONObject.getString("SHA");
 		}
 		catch (JSONException jsone) {
 			System.out.println(
@@ -168,10 +168,10 @@ public class UpstreamFailureUtil {
 					"pullrequest", "upstream");
 
 				String url = JenkinsResultsParserUtil.getLocalURL(
-					UPSTREAM_FAILURES_JOB_BASE_URL + upstreamJobName +
+					_UPSTREAM_FAILURES_JOB_BASE_URL + upstreamJobName +
 						"/builds/latest/test.results.json");
 
-				upstreamFailuresJobJSONObject =
+				_upstreamFailuresJobJSONObject =
 					JenkinsResultsParserUtil.toJSONObject(url);
 			}
 		}
@@ -183,10 +183,10 @@ public class UpstreamFailureUtil {
 		}
 	}
 
-	protected static final String UPSTREAM_FAILURES_JOB_BASE_URL =
+	private static final String _UPSTREAM_FAILURES_JOB_BASE_URL =
 		"https://test-1-0.liferay.com/userContent/testResults/";
 
-	protected static JSONObject upstreamFailuresJobJSONObject = new JSONObject(
+	private static JSONObject _upstreamFailuresJobJSONObject = new JSONObject(
 		"{\"SHA\":\"\",\"failedBatches\":[]}");
 
 }
