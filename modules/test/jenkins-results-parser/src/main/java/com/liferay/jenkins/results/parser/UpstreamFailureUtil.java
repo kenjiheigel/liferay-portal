@@ -158,10 +158,6 @@ public class UpstreamFailureUtil {
 	public static void loadUpstreamJobFailuresJSONObject(Build build) {
 		String jobName = build.getJobName();
 
-		loadUpstreamJobFailuresJSONObject(jobName);
-	}
-
-	public static void loadUpstreamJobFailuresJSONObject(String jobName) {
 		try {
 			if (jobName.contains("pullrequest")) {
 				String upstreamJobName = jobName.replace(
@@ -173,6 +169,10 @@ public class UpstreamFailureUtil {
 
 				_upstreamFailuresJobJSONObject =
 					JenkinsResultsParserUtil.toJSONObject(url);
+
+				System.out.println(
+					"Using upstream failures at: " +
+						getUpstreamJobFailuresSHA());
 			}
 		}
 		catch (IOException ioe) {
