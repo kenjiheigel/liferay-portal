@@ -328,11 +328,6 @@ public class TopLevelBuild extends BaseBuild {
 	}
 
 	@Override
-	public void setCompareToUpstream(boolean compareToUpstream) {
-		_compareToUpstream = compareToUpstream;
-	}
-
-	@Override
 	public void takeSlaveOffline(SlaveOfflineRule slaveOfflineRule) {
 	}
 
@@ -1218,11 +1213,6 @@ public class TopLevelBuild extends BaseBuild {
 		return upstreamBranchSHA;
 	}
 
-	@Override
-	protected boolean isCompareToUpstream() {
-		return _compareToUpstream;
-	}
-
 	protected static final Pattern gitRepositoryTempMapNamePattern =
 		Pattern.compile("git\\.(?<repositoryType>.*)\\.properties");
 
@@ -1246,7 +1236,6 @@ public class TopLevelBuild extends BaseBuild {
 	private static ExecutorService _executorService =
 		JenkinsResultsParserUtil.getNewThreadPoolExecutor(20, true);
 
-	private boolean _compareToUpstream = true;
 	private long _lastDownstreamBuildsListingTimestamp = -1L;
 	private long _updateDuration;
 
