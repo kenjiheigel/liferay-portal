@@ -328,11 +328,6 @@ public class TopLevelBuild extends BaseBuild {
 	}
 
 	@Override
-	public void setCompareToUpstream(boolean compareToUpstream) {
-		_compareToUpstream = compareToUpstream;
-	}
-
-	@Override
 	public void takeSlaveOffline(SlaveOfflineRule slaveOfflineRule) {
 	}
 
@@ -1104,10 +1099,6 @@ public class TopLevelBuild extends BaseBuild {
 		Dom4JUtil.addToElement(rootElement, getMoreDetailsElement());
 
 		if (!result.equals("SUCCESS")) {
-			if (isCompareToUpstream()) {
-				UpstreamFailureUtil.loadUpstreamJobFailuresJSONObject(this);
-			}
-
 			Dom4JUtil.addToElement(
 				rootElement, Dom4JUtil.getNewElement("hr"),
 				Dom4JUtil.getNewElement(
@@ -1176,7 +1167,7 @@ public class TopLevelBuild extends BaseBuild {
 						Dom4JUtil.getNewElement(
 							"strong", null, "Failures in common with ",
 							acceptanceUpstreamJobLinkElement, " at ",
-							UpstreamFailureUtil.getUpstreamJobFailuresSHA(),
+							UpstreamFailureUtil.getUpstreamJobFailuresSHA(this),
 							":")));
 
 				int remainingFailureCount =
@@ -1222,11 +1213,6 @@ public class TopLevelBuild extends BaseBuild {
 		return upstreamBranchSHA;
 	}
 
-	@Override
-	protected boolean isCompareToUpstream() {
-		return _compareToUpstream;
-	}
-
 	protected static final Pattern gitRepositoryTempMapNamePattern =
 		Pattern.compile("git\\.(?<repositoryType>.*)\\.properties");
 
@@ -1250,7 +1236,6 @@ public class TopLevelBuild extends BaseBuild {
 	private static ExecutorService _executorService =
 		JenkinsResultsParserUtil.getNewThreadPoolExecutor(20, true);
 
-	private boolean _compareToUpstream = true;
 	private long _lastDownstreamBuildsListingTimestamp = -1L;
 	private long _updateDuration;
 
