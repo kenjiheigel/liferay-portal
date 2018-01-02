@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.messaging.Destination;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageStatus;
+import com.liferay.portal.kernel.messaging.sender.SingleDestinationMessageSenderFactory;
 import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MapUtil;
@@ -59,7 +60,7 @@ public class LayoutsLocalPublisherMessageListener
 
 	@Activate
 	protected void activate(ComponentContext componentContext) {
-		initialize(componentContext);
+		initialize(componentContext, _singleDestinationMessageSenderFactory);
 	}
 
 	@Deactivate
@@ -117,11 +118,6 @@ public class LayoutsLocalPublisherMessageListener
 		}
 	}
 
-	@Override
-	protected Destination getDestination() {
-		return _destination;
-	}
-
 	@Reference(
 		target = "(destination.name=" + DestinationNames.LAYOUTS_LOCAL_PUBLISHER + ")",
 		unbind = "-"
@@ -139,14 +135,13 @@ public class LayoutsLocalPublisherMessageListener
 	private static final Log _log = LogFactoryUtil.getLog(
 		LayoutsLocalPublisherMessageListener.class);
 
-	@Reference(
-		target = "(destination.name=" + DestinationNames.MESSAGE_BUS_MESSAGE_STATUS + ")"
-	)
-	private Destination _destination;
-
 	@Reference
 	private ExportImportConfigurationLocalService
 		_exportImportConfigurationLocalService;
+
+	@Reference
+	private SingleDestinationMessageSenderFactory
+		_singleDestinationMessageSenderFactory;
 
 	@Reference
 	private Staging _staging;
