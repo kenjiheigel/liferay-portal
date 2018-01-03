@@ -3675,8 +3675,25 @@ org.apache.catalina.startup.ClassLoaderFactory.level=INFO]]>
 					<if>
 						<equals arg1="${test.ant.launched.by.selenium}" arg2="true" />
 						<then>
+							<if>
+								<and>
+									<equals arg1="${ant.java.version}" arg2="1.7" />
+									<isset property="java.jdk.7.x64.home" />
+								</and>
+								<then>
+									<property name="java.jdk.home" value="${java.jdk.7.x64.home}" />
+								</then>
+								<elseif>
+									<isset property="java.jdk.8.x64.home" />
+									<then>
+										<property name="java.jdk.home" value="${java.jdk.8.x64.home}" />
+									</then>
+								</elseif>
+							</if>
+
 							<exec dir="${test.app.server.bin.dir}" executable="${app.server.start.executable}" resolveexecutable="true">
 								<arg line="${app.server.start.executable.arg.line}" />
+								<env key="JAVA_HOME" path="${java.jdk.home}" />
 							</exec>
 
 							<wait-for-app-server app.server.bin.dir="@{app.server.bin.dir}" app.server.bundle.index="@{app.server.bundle.index}" />
