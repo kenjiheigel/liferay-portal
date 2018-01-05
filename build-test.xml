@@ -1464,10 +1464,12 @@ war.path=${app.server.weblogic.portal.dir}/</echo>
 				</elseif>
 			</if>
 
+			<!-- <property name="poshi.opts" value="-Xms1024m -Xmx2048m -XX:MaxPermSize=512m" /> -->
+
 			<propertyregex
 				input="${env.ANT_OPTS}"
 				override="true"
-				property="gradle.opts"
+				property="poshi.opts"
 				regexp="(-Xmx)(\d*\w*)"
 				replace="\12048m"
 			/>
@@ -1478,16 +1480,17 @@ war.path=${app.server.weblogic.portal.dir}/</echo>
 					<available file="${java.jdk.home}" />
 				</and>
 				<then>
-					<gradle-execute failonerror="false" gradleopts="${gradle.opts}" task="@{task}">
+					<gradle-execute failonerror="false" gradleopts="${poshi.opts}" task="@{task}">
 						<arg value="--build-file=portal-web/build-test.gradle" />
 						<arg value="-Plocal=${test.poshi.runner.local.release}" />
 						<arg value="-PposhiRunnerExtProperties=${test.ext.properties.file}" />
 						<arg value="-Ptmp.maven.repository.dir=../.m2-tmp" />
+						<env key="ANT_OPTS" value="${poshi.opts}" />
 						<env key="JAVA_HOME" path="${java.jdk.home}" />
 					</gradle-execute>
 				</then>
 				<else>
-					<gradle-execute failonerror="false" gradleopts="${gradle.opts}" task="@{task}">
+					<gradle-execute failonerror="false" gradleopts="${poshi.opts}" task="@{task}">
 						<arg value="--build-file=portal-web/build-test.gradle" />
 						<arg value="-Plocal=${test.poshi.runner.local.release}" />
 						<arg value="-PposhiRunnerExtProperties=${test.ext.properties.file}" />
@@ -3675,8 +3678,25 @@ org.apache.catalina.startup.ClassLoaderFactory.level=INFO]]>
 					<if>
 						<equals arg1="${test.ant.launched.by.selenium}" arg2="true" />
 						<then>
+							<if>
+								<and>
+									<equals arg1="${ant.java.version}" arg2="1.7" />
+									<isset property="java.jdk.7.x64.home" />
+								</and>
+								<then>
+									<property name="java.jdk.home" value="${java.jdk.7.x64.home}" />
+								</then>
+								<elseif>
+									<isset property="java.jdk.8.x64.home" />
+									<then>
+										<property name="java.jdk.home" value="${java.jdk.8.x64.home}" />
+									</then>
+								</elseif>
+							</if>
+
 							<exec dir="${test.app.server.bin.dir}" executable="${app.server.start.executable}" resolveexecutable="true">
 								<arg line="${app.server.start.executable.arg.line}" />
+								<env key="JAVA_HOME" path="${java.jdk.home}" />
 							</exec>
 
 							<wait-for-app-server app.server.bin.dir="@{app.server.bin.dir}" app.server.bundle.index="@{app.server.bundle.index}" />
@@ -3862,11 +3882,43 @@ org.apache.catalina.startup.ClassLoaderFactory.level=INFO]]>
 				</then>
 			</if>
 
+			<local name="java.jdk.home" />
+
+			<if>
+				<and>
+					<equals arg1="${ant.java.version}" arg2="1.7" />
+					<isset property="java.jdk.7.x64.home" />
+				</and>
+				<then>
+					<property name="java.jdk.home" value="${java.jdk.7.x64.home}" />
+				</then>
+				<elseif>
+					<isset property="java.jdk.8.x64.home" />
+					<then>
+						<property name="java.jdk.home" value="${java.jdk.8.x64.home}" />
+					</then>
+				</elseif>
+			</if>
+
 			<parallel>
 				<daemons>
-					<exec dir="${test.app.server.bin.dir}" executable="${app.server.stop.executable}" resolveexecutable="true">
-						<arg line="${app.server.stop.executable.arg.line}" />
-					</exec>
+					<echo>java.jdk.home: ${java.jdk.home}</echo>
+					<echo>test.ant.launched.by.selenium: ${test.ant.launched.by.selenium}</echo>
+
+					<if>
+						<equals arg1="${test.ant.launched.by.selenium}" arg2="true" />
+						<then>
+							<exec dir="${test.app.server.bin.dir}" executable="${app.server.stop.executable}" resolveexecutable="true">
+								<arg line="${app.server.stop.executable.arg.line}" />
+								<env key="JAVA_HOME" path="${java.jdk.home}" />
+							</exec>
+						</then>
+						<else>
+							<exec dir="${test.app.server.bin.dir}" executable="${app.server.stop.executable}" resolveexecutable="true">
+								<arg line="${app.server.stop.executable.arg.line}" />
+							</exec>
+						</else>
+					</if>
 				</daemons>
 				<sequential>
 					<if>
