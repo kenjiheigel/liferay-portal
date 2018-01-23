@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -139,11 +138,11 @@ public class AxisBuild extends BaseBuild {
 			Element poshiReportListItemElement = Dom4JUtil.getNewElement(
 				"li", reportLinksUnorderedListElement);
 
-			PoshiTestResult poshiTestResult = (PoshiTestResult) testResult;
+			PoshiTestResult poshiTestResult = (PoshiTestResult)testResult;
 
 			Dom4JUtil.getNewAnchorElement(
-				poshiTestResult.getPoshiReportURL(),
-				poshiReportListItemElement, "Poshi Report");
+				poshiTestResult.getPoshiReportURL(), poshiReportListItemElement,
+				"Poshi Report");
 
 			Element poshiSummaryListItemElement = Dom4JUtil.getNewElement(
 				"li", reportLinksUnorderedListElement);
@@ -296,8 +295,7 @@ public class AxisBuild extends BaseBuild {
 					continue;
 				}
 
-				failureElements.add(
-					testResult.getGitHubElement());
+				failureElements.add(testResult.getGitHubElement());
 			}
 
 			if (!upstreamJobFailureElements.isEmpty()) {

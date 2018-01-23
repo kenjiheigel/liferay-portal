@@ -15,6 +15,7 @@
 package com.liferay.jenkins.results.parser;
 
 import java.io.IOException;
+
 import java.util.Map;
 import java.util.Properties;
 
@@ -129,32 +130,6 @@ public class BaseTestResult implements TestResult {
 		return testName;
 	}
 
-	@Override
-	public String getTestReportURL() {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append(build.getBuildURL());
-		sb.append("/testReport/");
-		sb.append(packageName);
-		sb.append("/");
-		sb.append(simpleClassName);
-		sb.append("/");
-
-		String encodedTestName = testName;
-
-		encodedTestName = encodedTestName.replace("[", "_");
-		encodedTestName = encodedTestName.replace("]", "_");
-		encodedTestName = encodedTestName.replace("#", "_");
-
-		if (packageName.equals("junit.framework")) {
-			encodedTestName = encodedTestName.replace(".", "_");
-		}
-
-		sb.append(encodedTestName);
-
-		return sb.toString();
-	}
-
 	public String getTestrayLogsURL() {
 		Properties buildProperties = null;
 
@@ -187,17 +162,46 @@ public class BaseTestResult implements TestResult {
 			build.getJobVariant(), "/", getAxisBuildNumber());
 	}
 
+	@Override
+	public String getTestReportURL() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(build.getBuildURL());
+		sb.append("/testReport/");
+		sb.append(packageName);
+		sb.append("/");
+		sb.append(simpleClassName);
+		sb.append("/");
+
+		String encodedTestName = testName;
+
+		encodedTestName = encodedTestName.replace("[", "_");
+		encodedTestName = encodedTestName.replace("]", "_");
+		encodedTestName = encodedTestName.replace("#", "_");
+
+		if (packageName.equals("junit.framework")) {
+			encodedTestName = encodedTestName.replace(".", "_");
+		}
+
+		sb.append(encodedTestName);
+
+		return sb.toString();
+	}
+
 	protected String getAxisBuildNumber() {
 		AxisBuild axisBuild = null;
 
 		if (build instanceof AxisBuild) {
-			axisBuild = (AxisBuild) build;
+			axisBuild = (AxisBuild)build;
 
 			return axisBuild.getAxisNumber();
 		}
 
 		return "INVALID_AXIS_NUMBER";
 	}
+
+	protected static final String defaultLogBaseURL =
+		"https://testray.liferay.com/reports/production/logs";
 
 	protected Build build;
 	protected String className;
@@ -208,9 +212,6 @@ public class BaseTestResult implements TestResult {
 	protected String simpleClassName;
 	protected String status;
 	protected String testName;
-
-	protected static final String defaultLogBaseURL =
-		"https://testray.liferay.com/reports/production/logs";
 
 	private static final int _MAX_ERROR_STACK_DISPLAY_LENGTH = 1500;
 
