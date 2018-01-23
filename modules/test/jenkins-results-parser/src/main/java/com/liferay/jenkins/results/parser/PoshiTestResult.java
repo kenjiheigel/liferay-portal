@@ -14,7 +14,6 @@
 
 package com.liferay.jenkins.results.parser;
 
-import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 import org.json.JSONObject;
 
@@ -27,16 +26,6 @@ public class PoshiTestResult extends BaseTestResult {
 
 	public PoshiTestResult(Build build, JSONObject caseJSONObject) {
 		super(build, caseJSONObject);
-	}
-
-	@Override
-	public String getConsoleOutputURL(String testrayLogsURL) {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append(testrayLogsURL);
-		sb.append("/jenkins-console.txt.gz");
-
-		return sb.toString();
 	}
 
 	@Override
@@ -75,8 +64,16 @@ public class PoshiTestResult extends BaseTestResult {
 		return downstreamBuildListItemElement;
 	}
 
-	@Override
-	public String getLiferayLogURL(String testrayLogsURL) {
+	protected String getConsoleOutputURL(String testrayLogsURL) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(testrayLogsURL);
+		sb.append("/jenkins-console.txt.gz");
+
+		return sb.toString();
+	}
+
+	protected String getLiferayLogURL(String testrayLogsURL) {
 		StringBuilder sb = new StringBuilder();
 
 		String name = getDisplayName();
@@ -89,8 +86,7 @@ public class PoshiTestResult extends BaseTestResult {
 		return sb.toString();
 	}
 
-	@Override
-	public String getPoshiReportURL(String testrayLogsURL) {
+	protected String getPoshiReportURL(String testrayLogsURL) {
 		StringBuilder sb = new StringBuilder();
 
 		String name = getDisplayName();
@@ -103,8 +99,7 @@ public class PoshiTestResult extends BaseTestResult {
 		return sb.toString();
 	}
 
-	@Override
-	public String getPoshiSummaryURL(String testrayLogsURL) {
+	protected String getPoshiSummaryURL(String testrayLogsURL) {
 		StringBuilder sb = new StringBuilder();
 
 		String name = getDisplayName();
@@ -117,8 +112,7 @@ public class PoshiTestResult extends BaseTestResult {
 		return sb.toString();
 	}
 
-	@Override
-	public boolean hasLiferayLog(String testrayLogsURL) {
+	protected boolean hasLiferayLog(String testrayLogsURL) {
 		String liferayLog = null;
 
 		try {
