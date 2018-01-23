@@ -14,10 +14,11 @@
 
 package com.liferay.jenkins.results.parser;
 
-import org.dom4j.Element;
-import org.json.JSONObject;
-
 import java.io.IOException;
+
+import org.dom4j.Element;
+
+import org.json.JSONObject;
 
 /**
  * @author Kenji Heigel
@@ -40,8 +41,7 @@ public class PoshiTestResult extends BaseTestResult {
 
 		Dom4JUtil.addToElement(
 			downstreamBuildListItemElement, " - ",
-			Dom4JUtil.getNewAnchorElement(
-				getPoshiReportURL(), "Poshi Report"),
+			Dom4JUtil.getNewAnchorElement(getPoshiReportURL(), "Poshi Report"),
 			" - ",
 			Dom4JUtil.getNewAnchorElement(
 				getPoshiSummaryURL(), "Poshi Summary"),

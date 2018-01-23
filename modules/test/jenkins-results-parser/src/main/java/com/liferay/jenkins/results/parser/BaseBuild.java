@@ -952,22 +952,6 @@ public abstract class BaseBuild implements Build {
 		}
 	}
 
-	@Override
-	public List<TestResult> getTestResults(String testStatus) {
-		List<TestResult> testResults = new ArrayList<>();
-
-		for (Build downstreamBuild : getDownstreamBuilds(null)) {
-			List<TestResult> downstreamTestResults =
-				downstreamBuild.getTestResults(testStatus);
-
-			if (!(downstreamTestResults == null)) {
-				testResults.addAll(downstreamTestResults);
-			}
-		}
-
-		return testResults;
-	}
-
 	public List<TestResult> getTestResults(
 		Build build, JSONArray suitesJSONArray, String testStatus) {
 
@@ -983,10 +967,26 @@ public abstract class BaseBuild implements Build {
 					build, casesJSONArray.getJSONObject(j));
 
 				if ((testStatus == null) ||
-				testStatus.equals(testResult.getStatus())) {
+					testStatus.equals(testResult.getStatus())) {
 
 					testResults.add(testResult);
 				}
+			}
+		}
+
+		return testResults;
+	}
+
+	@Override
+	public List<TestResult> getTestResults(String testStatus) {
+		List<TestResult> testResults = new ArrayList<>();
+
+		for (Build downstreamBuild : getDownstreamBuilds(null)) {
+			List<TestResult> downstreamTestResults =
+				downstreamBuild.getTestResults(testStatus);
+
+			if (!(downstreamTestResults == null)) {
+				testResults.addAll(downstreamTestResults);
 			}
 		}
 

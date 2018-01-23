@@ -32,4 +32,5 @@ public class TestResultFactory {
 
 		return new BaseTestResult(build, caseJSONObject);
 	}
+
 }
