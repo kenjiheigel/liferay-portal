@@ -119,38 +119,23 @@ public class BaseTestResult implements TestResult {
 	public String getPackageName() {
 		String className = getClassName();
 
-		if (className.contains(".")) {
-			int x = className.lastIndexOf(".");
+		int x = className.lastIndexOf(".");
 
-			return className.substring(0, x);
+		if (x < 0) {
+			return "(root)";
 		}
 
-		Build build = getBuild();
-
-		System.out.println(
-			"Invalid test class name \"" + getClassName() + "\" in build " +
-				build.getBuildURL());
-
-		return className;
+		return className.substring(0, x);
 	}
 
 	@Override
 	public String getSimpleClassName() {
 		String className = getClassName();
 
-		if (className.contains(".")) {
-			int x = className.lastIndexOf(".");
+		int x = className.lastIndexOf(".");
 
-			return className.substring(x + 1);
-		}
+		return className.substring(x + 1);
 
-		Build build = getBuild();
-
-		System.out.println(
-			"Invalid test class name \"" + getClassName() + "\" in build " +
-				build.getBuildURL());
-
-		return className;
 	}
 
 	@Override
@@ -206,11 +191,7 @@ public class BaseTestResult implements TestResult {
 		sb.append(build.getBuildURL());
 
 		sb.append("/testReport/");
-
-		String packageName = getPackageName();
-
-		sb.append(packageName);
-
+		sb.append(getPackageName());
 		sb.append("/");
 		sb.append(getSimpleClassName());
 		sb.append("/");
