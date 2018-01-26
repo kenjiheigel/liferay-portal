@@ -40,14 +40,10 @@ public class BaseTestResult implements TestResult {
 		}
 
 		_build = build;
-
 		_className = caseJSONObject.getString("className");
-
 		_duration = (long)(caseJSONObject.getDouble("duration") * 1000D);
-
-		_testName = caseJSONObject.getString("name");
-
 		_status = caseJSONObject.getString("status");
+		_testName = caseJSONObject.getString("name");
 
 		if (_status.equals("FAILED") && caseJSONObject.has("errorDetails") &&
 			caseJSONObject.has("errorStackTrace")) {
@@ -138,7 +134,6 @@ public class BaseTestResult implements TestResult {
 		int x = className.lastIndexOf(".");
 
 		return className.substring(x + 1);
-
 	}
 
 	@Override
@@ -168,7 +163,7 @@ public class BaseTestResult implements TestResult {
 		}
 
 		if (logBaseURL == null) {
-			logBaseURL = defaultLogBaseURL;
+			logBaseURL = _DEFAULT_LOG_BASE_URL;
 		}
 
 		Build build = getBuild();
@@ -241,7 +236,7 @@ public class BaseTestResult implements TestResult {
 		return sb.toString();
 	}
 
-	protected static final String defaultLogBaseURL =
+	private static final String _DEFAULT_LOG_BASE_URL =
 		"https://testray.liferay.com/reports/production/logs";
 
 	private static final int _MAX_ERROR_STACK_DISPLAY_LENGTH = 1500;
