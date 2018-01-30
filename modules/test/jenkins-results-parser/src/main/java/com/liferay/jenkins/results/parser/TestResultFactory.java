@@ -14,35 +14,23 @@
 
 package com.liferay.jenkins.results.parser;
 
-import org.dom4j.Element;
+import org.json.JSONObject;
 
 /**
  * @author Kenji Heigel
  */
-public interface TestResult {
+public class TestResultFactory {
 
-	public Build getBuild();
+	public static TestResult newTestResult(
+		Build build, JSONObject caseJSONObject) {
 
-	public String getClassName();
+		String className = caseJSONObject.getString("className");
 
-	public String getDisplayName();
+		if (className.contains("com.liferay.poshi.runner.PoshiRunner")) {
+			return new PoshiTestResult(build, caseJSONObject);
+		}
 
-	public long getDuration();
-
-	public String getErrorDetails();
-
-	public String getErrorStackTrace();
-
-	public Element getGitHubElement();
-
-	public String getPackageName();
-
-	public String getSimpleClassName();
-
-	public String getStatus();
-
-	public String getTestName();
-
-	public String getTestReportURL();
+		return new BaseTestResult(build, caseJSONObject);
+	}
 
 }
