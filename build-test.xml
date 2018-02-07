@@ -549,18 +549,22 @@ jdbc.counter.connectionProperties=oracle.jdbc.ReadTimeout=0;oracle.net.CONNECT_T
 
 	<macrodef name="get-java-jdk-home">
 		<attribute default="x64" name="architecture" />
+		<attribute default="${ant.java.version}" name="version" />
 
 		<sequential>
 			<if>
 				<and>
-					<equals arg1="${ant.java.version}" arg2="1.7" />
+					<equals arg1="@{version}" arg2="1.7" />
 					<isset property="java.jdk.7.@{architecture}.home" />
 				</and>
 				<then>
 					<property name="java.jdk.home" value="${java.jdk.7.@{architecture}.home}" />
 				</then>
 				<elseif>
-					<isset property="java.jdk.8.@{architecture}.home" />
+					<and>
+						<equals arg1="@{version}" arg2="1.8" />
+						<isset property="java.jdk.8.@{architecture}.home" />
+					</and>
 					<then>
 						<property name="java.jdk.home" value="${java.jdk.8.@{architecture}.home}" />
 					</then>
@@ -1496,7 +1500,7 @@ war.path=${app.server.weblogic.portal.dir}/</echo>
 					<local name="java.jdk.home" />
 					<local name="poshi.java.jdk.opts" />
 
-					<get-java-jdk-home architecture="x32" />
+					<get-java-jdk-home architecture="x32" version="1.8" />
 
 					<get-poshi-java-jdk-opts />
 
