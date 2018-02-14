@@ -3383,7 +3383,11 @@ information. Make sure to commit in all build services results.
 		<echo file="create-header.sql">use master
 dump transaction master with no_log
 go
-alter database master on master=500
+exec sp_helpdevice
+go
+disk resize name="master", size="500m"
+go
+exec sp_helpdevice
 go
 drop database lportal
 go
@@ -3393,12 +3397,14 @@ exec sp_configure 'procedure cache size', 28000
 go
 create database lportal on master = "500m"
 go
+exec sp_helpdevice
+go
 exec sp_dboption 'lportal', 'allow nulls by default' , true
 go
 exec sp_dboption 'lportal', 'select into/bulkcopy/pllsort' , true
 go</echo>
 
-		<retry retrycount="10">
+		<retry retrycount="1">
 			<sequential>
 				<set-sybase-charset-utf8 />
 
