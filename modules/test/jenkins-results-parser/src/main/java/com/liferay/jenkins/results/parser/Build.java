@@ -116,7 +116,7 @@ public interface Build {
 
 	public String getResult();
 
-	public Map<String, String> getStartPropertiesTempMap();
+	public Map<String, String> getStartProperties();
 
 	public Long getStartTime();
 
@@ -129,8 +129,6 @@ public interface Build {
 	public String getStatusReport(int indentSize);
 
 	public String getStatusSummary();
-
-	public Map<String, String> getStopPropertiesTempMap();
 
 	public JSONObject getTestReportJSONObject();
 
