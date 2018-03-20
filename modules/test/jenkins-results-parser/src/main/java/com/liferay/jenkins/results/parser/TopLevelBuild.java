@@ -228,6 +228,12 @@ public class TopLevelBuild extends BaseBuild {
 			Integer.toString(getBuildNumber()), "/jenkins-report.html");
 	}
 
+	public Map<String, String> getRepositoriesProperties(
+		String repositoryType) {
+
+		return getBuildDataProperties("git." + repositoryType + ".properties");
+	}
+
 	@Override
 	public String getResult() {
 		String result = super.getResult();
