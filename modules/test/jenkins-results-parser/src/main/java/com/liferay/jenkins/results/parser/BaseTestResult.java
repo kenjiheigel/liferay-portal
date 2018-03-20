@@ -147,15 +147,14 @@ public class BaseTestResult implements TestResult {
 
 		Build build = getBuild();
 
-		Map<String, String> startPropertiesTempMap =
-			build.getStartPropertiesTempMap();
+		Map<String, String> startProperties = build.getStartProperties();
 
 		return JenkinsResultsParserUtil.combine(
 			logBaseURL, "/",
-			startPropertiesTempMap.get("TOP_LEVEL_MASTER_HOSTNAME"), "/",
-			startPropertiesTempMap.get("TOP_LEVEL_START_TIME"), "/",
-			startPropertiesTempMap.get("TOP_LEVEL_JOB_NAME"), "/",
-			startPropertiesTempMap.get("TOP_LEVEL_BUILD_NUMBER"), "/",
+			startProperties.get("TOP_LEVEL_MASTER_HOSTNAME"), "/",
+			startProperties.get("TOP_LEVEL_START_TIME"), "/",
+			startProperties.get("TOP_LEVEL_JOB_NAME"), "/",
+			startProperties.get("TOP_LEVEL_BUILD_NUMBER"), "/",
 			build.getJobVariant(), "/", getAxisNumber());
 	}
 
