@@ -63,22 +63,20 @@ public class PluginGitIDFailureMessageGenerator
 			pluginsRepositoryName += "-ee";
 		}
 
-		Map<String, String> pluginsRepositoryGitDetailsTempMap =
-			topLevelBuild.getBaseGitRepositoryDetailsTempMap();
+		Map<String, String> pluginsRepositoryGitDetails =
+			topLevelBuild.getBaseGitRepositoryDetails();
 
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("https://github.com/liferay/");
 		sb.append(pluginsRepositoryName);
 		sb.append("/commits/");
-		sb.append(
-			pluginsRepositoryGitDetailsTempMap.get(
-				"github.upstream.branch.name"));
+		sb.append(pluginsRepositoryGitDetails.get(
+			"github.upstream.branch.name"));
 
 		return Dom4JUtil.getNewAnchorElement(
 			sb.toString(), pluginsRepositoryName, "/",
-			pluginsRepositoryGitDetailsTempMap.get(
-				"github.upstream.branch.name"));
+			pluginsRepositoryGitDetails.get("github.upstream.branch.name"));
 	}
 
 }

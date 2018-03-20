@@ -246,17 +246,17 @@ public abstract class BaseBuild implements Build {
 		TopLevelBuild topLevelBuild = getTopLevelBuild();
 
 		if (repositoryName.equals("liferay-jenkins-ee")) {
-			Map<String, String> topLevelBuildStartPropertiesTempMap =
-				topLevelBuild.getStartPropertiesTempMap();
+			Map<String, String> topLevelBuildStartProperties =
+				topLevelBuild.getStartProperties();
 
-			return topLevelBuildStartPropertiesTempMap.get(
+			return topLevelBuildStartProperties.get(
 				"JENKINS_GITHUB_UPSTREAM_BRANCH_SHA");
 		}
 
-		Map<String, String> repositoryGitDetailsTempMap =
-			topLevelBuild.getBaseGitRepositoryDetailsTempMap();
+		Map<String, String> repositoryGitDetails =
+			topLevelBuild.getBaseGitRepositoryDetails();
 
-		return repositoryGitDetailsTempMap.get("github.upstream.branch.sha");
+		return repositoryGitDetails.get("github.upstream.branch.sha");
 	}
 
 	@Override
