@@ -2250,6 +2250,21 @@ public abstract class BaseBuild implements Build {
 		}
 	}
 
+	protected Map<String, String> parseJSONArrayToMap(JSONArray jsonArray) {
+		Map<String, String> map = new HashMap<>();
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			JSONObject propertyJSONObject = jsonArray.getJSONObject(i);
+
+			String name = propertyJSONObject.getString("name");
+			String value = propertyJSONObject.getString("value");
+
+			map.put(name, value);
+		}
+
+		return map;
+	}
+
 	protected void reset() {
 		setResult(null);
 
