@@ -358,47 +358,15 @@ public class TopLevelBuild extends BaseBuild {
 	protected void archiveJSON() {
 		super.archiveJSON();
 
+		JSONObject buildDataJSONObject = getBuildDataJSONObject();
+
 		try {
-			Properties buildProperties =
-				JenkinsResultsParserUtil.getBuildProperties();
-
-			String repositoryTypes = buildProperties.getProperty(
-				"repository.types");
-
-			if (jobName.startsWith(
-					"test-subrepository-acceptance-pullrequest")) {
-
-				repositoryTypes += "," + getBaseRepositoryName();
-			}
-
-			for (String repositoryType : repositoryTypes.split(",")) {
-				try {
-					JSONObject gitRepositoryDetailsJSONObject =
-						JenkinsResultsParserUtil.toJSONObject(
-							getGitRepositoryDetailsPropertiesTempMapURL(
-								repositoryType));
-
-					Set<?> set = gitRepositoryDetailsJSONObject.keySet();
-
-					if (set.isEmpty()) {
-						continue;
-					}
-
-					writeArchiveFile(
-						gitRepositoryDetailsJSONObject.toString(4),
-						getArchivePath() + "/git." + repositoryType +
-							".properties.json");
-				}
-				catch (IOException ioe) {
-					throw new RuntimeException(
-						"Unable to create git." + repositoryType +
-							".properties.json",
-						ioe);
-				}
-			}
+			writeArchiveFile(
+				buildDataJSONObject.toString(4), getArchivePath() +
+					"/build-data.json");
 		}
 		catch (IOException ioe) {
-			throw new RuntimeException("Unable to get build properties", ioe);
+			throw new RuntimeException("Unable to create build-data.jsoN");
 		}
 	}
 
