@@ -609,26 +609,6 @@ public class TopLevelBuild extends BaseBuild {
 				" Failed."));
 	}
 
-	protected String getGitRepositoryDetailsPropertiesTempMapURL(
-		String repositoryType) {
-
-		if (fromArchive) {
-			return JenkinsResultsParserUtil.combine(
-				getBuildURL(), "git.", repositoryType, ".properties.json");
-		}
-
-		TopLevelBuild topLevelBuild = getTopLevelBuild();
-
-		JenkinsMaster topLevelBuildJenkinsMaster =
-			topLevelBuild.getJenkinsMaster();
-
-		return JenkinsResultsParserUtil.combine(
-			TEMP_MAP_BASE_URL, topLevelBuildJenkinsMaster.getName(), "/",
-			topLevelBuild.getJobName(), "/",
-			Integer.toString(topLevelBuild.getBuildNumber()), "/",
-			topLevelBuild.getJobName(), "/git.", repositoryType, ".properties");
-	}
-
 	protected Element getJenkinsReportBodyElement() {
 		String buildURL = getBuildURL();
 
@@ -998,34 +978,6 @@ public class TopLevelBuild extends BaseBuild {
 		return Dom4JUtil.getNewElement("h3", null, sb.toString());
 	}
 
-	@Override
-	protected String getStartPropertiesTempMapURL() {
-		if (fromArchive) {
-			return getBuildURL() + "/start.properties.json";
-		}
-
-		JenkinsMaster jenkinsMaster = getJenkinsMaster();
-
-		return JenkinsResultsParserUtil.combine(
-			TEMP_MAP_BASE_URL, jenkinsMaster.getName(), "/", getJobName(), "/",
-			Integer.toString(getBuildNumber()), "/", getJobName(), "/",
-			"start.properties");
-	}
-
-	@Override
-	protected String getStopPropertiesTempMapURL() {
-		if (fromArchive) {
-			return getBuildURL() + "/stop.properties.json";
-		}
-
-		JenkinsMaster jenkinsMaster = getJenkinsMaster();
-
-		return JenkinsResultsParserUtil.combine(
-			TEMP_MAP_BASE_URL, jenkinsMaster.getName(), "/", getJobName(), "/",
-			Integer.toString(getBuildNumber()), "/", getJobName(), "/",
-			"stop.properties");
-	}
-
 	protected Element getSuccessfulJobSummaryElement() {
 		Element jobSummaryListElement = getJobSummaryListElement(true);
 
@@ -1045,24 +997,6 @@ public class TopLevelBuild extends BaseBuild {
 					"strong", null, Integer.toString(successCount),
 					" Successful Jobs:")),
 			jobSummaryListElement);
-	}
-
-	@Override
-	protected String getTempMapURL(String tempMapName) {
-		String tempMapURL = super.getTempMapURL(tempMapName);
-
-		if (tempMapURL != null) {
-			return tempMapURL;
-		}
-
-		Matcher matcher = gitRepositoryTempMapNamePattern.matcher(tempMapName);
-
-		if (matcher.find()) {
-			return getGitRepositoryDetailsPropertiesTempMapURL(
-				matcher.group("repositoryType"));
-		}
-
-		return null;
 	}
 
 	@Override
@@ -1272,9 +1206,6 @@ public class TopLevelBuild extends BaseBuild {
 	protected boolean isCompareToUpstream() {
 		return _compareToUpstream;
 	}
-
-	protected static final Pattern gitRepositoryTempMapNamePattern =
-		Pattern.compile("git\\.(?<repositoryType>.*)\\.properties");
 
 	private static final long _DOWNSTREAM_BUILDS_LISTING_INTERVAL =
 		1000 * 60 * 5;

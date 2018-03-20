@@ -436,26 +436,6 @@ public class AxisBuild extends BaseBuild {
 	}
 
 	@Override
-	protected String getStopPropertiesTempMapURL() {
-		if (fromArchive) {
-			return getBuildURL() + "/stop-properties.json";
-		}
-
-		TopLevelBuild topLevelBuild = getTopLevelBuild();
-
-		JenkinsMaster topLevelBuildJenkinsMaster =
-			topLevelBuild.getJenkinsMaster();
-
-		return JenkinsResultsParserUtil.combine(
-			"http://cloud-10-0-0-31.lax.liferay.com/osb-jenkins-web/map/",
-			topLevelBuildJenkinsMaster.getName(), "/",
-			topLevelBuild.getJobName(), "/",
-			Integer.toString(topLevelBuild.getBuildNumber()), "/", getJobName(),
-			"/", getAxisVariable(), "/", getParameterValue("JOB_VARIANT"), "/",
-			"stop.properties");
-	}
-
-	@Override
 	protected void setBuildURL(String buildURL) {
 		try {
 			buildURL = JenkinsResultsParserUtil.decode(buildURL);
