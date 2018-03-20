@@ -126,24 +126,20 @@ public class TopLevelBuild extends BaseBuild {
 		return null;
 	}
 
-	public Map<String, String> getBaseGitRepositoryDetailsTempMap() {
-		String repositoryType = getBaseRepositoryType();
-
-		String tempMapName = "git." + repositoryType + ".properties";
-
-		return getTempMap(tempMapName);
+	public Map<String, String> getBaseGitRepositoryDetails() {
+		return getRepositoriesProperties(getBaseRepositoryType());
 	}
 
 	public String getCompanionBranchName() {
 		TopLevelBuild topLevelBuild = getTopLevelBuild();
 
-		Map<String, String> repositoryGitDetailsTempMap =
-			topLevelBuild.getCompanionGitRepositoryDetailsTempMap();
+		Map<String, String> repositoryGitDetails =
+			topLevelBuild.getCompanionGitRepositoryDetails();
 
-		return repositoryGitDetailsTempMap.get("github.sender.branch.name");
+		return repositoryGitDetails.get("github.sender.branch.name");
 	}
 
-	public Map<String, String> getCompanionGitRepositoryDetailsTempMap() {
+	public Map<String, String> getCompanionGitRepositoryDetails() {
 		String branchName = getBranchName();
 		String branchType = "ee";
 		String repositoryType = getBaseRepositoryType();
@@ -152,28 +148,25 @@ public class TopLevelBuild extends BaseBuild {
 			branchType = "base";
 		}
 
-		String tempMapName = JenkinsResultsParserUtil.combine(
-			"git.", repositoryType, ".", branchType, ".properties");
-
-		return getTempMap(tempMapName);
+		return getRepositoriesProperties(repositoryType + "." + branchType);
 	}
 
 	public String getCompanionRepositorySHA() {
 		TopLevelBuild topLevelBuild = getTopLevelBuild();
 
-		Map<String, String> repositoryGitDetailsTempMap =
-			topLevelBuild.getCompanionGitRepositoryDetailsTempMap();
+		Map<String, String> repositoryGitDetails =
+			topLevelBuild.getCompanionGitRepositoryDetails();
 
-		return repositoryGitDetailsTempMap.get("github.sender.branch.sha");
+		return repositoryGitDetails.get("github.sender.branch.sha");
 	}
 
 	public String getCompanionUsername() {
 		TopLevelBuild topLevelBuild = getTopLevelBuild();
 
-		Map<String, String> repositoryGitDetailsTempMap =
-			topLevelBuild.getCompanionGitRepositoryDetailsTempMap();
+		Map<String, String> repositoryGitDetails =
+			topLevelBuild.getCompanionGitRepositoryDetails();
 
-		return repositoryGitDetailsTempMap.get("github.sender.username");
+		return repositoryGitDetails.get("github.sender.username");
 	}
 
 	@Override
