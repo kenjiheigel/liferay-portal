@@ -1586,6 +1586,57 @@ public abstract class BaseBuild implements Build {
 		return "jenkins";
 	}
 
+	protected JSONObject getBuildDataJSONObject() {
+		if (_buildDataJSONObject == null) {
+			try {
+				if (fromArchive) {
+					TopLevelBuild topLevelBuild = getTopLevelBuild();
+
+					_buildDataJSONObject =
+						JenkinsResultsParserUtil.toJSONObject(
+							JenkinsResultsParserUtil.getLocalURL(
+								topLevelBuild.getBuildURL() +
+									"build-data.json"));
+				}
+				else {
+					File buildDataFile;
+
+					buildDataFile = new File(getBuildDataPath());
+
+					String buildDataJson = JenkinsResultsParserUtil.read(
+						buildDataFile);
+
+					_buildDataJSONObject = new JSONObject(buildDataJson);
+				}
+			}
+			catch (IOException ioe) {
+				ioe.printStackTrace();
+
+				throw new RuntimeException(
+					"Unable to read build-data.json", ioe);
+			}
+		}
+
+		return _buildDataJSONObject;
+	}
+
+	protected String getBuildDataPath() {
+		JenkinsMaster jenkinsMaster = getJenkinsMaster();
+		TopLevelBuild topLevelBuild = getTopLevelBuild();
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("/tmp/dist/");
+		sb.append(jenkinsMaster.getName());
+		sb.append("/");
+		sb.append(topLevelBuild.getJobName());
+		sb.append("/");
+		sb.append(topLevelBuild.getBuildNumber());
+		sb.append("/build-data.json");
+
+		return sb.toString();
+	}
+
 	protected JSONObject getBuildJSONObject(String tree) {
 		if (getBuildURL() == null) {
 			return null;
@@ -2578,5 +2629,6 @@ public abstract class BaseBuild implements Build {
 	private final Build _parentBuild;
 	private String _result;
 	private String _status;
+	private JSONObject _buildDataJSONObject;
 
 }
