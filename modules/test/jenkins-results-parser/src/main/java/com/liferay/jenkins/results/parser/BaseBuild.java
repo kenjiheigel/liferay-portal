@@ -842,8 +842,8 @@ public abstract class BaseBuild implements Build {
 	}
 
 	@Override
-	public Map<String, String> getStartPropertiesTempMap() {
-		return getTempMap("start.properties");
+	public Map<String, String> getStartProperties() {
+		return getBuildDataProperties("start.properties");
 	}
 
 	@Override
@@ -968,11 +968,6 @@ public abstract class BaseBuild implements Build {
 			"/ ", Integer.toString(getDownstreamBuildCount("completed")),
 			" Completed  ", "/ ",
 			Integer.toString(getDownstreamBuildCount(null)), " Total ");
-	}
-
-	@Override
-	public Map<String, String> getStopPropertiesTempMap() {
-		return getTempMap("stop.properties");
 	}
 
 	@Override
