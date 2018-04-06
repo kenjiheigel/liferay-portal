@@ -18,7 +18,6 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,37 +62,8 @@ public class RebaseErrorTopLevelBuild extends TopLevelBuild {
 				return result;
 			}
 
-			int retries = 0;
-			long time = System.currentTimeMillis();
-			Map<String, String> stopPropertiesTempMap =
-				getStopPropertiesTempMap();
-
-			while (!stopPropertiesTempMap.containsKey(
-						"TOP_LEVEL_GITHUB_COMMENT_ID")) {
-
-				if (retries > 2) {
-					throw new RuntimeException(
-						"Unable to get TOP_LEVE_GITHUB_COMMENT_ID from stop " +
-							"properties temp map");
-				}
-
-				if ((System.currentTimeMillis() - time) > (5 * 60 * 1000)) {
-					System.out.println(
-						"No entry exists for TOP_LEVEL_GITHUB_COMMENT_ID in " +
-							"stop.properties");
-
-					return result;
-				}
-
-				retries++;
-
-				JenkinsResultsParserUtil.sleep(10 * 1000);
-
-				stopPropertiesTempMap = getStopPropertiesTempMap();
-			}
-
 			if (matchCommentTokens(
-					getActualCommentTokens(stopPropertiesTempMap),
+					getActualCommentTokens(getTopLevelGitHubCommentID()),
 					getExpectedCommentTokens())) {
 
 				setResult("SUCCESS");
@@ -114,8 +84,19 @@ public class RebaseErrorTopLevelBuild extends TopLevelBuild {
 		}
 	}
 
-	protected List<String> getActualCommentTokens(
-			Map<String, String> stopPropertiesTempMap)
+	protected int getTopLevelGitHubCommentID() {
+		Matcher matcher = _topLevelGitHubCommentIDPattern.matcher(
+			getConsoleText());
+
+		if (matcher.find()) {
+			return Integer.parseInt(matcher.group("id"));
+		}
+
+		throw new RuntimeException("Unable to get " +
+			"TOP_LEVEL_GITHUB_COMMENT_ID from console log");
+	}
+
+	protected List<String> getActualCommentTokens(int commentID)
 		throws IOException {
 
 		StringBuilder sb = new StringBuilder();
@@ -125,7 +106,7 @@ public class RebaseErrorTopLevelBuild extends TopLevelBuild {
 		sb.append("/");
 		sb.append("liferay-portal-ee");
 		sb.append("/issues/comments/");
-		sb.append(stopPropertiesTempMap.get("TOP_LEVEL_GITHUB_COMMENT_ID"));
+		sb.append(commentID);
 
 		JSONObject jsonObject = JenkinsResultsParserUtil.toJSONObject(
 			sb.toString());
@@ -210,5 +191,8 @@ public class RebaseErrorTopLevelBuild extends TopLevelBuild {
 	}
 
 	private boolean _validResult;
+
+	private static Pattern _topLevelGitHubCommentIDPattern = Pattern.compile(
+		"TOP_LEVEL_GITHUB_COMMENT_ID=(?<id>[0-9]+)");
 
 }

@@ -126,24 +126,20 @@ public class TopLevelBuild extends BaseBuild {
 		return null;
 	}
 
-	public Map<String, String> getBaseGitRepositoryDetailsTempMap() {
-		String repositoryType = getBaseRepositoryType();
-
-		String tempMapName = "git." + repositoryType + ".properties";
-
-		return getTempMap(tempMapName);
+	public Map<String, String> getBaseGitRepositoryDetails() {
+		return getRepositoriesProperties(getBaseRepositoryType());
 	}
 
 	public String getCompanionBranchName() {
 		TopLevelBuild topLevelBuild = getTopLevelBuild();
 
-		Map<String, String> repositoryGitDetailsTempMap =
-			topLevelBuild.getCompanionGitRepositoryDetailsTempMap();
+		Map<String, String> repositoryGitDetails =
+			topLevelBuild.getCompanionGitRepositoryDetails();
 
-		return repositoryGitDetailsTempMap.get("github.sender.branch.name");
+		return repositoryGitDetails.get("github.sender.branch.name");
 	}
 
-	public Map<String, String> getCompanionGitRepositoryDetailsTempMap() {
+	public Map<String, String> getCompanionGitRepositoryDetails() {
 		String branchName = getBranchName();
 		String branchType = "ee";
 		String repositoryType = getBaseRepositoryType();
@@ -152,28 +148,25 @@ public class TopLevelBuild extends BaseBuild {
 			branchType = "base";
 		}
 
-		String tempMapName = JenkinsResultsParserUtil.combine(
-			"git.", repositoryType, ".", branchType, ".properties");
-
-		return getTempMap(tempMapName);
+		return getRepositoriesProperties(repositoryType + "." + branchType);
 	}
 
 	public String getCompanionRepositorySHA() {
 		TopLevelBuild topLevelBuild = getTopLevelBuild();
 
-		Map<String, String> repositoryGitDetailsTempMap =
-			topLevelBuild.getCompanionGitRepositoryDetailsTempMap();
+		Map<String, String> repositoryGitDetails =
+			topLevelBuild.getCompanionGitRepositoryDetails();
 
-		return repositoryGitDetailsTempMap.get("github.sender.branch.sha");
+		return repositoryGitDetails.get("github.sender.branch.sha");
 	}
 
 	public String getCompanionUsername() {
 		TopLevelBuild topLevelBuild = getTopLevelBuild();
 
-		Map<String, String> repositoryGitDetailsTempMap =
-			topLevelBuild.getCompanionGitRepositoryDetailsTempMap();
+		Map<String, String> repositoryGitDetails =
+			topLevelBuild.getCompanionGitRepositoryDetails();
 
-		return repositoryGitDetailsTempMap.get("github.sender.username");
+		return repositoryGitDetails.get("github.sender.username");
 	}
 
 	@Override
@@ -226,6 +219,12 @@ public class TopLevelBuild extends BaseBuild {
 			"https://", jenkinsMaster.getName(), ".liferay.com/",
 			"userContent/jobs/", getJobName(), "/builds/",
 			Integer.toString(getBuildNumber()), "/jenkins-report.html");
+	}
+
+	public Map<String, String> getRepositoriesProperties(
+		String repositoryType) {
+
+		return getBuildDataProperties("git." + repositoryType + ".properties");
 	}
 
 	@Override
@@ -357,47 +356,15 @@ public class TopLevelBuild extends BaseBuild {
 	protected void archiveJSON() {
 		super.archiveJSON();
 
+		JSONObject buildDataJSONObject = getBuildDataJSONObject();
+
 		try {
-			Properties buildProperties =
-				JenkinsResultsParserUtil.getBuildProperties();
-
-			String repositoryTypes = buildProperties.getProperty(
-				"repository.types");
-
-			if (jobName.startsWith(
-					"test-subrepository-acceptance-pullrequest")) {
-
-				repositoryTypes += "," + getBaseRepositoryName();
-			}
-
-			for (String repositoryType : repositoryTypes.split(",")) {
-				try {
-					JSONObject gitRepositoryDetailsJSONObject =
-						JenkinsResultsParserUtil.toJSONObject(
-							getGitRepositoryDetailsPropertiesTempMapURL(
-								repositoryType));
-
-					Set<?> set = gitRepositoryDetailsJSONObject.keySet();
-
-					if (set.isEmpty()) {
-						continue;
-					}
-
-					writeArchiveFile(
-						gitRepositoryDetailsJSONObject.toString(4),
-						getArchivePath() + "/git." + repositoryType +
-							".properties.json");
-				}
-				catch (IOException ioe) {
-					throw new RuntimeException(
-						"Unable to create git." + repositoryType +
-							".properties.json",
-						ioe);
-				}
-			}
+			writeArchiveFile(
+				buildDataJSONObject.toString(4), getArchivePath() +
+					"/build-data.json");
 		}
 		catch (IOException ioe) {
-			throw new RuntimeException("Unable to get build properties", ioe);
+			throw new RuntimeException("Unable to create build-data.jsoN");
 		}
 	}
 
@@ -638,26 +605,6 @@ public class TopLevelBuild extends BaseBuild {
 				JenkinsResultsParserUtil.getNounForm(
 					failCount, " Jobs", " Job"),
 				" Failed."));
-	}
-
-	protected String getGitRepositoryDetailsPropertiesTempMapURL(
-		String repositoryType) {
-
-		if (fromArchive) {
-			return JenkinsResultsParserUtil.combine(
-				getBuildURL(), "git.", repositoryType, ".properties.json");
-		}
-
-		TopLevelBuild topLevelBuild = getTopLevelBuild();
-
-		JenkinsMaster topLevelBuildJenkinsMaster =
-			topLevelBuild.getJenkinsMaster();
-
-		return JenkinsResultsParserUtil.combine(
-			TEMP_MAP_BASE_URL, topLevelBuildJenkinsMaster.getName(), "/",
-			topLevelBuild.getJobName(), "/",
-			Integer.toString(topLevelBuild.getBuildNumber()), "/",
-			topLevelBuild.getJobName(), "/git.", repositoryType, ".properties");
 	}
 
 	protected Element getJenkinsReportBodyElement() {
@@ -1029,34 +976,6 @@ public class TopLevelBuild extends BaseBuild {
 		return Dom4JUtil.getNewElement("h3", null, sb.toString());
 	}
 
-	@Override
-	protected String getStartPropertiesTempMapURL() {
-		if (fromArchive) {
-			return getBuildURL() + "/start.properties.json";
-		}
-
-		JenkinsMaster jenkinsMaster = getJenkinsMaster();
-
-		return JenkinsResultsParserUtil.combine(
-			TEMP_MAP_BASE_URL, jenkinsMaster.getName(), "/", getJobName(), "/",
-			Integer.toString(getBuildNumber()), "/", getJobName(), "/",
-			"start.properties");
-	}
-
-	@Override
-	protected String getStopPropertiesTempMapURL() {
-		if (fromArchive) {
-			return getBuildURL() + "/stop.properties.json";
-		}
-
-		JenkinsMaster jenkinsMaster = getJenkinsMaster();
-
-		return JenkinsResultsParserUtil.combine(
-			TEMP_MAP_BASE_URL, jenkinsMaster.getName(), "/", getJobName(), "/",
-			Integer.toString(getBuildNumber()), "/", getJobName(), "/",
-			"stop.properties");
-	}
-
 	protected Element getSuccessfulJobSummaryElement() {
 		Element jobSummaryListElement = getJobSummaryListElement(true);
 
@@ -1076,24 +995,6 @@ public class TopLevelBuild extends BaseBuild {
 					"strong", null, Integer.toString(successCount),
 					" Successful Jobs:")),
 			jobSummaryListElement);
-	}
-
-	@Override
-	protected String getTempMapURL(String tempMapName) {
-		String tempMapURL = super.getTempMapURL(tempMapName);
-
-		if (tempMapURL != null) {
-			return tempMapURL;
-		}
-
-		Matcher matcher = gitRepositoryTempMapNamePattern.matcher(tempMapName);
-
-		if (matcher.find()) {
-			return getGitRepositoryDetailsPropertiesTempMapURL(
-				matcher.group("repositoryType"));
-		}
-
-		return null;
 	}
 
 	@Override
@@ -1290,10 +1191,9 @@ public class TopLevelBuild extends BaseBuild {
 			"GITHUB_UPSTREAM_BRANCH_SHA");
 
 		if ((upstreamBranchSHA == null) || upstreamBranchSHA.isEmpty()) {
-			Map<String, String> startPropertiesTempMap =
-				getStartPropertiesTempMap();
+			Map<String, String> startProperties = getStartProperties();
 
-			upstreamBranchSHA = startPropertiesTempMap.get(
+			upstreamBranchSHA = startProperties.get(
 				"GITHUB_UPSTREAM_BRANCH_SHA");
 		}
 
@@ -1304,9 +1204,6 @@ public class TopLevelBuild extends BaseBuild {
 	protected boolean isCompareToUpstream() {
 		return _compareToUpstream;
 	}
-
-	protected static final Pattern gitRepositoryTempMapNamePattern =
-		Pattern.compile("git\\.(?<repositoryType>.*)\\.properties");
 
 	private static final long _DOWNSTREAM_BUILDS_LISTING_INTERVAL =
 		1000 * 60 * 5;
