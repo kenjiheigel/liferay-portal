@@ -1,136 +1,136 @@
-<definition component-name="portal-wcm">
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Layout Page Templates" />
+@component-name = "portal-wcm"
+definition {
+	property portal.upstream = "true";
+	property testray.main.component.name = "Layout Page Templates";
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+	setUp {
+		TestCase.setUpPortalInstance();
 
-		<execute macro="User#firstLoginPG" />
+		User.firstLoginPG();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Sites" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Sites" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Sites",
+			panel = "Control Panel",
+			portlet = "Sites"
+		);
 
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Test Site Name" />
-		</execute>
+		Site.addBlankCP(
+			siteName = "Test Site Name"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Fragments" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Fragments"
+		);
 
-		<execute macro="Collection#addCollection">
-			<var name="collectionDescription" value="Collection Description" />
-			<var name="collectionName" value="Collection Name" />
-		</execute>
+		Collection.addCollection(
+			collectionDescription = "Collection Description",
+			collectionName = "Collection Name"
+		);
 
-		<execute macro="LexiconEntry#gotoEntry">
-			<var name="rowEntry" value="Collection Name" />
-		</execute>
+		LexiconEntry.gotoEntry(
+			rowEntry = "Collection Name"
+		);
 
-		<execute macro="Fragment#addFragment">
-			<var name="fragmentName" value="Fragment Name" />
-		</execute>
-	</set-up>
+		Fragment.addFragment(
+			fragmentName = "Fragment Name"
+		);
+	}
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+	tearDown {
+		var testPortalInstance = "TestPropsUtil.get('test.portal.instance')";
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Site#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			Site.tearDownCP();
+		}
+	}
 
-	<command name="AddLayoutPageTemplateRemoveFragment" priority="5">
-		<var name="htmlSnippet"><![CDATA[
+	@priority = "5"
+	testAddLayoutPageTemplateRemoveFragment {
+		var htmlSnippet = '''
 <html>${line.separator}
 <div>${line.separator}
 <span class="test">This is a test.</span>${line.separator}
 </div>${line.separator}
-</html>]]></var>
+</html>''';
 
-		<execute macro="Fragment#typeFragmentEditor">
-			<var name="editor" value="html" />
-			<var name="templateScript" value="${htmlSnippet}" />
-		</execute>
+		Fragment.typeFragmentEditor(
+			editor = "html",
+			templateScript = "${htmlSnippet}"
+		);
 
-		<execute macro="PortletEntry#publish" />
+		PortletEntry.publish();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Page Templates" />
-		</execute>
+		Navigator.gotoNavItem(
+			navItem = "Page Templates"
+		);
 
-		<execute macro="Collection#addCollection">
-			<var name="collectionName" value="Page Template Collection" />
-		</execute>
+		Collection.addCollection(
+			collectionName = "Page Template Collection"
+		);
 
-		<execute macro="LexiconEntry#gotoEntry">
-			<var name="rowEntry" value="Page Template Collection" />
-		</execute>
+		LexiconEntry.gotoEntry(
+			rowEntry = "Page Template Collection"
+		);
 
-		<execute macro="LayoutPageTemplates#add">
-			<var name="pageTemplateName" value="Page Template Name" />
-		</execute>
+		LayoutPageTemplates.add(
+			pageTemplateName = "Page Template Name"
+		);
 
-		<execute macro="LayoutPageTemplates#selectFragment">
-			<var name="collectionName" value="Collection Name" />
-			<var name="fragmentName" value="Fragment Name" />
-		</execute>
+		LayoutPageTemplates.selectFragment(
+			collectionName = "Collection Name",
+			fragmentName = "Fragment Name"
+		);
 
-		<execute macro="LayoutPageTemplates#viewAutoSaveMessage" />
+		LayoutPageTemplates.viewAutoSaveMessage();
 
-		<execute macro="LayoutPageTemplates#removeFragment">
-			<var name="fragmentName" value="Fragment Name" />
-		</execute>
+		LayoutPageTemplates.removeFragment(
+			fragmentName = "Fragment Name"
+		);
 
-		<execute macro="LayoutPageTemplates#viewAutoSaveMessage" />
+		LayoutPageTemplates.viewAutoSaveMessage();
 
-		<execute macro="Portlet#viewEmptyMessage">
-			<var name="message" value="This layout page template is empty." />
-		</execute>
-	</command>
+		Portlet.viewEmptyMessage(
+			message = "This layout page template is empty."
+		);
+	}
 
-	<command name="ViewDraftFragmentDoesNotDisplayInSidebar" priority="4">
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
+	@priority = "4"
+	testViewDraftFragmentDoesNotDisplayInSidebar {
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Page Templates" />
-		</execute>
+		Navigator.gotoNavItem(
+			navItem = "Page Templates"
+		);
 
-		<execute macro="Collection#addCollection">
-			<var name="collectionName" value="Page Template Collection" />
-		</execute>
+		Collection.addCollection(
+			collectionName = "Page Template Collection"
+		);
 
-		<execute macro="LexiconEntry#gotoEntry">
-			<var name="rowEntry" value="Page Template Collection" />
-		</execute>
+		LexiconEntry.gotoEntry(
+			rowEntry = "Page Template Collection"
+		);
 
-		<execute macro="LayoutPageTemplates#add">
-			<var name="pageTemplateName" value="Page Template Name" />
-		</execute>
+		LayoutPageTemplates.add(
+			pageTemplateName = "Page Template Name"
+		);
 
-		<execute macro="LayoutPageTemplates#viewCollectionNotPresent">
-			<var name="collectionName" value="Collection Name" />
-		</execute>
-	</command>
-</definition>
+		LayoutPageTemplates.viewCollectionNotPresent(
+			collectionName = "Collection Name"
+		);
+	}
+}

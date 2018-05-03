@@ -1,44 +1,43 @@
-<definition component-name="portal-permissions">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Permissions" />
+@component-name = "portal-permissions"
+definition {
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "Permissions";
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+	setUp {
+		TestCase.setUpPortalInstance();
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+		User.firstLoginPG();
+	}
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+	tearDown {
+		var testPortalInstance = "TestPropsUtil.get('test.portal.instance')";
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-		</if>
-	</tear-down>
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+	}
 
-	<command name="RemoveNoGuestInlineView" priority="5">
-		<property name="portal.acceptance" value="true" />
+	@priority = "5"
+	testRemoveNoGuestInlineView {
+		property portal.acceptance = "true";
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
 
-		<execute macro="SitePages#gotoPageMenuItem">
-			<var name="menuItem" value="Permissions" />
-			<var name="pageName" value="Welcome" />
-		</execute>
+		SitePages.gotoPageMenuItem(
+			menuItem = "Permissions",
+			pageName = "Welcome"
+		);
 
-		<execute macro="IFrame#selectPermissionsFrame" />
+		IFrame.selectPermissionsFrame();
+		var key_roleTitle = "guest";
 
-		<var name="key_roleTitle" value="guest" />
+		Click(locator1 = "Permissions#INLINE_PERMISSIONS_VIEW_CHECKBOX");
 
-		<execute function="Click" locator1="Permissions#INLINE_PERMISSIONS_VIEW_CHECKBOX" />
-		<execute function="AssertChecked" locator1="Permissions#INLINE_PERMISSIONS_VIEW_CHECKBOX" />
-	</command>
-</definition>
+		AssertChecked(locator1 = "Permissions#INLINE_PERMISSIONS_VIEW_CHECKBOX");
+	}
+}

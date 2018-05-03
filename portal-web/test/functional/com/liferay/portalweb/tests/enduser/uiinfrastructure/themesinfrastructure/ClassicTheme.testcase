@@ -1,88 +1,87 @@
-<definition component-name="portal-user-interface">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="User Interface" />
+@component-name = "portal-user-interface"
+definition {
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "User Interface";
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+	setUp {
+		TestCase.setUpPortalInstance();
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+		User.firstLoginPG();
+	}
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+	tearDown {
+		var testPortalInstance = "TestPropsUtil.get('test.portal.instance')";
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-		</if>
-	</tear-down>
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+	}
 
-	<command name="ConfigureLookAndFeelSettingsSinglePage" priority="5">
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Navigation" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
+	@priority = "5"
+	testConfigureLookAndFeelSettingsSinglePage {
+		ProductMenu.gotoPortlet(
+			category = "Navigation",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
 
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="Classic Theme Page" />
-		</execute>
+		SitePages.addPublicPage(
+			pageName = "Classic Theme Page"
+		);
 
-		<execute macro="SitePages#gotoPageMenuItem">
-			<var name="menuItem" value="Configure" />
-			<var name="pageName" value="Classic Theme Page" />
-		</execute>
+		SitePages.gotoPageMenuItem(
+			menuItem = "Configure",
+			pageName = "Classic Theme Page"
+		);
 
-		<execute macro="Navigator#gotoNavTab">
-			<var name="navTab" value="Look and Feel" />
-		</execute>
+		Navigator.gotoNavTab(
+			navTab = "Look and Feel"
+		);
 
-		<execute macro="Theme#configureLookAndFeelSpecificLook" />
+		Theme.configureLookAndFeelSpecificLook();
 
-		<execute macro="Theme#configureLookAndFeelBulletStyle">
-			<var name="bulletStyle" value="Arrows" />
-		</execute>
+		Theme.configureLookAndFeelBulletStyle(
+			bulletStyle = "Arrows"
+		);
 
-		<execute macro="Theme#configureLookAndFeelShowHeaderSearch">
-			<var name="showHeaderSearch" value="false" />
-		</execute>
+		Theme.configureLookAndFeelShowHeaderSearch(
+			showHeaderSearch = "false"
+		);
 
-		<execute macro="Theme#configureLookAndFeelShowMaxMinAppLinks">
-			<var name="showMaxMinAppLinks" value="true" />
-		</execute>
+		Theme.configureLookAndFeelShowMaxMinAppLinks(
+			showMaxMinAppLinks = "true"
+		);
 
-		<execute macro="PortletEntry#save" />
+		PortletEntry.save();
 
-		<execute macro="SitePages#gotoPageMenuItem">
-			<var name="menuItem" value="Configure" />
-			<var name="pageName" value="Classic Theme Page" />
-		</execute>
+		SitePages.gotoPageMenuItem(
+			menuItem = "Configure",
+			pageName = "Classic Theme Page"
+		);
 
-		<execute macro="Navigator#gotoNavTab">
-			<var name="navTab" value="Look and Feel" />
-		</execute>
+		Navigator.gotoNavTab(
+			navTab = "Look and Feel"
+		);
 
-		<execute macro="Theme#viewBulletStyle">
-			<var name="bulletStyle" value="Arrows" />
-		</execute>
+		Theme.viewBulletStyle(
+			bulletStyle = "Arrows"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Classic Theme Page" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "Classic Theme Page"
+		);
 
-		<execute macro="SearchPortlet#viewSearchHidden" />
+		SearchPortlet.viewSearchHidden();
 
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Hello World" />
-		</execute>
+		Portlet.addPG(
+			portletName = "Hello World"
+		);
 
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Hello World" />
-		</execute>
+		Portlet.gotoPortletOptions(
+			portletName = "Hello World"
+		);
 
-		<execute macro="Theme#viewMaxMinPortletOptions" />
-	</command>
-</definition>
+		Theme.viewMaxMinPortletOptions();
+	}
+}

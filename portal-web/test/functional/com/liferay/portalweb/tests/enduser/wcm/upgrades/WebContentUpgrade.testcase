@@ -1,107 +1,114 @@
-<definition component-name="portal-upgrades">
-	<property name="ignore.errors" value="Plugin security management is not enabled. Enable a security manager, then restart." />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.component.names" value="Upgrades WEM,Web Content Administration" />
-	<property name="testray.main.component.name" value="Upgrades WEM" />
+@component-name = "portal-upgrades"
+definition {
+	property ignore.errors = "Plugin security management is not enabled. Enable a security manager, then restart.";
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.component.names = "Upgrades WEM,Web Content Administration";
+	property testray.main.component.name = "Upgrades WEM";
 
-	<set-up>
-		<execute macro="SignIn#signIn" />
+	setUp {
+		SignIn.signIn();
 
-		<execute macro="Smoke#viewWelcomePage" />
+		Smoke.viewWelcomePage();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Search" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Search"
+		);
 
-		<execute macro="SearchAdministration#executeSearchActions">
-			<var name="actionsDescription" value="Reindex all search indexes." />
-		</execute>
-	</set-up>
+		SearchAdministration.executeSearchActions(
+			actionsDescription = "Reindex all search indexes."
+		);
+	}
 
-	<command name="ViewLayoutArchive621015" priority="5">
-		<description message="This is a use case for LPS-75561." />
+	@description = "This is a use case for LPS-75561."
+	@priority = "5"
+	testViewLayoutArchive621015 {
+		property data.archive.type = "data-archive-pages-administration";
+		property portal.version = "6.2.10.15";
 
-		<property name="data.archive.type" value="data-archive-pages-administration" />
-		<property name="portal.version" value="6.2.10.15" />
+		Navigator.openURL();
 
-		<execute macro="Navigator#openURL" />
+		Portlet.addPG(
+			portletName = "Web Content Display"
+		);
 
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
+		AssertTextNotPresent(value1 = "There was an unexpected error. Please refresh the current page.");
+	}
 
-		<execute function="AssertTextNotPresent" value1="There was an unexpected error. Please refresh the current page." />
-	</command>
+	@description = "This is a use case for LPS-75561."
+	@priority = "5"
+	testViewLayoutArchive625 {
+		property data.archive.type = "data-archive-pages-administration";
+		property portal.version = "6.2.5";
 
-	<command name="ViewLayoutArchive625" priority="5">
-		<description message="This is a use case for LPS-75561." />
+		Navigator.openURL();
 
-		<property name="data.archive.type" value="data-archive-pages-administration" />
-		<property name="portal.version" value="6.2.5" />
+		Portlet.addPG(
+			portletName = "Web Content Display"
+		);
 
-		<execute macro="Navigator#openURL" />
+		AssertTextNotPresent(value1 = "There was an unexpected error. Please refresh the current page.");
+	}
 
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
+	@priority = "5"
+	testViewWebContentArchive6012 {
+		property data.archive.type = "data-archive-web-content-draft";
+		property portal.version = "6.0.12";
 
-		<execute function="AssertTextNotPresent" value1="There was an unexpected error. Please refresh the current page." />
-	</command>
+		Upgrade.addWCStructureAndTemplate();
 
-	<command name="ViewWebContentArchive6012" priority="5">
-		<property name="data.archive.type" value="data-archive-web-content-draft" />
-		<property name="portal.version" value="6.0.12" />
+		Upgrade.publishWCDraft();
+	}
 
-		<execute macro="Upgrade#addWCStructureAndTemplate" />
+	@priority = "5"
+	testViewWebContentArchive612 {
+		property data.archive.type = "data-archive-web-content-draft";
+		property portal.version = "6.1.2";
 
-		<execute macro="Upgrade#publishWCDraft" />
-	</command>
+		Upgrade.addWCStructureAndTemplate();
 
-	<command name="ViewWebContentArchive612" priority="5">
-		<property name="data.archive.type" value="data-archive-web-content-draft" />
-		<property name="portal.version" value="6.1.2" />
+		Upgrade.publishWCDraft();
+	}
 
-		<execute macro="Upgrade#addWCStructureAndTemplate" />
+	@priority = "5"
+	testViewWebContentArchive6130 {
+		property data.archive.type = "data-archive-web-content-draft";
+		property portal.version = "6.1.30";
 
-		<execute macro="Upgrade#publishWCDraft" />
-	</command>
+		Upgrade.addWCStructureAndTemplate();
 
-	<command name="ViewWebContentArchive6130" priority="5">
-		<property name="data.archive.type" value="data-archive-web-content-draft" />
-		<property name="portal.version" value="6.1.30" />
+		Upgrade.publishWCDraft();
+	}
 
-		<execute macro="Upgrade#addWCStructureAndTemplate" />
+	@priority = "5"
+	testViewWebContentArchive621015 {
+		property data.archive.type = "data-archive-web-content-draft";
+		property portal.version = "6.2.10.15";
 
-		<execute macro="Upgrade#publishWCDraft" />
-	</command>
+		Upgrade.addWCStructureAndTemplate();
 
-	<command name="ViewWebContentArchive621015" priority="5">
-		<property name="data.archive.type" value="data-archive-web-content-draft" />
-		<property name="portal.version" value="6.2.10.15" />
+		Upgrade.publishWCDraft();
+	}
 
-		<execute macro="Upgrade#addWCStructureAndTemplate" />
+	@priority = "5"
+	testViewWebContentArchive623 {
+		property data.archive.type = "data-archive-web-content-draft";
+		property portal.version = "6.2.3";
 
-		<execute macro="Upgrade#publishWCDraft" />
-	</command>
+		Upgrade.addWCStructureAndTemplate();
 
-	<command name="ViewWebContentArchive623" priority="5">
-		<property name="data.archive.type" value="data-archive-web-content-draft" />
-		<property name="portal.version" value="6.2.3" />
+		Upgrade.publishWCDraft();
+	}
 
-		<execute macro="Upgrade#addWCStructureAndTemplate" />
+	@priority = "5"
+	testViewWebContentArchive625 {
+		property data.archive.type = "data-archive-web-content-draft";
+		property portal.version = "6.2.5";
 
-		<execute macro="Upgrade#publishWCDraft" />
-	</command>
+		Upgrade.addWCStructureAndTemplate();
 
-	<command name="ViewWebContentArchive625" priority="5">
-		<property name="data.archive.type" value="data-archive-web-content-draft" />
-		<property name="portal.version" value="6.2.5" />
-
-		<execute macro="Upgrade#addWCStructureAndTemplate" />
-
-		<execute macro="Upgrade#publishWCDraft" />
-	</command>
-</definition>
+		Upgrade.publishWCDraft();
+	}
+}

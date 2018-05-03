@@ -1,268 +1,265 @@
-<definition component-name="portal-security">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Security" />
+@component-name = "portal-security"
+definition {
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "Security";
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+	setUp {
+		TestCase.setUpPortalInstance();
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+		User.firstLoginPG();
+	}
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+	tearDown {
+		var testPortalInstance = "TestPropsUtil.get('test.portal.instance')";
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="PortalSettings#tearDownAuthenticationCP" />
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			PortalSettings.tearDownAuthenticationCP();
 
-				<execute macro="Page#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
+			Page.tearDownCP();
+		}
+	}
 
-	<command name="NoGuestRoleFromWCDArticleHistoryURL" priority="5">
-		<property name="portal.acceptance" value="quarantine" />
+	@priority = "5"
+	testNoGuestRoleFromWCDArticleHistoryURL {
+		property portal.acceptance = "quarantine";
+		var portalURL = "TestPropsUtil.get('portal.url')";
+		var url = "${portalURL}/web/guest/home?&p_p_id=com_liferay_journal_web_portlet_JournalPortlet&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_com_liferay_journal_web_portlet_JournalPortlet_struts_action=%2Fjournal%2Fview_article_history&_com_liferay_journal_web_portlet_JournalPortlet_groupId=10180&_com_liferay_journal_web_portlet_JournalPortlet_articleId=";
 
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-		<var name="url" value="${portalURL}/web/guest/home?&amp;p_p_id=com_liferay_journal_web_portlet_JournalPortlet&amp;p_p_lifecycle=0&amp;p_p_state=maximized&amp;p_p_mode=view&amp;_com_liferay_journal_web_portlet_JournalPortlet_struts_action=%2Fjournal%2Fview_article_history&amp;_com_liferay_journal_web_portlet_JournalPortlet_groupId=10180&amp;_com_liferay_journal_web_portlet_JournalPortlet_articleId=" />
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
+		SitePages.addPublicPage(
+			pageName = "Web Content Display Page"
+		);
 
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "Web Content Display Page"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Web Content Display Page" />
-		</execute>
+		Portlet.addPG(
+			portletName = "Web Content Display"
+		);
 
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
+		WebContent.addPGViaWCD(
+			webContentContent = "WC WebContent Content",
+			webContentTitle = "WC WebContent Title"
+		);
 
-		<execute macro="WebContent#addPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
+		WebContent.viewPGViaWCD(
+			webContentContent = "WC WebContent Content"
+		);
 
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC WebContent Content" />
-		</execute>
+		WebContentNavigator.gotoEditPGViaWCD(
+			menuItem = "Edit Web Content",
+			webContentTitle = "WC WebContent Title"
+		);
+		var articleID = "selenium.getText(WCEditWebContent#ARTICLE_ID)";
 
-		<execute macro="WebContentNavigator#gotoEditPGViaWCD">
-			<var name="menuItem" value="Edit Web Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
+		User.logoutPG();
 
-		<var method="selenium#getText(WCEditWebContent#ARTICLE_ID)" name="articleID" />
+		Navigator.openSpecificURL(
+			url = "${url}${articleID}"
+		);
 
-		<execute macro="User#logoutPG" />
+		AssertTextEquals(locator1 = "Message#ERROR", value1 = "You do not have the roles required to access this portlet.");
+	}
 
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${url}${articleID}" />
-		</execute>
+	@priority = "5"
+	testValidateBeanIdentifierUserPermissions {
+		property portal.acceptance = "true";
+		var portalURL = "TestPropsUtil.get('portal.url')";
+		var url = "${portalURL}/c/portal/json_service?serviceClassName=com.liferay.portal.service.AccountServiceUtil&serviceMethodName=getBeanIdentifier&p_auth=";
 
-		<execute function="AssertTextEquals" locator1="Message#ERROR" value1="You do not have the roles required to access this portlet." />
-	</command>
+		Api.gotoPAuthURL();
 
-	<command name="ValidateBeanIdentifierUserPermissions" priority="5">
-		<property name="portal.acceptance" value="true" />
+		Pause(locator1 = "1000");
 
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-		<var name="url" value="${portalURL}/c/portal/json_service?serviceClassName=com.liferay.portal.service.AccountServiceUtil&amp;serviceMethodName=getBeanIdentifier&amp;p_auth=" />
+		AssertElementNotPresent(locator1 = "JSONWS#SECURITY_TEST_PAGE_POPULATED");
+	}
 
-		<execute macro="Api#gotoPAuthURL" />
+	@priority = "4"
+	testValidateCannotStealAdminAccount {
+		property test.name.skip.portal.instance = "SecurityTestingUsecase#ValidateCannotStealAdminAccount";
+		var portalURL = "TestPropsUtil.get('portal.url')";
 
-		<execute function="Pause" locator1="1000" />
-		<execute function="AssertElementNotPresent" locator1="JSONWS#SECURITY_TEST_PAGE_POPULATED" />
-	</command>
+		ProductMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Users and Organizations"
+		);
 
-	<command name="ValidateCannotStealAdminAccount" priority="4">
-		<property name="test.name.skip.portal.instance" value="SecurityTestingUsecase#ValidateCannotStealAdminAccount" />
+		User.addCP(
+			userEmailAddress = "userea@liferay.com",
+			userFirstName = "userfn",
+			userLastName = "userln",
+			userScreenName = "usersn"
+		);
 
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
+		ProductMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Users and Organizations"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Users" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn"
+		);
 
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
+		User.logoutAndLoginPG(
+			userLoginEmailAddress = "userea@liferay.com",
+			userLoginFullName = "userfn userln"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Users" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
+		Api.gotoPAuthURL(
+			url = "${portalURL}/api/jsonws/user/update-status/user-id/20250/status/6?p_auth="
+		);
 
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
+		AssertTextEquals.assertPartialText(locator1 = "JSONWS#SECURITY_TEST_PAGE_BODY", value1 = "must have DELETE permission for com.liferay.portal.kernel.model.User");
 
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
+		AssertTextEquals.assertPartialText(locator1 = "JSONWS#SECURITY_TEST_PAGE_BODY", value1 = "com.liferay.portal.kernel.security.auth.PrincipalException$MustHavePermission");
 
-		<execute macro="Api#gotoPAuthURL">
-			<var name="url" value="${portalURL}/api/jsonws/user/update-status/user-id/20250/status/6?p_auth=" />
-		</execute>
+		AssertConsoleTextPresent(value1 = "must have DELETE permission for com.liferay.portal.kernel.model.User");
+	}
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="JSONWS#SECURITY_TEST_PAGE_BODY" value1="must have DELETE permission for com.liferay.portal.kernel.model.User" />
+	@priority = "5"
+	testValidateForwardURLPG {
+		property custom.properties = "virtual.hosts.valid.hosts=localhost,127.0.0.1,${ip.address}";
+		property portal.acceptance = "true";
+		var portalURL = "TestPropsUtil.get('portal.url')";
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="JSONWS#SECURITY_TEST_PAGE_BODY" value1="com.liferay.portal.kernel.security.auth.PrincipalException$MustHavePermission" />
+		Navigator.openSpecificURL(
+			url = "${portalURL}/html/common/forward_jsp.jsp?FORWARD_URL=http://www.msn.com"
+		);
 
-		<execute function="AssertConsoleTextPresent" value1="must have DELETE permission for com.liferay.portal.kernel.model.User" />
-	</command>
+		Pause(locator1 = "3000");
 
-	<command name="ValidateForwardURLPG" priority="5">
-		<property name="custom.properties" value="virtual.hosts.valid.hosts=localhost,127.0.0.1,${ip.address}" />
-		<property name="portal.acceptance" value="true" />
+		AssertElementPresent(locator1 = "Home#PAGE", key_pageName = "Welcome");
 
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
+		AssertTextEquals.assertTextCaseInsensitive(locator1 = "HelloWorld#PORTLET_TITLE", value1 = "Hello World");
 
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${portalURL}/html/common/forward_jsp.jsp?FORWARD_URL=http://www.msn.com" />
-		</execute>
+		AssertElementPresent(locator1 = "HelloWorld#PORTLET_CONTENT");
 
-		<execute function="Pause" locator1="3000" />
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
 
-		<execute function="AssertElementPresent" locator1="Home#PAGE">
-			<var name="key_pageName" value="Welcome" />
-		</execute>
+		SitePages.addPublicPage(
+			pageName = "Test"
+		);
 
-		<execute function="AssertTextEquals#assertTextCaseInsensitive" locator1="HelloWorld#PORTLET_TITLE" value1="Hello World" />
-		<execute function="AssertElementPresent" locator1="HelloWorld#PORTLET_CONTENT" />
+		Navigator.openSpecificURL(
+			url = '''${portalURL}/html/common/forward_jsp.jsp?FORWARD_URL=${portalURL}/web/guest/test'''
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
+		AssertElementPresent(locator1 = "Home#PAGE", key_pageName = "Test");
+	}
 
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="Test" />
-		</execute>
+	@description = "This is a use case for LPS-73595."
+	@priority = "5"
+	testViewJSLoaderModulesURLNoWiki {
+		var portalURL = "TestPropsUtil.get('portal.url')";
 
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url"><![CDATA[${portalURL}/html/common/forward_jsp.jsp?FORWARD_URL=${portalURL}/web/guest/test]]></var>
-		</execute>
+		Navigator.openSpecificURL(
+			url = "${portalURL}/o/js_loader_modules"
+		);
 
-		<execute function="AssertElementPresent" locator1="Home#PAGE">
-			<var name="key_pageName" value="Test" />
-		</execute>
-	</command>
+		AssertConsoleTextPresent(value1 = "com.liferay.wiki.engine.html");
 
-	<command name="ViewJSLoaderModulesURLNoWiki" priority="5">
-		<description message="This is a use case for LPS-73595." />
+		AssertConsoleTextPresent(value1 = "com.liferay.wiki.engine.text");
 
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
+		AssertTextNotPresent(value1 = "com.liferay.wiki.engine.html");
 
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${portalURL}/o/js_loader_modules" />
-		</execute>
+		AssertTextNotPresent(value1 = "com.liferay.wiki.engine.text");
+	}
 
-		<execute function="AssertConsoleTextPresent" value1="com.liferay.wiki.engine.html" />
-		<execute function="AssertConsoleTextPresent" value1="com.liferay.wiki.engine.text" />
-
-		<execute function="AssertTextNotPresent" value1="com.liferay.wiki.engine.html" />
-		<execute function="AssertTextNotPresent" value1="com.liferay.wiki.engine.text" />
-	</command>
-
-	<command name="ViewNoInvokedPortletViaURL" priority="5">
-		<description message="This is a use case for LPS-55622." />
-
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<var name="undeployedPortletURL">
-			<![CDATA[
+	@description = "This is a use case for LPS-55622."
+	@priority = "5"
+	testViewNoInvokedPortletViaURL {
+		var portalURL = "TestPropsUtil.get('portal.url')";
+		var undeployedPortletURL = '''
 				${portalURL}/?p_p_id=asdf&p_p_lifecycle=0&p_p_state=maximized&_asdf_mvcPath=/html/portlet/portal_settings/edit_company.jsp
-			]]>
-		</var>
+			''';
 
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${undeployedPortletURL}" />
-		</execute>
+		Navigator.openSpecificURL(
+			url = "${undeployedPortletURL}"
+		);
 
-		<execute function="AssertTextEquals" locator1="Message#INFO" value1="This portlet has been undeployed. Please redeploy it or remove it from the page." />
-	</command>
+		AssertTextEquals(locator1 = "Message#INFO", value1 = "This portlet has been undeployed. Please redeploy it or remove it from the page.");
+	}
 
-	<command name="ViewUpdateUserViaJSONWS" priority="4">
-		<property name="test.name.skip.portal.instance" value="SecurityTestingUsecase#ViewUpdateUserViaJSONWS" />
+	@priority = "4"
+	testViewUpdateUserViaJSONWS {
+		property test.name.skip.portal.instance = "SecurityTestingUsecase#ViewUpdateUserViaJSONWS";
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Search" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Search"
+		);
 
-		<execute macro="SearchAdministration#executeSearchActions">
-			<var name="actionsDescription" value="Reindex all search indexes." />
-		</execute>
+		SearchAdministration.executeSearchActions(
+			actionsDescription = "Reindex all search indexes."
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Users" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Users and Organizations"
+		);
+		var key_userScreenName = "test";
 
-		<var name="key_userScreenName" value="test" />
+		AssertClick(locator1 = "UsersAndOrganizations#USER_TABLE_SCREEN_NAME", value1 = "test");
 
-		<execute function="AssertClick" locator1="UsersAndOrganizations#USER_TABLE_SCREEN_NAME" value1="test" />
+		Pause(locator1 = "5000");
+		var userId = "selenium.getElementValue(UsersAndOrganizationsEditUser#DETAILS_USER_ID_FIELD)";
 
-		<execute function="Pause" locator1="5000" />
+		Api.apiJsonwsUserView();
 
-		<var method="selenium#getElementValue(UsersAndOrganizationsEditUser#DETAILS_USER_ID_FIELD)" name="userId" />
+		Api.editJsonwsUserView(
+			userBirthdayDay = "24",
+			userBirthdayMonth = "10",
+			userBirthdayYear = "1984",
+			userEmailAddress = "test1@liferay.com",
+			userFacebookId = "0",
+			userFirstName = "test1",
+			userId = "${userId}",
+			userLastName = "test1",
+			userPrefixId = "0",
+			userScreenName = "test1",
+			userSuffixId = "0"
+		);
 
-		<execute macro="Api#apiJsonwsUserView" />
+		Navigator.openURL();
 
-		<execute macro="Api#editJsonwsUserView">
-			<var name="userBirthdayDay" value="24" />
-			<var name="userBirthdayMonth" value="10" />
-			<var name="userBirthdayYear" value="1984" />
-			<var name="userEmailAddress" value="test1@liferay.com" />
-			<var name="userFacebookId" value="0" />
-			<var name="userFirstName" value="test1" />
-			<var name="userId" value="${userId}" />
-			<var name="userLastName" value="test1" />
-			<var name="userPrefixId" value="0" />
-			<var name="userScreenName" value="test1" />
-			<var name="userSuffixId" value="0" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Users and Organizations"
+		);
+		var key_userScreenName = "test1";
 
-		<execute macro="Navigator#openURL" />
+		AssertClick(locator1 = "UsersAndOrganizations#USER_TABLE_SCREEN_NAME", value1 = "test1");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Users" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
+		AssertValue(locator1 = "UsersAndOrganizationsEditUser#DETAILS_USER_ID_FIELD", value1 = "${userId}");
 
-		<var name="key_userScreenName" value="test1" />
+		AssertValue(locator1 = "UsersAndOrganizationsEditUser#DETAILS_FIRST_NAME_FIELD", value1 = "test1");
 
-		<execute function="AssertClick" locator1="UsersAndOrganizations#USER_TABLE_SCREEN_NAME" value1="test1" />
+		AssertValue(locator1 = "UsersAndOrganizationsEditUser#DETAILS_LAST_NAME_FIELD", value1 = "test1");
 
-		<execute function="AssertValue" locator1="UsersAndOrganizationsEditUser#DETAILS_USER_ID_FIELD" value1="${userId}" />
-		<execute function="AssertValue" locator1="UsersAndOrganizationsEditUser#DETAILS_FIRST_NAME_FIELD" value1="test1" />
-		<execute function="AssertValue" locator1="UsersAndOrganizationsEditUser#DETAILS_LAST_NAME_FIELD" value1="test1" />
-		<execute function="AssertValue" locator1="UsersAndOrganizationsEditUser#DETAILS_EMAIL_ADDRESS_FIELD" value1="test1@liferay.com" />
-		<execute function="AssertValue" locator1="UsersAndOrganizationsEditUser#DETAILS_SCREEN_NAME_FIELD" value1="test1" />
-		<execute function="AssertValue" locator1="UsersAndOrganizationsEditUser#DETAILS_BIRTHDAY_FIELD" value1="11/24/1984" />
-	</command>
-</definition>
+		AssertValue(locator1 = "UsersAndOrganizationsEditUser#DETAILS_EMAIL_ADDRESS_FIELD", value1 = "test1@liferay.com");
+
+		AssertValue(locator1 = "UsersAndOrganizationsEditUser#DETAILS_SCREEN_NAME_FIELD", value1 = "test1");
+
+		AssertValue(locator1 = "UsersAndOrganizationsEditUser#DETAILS_BIRTHDAY_FIELD", value1 = "11/24/1984");
+	}
+}

@@ -1,180 +1,186 @@
-<definition component-name="portal-security">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Authentication" />
+@component-name = "portal-security"
+definition {
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "Authentication";
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+	setUp {
+		TestCase.setUpPortalInstance();
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+		User.firstLoginPG();
+	}
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+	tearDown {
+		var testPortalInstance = "TestPropsUtil.get('test.portal.instance')";
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="PortalSettings#tearDownAuthenticationCP" />
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			PortalSettings.tearDownAuthenticationCP();
 
-				<execute macro="Page#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
+			Page.tearDownCP();
+		}
+	}
 
-	<command name="TestLDAPConnectionAndEntries" priority="5">
-		<property name="apacheds.enabled" value="true" />
-		<property name="portal.acceptance" value="true" />
-		<property name="test.name.skip.portal.instance" value="Authentication#TestLDAPConnectionAndEntries" />
+	@priority = "5"
+	testTestLDAPConnectionAndEntries {
+		property apacheds.enabled = "true";
+		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "Authentication#TestLDAPConnectionAndEntries";
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Instance Settings" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Instance Settings"
+		);
 
-		<execute macro="PortalSettingsNavigator#gotoLDAP" />
+		PortalSettingsNavigator.gotoLDAP();
 
-		<execute macro="PortalSettings#addLDAPServer">
-			<var name="LDAPServerName" value="ApacheDS Server" />
-		</execute>
+		PortalSettings.addLDAPServer(
+			LDAPServerName = "ApacheDS Server"
+		);
 
-		<execute macro="PortalSettingsNavigator#gotoLDAP" />
+		PortalSettingsNavigator.gotoLDAP();
 
-		<execute macro="PortalSettings#editLDAPServer">
-			<var name="LDAPServerName" value="ApacheDS Server" />
-		</execute>
+		PortalSettings.editLDAPServer(
+			LDAPServerName = "ApacheDS Server"
+		);
 
-		<execute macro="PortalSettings#testLDAPConnection" />
-	</command>
+		PortalSettings.testLDAPConnection();
+	}
 
-	<command name="ViewAuthenticationCAS" priority="3">
-		<property name="test.name.skip.portal.instance" value="Authentication#ViewAuthenticationCAS" />
+	@priority = "3"
+	testViewAuthenticationCAS {
+		property test.name.skip.portal.instance = "Authentication#ViewAuthenticationCAS";
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Instance Settings" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Instance Settings"
+		);
 
-		<execute macro="PortalSettings#viewAuthenticationCASCP" />
-	</command>
+		PortalSettings.viewAuthenticationCASCP();
+	}
 
-	<command name="ViewAuthenticationGeneral" priority="3">
-		<property name="test.name.skip.portal.instance" value="Authentication#ViewAuthenticationGeneral" />
+	@priority = "3"
+	testViewAuthenticationGeneral {
+		property test.name.skip.portal.instance = "Authentication#ViewAuthenticationGeneral";
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Instance Settings" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Instance Settings"
+		);
 
-		<execute macro="PortalSettings#viewAuthenticationGeneralCP" />
-	</command>
+		PortalSettings.viewAuthenticationGeneralCP();
+	}
 
-	<command name="ViewAuthenticationLDAP" priority="5">
-		<property name="test.name.skip.portal.instance" value="Authentication#ViewAuthenticationLDAP" />
-		<property name="testray.component.names" value="Training" />
+	@priority = "5"
+	testViewAuthenticationLDAP {
+		property test.name.skip.portal.instance = "Authentication#ViewAuthenticationLDAP";
+		property testray.component.names = "Training";
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Instance Settings" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Instance Settings"
+		);
 
-		<execute macro="PortalSettings#viewAuthenticationLDAPCP" />
-	</command>
+		PortalSettings.viewAuthenticationLDAPCP();
+	}
 
-	<command name="ViewAuthenticationNTLM" priority="3">
-		<property name="test.name.skip.portal.instance" value="Authentication#ViewAuthenticationNTLM" />
+	@priority = "3"
+	testViewAuthenticationNTLM {
+		property test.name.skip.portal.instance = "Authentication#ViewAuthenticationNTLM";
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Instance Settings" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Instance Settings"
+		);
 
-		<execute macro="PortalSettings#viewAuthenticationNTLMCP" />
-	</command>
+		PortalSettings.viewAuthenticationNTLMCP();
+	}
 
-	<command name="ViewAuthenticationOpenID" priority="3">
-		<property name="test.name.skip.portal.instance" value="Authentication#ViewAuthenticationOpenID" />
+	@priority = "3"
+	testViewAuthenticationOpenID {
+		property test.name.skip.portal.instance = "Authentication#ViewAuthenticationOpenID";
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Instance Settings" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Instance Settings"
+		);
 
-		<execute macro="PortalSettings#viewAuthenticationOpenIDCP" />
-	</command>
+		PortalSettings.viewAuthenticationOpenIDCP();
+	}
 
-	<command name="ViewAuthenticationOpenSSO" priority="3">
-		<property name="test.name.skip.portal.instance" value="Authentication#ViewAuthenticationOpenSSO" />
+	@priority = "3"
+	testViewAuthenticationOpenSSO {
+		property test.name.skip.portal.instance = "Authentication#ViewAuthenticationOpenSSO";
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Instance Settings" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Instance Settings"
+		);
 
-		<execute macro="PortalSettings#viewAuthenticationOpenSSOCP" />
-	</command>
+		PortalSettings.viewAuthenticationOpenSSOCP();
+	}
 
-	<command name="ViewInstanceSettingEnableLDAPAuthNotAffectSystemSetting" priority="3">
-		<property name="test.name.skip.portal.instance" value="Authentication#ViewInstanceSettingEnableLDAPAuthNotAffectSystemSetting" />
+	@priority = "3"
+	testViewInstanceSettingEnableLDAPAuthNotAffectSystemSetting {
+		property test.name.skip.portal.instance = "Authentication#ViewInstanceSettingEnableLDAPAuthNotAffectSystemSetting";
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="System Settings" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "System Settings"
+		);
 
-		<execute macro="SystemSettings#gotoConfiguration">
-			<var name="configurationCategory" value="LDAP" />
-			<var name="configurationName" value="LDAP Auth" />
-			<var name="configurationScope" value="Virtual Instance Scope" />
-		</execute>
+		SystemSettings.gotoConfiguration(
+			configurationCategory = "LDAP",
+			configurationName = "LDAP Auth",
+			configurationScope = "Virtual Instance Scope"
+		);
 
-		<execute macro="FormFields#viewCheckboxNotChecked">
-			<var name="fieldName" value="enabled" />
-		</execute>
+		FormFields.viewCheckboxNotChecked(
+			fieldName = "enabled"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Instance Settings" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Instance Settings"
+		);
 
-		<execute macro="PortalSettingsNavigator#gotoLDAP" />
+		PortalSettingsNavigator.gotoLDAP();
 
-		<execute macro="PortalSettings#enableLDAPSetting">
-			<var name="enableCheckboxKey" value="ENABLED" />
-		</execute>
+		PortalSettings.enableLDAPSetting(
+			enableCheckboxKey = "ENABLED"
+		);
 
-		<execute macro="PortalSettingsNavigator#gotoLDAP" />
+		PortalSettingsNavigator.gotoLDAP();
 
-		<execute macro="FormFields#viewCheckboxChecked">
-			<var name="fieldName" value="ldap--enabled" />
-		</execute>
+		FormFields.viewCheckboxChecked(
+			fieldName = "ldap--enabled"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="System Settings" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "System Settings"
+		);
 
-		<execute macro="SystemSettings#gotoConfiguration">
-			<var name="configurationCategory" value="LDAP" />
-			<var name="configurationName" value="LDAP Auth" />
-			<var name="configurationScope" value="Virtual Instance Scope" />
-		</execute>
+		SystemSettings.gotoConfiguration(
+			configurationCategory = "LDAP",
+			configurationName = "LDAP Auth",
+			configurationScope = "Virtual Instance Scope"
+		);
 
-		<execute macro="FormFields#viewCheckboxNotChecked">
-			<var name="fieldName" value="enabled" />
-		</execute>
-	</command>
-</definition>
+		FormFields.viewCheckboxNotChecked(
+			fieldName = "enabled"
+		);
+	}
+}

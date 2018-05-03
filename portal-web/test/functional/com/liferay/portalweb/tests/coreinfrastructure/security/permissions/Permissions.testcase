@@ -1,63 +1,62 @@
-<definition component-name="portal-security">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Permissions" />
+@component-name = "portal-security"
+definition {
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "Permissions";
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+	setUp {
+		TestCase.setUpPortalInstance();
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+		User.firstLoginPG();
+	}
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+	tearDown {
+		var testPortalInstance = "TestPropsUtil.get('test.portal.instance')";
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="User#firstLoginPG" />
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			User.firstLoginPG();
 
-				<execute macro="Page#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
+			Page.tearDownCP();
+		}
+	}
 
-	<command name="ViewBlogsPortletAsGuestPG" priority="5">
-		<property name="portal.acceptance" value="false" />
+	@priority = "5"
+	testViewBlogsPortletAsGuestPG {
+		property portal.acceptance = "false";
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
 
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
+		SitePages.addPublicPage(
+			pageName = "Blogs Page"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "Blogs Page"
+		);
 
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
+		Portlet.addPG(
+			portletName = "Blogs"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "Blogs Page"
+		);
 
-		<execute macro="Blogs#viewControlsPG" />
+		Blogs.viewControlsPG();
 
-		<execute macro="User#logoutPG" />
+		User.logoutPG();
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Blogs Page" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "Blogs Page"
+		);
 
-		<execute macro="BlogsConfiguration#viewNoPermissionPG" />
-	</command>
-</definition>
+		BlogsConfiguration.viewNoPermissionPG();
+	}
+}

@@ -1,100 +1,99 @@
-<definition component-name="portal-business-productivity-ee">
-	<property name="portal.release" value="false" />
-	<property name="portal.upstream" value="true" />
-	<property name="test.run.environment" value="EE" />
-	<property name="testray.main.component.name" value="Rules" />
+@component-name = "portal-business-productivity-ee"
+definition {
+	property portal.release = "false";
+	property portal.upstream = "true";
+	property test.run.environment = "EE";
+	property testray.main.component.name = "Rules";
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+	setUp {
+		TestCase.setUpPortalInstance();
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+		User.firstLoginPG();
+	}
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+	tearDown {
+		var testPortalInstance = "TestPropsUtil.get('test.portal.instance')";
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Page#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			Page.tearDownCP();
+		}
+	}
 
-	<command name="ViewWebContentInSampleDrools" priority="4">
-		<property name="osgi.modules.includes" value="portal-rules-engine-sample-web" />
+	@priority = "4"
+	testViewWebContentInSampleDrools {
+		property osgi.modules.includes = "portal-rules-engine-sample-web";
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Users" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Users and Organizations"
+		);
 
-		<execute macro="User#gotoEditCP">
-			<var name="userScreenName" value="test" />
-		</execute>
+		User.gotoEditCP(
+			userScreenName = "test"
+		);
 
-		<execute macro="Organization#gotoIdentificationCP" />
+		Organization.gotoIdentificationCP();
 
-		<execute macro="Organization#addAddressCP">
-			<var name="orgAddressCity" value="Diamond Bar" />
-			<var name="orgAddressCountry" value="United States" />
-			<var name="orgAddressPostal" value="91765" />
-			<var name="orgAddressRegion" value="California" />
-			<var name="orgAddressStreet" value="1400 Montefino Ave" />
-			<var name="orgAddressType" value="Personal" />
-		</execute>
+		Organization.addAddressCP(
+			orgAddressCity = "Diamond Bar",
+			orgAddressCountry = "United States",
+			orgAddressPostal = "91765",
+			orgAddressRegion = "California",
+			orgAddressStreet = "1400 Montefino Ave",
+			orgAddressType = "Personal"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Categorization" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Tags" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Categorization",
+			panel = "Site Administration",
+			portlet = "Tags"
+		);
 
-		<execute macro="Tag#addCP">
-			<var name="tagName" value="americas" />
-		</execute>
+		Tag.addCP(
+			tagName = "americas"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Web Content" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Web Content"
+		);
 
-		<execute macro="WebContentNavigator#gotoAddCP" />
+		WebContentNavigator.gotoAddCP();
 
-		<execute macro="WebContent#addWithTagCP">
-			<var name="tagNameList" value="americas" />
-			<var name="webContentContent" value="Web Content Content" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
+		WebContent.addWithTagCP(
+			tagNameList = "americas",
+			webContentContent = "Web Content Content",
+			webContentTitle = "Web Content Title"
+		);
 
-		<execute macro="Navigator#openURL" />
+		Navigator.openURL();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
 
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="Drools Page" />
-		</execute>
+		SitePages.addPublicPage(
+			pageName = "Drools Page"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Drools Page" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "Drools Page"
+		);
 
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Sample Drools" />
-		</execute>
+		Portlet.addPG(
+			portletName = "Sample Drools"
+		);
 
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="Web Content Content" />
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
-	</command>
-</definition>
+		WebContent.viewPGViaWCD(
+			webContentContent = "Web Content Content",
+			webContentTitle = "Web Content Title"
+		);
+	}
+}

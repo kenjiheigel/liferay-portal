@@ -1,201 +1,200 @@
-<definition component-name="portal-document-management-ee" ignore="true">
-	<property name="cmis.repository.type" value="sharepoint2010" />
-	<property name="custom.properties" value="session.store.password=true${line.separator}company.security.auth.type=screenName${line.separator}default.layout.template.id=1_column" />
-	<property name="osgi.app.includes" value="sharepoint" />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="test.run.environment" value="EE" />
-	<property name="testray.main.component.name" value="Documents Management" />
+@component-name = "portal-document-management-ee"
+@ignore = "true"
+definition {
+	property cmis.repository.type = "sharepoint2010";
+	property custom.properties = "session.store.password=true${line.separator}company.security.auth.type=screenName${line.separator}default.layout.template.id=1_column";
+	property osgi.app.includes = "sharepoint";
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property test.run.environment = "EE";
+	property testray.main.component.name = "Documents Management";
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+	setUp {
+		TestCase.setUpPortalInstance();
+		var sharepointVMHostName = "TestPropsUtil.get('cmis.repository.vm.host.name')";
 
-		<var method="TestPropsUtil#get('cmis.repository.vm.host.name')" name="sharepointVMHostName" />
+		AntCommand(locator1 = "build-test-sharepoint.xml", value1 = "clean-sharepoint-repository -Dssh.host=${sharepointVMHostName}");
 
-		<execute function="AntCommand" locator1="build-test-sharepoint.xml" value1="clean-sharepoint-repository -Dssh.host=${sharepointVMHostName}" />
+		User.loginPG(
+			authenticationMethod = "By Screen Name",
+			userScreenName = "test"
+		);
 
-		<execute macro="User#loginPG">
-			<var name="authenticationMethod" value="By Screen Name" />
-			<var name="userScreenName" value="test" />
-		</execute>
+		Navigator.openURL();
 
-		<execute macro="Navigator#openURL" />
+		ProductMenu.gotoPortlet(
+			category = "My Account",
+			panel = "User",
+			portlet = "Account Settings"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="My Account" />
-			<var name="panel" value="User" />
-			<var name="portlet" value="Account Settings" />
-		</execute>
+		User.editDetailsViaMyAccount(
+			userScreenNameEdit = "administrator"
+		);
 
-		<execute macro="User#editDetailsViaMyAccount">
-			<var name="userScreenNameEdit" value="administrator" />
-		</execute>
+		Navigator.openURL();
 
-		<execute macro="Navigator#openURL" />
+		ProductMenu.gotoPortlet(
+			category = "My Account",
+			panel = "User",
+			portlet = "Account Settings"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="My Account" />
-			<var name="panel" value="User" />
-			<var name="portlet" value="Account Settings" />
-		</execute>
+		User.editPasswordViaMyAccount(
+			currentPassword = "test",
+			newPassword = "password"
+		);
 
-		<execute macro="User#editPasswordViaMyAccount">
-			<var name="currentPassword" value="test" />
-			<var name="newPassword" value="password" />
-		</execute>
+		User.logoutPG();
 
-		<execute macro="User#logoutPG" />
+		User.loginPG(
+			authenticationMethod = "By Screen Name",
+			password = "password",
+			userScreenName = "administrator"
+		);
 
-		<execute macro="User#loginPG">
-			<var name="authenticationMethod" value="By Screen Name" />
-			<var name="password" value="password" />
-			<var name="userScreenName" value="administrator" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
+		SitePages.addPublicPage(
+			pageName = "Documents and Media Page",
+			sitePageType = "Layout"
+		);
 
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="sitePageType" value="Layout" />
-		</execute>
+		SitePages.configurePage(
+			columnName = "1 Column",
+			pageName = "Documents and Media Page",
+			privacy = "Public",
+			sitePageType = "Layout"
+		);
 
-		<execute macro="SitePages#configurePage">
-			<var name="columnName" value="1 Column" />
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="privacy" value="Public" />
-			<var name="sitePageType" value="Layout" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "Documents and Media Page"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
+		Portlet.addPG(
+			portletName = "Documents and Media"
+		);
 
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
+		DMNavigator.gotoAddRepositoryPG();
 
-		<execute macro="DMNavigator#gotoAddRepositoryPG" />
+		DMRepository.edit(
+			dmRepositoryName = "Sharepoint Repository Name"
+		);
 
-		<execute macro="DMRepository#edit">
-			<var name="dmRepositoryName" value="Sharepoint Repository Name" />
-		</execute>
+		DMRepository.addSharepoint(
+			dmRepositoryLibraryName = "Documents",
+			dmRepositoryName = "Sharepoint",
+			dmRepositorySiteURL = "http://${sharepointVMHostName}"
+		);
 
-		<execute macro="DMRepository#addSharepoint">
-			<var name="dmRepositoryLibraryName" value="Documents" />
-			<var name="dmRepositoryName" value="Sharepoint" />
-			<var name="dmRepositorySiteURL" value="http://${sharepointVMHostName}" />
-		</execute>
+		PortletEntry.save();
 
-		<execute macro="PortletEntry#save" />
+		DMDocument.enableActionsMenuOnPortlet();
 
-		<execute macro="DMDocument#enableActionsMenuOnPortlet" />
+		Navigator.gotoPage(
+			pageName = "Documents and Media Page"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
+		Portlet.changeDisplayStyle(
+			displayStyle = "descriptive"
+		);
+	}
 
-		<execute macro="Portlet#changeDisplayStyle">
-			<var name="displayStyle" value="descriptive" />
-		</execute>
-	</set-up>
+	tearDown {
+		var testPortalInstance = "TestPropsUtil.get('test.portal.instance')";
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			DMRepository.tearDownCP();
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="DMRepository#tearDownCP" />
+			DMDocument.tearDownCP();
 
-				<execute macro="DMDocument#tearDownCP" />
+			Navigator.openURL();
 
-				<execute macro="Navigator#openURL" />
+			ProductMenu.gotoPortlet(
+				category = "My Account",
+				panel = "User",
+				portlet = "Account Settings"
+			);
 
-				<execute macro="ProductMenu#gotoPortlet">
-					<var name="category" value="My Account" />
-					<var name="panel" value="User" />
-					<var name="portlet" value="Account Settings" />
-				</execute>
+			User.editDetailsViaMyAccount(
+				userScreenNameEdit = "test"
+			);
 
-				<execute macro="User#editDetailsViaMyAccount">
-					<var name="userScreenNameEdit" value="test" />
-				</execute>
+			Navigator.openURL();
 
-				<execute macro="Navigator#openURL" />
+			ProductMenu.gotoPortlet(
+				category = "My Account",
+				panel = "User",
+				portlet = "Account Settings"
+			);
 
-				<execute macro="ProductMenu#gotoPortlet">
-					<var name="category" value="My Account" />
-					<var name="panel" value="User" />
-					<var name="portlet" value="Account Settings" />
-				</execute>
+			User.editPasswordViaMyAccount(
+				currentPassword = "password",
+				newPassword = "test"
+			);
 
-				<execute macro="User#editPasswordViaMyAccount">
-					<var name="currentPassword" value="password" />
-					<var name="newPassword" value="test" />
-				</execute>
+			User.logoutPG();
 
-				<execute macro="User#logoutPG" />
+			User.loginPG(
+				authenticationMethod = "By Screen Name",
+				password = "test",
+				userScreenName = "test"
+			);
+		}
+	}
 
-				<execute macro="User#loginPG">
-					<var name="authenticationMethod" value="By Screen Name" />
-					<var name="password" value="test" />
-					<var name="userScreenName" value="test" />
-				</execute>
-			</else>
-		</if>
-	</tear-down>
+	@priority = "4"
+	testViewDocumentAsGuest {
+		Navigator.gotoPage(
+			pageName = "Documents and Media Page"
+		);
 
-	<command name="ViewDocumentAsGuest" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
+		DMNavigator.gotoRepository(
+			dmRepositoryName = "Sharepoint Repository Name"
+		);
 
-		<execute macro="DMNavigator#gotoRepository">
-			<var name="dmRepositoryName" value="Sharepoint Repository Name" />
-		</execute>
+		DMDocument.addPG(
+			dmDocumentFile = "Document_1.doc",
+			dmDocumentTitle = "Document_1.doc"
+		);
 
-		<execute macro="DMDocument#addPG">
-			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="Document_1.doc" />
-		</execute>
+		DMDocument.viewPG(
+			dmDocumentFile = "Document_1.doc",
+			dmDocumentTitle = "Document_1.doc",
+			dmRepositoryName = "true"
+		);
 
-		<execute macro="DMDocument#viewPG">
-			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="Document_1.doc" />
-			<var name="dmRepositoryName" value="true" />
-		</execute>
+		User.logoutPG();
 
-		<execute macro="User#logoutPG" />
+		Navigator.gotoPage(
+			pageName = "Documents and Media Page"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
+		Portlet.changeDisplayStyle(
+			displayStyle = "descriptive"
+		);
 
-		<execute macro="Portlet#changeDisplayStyle">
-			<var name="displayStyle" value="descriptive" />
-		</execute>
+		DMNavigator.gotoRepository(
+			dmRepositoryName = "Sharepoint Repository Name"
+		);
 
-		<execute macro="DMNavigator#gotoRepository">
-			<var name="dmRepositoryName" value="Sharepoint Repository Name" />
-		</execute>
+		DMDocument.viewPG(
+			dmDocumentFile = "Document_1.doc",
+			dmDocumentTitle = "Document_1.doc",
+			dmRepositoryName = "true"
+		);
 
-		<execute macro="DMDocument#viewPG">
-			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="Document_1.doc" />
-			<var name="dmRepositoryName" value="true" />
-		</execute>
-
-		<execute macro="User#loginPG">
-			<var name="authenticationMethod" value="By Screen Name" />
-			<var name="password" value="password" />
-			<var name="userScreenName" value="administrator" />
-		</execute>
-	</command>
-</definition>
+		User.loginPG(
+			authenticationMethod = "By Screen Name",
+			password = "password",
+			userScreenName = "administrator"
+		);
+	}
+}

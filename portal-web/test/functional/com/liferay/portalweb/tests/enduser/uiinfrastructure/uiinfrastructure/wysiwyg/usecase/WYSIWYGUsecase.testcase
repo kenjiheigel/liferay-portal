@@ -1,255 +1,253 @@
-<definition component-name="portal-user-interface">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="User Interface" />
+@component-name = "portal-user-interface"
+definition {
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "User Interface";
+	var pageName = "CKEditor Page";
 
-	<var name="pageName" value="CKEditor Page" />
+	setUp {
+		TestCase.setUpPortalInstance();
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+		User.firstLoginPG();
+	}
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+	tearDown {
+		var testPortalInstance = "TestPropsUtil.get('test.portal.instance')";
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			Page.tearDownCP();
+		}
+	}
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Page#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
+	@priority = "4"
+	testAddBlogsEntryWithImageViaBlogsImages {
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
 
-	<command name="AddBlogsEntryWithImageViaBlogsImages" priority="4">
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
+		SitePages.addPublicPage(
+			pageName = "${pageName}"
+		);
 
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "${pageName}"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
+		Portlet.addPG(
+			portletName = "Blogs"
+		);
 
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "${pageName}"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
+		Blogs.addEntryWithUploadedCoverImage(
+			coverImageName = "Document_1",
+			entryContent = "Blogs Entry Content",
+			entrySubtitle = "Blogs Entry Subtitle",
+			entryTitle = "Blogs Entry Title",
+			navTab = "Upload Image",
+			uploadFileName = "Document_1.jpg"
+		);
 
-		<execute macro="Blogs#addEntryWithUploadedCoverImage">
-			<var name="coverImageName" value="Document_1" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entrySubtitle" value="Blogs Entry Subtitle" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-			<var name="navTab" value="Upload Image" />
-			<var name="uploadFileName" value="Document_1.jpg" />
-		</execute>
+		Pause(locator1 = "1000");
 
-		<execute function="Pause" locator1="1000" />
+		BlogsEntry.saveAsDraft();
 
-		<execute macro="BlogsEntry#saveAsDraft" />
+		Click(locator1 = "BlogsEditEntry#DELETE_COVER_IMAGE_BUTTON");
 
-		<execute function="Click" locator1="BlogsEditEntry#DELETE_COVER_IMAGE_BUTTON" />
+		Click.pauseClickAt(locator1 = "AlloyEditor#EDITOR", key_editor = "content");
 
-		<execute function="Click#pauseClickAt" locator1="AlloyEditor#EDITOR">
-			<var name="key_editor" value="content" />
-		</execute>
+		Click(locator1 = "AlloyEditor#CONTENT_ADD_BUTTON");
 
-		<execute function="Click" locator1="AlloyEditor#CONTENT_ADD_BUTTON" />
+		Click(locator1 = "AlloyEditor#CONTENT_ADD_MENUBAR_IMAGE");
 
-		<execute function="Click" locator1="AlloyEditor#CONTENT_ADD_MENUBAR_IMAGE" />
+		ItemSelector.selectBlogImage(
+			imageFileName = "Document_1.jpg",
+			navTab = "Blog Images"
+		);
 
-		<execute macro="ItemSelector#selectBlogImage">
-			<var name="imageFileName" value="Document_1.jpg" />
-			<var name="navTab" value="Blog Images" />
-		</execute>
+		PortletEntry.publish();
 
-		<execute macro="PortletEntry#publish" />
+		BlogsNavigator.gotoEntryPG(
+			entryContent = "Blogs Entry Content",
+			entryTitle = "Blogs Entry Title"
+		);
 
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
+		BlogsEntry.viewInlineImage(
+			uploadFileName = "Document_1"
+		);
+	}
 
-		<execute macro="BlogsEntry#viewInlineImage">
-			<var name="uploadFileName" value="Document_1" />
-		</execute>
-	</command>
+	@priority = "4"
+	testAddWebContentArticleWithImageViaURL {
+		Navigator.openURL();
 
-	<command name="AddWebContentArticleWithImageViaURL" priority="4">
-		<execute macro="Navigator#openURL" />
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Web Content"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Web Content" />
-		</execute>
+		WebContentNavigator.gotoAddCP();
 
-		<execute macro="WebContentNavigator#gotoAddCP" />
+		PortletEntry.inputTitle(
+			title = "Web Content Title"
+		);
 
-		<execute macro="PortletEntry#inputTitle">
-			<var name="title" value="Web Content Title" />
-		</execute>
+		Click.pauseClickAt(locator1 = "AlloyEditor#EDITOR", key_editor = "content");
 
-		<execute function="Click#pauseClickAt" locator1="AlloyEditor#EDITOR">
-			<var name="key_editor" value="content" />
-		</execute>
+		Click(locator1 = "AlloyEditor#CONTENT_ADD_BUTTON");
 
-		<execute function="Click" locator1="AlloyEditor#CONTENT_ADD_BUTTON" />
+		Click(locator1 = "AlloyEditor#CONTENT_ADD_MENUBAR_IMAGE");
 
-		<execute function="Click" locator1="AlloyEditor#CONTENT_ADD_MENUBAR_IMAGE" />
+		ItemSelector.addFromURL(
+			imageSourceURL = "https://raw.githubusercontent.com/liferay/liferay-portal/master/portal-web/test/functional/com/liferay/portalweb/dependencies/Document_1.jpg",
+			navTab = "URL"
+		);
 
-		<execute macro="ItemSelector#addFromURL">
-			<var name="imageSourceURL" value="https://raw.githubusercontent.com/liferay/liferay-portal/master/portal-web/test/functional/com/liferay/portalweb/dependencies/Document_1.jpg" />
-			<var name="navTab" value="URL" />
-		</execute>
+		PortletEntry.publish();
 
-		<execute macro="PortletEntry#publish" />
+		WebContentNavigator.gotoPreviewEntryCP(
+			webContentTitle = "Web Content Title"
+		);
 
-		<execute macro="WebContentNavigator#gotoPreviewEntryCP">
-			<var name="webContentTitle" value="Web Content Title" />
-		</execute>
+		SelectFrame(locator1 = "IFrame#DIALOG");
 
-		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
+		AssertElementPresent(locator1 = "//img[contains(@src,'Document_1.jpg')]");
+	}
 
-		<execute function="AssertElementPresent" locator1="//img[contains(@src,'Document_1.jpg')]" />
-	</command>
+	@description = "This is a use case for LPS-61676."
+	@priority = "4"
+	testRemoveAppliedStylingInAlloyEditor {
 
-	<command name="RemoveAppliedStylingInAlloyEditor" priority="4">
-		<description message="This is a use case for LPS-61676." />
+		Navigator.openURL();
 
-		<execute macro="Navigator#openURL" />
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Web Content"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Web Content" />
-		</execute>
+		WebContentNavigator.gotoAddCP();
 
-		<execute macro="WebContentNavigator#gotoAddCP" />
+		AlloyEditor.addContent(
+			content = "This is a sentence"
+		);
 
-		<execute macro="AlloyEditor#addContent">
-			<var name="content" value="This is a sentence" />
-		</execute>
+		AlloyEditor.toggleStylingInAlloyEditor(
+			boldContent = "This is a sentence"
+		);
 
-		<execute macro="AlloyEditor#toggleStylingInAlloyEditor">
-			<var name="boldContent" value="This is a sentence" />
-		</execute>
+		AlloyEditor.viewStylingInAlloyEditor(
+			boldContent = "This is a sentence"
+		);
 
-		<execute macro="AlloyEditor#viewStylingInAlloyEditor">
-			<var name="boldContent" value="This is a sentence" />
-		</execute>
+		AlloyEditor.toggleStylingInAlloyEditor(
+			boldContent = "This is a sentence"
+		);
 
-		<execute macro="AlloyEditor#toggleStylingInAlloyEditor">
-			<var name="boldContent" value="This is a sentence" />
-		</execute>
+		AlloyEditor.viewNoStylingInAlloyEditor(
+			boldContent = "This is a sentence"
+		);
+	}
 
-		<execute macro="AlloyEditor#viewNoStylingInAlloyEditor">
-			<var name="boldContent" value="This is a sentence" />
-		</execute>
-	</command>
+	@priority = "4"
+	testViewWikiFrontPageLeftToRight {
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
 
-	<command name="ViewWikiFrontPageLeftToRight" priority="4">
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
+		SitePages.addPublicPage(
+			pageName = "${pageName}"
+		);
 
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "${pageName}"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
+		Portlet.addPG(
+			portletName = "Wiki"
+		);
 
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Wiki" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "${pageName}"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
+		WikiPage.addLocalizedFrontPagePG(
+			emptyPageMessage = "This page is empty. Edit it to add some text.",
+			successMessage = "Your request completed successfully.",
+			wikiPageContent = "Wiki Left to Right Content"
+		);
 
-		<execute macro="WikiPage#addLocalizedFrontPagePG">
-			<var name="emptyPageMessage" value="This page is empty. Edit it to add some text." />
-			<var name="successMessage" value="Your request completed successfully." />
-			<var name="wikiPageContent" value="Wiki Left to Right Content" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "${pageName}"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
+		WikiPage.viewLocalizedFrontPagePG(
+			wikiPageContent = "Wiki Left to Right Content"
+		);
+	}
 
-		<execute macro="WikiPage#viewLocalizedFrontPagePG">
-			<var name="wikiPageContent" value="Wiki Left to Right Content" />
-		</execute>
-	</command>
+	@priority = "4"
+	testViewWikiFrontPageRightToLeft {
+		property test.name.skip.portal.instance = "WYSIWIGUsecase#ViewWikiFrontPageRightToLeft";
 
-	<command name="ViewWikiFrontPageRightToLeft" priority="4">
-		<property name="test.name.skip.portal.instance" value="WYSIWIGUsecase#ViewWikiFrontPageRightToLeft" />
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
+		SitePages.addPublicPage(
+			pageName = "${pageName}"
+		);
 
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "${pageName}"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
+		Portlet.addPG(
+			portletName = "Language Selector"
+		);
 
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language Selector" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "${pageName}"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
+		Portlet.addPG(
+			portletName = "Wiki"
+		);
 
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Wiki" />
-		</execute>
+		LanguagePortlet.selectLanguagePG(
+			locale = "iw-il"
+		);
 
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="locale" value="iw-il" />
-		</execute>
+		WikiPage.addLocalizedFrontPagePG(
+			emptyPageMessage = "דף זה ריק. ערוך אותו על מנת להוסיף טקסט",
+			rtl = "true",
+			successMessage = "בקשתך עברה בהצלחה",
+			wikiPageContent = "Wiki Right to Left תוֹכֶן"
+		);
 
-		<execute macro="WikiPage#addLocalizedFrontPagePG">
-			<var name="emptyPageMessage" value="דף זה ריק. ערוך אותו על מנת להוסיף טקסט" />
-			<var name="rtl" value="true" />
-			<var name="successMessage" value="בקשתך עברה בהצלחה" />
-			<var name="wikiPageContent" value="Wiki Right to Left תוֹכֶן" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "${pageName}"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
+		WikiPage.viewLocalizedFrontPagePG(
+			rightToLeft = "true",
+			wikiPageContent = "Wiki Right to Left תוֹכֶן"
+		);
 
-		<execute macro="WikiPage#viewLocalizedFrontPagePG">
-			<var name="rightToLeft" value="true" />
-			<var name="wikiPageContent" value="Wiki Right to Left תוֹכֶן" />
-		</execute>
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="locale" value="en-us" />
-		</execute>
-	</command>
-</definition>
+		LanguagePortlet.selectLanguagePG(
+			locale = "en-us"
+		);
+	}
+}

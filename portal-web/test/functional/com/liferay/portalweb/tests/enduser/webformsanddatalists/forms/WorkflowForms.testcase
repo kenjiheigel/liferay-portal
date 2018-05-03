@@ -1,627 +1,625 @@
-<definition component-name="portal-workflow">
-	<property name="custom.properties" value="minifier.enabled=true" />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.component.names" value="Dynamic Data Lists,Workflow,Forms" />
-	<property name="testray.main.component.name" value="Workflow" />
+@component-name = "portal-workflow"
+definition {
+	property custom.properties = "minifier.enabled=true";
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.component.names = "Dynamic Data Lists,Workflow,Forms";
+	property testray.main.component.name = "Workflow";
 
-	<set-up>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+	setUp {
+		var testPortalInstance = "TestPropsUtil.get('test.portal.instance')";
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="SignIn#signInPortalInstanceSetUp" />
-			</then>
-		</if>
+		if ("${testPortalInstance}" == "true") {
+			SignIn.signInPortalInstanceSetUp();
+		}
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+		User.firstLoginPG();
+	}
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+	tearDown {
+		var testPortalInstance = "TestPropsUtil.get('test.portal.instance')";
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Navigator#openURL" />
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			Navigator.openURL();
 
-				<execute macro="ProductMenu#gotoPortlet">
-					<var name="category" value="Content" />
-					<var name="panel" value="Site Administration" />
-					<var name="portlet" value="Forms" />
-				</execute>
+			ProductMenu.gotoPortlet(
+				category = "Content",
+				panel = "Site Administration",
+				portlet = "Forms"
+			);
 
-				<execute macro="FormsAdmin#teardownForms" />
+			FormsAdmin.teardownForms();
 
-				<execute macro="Page#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
+			Page.tearDownCP();
+		}
+	}
 
-	<command name="SubmitPublishedFormWithTextField" priority="3">
-		<description message="This is a use case for LPS-62371" />
+	@description = "This is a use case for LPS-62371"
+	@priority = "3"
+	testSubmitPublishedFormWithTextField {
 
-		<execute macro="Navigator#openURL" />
+		Navigator.openURL();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Forms" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Forms"
+		);
 
-		<execute macro="FormsAdminNavigator#gotoAddForm" />
+		FormsAdminNavigator.gotoAddForm();
 
-		<execute macro="Form#editName" />
+		Form.editName();
 
-		<execute macro="Form#editDescription" />
+		Form.editDescription();
 
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Text Field" />
-		</execute>
+		Form.gotoAddField(
+			fieldType = "Text Field"
+		);
 
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Text Field" />
-		</execute>
-
-		<execute macro="Form#closeSidebar" />
-
-		<execute macro="FormsAdminNavigator#gotoSettings" />
+		Form.editFieldLabel(
+			fieldValue = "Text Field"
+		);
 
-		<execute macro="Form#configureWorkflow">
-			<var name="workflowDefinition" value="Single Approver" />
-		</execute>
-
-		<execute macro="Form#save" />
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Forms" />
-		</execute>
+		Form.closeSidebar();
 
-		<execute macro="FormsAdminNavigator#gotoEditFormByName" />
-
-		<execute macro="Form#publishForm" />
-
-		<execute macro="FormsAdminNavigator#openPublishURL">
-			<var name="publishFormURL" value="${publishedFormPublicURL}" />
-		</execute>
+		FormsAdminNavigator.gotoSettings();
 
-		<execute macro="FormFields#editText">
-			<var name="fieldName" value="TextField" />
-			<var name="fieldValue" value="Text Field Value" />
-		</execute>
+		Form.configureWorkflow(
+			workflowDefinition = "Single Approver"
+		);
 
-		<execute macro="Button#clickSubmitForPublication" />
+		Form.save();
+
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Forms"
+		);
 
-		<execute macro="Alert#viewSuccessMessage" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Forms" />
-		</execute>
-
-		<execute macro="FormsAdminNavigator#gotoViewEntries" />
-
-		<execute macro="WorkflowAsset#viewFormEntryTable">
-			<var name="fieldLabel" value="Text Field" />
-			<var name="fieldValue" value="Text Field Value" />
-			<var name="workflowStatus" value="Pending" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="My Account" />
-			<var name="panel" value="User" />
-			<var name="portlet" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByDetails">
-			<var name="workflowAssetTitle" value="Created Form Name" />
-			<var name="workflowAssetType" value="Form Record" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Workflow#viewTaskAssignedToMe">
-			<var name="workflowAssetTitle" value="Created Form Name" />
-			<var name="workflowAssetType" value="Form Record" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Workflow#viewTaskAssignedToMeDetails">
-			<var name="workflowAssetContent" value="Text" />
-			<var name="workflowAssetTitle" value="Created Form Name" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="My Account" />
-			<var name="panel" value="User" />
-			<var name="portlet" value="My Workflow Tasks" />
-		</execute>
+		FormsAdminNavigator.gotoEditFormByName();
 
-		<execute macro="Workflow#approveTaskByActions">
-			<var name="workflowAssetTitle" value="Created Form Name" />
-			<var name="workflowAssetType" value="Form Record" />
-			<var name="workflowTask" value="Review" />
-		</execute>
+		Form.publishForm();
 
-		<execute macro="Workflow#viewCompletedTask">
-			<var name="workflowAssetTitle" value="Created Form Name" />
-			<var name="workflowAssetType" value="Form Record" />
-			<var name="workflowTask" value="Review" />
-		</execute>
+		FormsAdminNavigator.openPublishURL(
+			publishFormURL = "${publishedFormPublicURL}"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Forms" />
-		</execute>
+		FormFields.editText(
+			fieldName = "TextField",
+			fieldValue = "Text Field Value"
+		);
 
-		<execute macro="FormsAdminNavigator#gotoViewEntries" />
+		Button.clickSubmitForPublication();
 
-		<execute macro="WorkflowAsset#viewFormEntryTable">
-			<var name="fieldLabel" value="Text Field" />
-			<var name="fieldValue" value="Text Field Value" />
-			<var name="workflowStatus" value="Approved" />
-		</execute>
-	</command>
+		Alert.viewSuccessMessage();
 
-	<command name="ViewDateAssetDetails" priority="5">
-		<description message="This is a use case LPS-61197." />
+		Navigator.openURL();
 
-		<execute macro="Navigator#openURL" />
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Forms"
+		);
+
+		FormsAdminNavigator.gotoViewEntries();
+
+		WorkflowAsset.viewFormEntryTable(
+			fieldLabel = "Text Field",
+			fieldValue = "Text Field Value",
+			workflowStatus = "Pending"
+		);
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "My Account",
+			panel = "User",
+			portlet = "My Workflow Tasks"
+		);
+
+		Workflow.assignToMeTaskByDetails(
+			workflowAssetTitle = "Created Form Name",
+			workflowAssetType = "Form Record",
+			workflowTask = "Review"
+		);
+
+		Workflow.viewTaskAssignedToMe(
+			workflowAssetTitle = "Created Form Name",
+			workflowAssetType = "Form Record",
+			workflowTask = "Review"
+		);
+
+		Workflow.viewTaskAssignedToMeDetails(
+			workflowAssetContent = "Text",
+			workflowAssetTitle = "Created Form Name",
+			workflowTask = "Review"
+		);
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "My Account",
+			panel = "User",
+			portlet = "My Workflow Tasks"
+		);
+
+		Workflow.approveTaskByActions(
+			workflowAssetTitle = "Created Form Name",
+			workflowAssetType = "Form Record",
+			workflowTask = "Review"
+		);
+
+		Workflow.viewCompletedTask(
+			workflowAssetTitle = "Created Form Name",
+			workflowAssetType = "Form Record",
+			workflowTask = "Review"
+		);
+
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Forms"
+		);
+
+		FormsAdminNavigator.gotoViewEntries();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Forms" />
-		</execute>
-
-		<execute macro="FormsAdminNavigator#gotoAddForm" />
+		WorkflowAsset.viewFormEntryTable(
+			fieldLabel = "Text Field",
+			fieldValue = "Text Field Value",
+			workflowStatus = "Approved"
+		);
+	}
+
+	@description = "This is a use case LPS-61197."
+	@priority = "5"
+	testViewDateAssetDetails {
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Forms"
+		);
+
+		FormsAdminNavigator.gotoAddForm();
+
+		Form.editName();
+
+		Form.editDescription();
+
+		Form.gotoAddField(
+			fieldType = "Date"
+		);
+
+		Form.editFieldLabel(
+			fieldValue = "Date"
+		);
+
+		Form.closeSidebar();
+
+		Form.save();
+
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Forms"
+		);
+
+		LexiconEntry.gotoEntryMenuItem(
+			menuItem = "Edit",
+			rowEntry = "Created Form Name"
+		);
+
+		FormsAdminNavigator.gotoSettings();
+
+		Form.configureWorkflow(
+			workflowDefinition = "Single Approver"
+		);
+
+		Form.save();
+
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
+
+		SitePages.addPublicPage(
+			pageName = "Form Page"
+		);
+
+		Navigator.gotoPage(
+			pageName = "Form Page"
+		);
+
+		Portlet.addPG(
+			pageName = "Form Page",
+			portletName = "Form"
+		);
+
+		FormPortletNavigator.gotoSelectForm();
+
+		FormPortletConfiguration.selectForm();
+
+		PortletEntry.save();
+
+		Navigator.gotoPage(
+			pageName = "Form Page"
+		);
+
+		FormFields.viewDateLabel(
+			fieldLabel = "Date",
+			fieldName = "Date"
+		);
+
+		FormFields.editDate(
+			fieldName = "Date",
+			fieldValue = "02/01/2016"
+		);
+
+		Button.clickSubmitForPublication();
 
-		<execute macro="Form#editName" />
-
-		<execute macro="Form#editDescription" />
-
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Date" />
-		</execute>
+		Alert.viewSuccessMessage();
+
+		Navigator.openURL();
 
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Date" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "My Account",
+			panel = "User",
+			portlet = "My Workflow Tasks"
+		);
+
+		Workflow.assignToMeTaskByDetails(
+			workflowAssetTitle = "Created Form Name",
+			workflowAssetType = "Form Record",
+			workflowTask = "Review"
+		);
 
-		<execute macro="Form#closeSidebar" />
+		Workflow.viewTaskAssignedToMe(
+			workflowAssetTitle = "Created Form Name",
+			workflowAssetType = "Form Record",
+			workflowTask = "Review"
+		);
+
+		Workflow.viewTaskAssignedToMeDetails(
+			workflowAssetContent = "Date",
+			workflowAssetTitle = "Created Form Name",
+			workflowTask = "Review"
+		);
 
-		<execute macro="Form#save" />
+		Workflow.gotoPreviewView();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Forms" />
-		</execute>
-
-		<execute macro="LexiconEntry#gotoEntryMenuItem">
-			<var name="menuItem" value="Edit" />
-			<var name="rowEntry" value="Created Form Name" />
-		</execute>
-
-		<execute macro="FormsAdminNavigator#gotoSettings" />
-
-		<execute macro="Form#configureWorkflow">
-			<var name="workflowDefinition" value="Single Approver" />
-		</execute>
-
-		<execute macro="Form#save" />
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
-
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="Form Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Form Page" />
-		</execute>
+		FormFields.viewDateField(
+			fieldLabel = "Date",
+			fieldName = "Date"
+		);
 
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Form Page" />
-			<var name="portletName" value="Form" />
-		</execute>
+		Navigator.openURL();
 
-		<execute macro="FormPortletNavigator#gotoSelectForm" />
+		ProductMenu.gotoPortlet(
+			category = "My Account",
+			panel = "User",
+			portlet = "My Workflow Tasks"
+		);
 
-		<execute macro="FormPortletConfiguration#selectForm" />
+		Workflow.approveTaskByActions(
+			workflowAssetTitle = "Created Form Name",
+			workflowAssetType = "Form Record",
+			workflowTask = "Review"
+		);
 
-		<execute macro="PortletEntry#save" />
+		Workflow.viewCompletedTask(
+			workflowAssetTitle = "Created Form Name",
+			workflowAssetType = "Form Record",
+			workflowTask = "Review"
+		);
+	}
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Form Page" />
-		</execute>
+	@description = "This is a use case for LPS-65270."
+	@priority = "5"
+	testViewEntryWithConditionalVisibilityFromSelectAndRadio {
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Forms"
+		);
 
-		<execute macro="FormFields#viewDateLabel">
-			<var name="fieldLabel" value="Date" />
-			<var name="fieldName" value="Date" />
-		</execute>
+		FormsAdminNavigator.gotoAddForm();
 
-		<execute macro="FormFields#editDate">
-			<var name="fieldName" value="Date" />
-			<var name="fieldValue" value="02/01/2016" />
-		</execute>
+		Form.editName();
 
-		<execute macro="Button#clickSubmitForPublication" />
+		Form.editDescription();
 
-		<execute macro="Alert#viewSuccessMessage" />
+		Form.gotoAddField(
+			fieldType = "Select from List"
+		);
 
-		<execute macro="Navigator#openURL" />
+		Form.editFieldLabel(
+			fieldValue = "Select"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="My Account" />
-			<var name="panel" value="User" />
-			<var name="portlet" value="My Workflow Tasks" />
-		</execute>
+		FormFields.editOptionsRow(
+			optionName = "Select1",
+			optionValue = "Select 1"
+		);
 
-		<execute macro="Workflow#assignToMeTaskByDetails">
-			<var name="workflowAssetTitle" value="Created Form Name" />
-			<var name="workflowAssetType" value="Form Record" />
-			<var name="workflowTask" value="Review" />
-		</execute>
+		Form.closeSidebar();
 
-		<execute macro="Workflow#viewTaskAssignedToMe">
-			<var name="workflowAssetTitle" value="Created Form Name" />
-			<var name="workflowAssetType" value="Form Record" />
-			<var name="workflowTask" value="Review" />
-		</execute>
+		Form.gotoAddField(
+			fieldType = "Text Field"
+		);
 
-		<execute macro="Workflow#viewTaskAssignedToMeDetails">
-			<var name="workflowAssetContent" value="Date" />
-			<var name="workflowAssetTitle" value="Created Form Name" />
-			<var name="workflowTask" value="Review" />
-		</execute>
+		Form.editFieldLabel(
+			fieldValue = "Text One"
+		);
 
-		<execute macro="Workflow#gotoPreviewView" />
+		Form.closeSidebar();
 
-		<execute macro="FormFields#viewDateField">
-			<var name="fieldLabel" value="Date" />
-			<var name="fieldName" value="Date" />
-		</execute>
+		Form.gotoAddField(
+			fieldType = "Single Selection"
+		);
 
-		<execute macro="Navigator#openURL" />
+		Form.editFieldLabel(
+			fieldValue = "Radio"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="My Account" />
-			<var name="panel" value="User" />
-			<var name="portlet" value="My Workflow Tasks" />
-		</execute>
+		FormFields.editOptionsRow(
+			optionName = "Option1",
+			optionValue = "Option 1"
+		);
 
-		<execute macro="Workflow#approveTaskByActions">
-			<var name="workflowAssetTitle" value="Created Form Name" />
-			<var name="workflowAssetType" value="Form Record" />
-			<var name="workflowTask" value="Review" />
-		</execute>
+		Form.closeSidebar();
 
-		<execute macro="Workflow#viewCompletedTask">
-			<var name="workflowAssetTitle" value="Created Form Name" />
-			<var name="workflowAssetType" value="Form Record" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-	</command>
+		Form.gotoAddField(
+			fieldType = "Text Field"
+		);
 
-	<command name="ViewEntryWithConditionalVisibilityFromSelectAndRadio" priority="5">
-		<description message="This is a use case for LPS-65270." />
+		Form.editFieldLabel(
+			fieldValue = "Text Two"
+		);
 
-		<execute macro="Navigator#openURL" />
+		Form.closeSidebar();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Forms" />
-		</execute>
+		FormsAdminNavigator.gotoRules();
 
-		<execute macro="FormsAdminNavigator#gotoAddForm" />
+		FormRules.addRule();
 
-		<execute macro="Form#editName" />
+		FormRules.configureConditionOptions(
+			conditionField = "Select",
+			conditionOperator = "Is equal to",
+			conditionRowNumber = "1",
+			conditionValueField = "Select 1",
+			conditionValueType = "Value"
+		);
 
-		<execute macro="Form#editDescription" />
+		FormRules.configureActionOptions(
+			action = "Show",
+			actionRowNumber = "1",
+			actionTarget = "Text One"
+		);
 
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Select from List" />
-		</execute>
+		FormRules.save();
 
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Select" />
-		</execute>
+		FormRules.addRule();
 
-		<execute macro="FormFields#editOptionsRow">
-			<var name="optionName" value="Select1" />
-			<var name="optionValue" value="Select 1" />
-		</execute>
+		FormRules.configureConditionOptions(
+			conditionField = "Radio",
+			conditionOperator = "Is equal to",
+			conditionRowNumber = "1",
+			conditionValueField = "Option 1",
+			conditionValueType = "Value"
+		);
 
-		<execute macro="Form#closeSidebar" />
+		FormRules.configureActionOptions(
+			action = "Show",
+			actionRowNumber = "1",
+			actionTarget = "Text Two"
+		);
 
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Text Field" />
-		</execute>
+		FormRules.save();
+
+		FormsAdminNavigator.gotoFormBuilder();
 
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Text One" />
-		</execute>
+		FormsAdminNavigator.gotoSettings();
 
-		<execute macro="Form#closeSidebar" />
+		Form.configureWorkflow(
+			workflowDefinition = "Single Approver"
+		);
+
+		Form.save();
 
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Single Selection" />
-		</execute>
-
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Radio" />
-		</execute>
-
-		<execute macro="FormFields#editOptionsRow">
-			<var name="optionName" value="Option1" />
-			<var name="optionValue" value="Option 1" />
-		</execute>
-
-		<execute macro="Form#closeSidebar" />
-
-		<execute macro="Form#gotoAddField">
-			<var name="fieldType" value="Text Field" />
-		</execute>
-
-		<execute macro="Form#editFieldLabel">
-			<var name="fieldValue" value="Text Two" />
-		</execute>
-
-		<execute macro="Form#closeSidebar" />
-
-		<execute macro="FormsAdminNavigator#gotoRules" />
-
-		<execute macro="FormRules#addRule" />
-
-		<execute macro="FormRules#configureConditionOptions">
-			<var name="conditionField" value="Select" />
-			<var name="conditionOperator" value="Is equal to" />
-			<var name="conditionRowNumber" value="1" />
-			<var name="conditionValueField" value="Select 1" />
-			<var name="conditionValueType" value="Value" />
-		</execute>
-
-		<execute macro="FormRules#configureActionOptions">
-			<var name="action" value="Show" />
-			<var name="actionRowNumber" value="1" />
-			<var name="actionTarget" value="Text One" />
-		</execute>
-
-		<execute macro="FormRules#save" />
-
-		<execute macro="FormRules#addRule" />
-
-		<execute macro="FormRules#configureConditionOptions">
-			<var name="conditionField" value="Radio" />
-			<var name="conditionOperator" value="Is equal to" />
-			<var name="conditionRowNumber" value="1" />
-			<var name="conditionValueField" value="Option 1" />
-			<var name="conditionValueType" value="Value" />
-		</execute>
-
-		<execute macro="FormRules#configureActionOptions">
-			<var name="action" value="Show" />
-			<var name="actionRowNumber" value="1" />
-			<var name="actionTarget" value="Text Two" />
-		</execute>
-
-		<execute macro="FormRules#save" />
-
-		<execute macro="FormsAdminNavigator#gotoFormBuilder" />
-
-		<execute macro="FormsAdminNavigator#gotoSettings" />
-
-		<execute macro="Form#configureWorkflow">
-			<var name="workflowDefinition" value="Single Approver" />
-		</execute>
-
-		<execute macro="Form#save" />
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
-
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="Form Page" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Form Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="pageName" value="Form Page" />
-			<var name="portletName" value="Form" />
-		</execute>
-
-		<execute macro="FormPortletNavigator#gotoSelectForm" />
-
-		<execute macro="FormPortletConfiguration#selectForm" />
-
-		<execute macro="PortletEntry#save" />
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Form Page" />
-		</execute>
-
-		<execute macro="FormFields#viewTextFieldNotVisible">
-			<var name="fieldLabel" value="Text One" />
-			<var name="fieldName" value="TextOne" />
-			<var name="fieldValue" value="Text One Input" />
-		</execute>
-
-		<execute macro="FormFields#selectSelectOption">
-			<var name="fieldName" value="Select" />
-			<var name="selectOption" value="Select 1" />
-		</execute>
-
-		<execute macro="FormFields#editText">
-			<var name="fieldName" value="TextOne" />
-			<var name="fieldValue" value="Text One Input" />
-		</execute>
-
-		<execute macro="FormFields#viewTextFieldNotVisible">
-			<var name="fieldLabel" value="Text Two" />
-			<var name="fieldName" value="TextTwo" />
-			<var name="fieldValue" value="Text Two Input" />
-		</execute>
-
-		<execute macro="FormFields#selectRadioOption">
-			<var name="fieldName" value="Radio" />
-			<var name="radioOption" value="Option 1" />
-		</execute>
-
-		<execute macro="FormFields#editText">
-			<var name="fieldName" value="TextTwo" />
-			<var name="fieldValue" value="Text Two Input" />
-		</execute>
-
-		<execute macro="Button#clickSubmitForPublication" />
-
-		<execute macro="Alert#viewSuccessMessage" />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="My Account" />
-			<var name="panel" value="User" />
-			<var name="portlet" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#assignToMeTaskByDetails">
-			<var name="workflowAssetTitle" value="Created Form Name" />
-			<var name="workflowAssetType" value="Form Record" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Workflow#viewTaskAssignedToMe">
-			<var name="workflowAssetTitle" value="Created Form Name" />
-			<var name="workflowAssetType" value="Form Record" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Workflow#viewTaskAssignedToMeDetails">
-			<var name="workflowAssetContent" value="Text Two" />
-			<var name="workflowAssetTitle" value="Created Form Name" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Workflow#gotoPreviewView" />
-
-		<execute macro="FormsAdmin#viewSelectEntry">
-			<var name="fieldLabel" value="Select" />
-			<var name="fieldName" value="Select" />
-			<var name="selectOption" value="Select 1" />
-		</execute>
-
-		<execute macro="FormsAdmin#viewTextEntry">
-			<var name="fieldLabel" value="Text One" />
-			<var name="fieldName" value="TextOne" />
-			<var name="fieldValue" value="Text One Input" />
-		</execute>
-
-		<execute macro="FormsAdmin#viewRadioEntry">
-			<var name="fieldLabel" value="Radio" />
-			<var name="fieldName" value="Radio" />
-			<var name="fieldValue" value="Option 1" />
-		</execute>
-
-		<execute macro="FormsAdmin#viewTextEntry">
-			<var name="fieldLabel" value="Text Two" />
-			<var name="fieldName" value="TextTwo" />
-			<var name="fieldValue" value="Text Two Input" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="My Account" />
-			<var name="panel" value="User" />
-			<var name="portlet" value="My Workflow Tasks" />
-		</execute>
-
-		<execute macro="Workflow#approveTaskByActions">
-			<var name="workflowAssetTitle" value="Created Form Name" />
-			<var name="workflowAssetType" value="Form Record" />
-			<var name="workflowTask" value="Review" />
-		</execute>
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Forms" />
-		</execute>
-
-		<execute macro="FormsAdminNavigator#gotoViewEntries" />
-
-		<execute macro="FormsAdmin#viewFormTableEntry">
-			<var name="fieldLabel" value="Select" />
-			<var name="fieldValue" value="Select 1" />
-		</execute>
-
-		<execute macro="FormsAdmin#viewFormTableEntry">
-			<var name="fieldLabel" value="Text One" />
-			<var name="fieldValue" value="Text One Input" />
-		</execute>
-
-		<execute macro="FormsAdmin#viewFormTableEntry">
-			<var name="fieldLabel" value="Radio" />
-			<var name="fieldValue" value="Option 1" />
-		</execute>
-
-		<execute macro="FormsAdmin#viewFormTableEntry">
-			<var name="fieldLabel" value="Text Two" />
-			<var name="fieldValue" value="Text Two Input" />
-		</execute>
-
-		<execute macro="FormsAdminNavigator#gotoView" />
-
-		<execute macro="FormsAdmin#viewSelectEntry">
-			<var name="fieldLabel" value="Select" />
-			<var name="fieldName" value="Select" />
-			<var name="selectOption" value="Select 1" />
-		</execute>
-
-		<execute macro="FormsAdmin#viewTextEntry">
-			<var name="fieldLabel" value="Text One" />
-			<var name="fieldName" value="TextOne" />
-			<var name="fieldValue" value="Text One Input" />
-		</execute>
-
-		<execute macro="FormsAdmin#viewRadioEntry">
-			<var name="fieldLabel" value="Radio" />
-			<var name="fieldName" value="Radio" />
-			<var name="fieldValue" value="Option 1" />
-		</execute>
-
-		<execute macro="FormsAdmin#viewTextEntry">
-			<var name="fieldLabel" value="Text Two" />
-			<var name="fieldName" value="TextTwo" />
-			<var name="fieldValue" value="Text Two Input" />
-		</execute>
-	</command>
-</definition>
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
+
+		SitePages.addPublicPage(
+			pageName = "Form Page"
+		);
+
+		Navigator.gotoPage(
+			pageName = "Form Page"
+		);
+
+		Portlet.addPG(
+			pageName = "Form Page",
+			portletName = "Form"
+		);
+
+		FormPortletNavigator.gotoSelectForm();
+
+		FormPortletConfiguration.selectForm();
+
+		PortletEntry.save();
+
+		Navigator.gotoPage(
+			pageName = "Form Page"
+		);
+
+		FormFields.viewTextFieldNotVisible(
+			fieldLabel = "Text One",
+			fieldName = "TextOne",
+			fieldValue = "Text One Input"
+		);
+
+		FormFields.selectSelectOption(
+			fieldName = "Select",
+			selectOption = "Select 1"
+		);
+
+		FormFields.editText(
+			fieldName = "TextOne",
+			fieldValue = "Text One Input"
+		);
+
+		FormFields.viewTextFieldNotVisible(
+			fieldLabel = "Text Two",
+			fieldName = "TextTwo",
+			fieldValue = "Text Two Input"
+		);
+
+		FormFields.selectRadioOption(
+			fieldName = "Radio",
+			radioOption = "Option 1"
+		);
+
+		FormFields.editText(
+			fieldName = "TextTwo",
+			fieldValue = "Text Two Input"
+		);
+
+		Button.clickSubmitForPublication();
+
+		Alert.viewSuccessMessage();
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "My Account",
+			panel = "User",
+			portlet = "My Workflow Tasks"
+		);
+
+		Workflow.assignToMeTaskByDetails(
+			workflowAssetTitle = "Created Form Name",
+			workflowAssetType = "Form Record",
+			workflowTask = "Review"
+		);
+
+		Workflow.viewTaskAssignedToMe(
+			workflowAssetTitle = "Created Form Name",
+			workflowAssetType = "Form Record",
+			workflowTask = "Review"
+		);
+
+		Workflow.viewTaskAssignedToMeDetails(
+			workflowAssetContent = "Text Two",
+			workflowAssetTitle = "Created Form Name",
+			workflowTask = "Review"
+		);
+
+		Workflow.gotoPreviewView();
+
+		FormsAdmin.viewSelectEntry(
+			fieldLabel = "Select",
+			fieldName = "Select",
+			selectOption = "Select 1"
+		);
+
+		FormsAdmin.viewTextEntry(
+			fieldLabel = "Text One",
+			fieldName = "TextOne",
+			fieldValue = "Text One Input"
+		);
+
+		FormsAdmin.viewRadioEntry(
+			fieldLabel = "Radio",
+			fieldName = "Radio",
+			fieldValue = "Option 1"
+		);
+
+		FormsAdmin.viewTextEntry(
+			fieldLabel = "Text Two",
+			fieldName = "TextTwo",
+			fieldValue = "Text Two Input"
+		);
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "My Account",
+			panel = "User",
+			portlet = "My Workflow Tasks"
+		);
+
+		Workflow.approveTaskByActions(
+			workflowAssetTitle = "Created Form Name",
+			workflowAssetType = "Form Record",
+			workflowTask = "Review"
+		);
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Forms"
+		);
+
+		FormsAdminNavigator.gotoViewEntries();
+
+		FormsAdmin.viewFormTableEntry(
+			fieldLabel = "Select",
+			fieldValue = "Select 1"
+		);
+
+		FormsAdmin.viewFormTableEntry(
+			fieldLabel = "Text One",
+			fieldValue = "Text One Input"
+		);
+
+		FormsAdmin.viewFormTableEntry(
+			fieldLabel = "Radio",
+			fieldValue = "Option 1"
+		);
+
+		FormsAdmin.viewFormTableEntry(
+			fieldLabel = "Text Two",
+			fieldValue = "Text Two Input"
+		);
+
+		FormsAdminNavigator.gotoView();
+
+		FormsAdmin.viewSelectEntry(
+			fieldLabel = "Select",
+			fieldName = "Select",
+			selectOption = "Select 1"
+		);
+
+		FormsAdmin.viewTextEntry(
+			fieldLabel = "Text One",
+			fieldName = "TextOne",
+			fieldValue = "Text One Input"
+		);
+
+		FormsAdmin.viewRadioEntry(
+			fieldLabel = "Radio",
+			fieldName = "Radio",
+			fieldValue = "Option 1"
+		);
+
+		FormsAdmin.viewTextEntry(
+			fieldLabel = "Text Two",
+			fieldName = "TextTwo",
+			fieldValue = "Text Two Input"
+		);
+	}
+}

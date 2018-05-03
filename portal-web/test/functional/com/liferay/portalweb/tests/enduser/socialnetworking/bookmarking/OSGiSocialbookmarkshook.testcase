@@ -1,21 +1,23 @@
-<definition component-name="portal-plugins-osgi">
-	<property name="osgi.app.includes" value="social-bookmarks" />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="plugins.deployment.type" value="osgi" />
-	<property name="testray.main.component.name" value="Social Networking" />
+@component-name = "portal-plugins-osgi"
+definition {
+	property osgi.app.includes = "social-bookmarks";
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property plugins.deployment.type = "osgi";
+	property testray.main.component.name = "Social Networking";
 
-	<set-up>
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+	setUp {
+		User.firstLoginPG();
+	}
 
-	<command name="SocialBookmarksHookSmoke" priority="4">
-		<var name="appName" value="Social Bookmarks" />
-		<var name="portletName" value="social-bookmarks-hook" />
+	@priority = "4"
+	testSocialBookmarksHookSmoke {
+		var appName = "Social Bookmarks";
+		var portletName = "social-bookmarks-hook";
 
-		<execute macro="OSGiSmoke#Smoke">
-			<var name="appName" value="${portletName}" />
-			<var name="portletName" value="${portletName}" />
-		</execute>
-	</command>
-</definition>
+		OSGiSmoke.Smoke(
+			appName = "${portletName}",
+			portletName = "${portletName}"
+		);
+	}
+}

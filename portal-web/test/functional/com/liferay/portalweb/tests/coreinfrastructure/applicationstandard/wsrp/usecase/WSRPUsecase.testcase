@@ -1,97 +1,97 @@
-<definition component-name="portal-legacy">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="portlet.plugins.includes" value="wsrp-portlet" />
-	<property name="test.run.environment" value="EE" />
-	<property name="testray.main.component.name" value="WSRP" />
+@component-name = "portal-legacy"
+definition {
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property portlet.plugins.includes = "wsrp-portlet";
+	property test.run.environment = "EE";
+	property testray.main.component.name = "WSRP";
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+	setUp {
+		TestCase.setUpPortalInstance();
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+		User.firstLoginPG();
+	}
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+	tearDown {
+		var testPortalInstance = "TestPropsUtil.get('test.portal.instance')";
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Page#tearDownCP" />
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			Page.tearDownCP();
 
-				<execute macro="WSRP#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
+			WSRP.tearDownCP();
+		}
+	}
 
-	<command name="AddWSRPUnitConverter" priority="4">
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Apps" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="WSRP Admin" />
-		</execute>
+	@priority = "4"
+	testAddWSRPUnitConverter {
+		ProductMenu.gotoPortlet(
+			category = "Apps",
+			panel = "Control Panel",
+			portlet = "WSRP Admin"
+		);
 
-		<execute macro="WSRP#addProducerCP">
-			<var name="portletsAvailableSelect" value="Unit Converter" />
-			<var name="producerName" value="Producer Demo" />
-		</execute>
+		WSRP.addProducerCP(
+			portletsAvailableSelect = "Unit Converter",
+			producerName = "Producer Demo"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Apps" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="WSRP Admin" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Apps",
+			panel = "Control Panel",
+			portlet = "WSRP Admin"
+		);
 
-		<execute macro="WSRP#addConsumerCP">
-			<var name="consumerName" value="Consumer Demo" />
-			<var name="producerName" value="Producer Demo" />
-		</execute>
+		WSRP.addConsumerCP(
+			consumerName = "Consumer Demo",
+			producerName = "Producer Demo"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Apps" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="WSRP Admin" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Apps",
+			panel = "Control Panel",
+			portlet = "WSRP Admin"
+		);
 
-		<execute macro="WSRP#addConsumerPortletCP">
-			<var name="consumerName" value="Consumer Demo" />
-			<var name="consumerPortletName" value="WSRP Unit Converter" />
-			<var name="consumerPortletType" value="Unit Converter" />
-		</execute>
+		WSRP.addConsumerPortletCP(
+			consumerName = "Consumer Demo",
+			consumerPortletName = "WSRP Unit Converter",
+			consumerPortletType = "Unit Converter"
+		);
+		var key_consumerPortletName = "WSRP Unit Converter";
 
-		<var name="key_consumerPortletName" value="WSRP Unit Converter" />
+		AssertTextEquals(locator1 = "WSRPAdminManagePortlets#PORTLET_TABLE_NAME", value1 = "WSRP Unit Converter");
 
-		<execute function="AssertTextEquals" locator1="WSRPAdminManagePortlets#PORTLET_TABLE_NAME" value1="WSRP Unit Converter" />
-		<execute function="AssertTextEquals" locator1="WSRPAdminManagePortlets#PORTLET_TABLE_REMOTE_PORTLET" value1="Unit Converter" />
-		<execute function="AssertElementPresent" locator1="WSRPAdminManagePortlets#PORTLET_TABLE_DELETE" />
+		AssertTextEquals(locator1 = "WSRPAdminManagePortlets#PORTLET_TABLE_REMOTE_PORTLET", value1 = "Unit Converter");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
+		AssertElementPresent(locator1 = "WSRPAdminManagePortlets#PORTLET_TABLE_DELETE");
 
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="WSRP Page" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="WSRP Page" />
-		</execute>
+		SitePages.addPublicPage(
+			pageName = "WSRP Page"
+		);
 
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="WSRP Unit Converter" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "WSRP Page"
+		);
 
-		<execute macro="WSRP#wsrpUnitConverterConvertPG">
-			<var name="initialUnit" value="Inch" />
-			<var name="initialValue" value="12" />
-			<var name="targetUnit" value="Foot" />
-			<var name="targetValue" value="1.0" />
-			<var name="unitType" value="Length" />
-		</execute>
-	</command>
-</definition>
+		Portlet.addPG(
+			portletName = "WSRP Unit Converter"
+		);
+
+		WSRP.wsrpUnitConverterConvertPG(
+			initialUnit = "Inch",
+			initialValue = "12",
+			targetUnit = "Foot",
+			targetValue = "1.0",
+			unitType = "Length"
+		);
+	}
+}

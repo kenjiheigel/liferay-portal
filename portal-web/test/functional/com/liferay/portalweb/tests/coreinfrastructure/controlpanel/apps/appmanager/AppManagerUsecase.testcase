@@ -1,77 +1,77 @@
-<definition component-name="portal-plugins-osgi">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="App Manager" />
+@component-name = "portal-plugins-osgi"
+definition {
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "App Manager";
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+	setUp {
+		TestCase.setUpPortalInstance();
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+		User.firstLoginPG();
+	}
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+	tearDown {
+		var testPortalInstance = "TestPropsUtil.get('test.portal.instance')";
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="PortalInstances#tearDownCP" />
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			PortalInstances.tearDownCP();
 
-				<execute macro="Page#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
+			Page.tearDownCP();
+		}
+	}
 
-	<command name="InstallUninstallApp" priority="5">
-		<var name="appName" value="test-app-portlet" />
+	@priority = "5"
+	testInstallUninstallApp {
+		var appName = "test-app-portlet";
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Apps" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="App Manager" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Apps",
+			panel = "Control Panel",
+			portlet = "App Manager"
+		);
 
-		<execute macro="AppManager#uploadAppCP">
-			<var name="appName" value="${appName}" />
-			<var name="warFileName" value="${appName}-7.1.0.1.war" />
-		</execute>
+		AppManager.uploadAppCP(
+			appName = "${appName}",
+			warFileName = "${appName}-7.1.0.1.war"
+		);
 
-		<execute macro="AppManager#viewAppCP">
-			<var name="appName" value="${appName}" />
-			<var name="appStatus" value="Active" />
-		</execute>
+		AppManager.viewAppCP(
+			appName = "${appName}",
+			appStatus = "Active"
+		);
 
-		<execute macro="AppManager#uninstallAppCP">
-			<var name="appName" value="${appName}" />
-		</execute>
+		AppManager.uninstallAppCP(
+			appName = "${appName}"
+		);
 
-		<execute macro="AppManager#viewUninstallAppCP">
-			<var name="appName" value="${appName}" />
-		</execute>
+		AppManager.viewUninstallAppCP(
+			appName = "${appName}"
+		);
 
-		<execute function="AssertConsoleTextPresent" value1="STOPPED ${appName}" />
-	</command>
+		AssertConsoleTextPresent(value1 = "STOPPED ${appName}");
+	}
 
-	<command name="ViewIndependentModulesIsNotNestedWithinItself" priority="4">
-		<property name="test.name.skip.portal.instance" value="AppManagerUsecase#ViewIndependentModulesIsNotNestedWithinItself" />
+	@priority = "4"
+	testViewIndependentModulesIsNotNestedWithinItself {
+		property test.name.skip.portal.instance = "AppManagerUsecase#ViewIndependentModulesIsNotNestedWithinItself";
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Apps" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="App Manager" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Apps",
+			panel = "Control Panel",
+			portlet = "App Manager"
+		);
 
-		<execute macro="AppManager#selectAppCP">
-			<var name="appName" value="Independent Modules" />
-		</execute>
+		AppManager.selectAppCP(
+			appName = "Independent Modules"
+		);
 
-		<execute function="Pause" locator1="3000" />
+		Pause(locator1 = "3000");
 
-		<execute macro="AppManager#viewNoAppCP">
-			<var name="appName" value="Independent Modules" />
-		</execute>
-	</command>
-</definition>
+		AppManager.viewNoAppCP(
+			appName = "Independent Modules"
+		);
+	}
+}

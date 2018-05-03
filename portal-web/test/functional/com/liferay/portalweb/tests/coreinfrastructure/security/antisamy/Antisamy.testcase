@@ -1,69 +1,64 @@
-<definition component-name="portal-security">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Antisamy Hook" />
+@component-name = "portal-security"
+definition {
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "Antisamy Hook";
+	var pageName = "Antisamy Test Page";
+	var portletName = "Wiki";
 
-	<var name="pageName" value="Antisamy Test Page" />
-	<var name="portletName" value="Wiki" />
+	setUp {
+		TestCase.setUpPortalInstance();
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+		User.firstLoginPG();
 
-		<execute macro="User#firstLoginPG" />
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
+		SitePages.addPublicPage(
+			pageName = "${pageName}"
+		);
 
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "${pageName}"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="${pageName}" />
-		</execute>
+		Portlet.addPG(
+			portletName = "${portletName}"
+		);
+	}
 
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="${portletName}" />
-		</execute>
-	</set-up>
+	tearDown {
+		var testPortalInstance = "TestPropsUtil.get('test.portal.instance')";
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			WikiPage.tearDownCP();
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="WikiPage#tearDownCP" />
+			Page.tearDownCP();
+		}
+	}
 
-				<execute macro="Page#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="AddWikiFrontPageContentJavascript" priority="4">
-		<var name="wikiPageContent">
-			<![CDATA[
+	@priority = "4"
+	testAddWikiFrontPageContentJavascript {
+		var wikiPageContent = '''
 				<p id='demo'>PASS</p>
 
 				<script type='text/javascript'>
 					document.getElementById('demo').innerHTML = 'FAIL';
 				</script>
-			]]>
-		</var>
+			''';
+		var wikiPageText = "PASS";
 
-		<var name="wikiPageText" value="PASS" />
-
-		<execute macro="WikiPage#addFrontPagePG">
-			<var name="htmlSource" value="true" />
-			<var name="pageName" value="${pageName}" />
-			<var name="wikiPageContent" value="${wikiPageContent}" />
-			<var name="wikiPageText" value="${wikiPageText}" />
-		</execute>
-	</command>
-</definition>
+		WikiPage.addFrontPagePG(
+			htmlSource = "true",
+			pageName = "${pageName}",
+			wikiPageContent = "${wikiPageContent}",
+			wikiPageText = "${wikiPageText}"
+		);
+	}
+}

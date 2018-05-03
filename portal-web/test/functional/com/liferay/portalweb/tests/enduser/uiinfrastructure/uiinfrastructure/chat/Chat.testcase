@@ -1,28 +1,28 @@
-<definition component-name="portal-user-interface">
-	<property name="blacklist.portal.profile.names.remove" value="com.liferay.chat.service,com.liferay.chat.web" />
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="User Interface" />
+@component-name = "portal-user-interface"
+definition {
+	property blacklist.portal.profile.names.remove = "com.liferay.chat.service,com.liferay.chat.web";
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "User Interface";
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+	setUp {
+		TestCase.setUpPortalInstance();
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+		User.firstLoginPG();
+	}
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+	tearDown {
+		var testPortalInstance = "TestPropsUtil.get('test.portal.instance')";
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-		</if>
-	</tear-down>
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+	}
 
-	<command name="AssertChatBar" priority="3">
-		<execute function="AssertVisible" locator1="Chat#CHAT_BAR" />
-		<execute function="AssertVisible" locator1="Chat#CHAT_BAR_BUDDY_LIST" />
-	</command>
-</definition>
+	@priority = "3"
+	testAssertChatBar {
+		AssertVisible(locator1 = "Chat#CHAT_BAR");
+
+		AssertVisible(locator1 = "Chat#CHAT_BAR_BUDDY_LIST");
+	}
+}

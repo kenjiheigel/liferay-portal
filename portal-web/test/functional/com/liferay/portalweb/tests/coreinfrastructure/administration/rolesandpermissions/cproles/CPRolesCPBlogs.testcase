@@ -1,260 +1,260 @@
-<definition component-name="portal-permissions">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Permissions" />
+@component-name = "portal-permissions"
+definition {
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "Permissions";
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+	setUp {
+		TestCase.setUpPortalInstance();
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+		User.firstLoginPG();
+	}
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+	tearDown {
+		var testPortalInstance = "TestPropsUtil.get('test.portal.instance')";
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="User#firstLoginPG" />
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			User.firstLoginPG();
 
-				<execute macro="PortalSettings#tearDownCP" />
+			PortalSettings.tearDownCP();
 
-				<execute macro="User#tearDownCP" />
+			User.tearDownCP();
 
-				<execute macro="Role#tearDownCP" />
+			Role.tearDownCP();
 
-				<execute macro="Organization#tearDownCP" />
+			Organization.tearDownCP();
 
-				<execute macro="Site#tearDownCP" />
+			Site.tearDownCP();
 
-				<execute macro="BlogsEntry#tearDownCP" />
+			BlogsEntry.tearDownCP();
 
-				<execute macro="Page#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
+			Page.tearDownCP();
+		}
+	}
 
-	<command name="ViewBlogsEntryRegRoleInline" priority="5">
-		<property name="portal.acceptance" value="quarantine" />
-		<property name="test.name.skip.portal.instance" value="CPRolesCPBlogs#ViewBlogsEntryRegRoleInline" />
+	@priority = "5"
+	testViewBlogsEntryRegRoleInline {
+		property portal.acceptance = "quarantine";
+		property test.name.skip.portal.instance = "CPRolesCPBlogs#ViewBlogsEntryRegRoleInline";
 
-		<execute macro="Permissions#setUpRegRoleLoginUserCP">
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
+		Permissions.setUpRegRoleLoginUserCP(
+			portletName = "Blogs",
+			roleTitle = "Regrole Name",
+			userEmailAddress = "userea@liferay.com",
+			userFirstName = "userfn",
+			userLastName = "userln",
+			userLoginEmailAddress = "test@liferay.com",
+			userLoginFullName = "Test Test",
+			userScreenName = "usersn"
+		);
 
-		<execute macro="Permissions#definePermissionViaJSONAPI">
-			<var name="resourceAction" value="VIEW_SITE_ADMINISTRATION" />
-			<var name="resourceName" value="com.liferay.portal.kernel.model.Group" />
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
+		Permissions.definePermissionViaJSONAPI(
+			resourceAction = "VIEW_SITE_ADMINISTRATION",
+			resourceName = "com.liferay.portal.kernel.model.Group",
+			roleTitle = "Regrole Name"
+		);
 
-		<execute macro="Permissions#definePermissionViaJSONAPI">
-			<var name="resourceAction" value="ACCESS_IN_CONTROL_PANEL" />
-			<var name="resourceName" value="com_liferay_blogs_web_portlet_BlogsAdminPortlet" />
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
+		Permissions.definePermissionViaJSONAPI(
+			resourceAction = "ACCESS_IN_CONTROL_PANEL",
+			resourceName = "com_liferay_blogs_web_portlet_BlogsAdminPortlet",
+			roleTitle = "Regrole Name"
+		);
 
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
+		User.logoutAndLoginPG(
+			userLoginEmailAddress = "test@liferay.com",
+			userLoginFullName = "Test Test"
+		);
 
-		<execute macro="Navigator#openURL" />
+		Navigator.openURL();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Blogs" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Blogs"
+		);
 
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
+		Blogs.addEntry(
+			entryContent = "Blogs Entry Content",
+			entryTitle = "Blogs Entry Title"
+		);
 
-		<execute macro="Navigator#openURL" />
+		Navigator.openURL();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Blogs" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Blogs"
+		);
 
-		<execute macro="BlogsNavigator#gotoBlogsEntryPermissionsCP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
+		BlogsNavigator.gotoBlogsEntryPermissionsCP(
+			entryTitle = "Blogs Entry Title"
+		);
 
-		<execute macro="Role#removePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_VIEW_CHECKBOX" />
-			<var name="roleTitle" value="Guest" />
-		</execute>
+		Role.removePermissionPG(
+			permissionDefinitionKey = "CONTENT_PERMISSIONS_VIEW_CHECKBOX",
+			roleTitle = "Guest"
+		);
 
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
+		User.logoutAndLoginPG(
+			userLoginEmailAddress = "userea@liferay.com",
+			userLoginFullName = "userfn userln"
+		);
 
-		<execute macro="Navigator#openURL" />
+		Navigator.openURL();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Blogs" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Blogs"
+		);
 
-		<execute macro="BlogsEntry#viewDefaultCP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
+		BlogsEntry.viewDefaultCP(
+			entryTitle = "Blogs Entry Title"
+		);
 
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="test@liferay.com" />
-			<var name="userLoginFullName" value="Test Test" />
-		</execute>
+		User.logoutAndLoginPG(
+			userLoginEmailAddress = "test@liferay.com",
+			userLoginFullName = "Test Test"
+		);
 
-		<execute macro="Navigator#openURL" />
+		Navigator.openURL();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Blogs" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Blogs"
+		);
 
-		<execute macro="BlogsNavigator#gotoBlogsEntryPermissionsCP">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
+		BlogsNavigator.gotoBlogsEntryPermissionsCP(
+			entryTitle = "Blogs Entry Title"
+		);
 
-		<execute macro="Role#definePermissionPG">
-			<var name="permissionDefinitionKey" value="CONTENT_PERMISSIONS_VIEW_CHECKBOX" />
-			<var name="roleTitle" value="Guest" />
-		</execute>
+		Role.definePermissionPG(
+			permissionDefinitionKey = "CONTENT_PERMISSIONS_VIEW_CHECKBOX",
+			roleTitle = "Guest"
+		);
 
-		<execute macro="User#logoutAndLoginPG">
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-		</execute>
+		User.logoutAndLoginPG(
+			userLoginEmailAddress = "userea@liferay.com",
+			userLoginFullName = "userfn userln"
+		);
 
-		<execute macro="Navigator#openURL" />
+		Navigator.openURL();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Blogs" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Blogs"
+		);
 
-		<execute macro="Portlet#changeDisplayStyle">
-			<var name="displayStyle" value="list" />
-		</execute>
+		Portlet.changeDisplayStyle(
+			displayStyle = "list"
+		);
 
-		<execute macro="BlogsEntry#viewEntryTable">
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
+		BlogsEntry.viewEntryTable(
+			entryTitle = "Blogs Entry Title"
+		);
 
-		<execute macro="BlogsEntry#viewEntryAuthorCP">
-			<var name="entryAuthorFullName" value="Test Test" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
+		BlogsEntry.viewEntryAuthorCP(
+			entryAuthorFullName = "Test Test",
+			entryTitle = "Blogs Entry Title"
+		);
+		var key_entryTitle = "Blogs Entry Title";
 
-		<var name="key_entryTitle" value="Blogs Entry Title" />
+		AssertClick(locator1 = "Blogs#ENTRY_TABLE_TITLE", value1 = "Blogs Entry Title");
 
-		<execute function="AssertClick" locator1="Blogs#ENTRY_TABLE_TITLE" value1="Blogs Entry Title" />
+		BlogsEntry.viewEntry(
+			entryContent = "Blogs Entry Content",
+			entryTitle = "Blogs Entry Title"
+		);
+	}
 
-		<execute macro="BlogsEntry#viewEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Blogs Entry Title" />
-		</execute>
-	</command>
+	@priority = "4"
+	testViewBlogsPortletRegRole {
+		Permissions.setUpRegRoleLoginUserCP(
+			portletName = "Blogs",
+			roleTitle = "Regrole Name",
+			userEmailAddress = "userea@liferay.com",
+			userFirstName = "userfn",
+			userLastName = "userln",
+			userLoginEmailAddress = "userea@liferay.com",
+			userLoginFullName = "userfn userln",
+			userScreenName = "usersn"
+		);
 
-	<command name="ViewBlogsPortletRegRole" priority="4">
-		<execute macro="Permissions#setUpRegRoleLoginUserCP">
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Regrole Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
+		Navigator.openURL();
 
-		<execute macro="Navigator#openURL" />
+		Permissions.definePermissionViaJSONAPI(
+			resourceAction = "VIEW_SITE_ADMINISTRATION",
+			resourceName = "com.liferay.portal.kernel.model.Group",
+			roleTitle = "Regrole Name"
+		);
 
-		<execute macro="Permissions#definePermissionViaJSONAPI">
-			<var name="resourceAction" value="VIEW_SITE_ADMINISTRATION" />
-			<var name="resourceName" value="com.liferay.portal.kernel.model.Group" />
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
+		Permissions.definePermissionViaJSONAPI(
+			resourceAction = "ACCESS_IN_CONTROL_PANEL",
+			resourceName = "com_liferay_blogs_web_portlet_BlogsAdminPortlet",
+			roleTitle = "Regrole Name"
+		);
 
-		<execute macro="Permissions#definePermissionViaJSONAPI">
-			<var name="resourceAction" value="ACCESS_IN_CONTROL_PANEL" />
-			<var name="resourceName" value="com_liferay_blogs_web_portlet_BlogsAdminPortlet" />
-			<var name="roleTitle" value="Regrole Name" />
-		</execute>
+		Navigator.openURL();
 
-		<execute macro="Navigator#openURL" />
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Blogs"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Blogs" />
-		</execute>
+		BlogsConfiguration.viewNoPermissionCP();
+	}
 
-		<execute macro="BlogsConfiguration#viewNoPermissionCP" />
-	</command>
+	@priority = "4"
+	testViewBlogsPortletSiteRole {
+		Permissions.setUpSiteRoleLoginUserCP(
+			pageName = "Blogs Page",
+			portletName = "Blogs",
+			roleTitle = "Roles Siterole Name",
+			roleType = "Site",
+			siteName = "Site Name",
+			userEmailAddress = "userea@liferay.com",
+			userFirstName = "userfn",
+			userLastName = "userln",
+			userLoginEmailAddress = "userea@liferay.com",
+			userLoginFullName = "userfn userln",
+			userScreenName = "usersn"
+		);
 
-	<command name="ViewBlogsPortletSiteRole" priority="4">
-		<execute macro="Permissions#setUpSiteRoleLoginUserCP">
-			<var name="pageName" value="Blogs Page" />
-			<var name="portletName" value="Blogs" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="Site" />
-			<var name="siteName" value="Site Name" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userLoginEmailAddress" value="userea@liferay.com" />
-			<var name="userLoginFullName" value="userfn userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
+		Navigator.gotoSitePage(
+			pageName = "Blogs Page",
+			siteName = "Site Name"
+		);
 
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Blogs Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
+		Permissions.definePermissionViaJSONAPI(
+			resourceAction = "VIEW_SITE_ADMINISTRATION",
+			resourceName = "com.liferay.portal.kernel.model.Group",
+			roleTitle = "Roles Siterole Name",
+			roleType = "site"
+		);
 
-		<execute macro="Permissions#definePermissionViaJSONAPI">
-			<var name="resourceAction" value="VIEW_SITE_ADMINISTRATION" />
-			<var name="resourceName" value="com.liferay.portal.kernel.model.Group" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="site" />
-		</execute>
+		Permissions.definePermissionViaJSONAPI(
+			resourceAction = "ACCESS_IN_CONTROL_PANEL",
+			resourceName = "com_liferay_blogs_web_portlet_BlogsAdminPortlet",
+			roleTitle = "Roles Siterole Name",
+			roleType = "site"
+		);
 
-		<execute macro="Permissions#definePermissionViaJSONAPI">
-			<var name="resourceAction" value="ACCESS_IN_CONTROL_PANEL" />
-			<var name="resourceName" value="com_liferay_blogs_web_portlet_BlogsAdminPortlet" />
-			<var name="roleTitle" value="Roles Siterole Name" />
-			<var name="roleType" value="site" />
-		</execute>
+		Navigator.openSiteURL(
+			siteName = "Site Name"
+		);
 
-		<execute macro="Navigator#openSiteURL">
-			<var name="siteName" value="Site Name" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Blogs"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Blogs" />
-		</execute>
-
-		<execute macro="BlogsConfiguration#viewNoPermissionCP" />
-	</command>
-</definition>
+		BlogsConfiguration.viewNoPermissionCP();
+	}
+}

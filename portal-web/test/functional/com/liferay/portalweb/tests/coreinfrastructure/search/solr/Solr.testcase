@@ -1,153 +1,152 @@
-<definition component-name="portal-search">
-	<property name="osgi.app.includes" value="portal-search-solr" />
-	<property name="osgi.module.configuration.file.names" value="com.liferay.portal.bundle.blacklist.internal.BundleBlacklistConfiguration.config" />
-	<property name="osgi.module.configurations" value="blacklistBundleSymbolicNames=&quot;com.liferay.portal.mobile.device.detection.fiftyonedegrees.api,com.liferay.portal.mobile.device.detection.fiftyonedegrees.enterprise,com.liferay.portal.mobile.device.detection.fiftyonedegrees.enterprise.test.data,com.liferay.portal.mobile.device.detection.fiftyonedegrees,com.liferay.portal.search.elasticsearch6.api,com.liferay.portal.search.elasticsearch6.impl,com.liferay.portal.search.elasticsearch6.xpack.security.impl,com.liferay.portal.search.elasticsearch6.xpack.monitoring.web&quot;" />
-	<property name="portal.release" value="true" />
-	<property name="portal.suite.search.engine" value="solr" />
-	<property name="portal.upstream" value="true" />
-	<property name="solr.enabled" value="true" />
-	<property name="testray.main.component.name" value="SOLR Impl" />
+@component-name = "portal-search"
+definition {
+	property osgi.app.includes = "portal-search-solr";
+	property osgi.module.configuration.file.names = "com.liferay.portal.bundle.blacklist.internal.BundleBlacklistConfiguration.config";
+	property osgi.module.configurations = "blacklistBundleSymbolicNames=&quot;com.liferay.portal.mobile.device.detection.fiftyonedegrees.api,com.liferay.portal.mobile.device.detection.fiftyonedegrees.enterprise,com.liferay.portal.mobile.device.detection.fiftyonedegrees.enterprise.test.data,com.liferay.portal.mobile.device.detection.fiftyonedegrees,com.liferay.portal.search.elasticsearch6.api,com.liferay.portal.search.elasticsearch6.impl,com.liferay.portal.search.elasticsearch6.xpack.security.impl,com.liferay.portal.search.elasticsearch6.xpack.monitoring.web&quot;";
+	property portal.release = "true";
+	property portal.suite.search.engine = "solr";
+	property portal.upstream = "true";
+	property solr.enabled = "true";
+	property testray.main.component.name = "SOLR Impl";
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+	setUp {
+		TestCase.setUpPortalInstance();
 
-		<execute macro="User#firstLoginPG" />
+		User.firstLoginPG();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
 
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="Solr Page" />
-		</execute>
-	</set-up>
+		SitePages.addPublicPage(
+			pageName = "Solr Page"
+		);
+	}
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+	tearDown {
+		var testPortalInstance = "TestPropsUtil.get('test.portal.instance')";
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="MessageboardsThread#tearDownCP" />
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			MessageboardsThread.tearDownCP();
 
-				<execute macro="DMDocument#tearDownCP" />
+			DMDocument.tearDownCP();
 
-				<execute macro="Page#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
+			Page.tearDownCP();
+		}
+	}
 
-	<command name="SearchAssetsScopeEverythingAcrossMultipleSites" priority="4">
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Sites" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Sites" />
-		</execute>
+	@priority = "4"
+	testSearchAssetsScopeEverythingAcrossMultipleSites {
+		ProductMenu.gotoPortlet(
+			category = "Sites",
+			panel = "Control Panel",
+			portlet = "Sites"
+		);
 
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name 1" />
-		</execute>
+		Site.addBlankCP(
+			siteName = "Site Name 1"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Web Content" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Web Content"
+		);
 
-		<execute macro="WebContentNavigator#gotoAddCP" />
+		WebContentNavigator.gotoAddCP();
 
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="Apple" />
-		</execute>
+		WebContent.addCP(
+			webContentContent = "WC WebContent Content",
+			webContentTitle = "Apple"
+		);
 
-		<execute macro="PortletEntry#publish" />
+		PortletEntry.publish();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Sites" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Sites" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Sites",
+			panel = "Control Panel",
+			portlet = "Sites"
+		);
 
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name 2" />
-		</execute>
+		Site.addBlankCP(
+			siteName = "Site Name 2"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Documents and Media" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Documents and Media"
+		);
 
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="DM Document Description" />
-			<var name="dmDocumentFile" value="Document_1.doc" />
-			<var name="dmDocumentTitle" value="Apple" />
-		</execute>
+		DMDocument.addCP(
+			dmDocumentDescription = "DM Document Description",
+			dmDocumentFile = "Document_1.doc",
+			dmDocumentTitle = "Apple"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Sites" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Sites" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Sites",
+			panel = "Control Panel",
+			portlet = "Sites"
+		);
 
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name 3" />
-		</execute>
+		Site.addBlankCP(
+			siteName = "Site Name 3"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Blogs" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Blogs"
+		);
 
-		<execute macro="Blogs#addEntry">
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="Apple" />
-		</execute>
+		Blogs.addEntry(
+			entryContent = "Blogs Entry Content",
+			entryTitle = "Apple"
+		);
 
-		<execute macro="Navigator#openURL" />
+		Navigator.openURL();
 
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Search" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
+		Portlet.gotoPortletOptions(
+			portletName = "Search",
+			portletOption = "Configuration"
+		);
 
-		<execute macro="SearchPortlet#configureSearchScopePG">
-			<var name="searchScope" value="Everything" />
-		</execute>
+		SearchPortlet.configureSearchScopePG(
+			searchScope = "Everything"
+		);
 
-		<execute macro="Navigator#openURL" />
+		Navigator.openURL();
 
-		<execute macro="SearchPortlet#searchPG">
-			<var name="searchTerm" value="Apple" />
-		</execute>
+		SearchPortlet.searchPG(
+			searchTerm = "Apple"
+		);
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Web Content Article" />
-		</execute>
+		SearchPortlet.viewSearchResultsPG(
+			searchAssetTitle = "Apple",
+			searchAssetType = "Web Content Article"
+		);
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Document" />
-		</execute>
+		SearchPortlet.viewSearchResultsPG(
+			searchAssetTitle = "Apple",
+			searchAssetType = "Document"
+		);
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Blogs Entry" />
-		</execute>
-	</command>
+		SearchPortlet.viewSearchResultsPG(
+			searchAssetTitle = "Apple",
+			searchAssetType = "Blogs Entry"
+		);
+	}
 
-	<command name="SolrSmokeTest" priority="4">
-		<property name="test.name.skip.portal.instance" value="Solr#SolrSmokeTest" />
-
-		<!-- <description message="This smoke test is to ensure that Liferay is successfully running on a remote Solr by asserting the Solr administration dashboard and performing searches in portal. Note by default, an embedded Elasticsearch is deployed in portal." />
+	@priority = "4"
+	testSolrSmokeTest {
+		property test.name.skip.portal.instance = "Solr#SolrSmokeTest";
+		/* <description message="This smoke test is to ensure that Liferay is successfully running on a remote Solr by asserting the Solr administration dashboard and performing searches in portal. Note by default, an embedded Elasticsearch is deployed in portal." />
 
 		<execute macro="Solr#viewAdminDashboard">
 			<var name="solrVersion" value="5.2.1" />
@@ -157,266 +156,270 @@
 			<var name="coreName" value="liferay" />
 			<var name="solrVersion" value="5.2.1" />
 		</execute>
--->
-		<execute macro="Navigator#openURL" />
+*/
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Message Boards" />
-		</execute>
+		Navigator.openURL();
 
-		<execute macro="MessageboardsThread#addCP">
-			<var name="threadBody" value="Orange" />
-			<var name="threadSubject" value="Apple" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Message Boards"
+		);
 
-		<execute macro="Navigator#openURL" />
+		MessageboardsThread.addCP(
+			threadBody = "Orange",
+			threadSubject = "Apple"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Documents and Media" />
-		</execute>
+		Navigator.openURL();
 
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="Orange" />
-			<var name="dmDocumentFile" value="Document_1.txt" />
-			<var name="dmDocumentTitle" value="Apple" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Documents and Media"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Search" />
-		</execute>
+		DMDocument.addCP(
+			dmDocumentDescription = "Orange",
+			dmDocumentFile = "Document_1.txt",
+			dmDocumentTitle = "Apple"
+		);
 
-		<execute macro="SearchAdministration#executeSearchActions">
-			<var name="actionsDescription" value="Reindex all search indexes." />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Search"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Solr Page" />
-		</execute>
+		SearchAdministration.executeSearchActions(
+			actionsDescription = "Reindex all search indexes."
+		);
 
-		<execute macro="SearchPortlet#searchPG">
-			<var name="searchTerm" value="Apple" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "Solr Page"
+		);
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Document" />
-		</execute>
+		SearchPortlet.searchPG(
+			searchTerm = "Apple"
+		);
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Message Boards Message" />
-		</execute>
+		SearchPortlet.viewSearchResultsPG(
+			searchAssetTitle = "Apple",
+			searchAssetType = "Document"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Solr Page" />
-		</execute>
+		SearchPortlet.viewSearchResultsPG(
+			searchAssetTitle = "Apple",
+			searchAssetType = "Message Boards Message"
+		);
 
-		<execute macro="SearchPortlet#searchPG">
-			<var name="searchTerm" value="Orange" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "Solr Page"
+		);
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Document" />
-		</execute>
+		SearchPortlet.searchPG(
+			searchTerm = "Orange"
+		);
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Message Boards Message" />
-		</execute>
-	</command>
+		SearchPortlet.viewSearchResultsPG(
+			searchAssetTitle = "Apple",
+			searchAssetType = "Document"
+		);
 
-	<command ignore="true" name="SolrWithSolrCloudSmokeTest" priority="4">
-		<description message="This smoke test is to ensure that Liferay is successfully running on a remote SolrCloud with 2 nodes by asserting console logging for ZooKeeper and performing searches in portal. Note by default, an embedded Elasticsearch is deployed in portal." />
+		SearchPortlet.viewSearchResultsPG(
+			searchAssetTitle = "Apple",
+			searchAssetType = "Message Boards Message"
+		);
+	}
 
-		<property name="solr.solrcloud.enabled" value="true" />
-		<property name="test.name.skip.portal.instance" value="Solr#SolrWithSolrCloudSmokeTest" />
+	@description = "This smoke test is to ensure that Liferay is successfully running on a remote SolrCloud with 2 nodes by asserting console logging for ZooKeeper and performing searches in portal. Note by default, an embedded Elasticsearch is deployed in portal."
+	@ignore = "true"
+	@priority = "4"
+	testSolrWithSolrCloudSmokeTest {
+		property solr.solrcloud.enabled = "true";
+		property test.name.skip.portal.instance = "Solr#SolrWithSolrCloudSmokeTest";
 
-		<execute macro="Solr#viewSolrwithSolrCloudEnabledInConsole" />
+		Solr.viewSolrwithSolrCloudEnabledInConsole();
 
-		<execute macro="Solr#viewLiferayCloudDashboard">
-			<var name="cloudCollectionName" value="liferay" />
-		</execute>
+		Solr.viewLiferayCloudDashboard(
+			cloudCollectionName = "liferay"
+		);
 
-		<execute macro="Navigator#openURL" />
+		Navigator.openURL();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Message Boards" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Message Boards"
+		);
 
-		<execute macro="MessageboardsThread#addCP">
-			<var name="threadBody" value="Orange" />
-			<var name="threadSubject" value="Apple" />
-		</execute>
+		MessageboardsThread.addCP(
+			threadBody = "Orange",
+			threadSubject = "Apple"
+		);
 
-		<execute macro="Navigator#openURL" />
+		Navigator.openURL();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Documents and Media" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Documents and Media"
+		);
 
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="Orange" />
-			<var name="dmDocumentFile" value="Document_1.txt" />
-			<var name="dmDocumentTitle" value="Apple" />
-		</execute>
+		DMDocument.addCP(
+			dmDocumentDescription = "Orange",
+			dmDocumentFile = "Document_1.txt",
+			dmDocumentTitle = "Apple"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Search" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Search"
+		);
 
-		<execute macro="SearchAdministration#executeSearchActions">
-			<var name="actionsDescription" value="Reindex all search indexes." />
-		</execute>
+		SearchAdministration.executeSearchActions(
+			actionsDescription = "Reindex all search indexes."
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Solr Page" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "Solr Page"
+		);
 
-		<execute macro="SearchPortlet#searchPG">
-			<var name="searchTerm" value="Apple" />
-		</execute>
+		SearchPortlet.searchPG(
+			searchTerm = "Apple"
+		);
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Document" />
-		</execute>
+		SearchPortlet.viewSearchResultsPG(
+			searchAssetTitle = "Apple",
+			searchAssetType = "Document"
+		);
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Message Boards Message" />
-		</execute>
+		SearchPortlet.viewSearchResultsPG(
+			searchAssetTitle = "Apple",
+			searchAssetType = "Message Boards Message"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Solr Page" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "Solr Page"
+		);
 
-		<execute macro="SearchPortlet#searchPG">
-			<var name="searchTerm" value="Orange" />
-		</execute>
+		SearchPortlet.searchPG(
+			searchTerm = "Orange"
+		);
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Document" />
-		</execute>
+		SearchPortlet.viewSearchResultsPG(
+			searchAssetTitle = "Apple",
+			searchAssetType = "Document"
+		);
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Message Boards Message" />
-		</execute>
-	</command>
+		SearchPortlet.viewSearchResultsPG(
+			searchAssetTitle = "Apple",
+			searchAssetType = "Message Boards Message"
+		);
+	}
 
-	<command name="SolrWithSSLAuthenticationSmokeTest" priority="4">
-		<description message="This smoke test is to ensure that Liferay is successfully running on a remote Solr with SSL Authentication by asserting console logging for KeyStoreLoaderImpl and performing searches in portal. Note by default, an embedded Elasticsearch is deployed in portal." />
+	@description = "This smoke test is to ensure that Liferay is successfully running on a remote Solr with SSL Authentication by asserting console logging for KeyStoreLoaderImpl and performing searches in portal. Note by default, an embedded Elasticsearch is deployed in portal."
+	@priority = "4"
+	testSolrWithSSLAuthenticationSmokeTest {
+		property solr.ssl.authentication.enabled = "true";
+		property test.name.skip.portal.instance = "Solr#SolrWithSSLAuthenticationSmokeTest";
 
-		<property name="solr.ssl.authentication.enabled" value="true" />
-		<property name="test.name.skip.portal.instance" value="Solr#SolrWithSSLAuthenticationSmokeTest" />
+		Navigator.openURL();
 
-		<execute macro="Navigator#openURL" />
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Message Boards"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Message Boards" />
-		</execute>
+		MessageboardsThread.addCP(
+			threadBody = "Orange",
+			threadSubject = "Apple"
+		);
 
-		<execute macro="MessageboardsThread#addCP">
-			<var name="threadBody" value="Orange" />
-			<var name="threadSubject" value="Apple" />
-		</execute>
+		Navigator.openURL();
 
-		<execute macro="Navigator#openURL" />
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Documents and Media"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Documents and Media" />
-		</execute>
+		DMDocument.addCP(
+			dmDocumentDescription = "Orange",
+			dmDocumentFile = "Document_1.txt",
+			dmDocumentTitle = "Apple"
+		);
 
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="Orange" />
-			<var name="dmDocumentFile" value="Document_1.txt" />
-			<var name="dmDocumentTitle" value="Apple" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Search"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Search" />
-		</execute>
+		SearchAdministration.executeSearchActions(
+			actionsDescription = "Reindex all search indexes."
+		);
 
-		<execute macro="SearchAdministration#executeSearchActions">
-			<var name="actionsDescription" value="Reindex all search indexes." />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "Solr Page"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Solr Page" />
-		</execute>
+		SearchPortlet.searchPG(
+			searchTerm = "Apple"
+		);
 
-		<execute macro="SearchPortlet#searchPG">
-			<var name="searchTerm" value="Apple" />
-		</execute>
+		SearchPortlet.viewSearchResultsPG(
+			searchAssetTitle = "Apple",
+			searchAssetType = "Document"
+		);
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Document" />
-		</execute>
+		SearchPortlet.viewSearchResultsPG(
+			searchAssetTitle = "Apple",
+			searchAssetType = "Message Boards Message"
+		);
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Message Boards Message" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = "Solr Page"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Solr Page" />
-		</execute>
+		SearchPortlet.searchPG(
+			searchTerm = "Orange"
+		);
 
-		<execute macro="SearchPortlet#searchPG">
-			<var name="searchTerm" value="Orange" />
-		</execute>
+		SearchPortlet.viewSearchResultsPG(
+			searchAssetTitle = "Apple",
+			searchAssetType = "Document"
+		);
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Document" />
-		</execute>
+		SearchPortlet.viewSearchResultsPG(
+			searchAssetTitle = "Apple",
+			searchAssetType = "Message Boards Message"
+		);
+	}
 
-		<execute macro="SearchPortlet#viewSearchResultsPG">
-			<var name="searchAssetTitle" value="Apple" />
-			<var name="searchAssetType" value="Message Boards Message" />
-		</execute>
-	</command>
+	@ignore = "true"
+	@priority = "4"
+	testViewReindexAllSearchIndexesLoggingInSolrAdmin {
+		property index.on.startup = "false";
+		property solr.logging.info.level = "true";
+		property test.name.skip.portal.instance = "Solr#ViewReindexAllSearchIndexesLoggingInSolrAdmin";
 
-	<command ignore="true" name="ViewReindexAllSearchIndexesLoggingInSolrAdmin" priority="4">
-		<property name="index.on.startup" value="false" />
-		<property name="solr.logging.info.level" value="true" />
-		<property name="test.name.skip.portal.instance" value="Solr#ViewReindexAllSearchIndexesLoggingInSolrAdmin" />
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Search"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Search" />
-		</execute>
+		SearchAdministration.executeSearchActions(
+			actionsDescription = "Reindex all search indexes."
+		);
 
-		<execute macro="SearchAdministration#executeSearchActions">
-			<var name="actionsDescription" value="Reindex all search indexes." />
-		</execute>
+		Navigator.openSpecificURL(
+			url = "http://localhost:8983/solr/#/~logging"
+		);
 
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="http://localhost:8983/solr/#/~logging" />
-		</execute>
-
-		<execute macro="Solr#viewLoggerNameInSolrAdminLogging" />
-	</command>
-</definition>
+		Solr.viewLoggerNameInSolrAdminLogging();
+	}
+}

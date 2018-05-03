@@ -1,364 +1,345 @@
-<definition component-name="portal-collaboration">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column" />
-	<property name="testray.main.component.name" value="Announcements" />
-
-	<var name="pageName" value="Announcements Page" />
-	<var name="portletName" value="Announcements" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
-
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="Announcements Page" />
-			<var name="sitePageType" value="Layout" />
-		</execute>
-
-		<execute macro="SitePages#configurePage">
-			<var name="columnName" value="1 Column" />
-			<var name="pageName" value="Announcements Page" />
-			<var name="privacy" value="Public" />
-			<var name="sitePageType" value="Layout" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Announcements" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Navigator#gotoPage">
-					<var name="pageName" value="Announcements Page" />
-				</execute>
-
-				<execute macro="AnnouncementsEntry#tearDownPG" />
-
-				<execute macro="Page#tearDownCP" />
-
-				<execute macro="User#tearDownCP" />
-
-				<execute macro="Site#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="ViewAnnouncementsEntryWithDistributedScope" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-			<var name="entryURL" value="http://www.google.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewPG">
-			<var name="announcementType" value="General" />
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Sites" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addCP">
-			<var name="siteName" value="Community Site Name" />
-			<var name="siteType" value="Community" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
-
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="sitePageType" value="Layout" />
-		</execute>
-
-		<execute macro="SitePages#configurePage">
-			<var name="columnName" value="1 Column" />
-			<var name="pageName" value="Site Page Name" />
-			<var name="privacy" value="Public" />
-			<var name="sitePageType" value="Layout" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Community Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Announcements" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewPG">
-			<var name="announcementType" value="General" />
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-		</execute>
-
-		<execute macro="TestCase#getSiteName">
-			<return from="siteName" name="siteName" />
-			<var name="siteName" value="${siteName}" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#addPG">
-			<var name="distributionScope" value="${siteName}" />
-			<var name="entryContent" value="Announcements Entry2 Scoped Content" />
-			<var name="entryTitle" value="Announcements Entry2 Scoped Title" />
-			<var name="entryURL" value="http://www.yahoo.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="siteName" value="Community Site Name" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewNoPG">
-			<var name="entryTitle" value="Announcements Entry2 Scoped Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewPG">
-			<var name="announcementType" value="General" />
-			<var name="distributionScope" value="${siteName}" />
-			<var name="entryContent" value="Announcements Entry2 Scoped Content" />
-			<var name="entryTitle" value="Announcements Entry2 Scoped Title" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Users" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#addCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userFirstName" value="userfn" />
-			<var name="userLastName" value="userln" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Users" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Users and Organizations" />
-		</execute>
-
-		<execute macro="User#editPasswordCP">
-			<var name="userEmailAddress" value="userea@liferay.com" />
-			<var name="userScreenName" value="usersn" />
-		</execute>
-
-		<execute macro="User#logoutPG" />
-
-		<execute macro="User#loginPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="userea@liferay.com" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewViaEntriesPG">
-			<var name="distributionScope" value="General" />
-			<var name="entryContent" value="Announcements Entry Content" />
-			<var name="entryTitle" value="Announcements Entry Title" />
-		</execute>
-
-		<execute macro="AnnouncementsEntry#viewViaEntriesPG">
-			<var name="distributionScope" value="${siteName}" />
-			<var name="entryContent" value="Announcements Entry2 Scoped Content" />
-			<var name="entryTitle" value="Announcements Entry2 Scoped Title" />
-		</execute>
-	</command>
-
-	<command name="ViewAnnouncementsPagination" priority="3">
-		<var name="entryCountList" value="1,2,3,4,5,6,7" />
-
-		<for list="${entryCountList}" param="entryCount">
-			<execute macro="Navigator#gotoPage">
-				<var name="pageName" value="Announcements Page" />
-			</execute>
-
-			<execute macro="AnnouncementsEntry#addPG">
-				<var name="announcementType" value="General" />
-				<var name="distributionScope" value="General" />
-				<var name="entryContent" value="Announcements Entry Content ${entryCount}" />
-				<var name="entryTitle" value="Announcements Entry Title ${entryCount}" />
-				<var name="entryURL" value="http://www.liferay.com" />
-			</execute>
-		</for>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<execute macro="AnnouncementsPortlet#configureDisplayCountPG">
-			<var name="maxDisplayItems" value="5" />
-		</execute>
-
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Announcements Page" />
-		</execute>
-
-		<var name="viewEntryList" value="3,4,5,6,7" />
-
-		<for list="${viewEntryList}" param="viewEntryCount">
-			<execute macro="AnnouncementsEntry#viewViaEntriesPG">
-				<var name="distributionScope" value="General" />
-				<var name="entryContent" value="Announcements Entry Content ${viewEntryCount}" />
-				<var name="entryTitle" value="Announcements Entry Title ${viewEntryCount}" />
-				<var name="entryURL" value="http://www.liferay.com" />
-			</execute>
-		</for>
-
-		<var name="viewEntryList" value="1,2" />
-
-		<for list="${viewEntryList}" param="viewEntryCount">
-			<execute function="AssertElementNotPresent" locator1="Announcements#CARD_VIEW_ENTRY_TITLE">
-				<var name="key_entryTitle" value="Announcements Entry Title ${viewEntryCount}" />
-			</execute>
-		</for>
-
-		<execute function="AssertClick" locator1="Pagination#NEXT_LINK" value1="Next" />
-
-		<for list="${viewEntryList}" param="viewEntryCount">
-			<execute macro="AnnouncementsEntry#viewViaEntriesPG">
-				<var name="distributionScope" value="General" />
-				<var name="entryContent" value="Announcements Entry Content ${viewEntryCount}" />
-				<var name="entryTitle" value="Announcements Entry Title ${viewEntryCount}" />
-				<var name="entryURL" value="http://www.liferay.com" />
-			</execute>
-		</for>
-
-		<var name="viewEntryList" value="3,4,5,6,7" />
-
-		<for list="${viewEntryList}" param="viewEntryCount">
-			<execute function="AssertElementNotPresent" locator1="Announcements#CARD_VIEW_ENTRY_TITLE">
-				<var name="key_entryTitle" value="Announcements Entry Title ${viewEntryCount}" />
-			</execute>
-		</for>
-
-		<execute function="AssertClick" locator1="Pagination#PREVIOUS_LINK" value1="Previous" />
-
-		<for list="${viewEntryList}" param="viewEntryCount">
-			<execute macro="AnnouncementsEntry#viewViaEntriesPG">
-				<var name="distributionScope" value="General" />
-				<var name="entryContent" value="Announcements Entry Content ${viewEntryCount}" />
-				<var name="entryTitle" value="Announcements Entry Title ${viewEntryCount}" />
-				<var name="entryURL" value="http://www.liferay.com" />
-			</execute>
-		</for>
-
-		<var name="viewEntryList" value="1,2" />
-
-		<for list="${viewEntryList}" param="viewEntryCount">
-			<execute function="AssertElementNotPresent" locator1="Announcements#CARD_VIEW_ENTRY_TITLE">
-				<var name="key_entryTitle" value="Announcements Entry Title ${viewEntryCount}" />
-			</execute>
-		</for>
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Announcements and Alerts" />
-		</execute>
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="Dropdown#FILTER" value1="General" />
-
-		<execute macro="AnnouncementsPortlet#configurePaginationCP">
-			<var name="distributionScope" value="General" />
-			<var name="itemsPerPage" value="5" />
-		</execute>
-
-		<var name="viewEntryList" value="1,2,3,4,5" />
-
-		<for list="${viewEntryList}" param="viewEntryCount">
-			<execute macro="AnnouncementsEntry#viewList">
-				<var name="distributionScope" value="General" />
-				<var name="entryTitle" value="Announcements Entry Title ${viewEntryCount}" />
-			</execute>
-		</for>
-
-		<var name="viewEntryList" value="6,7" />
-
-		<for list="${viewEntryList}" param="viewEntryCount">
-			<execute function="AssertElementNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE">
-				<var name="key_entryTitle" value="Announcements Entry Title ${viewEntryCount}" />
-			</execute>
-		</for>
-
-		<execute function="Click" locator1="Pagination#NEXT_LINK" />
-
-		<for list="${viewEntryList}" param="viewEntryCount">
-			<execute macro="AnnouncementsEntry#viewList">
-				<var name="distributionScope" value="General" />
-				<var name="entryTitle" value="Announcements Entry Title ${viewEntryCount}" />
-			</execute>
-		</for>
-
-		<var name="viewEntryList" value="1,2,3,4,5" />
-
-		<for list="${viewEntryList}" param="viewEntryCount">
-			<execute function="AssertElementNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE">
-				<var name="key_entryTitle" value="Announcements Entry Title ${viewEntryCount}" />
-			</execute>
-		</for>
-
-		<execute function="Click" locator1="Pagination#PREVIOUS_LINK" />
-
-		<for list="${viewEntryList}" param="viewEntryCount">
-			<execute macro="AnnouncementsEntry#viewList">
-				<var name="distributionScope" value="General" />
-				<var name="entryTitle" value="Announcements Entry Title ${viewEntryCount}" />
-			</execute>
-		</for>
-
-		<var name="viewEntryList" value="6,7" />
-
-		<for list="${viewEntryList}" param="viewEntryCount">
-			<execute function="AssertElementNotPresent" locator1="AnnouncementsManageEntries#ENTRY_TABLE_TITLE">
-				<var name="key_entryTitle" value="Announcements Entry Title ${viewEntryCount}" />
-			</execute>
-		</for>
-	</command>
-</definition>
+@component-name = "portal-collaboration"
+definition {
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property custom.properties = "default.layout.template.id=1_column";
+	property testray.main.component.name = "Announcements";
+	var pageName = "Announcements Page";
+	var portletName = "Announcements";
+
+	setUp {
+		TestCase.setUpPortalInstance();
+
+		User.firstLoginPG();
+
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
+
+		SitePages.addPublicPage(
+			pageName = "Announcements Page",
+			sitePageType = "Layout"
+		);
+
+		SitePages.configurePage(
+			columnName = "1 Column",
+			pageName = "Announcements Page",
+			privacy = "Public",
+			sitePageType = "Layout"
+		);
+
+		Navigator.gotoPage(
+			pageName = "Announcements Page"
+		);
+
+		Portlet.addPG(
+			portletName = "Announcements"
+		);
+	}
+
+	tearDown {
+		var testPortalInstance = "TestPropsUtil.get('test.portal.instance')";
+
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			Navigator.gotoPage(
+				pageName = "Announcements Page"
+			);
+
+			AnnouncementsEntry.tearDownPG();
+
+			Page.tearDownCP();
+
+			User.tearDownCP();
+
+			Site.tearDownCP();
+		}
+	}
+
+	@priority = "4"
+	testViewAnnouncementsEntryWithDistributedScope {
+		Navigator.gotoPage(
+			pageName = "Announcements Page"
+		);
+
+		AnnouncementsEntry.addPG(
+			distributionScope = "General",
+			entryContent = "Announcements Entry Content",
+			entryTitle = "Announcements Entry Title",
+			entryURL = "http://www.google.com"
+		);
+
+		Navigator.gotoPage(
+			pageName = "Announcements Page"
+		);
+
+		AnnouncementsEntry.viewPG(
+			announcementType = "General",
+			distributionScope = "General",
+			entryContent = "Announcements Entry Content",
+			entryTitle = "Announcements Entry Title"
+		);
+
+		ProductMenu.gotoPortlet(
+			category = "Sites",
+			panel = "Control Panel",
+			portlet = "Sites"
+		);
+
+		Site.addCP(
+			siteName = "Community Site Name",
+			siteType = "Community"
+		);
+
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
+
+		SitePages.addPublicPage(
+			pageName = "Site Page Name",
+			sitePageType = "Layout"
+		);
+
+		SitePages.configurePage(
+			columnName = "1 Column",
+			pageName = "Site Page Name",
+			privacy = "Public",
+			sitePageType = "Layout"
+		);
+
+		Navigator.gotoSitePage(
+			pageName = "Site Page Name",
+			siteName = "Community Site Name"
+		);
+
+		Portlet.addPG(
+			portletName = "Announcements"
+		);
+
+		AnnouncementsEntry.viewPG(
+			announcementType = "General",
+			distributionScope = "General",
+			entryContent = "Announcements Entry Content",
+			entryTitle = "Announcements Entry Title"
+		);
+
+		var siteName = return(
+			TestCase.getSiteName(
+				siteName = "${siteName}"
+			),
+			siteName
+		);
+
+		AnnouncementsEntry.addPG(
+			distributionScope = "${siteName}",
+			entryContent = "Announcements Entry2 Scoped Content",
+			entryTitle = "Announcements Entry2 Scoped Title",
+			entryURL = "http://www.yahoo.com"
+		);
+
+		Navigator.gotoSitePage(
+			pageName = "Site Page Name",
+			siteName = "Community Site Name"
+		);
+
+		AnnouncementsEntry.viewNoPG(
+			entryTitle = "Announcements Entry2 Scoped Title"
+		);
+
+		Navigator.gotoPage(
+			pageName = "Announcements Page"
+		);
+
+		AnnouncementsEntry.viewPG(
+			announcementType = "General",
+			distributionScope = "${siteName}",
+			entryContent = "Announcements Entry2 Scoped Content",
+			entryTitle = "Announcements Entry2 Scoped Title"
+		);
+
+		ProductMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Users and Organizations"
+		);
+
+		User.addCP(
+			userEmailAddress = "userea@liferay.com",
+			userFirstName = "userfn",
+			userLastName = "userln",
+			userScreenName = "usersn"
+		);
+
+		ProductMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Users and Organizations"
+		);
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn"
+		);
+
+		User.logoutPG();
+
+		User.loginPG(
+			password = "test",
+			userEmailAddress = "userea@liferay.com"
+		);
+
+		Navigator.gotoPage(
+			pageName = "Announcements Page"
+		);
+
+		AnnouncementsEntry.viewViaEntriesPG(
+			distributionScope = "General",
+			entryContent = "Announcements Entry Content",
+			entryTitle = "Announcements Entry Title"
+		);
+
+		AnnouncementsEntry.viewViaEntriesPG(
+			distributionScope = "${siteName}",
+			entryContent = "Announcements Entry2 Scoped Content",
+			entryTitle = "Announcements Entry2 Scoped Title"
+		);
+	}
+
+	@priority = "3"
+	testViewAnnouncementsPagination {
+		var entryCountList = "1,2,3,4,5,6,7";
+
+		for (entryCount : "${entryCountList}") {
+			Navigator.gotoPage(
+				pageName = "Announcements Page"
+			);
+
+			AnnouncementsEntry.addPG(
+				announcementType = "General",
+				distributionScope = "General",
+				entryContent = "Announcements Entry Content ${entryCount}",
+				entryTitle = "Announcements Entry Title ${entryCount}",
+				entryURL = "http://www.liferay.com"
+			);
+		}
+
+		Navigator.gotoPage(
+			pageName = "Announcements Page"
+		);
+
+		AnnouncementsPortlet.configureDisplayCountPG(
+			maxDisplayItems = "5"
+		);
+
+		Navigator.gotoPage(
+			pageName = "Announcements Page"
+		);
+		var viewEntryList = "3,4,5,6,7";
+
+		for (viewEntryCount : "${viewEntryList}") {
+			AnnouncementsEntry.viewViaEntriesPG(
+				distributionScope = "General",
+				entryContent = "Announcements Entry Content ${viewEntryCount}",
+				entryTitle = "Announcements Entry Title ${viewEntryCount}",
+				entryURL = "http://www.liferay.com"
+			);
+		}
+		var viewEntryList = "1,2";
+
+		for (viewEntryCount : "${viewEntryList}") {
+			AssertElementNotPresent(locator1 = "Announcements#CARD_VIEW_ENTRY_TITLE", key_entryTitle = "Announcements Entry Title ${viewEntryCount}");
+		}
+
+		AssertClick(locator1 = "Pagination#NEXT_LINK", value1 = "Next");
+
+		for (viewEntryCount : "${viewEntryList}") {
+			AnnouncementsEntry.viewViaEntriesPG(
+				distributionScope = "General",
+				entryContent = "Announcements Entry Content ${viewEntryCount}",
+				entryTitle = "Announcements Entry Title ${viewEntryCount}",
+				entryURL = "http://www.liferay.com"
+			);
+		}
+		var viewEntryList = "3,4,5,6,7";
+
+		for (viewEntryCount : "${viewEntryList}") {
+			AssertElementNotPresent(locator1 = "Announcements#CARD_VIEW_ENTRY_TITLE", key_entryTitle = "Announcements Entry Title ${viewEntryCount}");
+		}
+
+		AssertClick(locator1 = "Pagination#PREVIOUS_LINK", value1 = "Previous");
+
+		for (viewEntryCount : "${viewEntryList}") {
+			AnnouncementsEntry.viewViaEntriesPG(
+				distributionScope = "General",
+				entryContent = "Announcements Entry Content ${viewEntryCount}",
+				entryTitle = "Announcements Entry Title ${viewEntryCount}",
+				entryURL = "http://www.liferay.com"
+			);
+		}
+		var viewEntryList = "1,2";
+
+		for (viewEntryCount : "${viewEntryList}") {
+			AssertElementNotPresent(locator1 = "Announcements#CARD_VIEW_ENTRY_TITLE", key_entryTitle = "Announcements Entry Title ${viewEntryCount}");
+		}
+
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Announcements and Alerts"
+		);
+
+		AssertTextEquals.assertPartialText(locator1 = "Dropdown#FILTER", value1 = "General");
+
+		AnnouncementsPortlet.configurePaginationCP(
+			distributionScope = "General",
+			itemsPerPage = "5"
+		);
+		var viewEntryList = "1,2,3,4,5";
+
+		for (viewEntryCount : "${viewEntryList}") {
+			AnnouncementsEntry.viewList(
+				distributionScope = "General",
+				entryTitle = "Announcements Entry Title ${viewEntryCount}"
+			);
+		}
+		var viewEntryList = "6,7";
+
+		for (viewEntryCount : "${viewEntryList}") {
+			AssertElementNotPresent(locator1 = "AnnouncementsManageEntries#ENTRY_TABLE_TITLE", key_entryTitle = "Announcements Entry Title ${viewEntryCount}");
+		}
+
+		Click(locator1 = "Pagination#NEXT_LINK");
+
+		for (viewEntryCount : "${viewEntryList}") {
+			AnnouncementsEntry.viewList(
+				distributionScope = "General",
+				entryTitle = "Announcements Entry Title ${viewEntryCount}"
+			);
+		}
+		var viewEntryList = "1,2,3,4,5";
+
+		for (viewEntryCount : "${viewEntryList}") {
+			AssertElementNotPresent(locator1 = "AnnouncementsManageEntries#ENTRY_TABLE_TITLE", key_entryTitle = "Announcements Entry Title ${viewEntryCount}");
+		}
+
+		Click(locator1 = "Pagination#PREVIOUS_LINK");
+
+		for (viewEntryCount : "${viewEntryList}") {
+			AnnouncementsEntry.viewList(
+				distributionScope = "General",
+				entryTitle = "Announcements Entry Title ${viewEntryCount}"
+			);
+		}
+		var viewEntryList = "6,7";
+
+		for (viewEntryCount : "${viewEntryList}") {
+			AssertElementNotPresent(locator1 = "AnnouncementsManageEntries#ENTRY_TABLE_TITLE", key_entryTitle = "Announcements Entry Title ${viewEntryCount}");
+		}
+	}
+}

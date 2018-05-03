@@ -1,559 +1,548 @@
-<definition component-name="portal-security">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="XSS" />
+@component-name = "portal-security"
+definition {
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "XSS";
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+	setUp {
+		TestCase.setUpPortalInstance();
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+		User.firstLoginPG();
+	}
 
-	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+	tearDown {
+		var testPortalInstance = "TestPropsUtil.get('test.portal.instance')";
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="PortalSettings#tearDownAuthenticationCP" />
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			PortalSettings.tearDownAuthenticationCP();
 
-				<execute macro="Page#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
+			Page.tearDownCP();
+		}
+	}
 
-	<command name="ValidateXSSVulnerabilities" priority="5">
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
-
-		<var name="maliciousURL1">
-			<![CDATA[
+	@priority = "5"
+	testValidateXSSVulnerabilities {
+		var portalURL = "TestPropsUtil.get('portal.url')";
+		var maliciousURL1 = '''
 				${portalURL}/group/guest/home?p_p_id=82&p_p_lifecycle=1&p_p_state=normal&p_p_mode=view&p_p_col_id=column-1&p_p_col_pos=1&p_p_col_count=2&_82_struts_action=%2Flanguage%2Fview&languageId=&lt;/script&gt;&lt;script&gt;alert(document.domain)&lt;/script>
-			]]>
-		</var>
-
-		<var name="maliciousURL2">
-			<![CDATA[
+			''';
+		var maliciousURL2 = '''
 				${portalURL}/group/guest/home?p_p_id=82&p_p_lifecycle=1&p_p_state=normal&p_p_mode=view&p_p_col_id=column-1&p_p_col_pos=1&p_p_col_count=2&_82_struts_action=%2Flanguage%2Fview&languageId=&lt;/script&gt;&lt;script&gt;alert(document.domain)&lt;/script&gt;
-			]]>
-		</var>
-
-		<var name="maliciousURL3">
-			<![CDATA[
+			''';
+		var maliciousURL3 = '''
 				${portalURL}/group/guest/home?p_p_id=82&p_p_lifecycle=1&p_p_state=normal&p_p_mode=view&p_p_col_id=column-1&p_p_col_pos=1&p_p_col_count=2&_82_struts_action=%2Flanguage%2Fview&languageId=%3C/script%3E%3Cscript%3Ealert(document.domain)%3C/script%3E
-			]]>
-		</var>
-
-		<var name="maliciousURL4">
-			<![CDATA[
+			''';
+		var maliciousURL4 = '''
 				${portalURL}/group/guest/home?p_p_id=82&p_p_lifecycle=1&p_p_state=normal&p_p_mode=view&p_p_col_id=column-1&p_p_col_pos=1&p_p_col_count=2&_82_struts_action=%2Flanguage%2Fview&languageId=</script><script>alert(document.domain)</script>
-			]]>
-		</var>
+			''';
 
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${maliciousURL1}" />
-		</execute>
+		Navigator.openSpecificURL(
+			url = "${maliciousURL1}"
+		);
 
-		<execute function="AssertTextEquals" locator1="Home#ERROR_MESSAGE_ALERT_ERROR" value1="Not Found" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Home#ERROR_MESSAGE_RESOURCE_NOT_FOUND" value1="The requested resource could not be found." />
-		<execute function="AssertElementPresent" locator1="Home#URL_ERROR_MESSAGE" />
+		AssertTextEquals(locator1 = "Home#ERROR_MESSAGE_ALERT_ERROR", value1 = "Not Found");
 
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${maliciousURL2}" />
-		</execute>
+		AssertTextEquals.assertPartialText(locator1 = "Home#ERROR_MESSAGE_RESOURCE_NOT_FOUND", value1 = "The requested resource could not be found.");
 
-		<execute function="AssertTextEquals" locator1="Home#ERROR_MESSAGE_ALERT_ERROR" value1="Not Found" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Home#ERROR_MESSAGE_RESOURCE_NOT_FOUND" value1="The requested resource could not be found." />
-		<execute function="AssertElementPresent" locator1="Home#URL_ERROR_MESSAGE" />
+		AssertElementPresent(locator1 = "Home#URL_ERROR_MESSAGE");
 
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${maliciousURL3}" />
-		</execute>
+		Navigator.openSpecificURL(
+			url = "${maliciousURL2}"
+		);
 
-		<execute function="AssertTextEquals" locator1="Home#ERROR_MESSAGE_ALERT_ERROR" value1="Not Found" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Home#ERROR_MESSAGE_RESOURCE_NOT_FOUND" value1="The requested resource could not be found." />
-		<execute function="AssertElementPresent" locator1="Home#URL_ERROR_MESSAGE" />
+		AssertTextEquals(locator1 = "Home#ERROR_MESSAGE_ALERT_ERROR", value1 = "Not Found");
 
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${maliciousURL4}" />
-		</execute>
+		AssertTextEquals.assertPartialText(locator1 = "Home#ERROR_MESSAGE_RESOURCE_NOT_FOUND", value1 = "The requested resource could not be found.");
 
-		<execute function="AssertTextEquals" locator1="Home#ERROR_MESSAGE_ALERT_ERROR" value1="Not Found" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="Home#ERROR_MESSAGE_RESOURCE_NOT_FOUND" value1="The requested resource could not be found." />
-		<execute function="AssertElementPresent" locator1="Home#URL_ERROR_MESSAGE" />
-	</command>
+		AssertElementPresent(locator1 = "Home#URL_ERROR_MESSAGE");
 
-	<command name="ViewBookmarkNoXSS" priority="4">
-		<execute macro="Navigator#openURL" />
+		Navigator.openSpecificURL(
+			url = "${maliciousURL3}"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="My Account" />
-			<var name="panel" value="User" />
-			<var name="portlet" value="Account Settings" />
-		</execute>
+		AssertTextEquals(locator1 = "Home#ERROR_MESSAGE_ALERT_ERROR", value1 = "Not Found");
 
-		<execute macro="User#editDetailsViaMyAccount">
-			<var name="userLastNameEdit"><![CDATA[<script>alert(123);</script>]]></var>
-		</execute>
+		AssertTextEquals.assertPartialText(locator1 = "Home#ERROR_MESSAGE_RESOURCE_NOT_FOUND", value1 = "The requested resource could not be found.");
 
-		<execute macro="Navigator#openURL" />
+		AssertElementPresent(locator1 = "Home#URL_ERROR_MESSAGE");
 
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Bookmarks" />
-		</execute>
+		Navigator.openSpecificURL(
+			url = "${maliciousURL4}"
+		);
 
-		<execute macro="Navigator#openURL" />
+		AssertTextEquals(locator1 = "Home#ERROR_MESSAGE_ALERT_ERROR", value1 = "Not Found");
 
-		<execute macro="RelatedAssets#gotoBookmarksSelectionPG">
-			<var name="assetType" value="Bookmarks Entry" />
-		</execute>
+		AssertTextEquals.assertPartialText(locator1 = "Home#ERROR_MESSAGE_RESOURCE_NOT_FOUND", value1 = "The requested resource could not be found.");
 
-		<execute macro="Bookmark#addRelatedAssetBookmarksEntryPG">
-			<var name="bookmarkName" value="Test Bookmark Name" />
-			<var name="bookmarkURL" value="http://www.liferay.com" />
-		</execute>
+		AssertElementPresent(locator1 = "Home#URL_ERROR_MESSAGE");
+	}
 
-		<execute function="AssertElementNotPresent" locator1="//body[.='XSS']" />
+	@priority = "4"
+	testViewBookmarkNoXSS {
+		Navigator.openURL();
 
-		<var name="actualScript"><![CDATA[<script>alert(123);</script>]]></var>
-		<var name="escapedScript"><![CDATA[&lt;script&gt;alert(123);&lt;/script&gt;]]></var>
+		ProductMenu.gotoPortlet(
+			category = "My Account",
+			panel = "User",
+			portlet = "Account Settings"
+		);
 
-		<execute function="AssertHTMLSourceTextNotPresent" value1="${actualScript}" />
-		<execute function="AssertHTMLSourceTextPresent" value1="${escapedScript}" />
-	</command>
+		User.editDetailsViaMyAccount(
+			userLastNameEdit = '''<script>alert(123);</script>'''
+		);
 
-	<command name="ViewControlPanelNoXSS" priority="5">
-		<var name="siteName"><![CDATA[<script>alert(123);</script>]]></var>
+		Navigator.openURL();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Sites" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Sites" />
-		</execute>
+		Portlet.addPG(
+			portletName = "Bookmarks"
+		);
 
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="${siteName}" />
-		</execute>
+		Navigator.openURL();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Sites" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Sites" />
-		</execute>
+		RelatedAssets.gotoBookmarksSelectionPG(
+			assetType = "Bookmarks Entry"
+		);
 
-		<execute macro="Search#searchCP">
-			<var name="searchTerm" value="${siteName}" />
-		</execute>
+		Bookmark.addRelatedAssetBookmarksEntryPG(
+			bookmarkName = "Test Bookmark Name",
+			bookmarkURL = "http://www.liferay.com"
+		);
 
-		<var name="key_rowEntry" value="${siteName}" />
+		AssertElementNotPresent(locator1 = "//body[.='XSS']");
+		var actualScript = '''<script>alert(123);</script>''';
+		var escapedScript = '''&lt;script&gt;alert(123);&lt;/script&gt;''';
 
-		<execute function="AssertClick" locator1="ContentRow#ENTRY_CONTENT_ENTRY_NAME_LINK" value1="${siteName}" />
+		AssertHTMLSourceTextNotPresent(value1 = "${actualScript}");
 
-		<execute function="AssertElementNotPresent" locator1="//body[.='XSS']" />
+		AssertHTMLSourceTextPresent(value1 = "${escapedScript}");
+	}
 
-		<var name="actualScript"><![CDATA[<script>alert(123);</script>]]></var>
-		<var name="escapedScript"><![CDATA[&lt;script&gt;alert(123);&lt;/script&gt;]]></var>
+	@priority = "5"
+	testViewControlPanelNoXSS {
+		var siteName = '''<script>alert(123);</script>''';
 
-		<execute function="AssertHTMLSourceTextNotPresent" value1="${actualScript}" />
-		<execute function="AssertHTMLSourceTextPresent" value1="${escapedScript}" />
+		ProductMenu.gotoPortlet(
+			category = "Sites",
+			panel = "Control Panel",
+			portlet = "Sites"
+		);
 
-		<execute function="AssertTextEquals" locator1="Portlet#HEADER" value1="Site Pages" />
+		Site.addBlankCP(
+			siteName = "${siteName}"
+		);
 
-		<var name="key_siteName" value="${siteName}" />
+		ProductMenu.gotoPortlet(
+			category = "Sites",
+			panel = "Control Panel",
+			portlet = "Sites"
+		);
 
-		<execute function="AssertTextEquals" locator1="ProductMenu#PRODUCT_MENU_PANEL_SITE_ADMINISTRATION_SITE_NAME" value1="${siteName}" />
-	</command>
+		Search.searchCP(
+			searchTerm = "${siteName}"
+		);
+		var key_rowEntry = "${siteName}";
 
-	<command name="ViewGoogleAnalyticsIDNoXSS" priority="5">
-		<execute macro="Navigator#openURL" />
+		AssertClick(locator1 = "ContentRow#ENTRY_CONTENT_ENTRY_NAME_LINK", value1 = "${siteName}");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Settings" />
-		</execute>
+		AssertElementNotPresent(locator1 = "//body[.='XSS']");
+		var actualScript = '''<script>alert(123);</script>''';
+		var escapedScript = '''&lt;script&gt;alert(123);&lt;/script&gt;''';
 
-		<execute macro="Site#editGoogleAnalyticsIDCP">
-			<var name="googleAnalyticsID"><![CDATA[']);alert(/googleAnalyticsId/);//]]></var>
-		</execute>
+		AssertHTMLSourceTextNotPresent(value1 = "${actualScript}");
 
-		<execute macro="Navigator#openURL" />
-		<execute function="AssertAlertNotPresent" />
-	</command>
+		AssertHTMLSourceTextPresent(value1 = "${escapedScript}");
 
-	<command name="ViewJSONWSNoXSS" priority="5">
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
+		AssertTextEquals(locator1 = "Portlet#HEADER", value1 = "Site Pages");
+		var key_siteName = "${siteName}";
 
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${portalURL}/api/jsonws?contextPath=%22%3E%3Cimg%20src=x%20onerror=alert%28/contextPath/%29%3E" />
-		</execute>
+		AssertTextEquals(locator1 = "ProductMenu#PRODUCT_MENU_PANEL_SITE_ADMINISTRATION_SITE_NAME", value1 = "${siteName}");
+	}
 
-		<execute function="AssertAlertNotPresent" />
-	</command>
+	@priority = "5"
+	testViewGoogleAnalyticsIDNoXSS {
+		Navigator.openURL();
 
-	<command name="ViewLDAPNoXSS" priority="5">
-		<description message="This is a use case for LPS-59198." />
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Site Administration",
+			portlet = "Site Settings"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Instance Settings" />
-		</execute>
+		Site.editGoogleAnalyticsIDCP(
+			googleAnalyticsID = '''']);alert(/googleAnalyticsId/);//'''
+		);
 
-		<execute macro="PortalSettingsNavigator#gotoLDAP" />
+		Navigator.openURL();
 
-		<execute macro="PortalSettings#addLDAPServer">
-			<var name="LDAPServerName"><![CDATA[<script>alert(123);</script>]]></var>
-		</execute>
+		AssertAlertNotPresent();
+	}
 
-		<execute function="AssertAlertNotPresent" />
+	@priority = "5"
+	testViewJSONWSNoXSS {
+		var portalURL = "TestPropsUtil.get('portal.url')";
 
-		<var name="actualScript"><![CDATA[<script>alert(123);</script>]]></var>
-		<var name="escapedScript"><![CDATA[&lt;script&gt;alert(123);&lt;/script&gt;]]></var>
+		Navigator.openSpecificURL(
+			url = "${portalURL}/api/jsonws?contextPath=%22%3E%3Cimg%20src=x%20onerror=alert%28/contextPath/%29%3E"
+		);
 
-		<execute function="AssertHTMLSourceTextNotPresent" value1="${actualScript}" />
-		<execute function="AssertHTMLSourceTextPresent" value1="${escapedScript}" />
-	</command>
+		AssertAlertNotPresent();
+	}
 
-	<command name="ViewLiferayPortletListNoXSS" priority="5">
-		<var method="TestPropsUtil#get('portal.url')" name="portalURL" />
+	@description = "This is a use case for LPS-59198."
+	@priority = "5"
+	testViewLDAPNoXSS {
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Instance Settings"
+		);
 
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
+		PortalSettingsNavigator.gotoLDAP();
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Asset Publisher Page" />
-		</execute>
+		PortalSettings.addLDAPServer(
+			LDAPServerName = '''<script>alert(123);</script>'''
+		);
 
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Asset Publisher" />
-		</execute>
+		AssertAlertNotPresent();
+		var actualScript = '''<script>alert(123);</script>''';
+		var escapedScript = '''&lt;script&gt;alert(123);&lt;/script&gt;''';
 
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${portalURL}/web/guest/home?p_p_id=com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet&amp;p_p_state=pop_up&amp;_com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet_mvcPath=%2Fedit_configuration.jsp&amp;_com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet_portletResource=com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_7awylRgVDERT;alert(1)//%22;alert(2)//%22;alert(3)//%E2%80%93%3E%3C/script%3E%22%3E%27%3E%3Cscript%3Ealert(4)%3C/script%3E&amp;_com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet_resourcePrimKey=asdfxxx" />
-		</execute>
+		AssertHTMLSourceTextNotPresent(value1 = "${actualScript}");
 
-		<execute function="AssertAlertNotPresent" />
+		AssertHTMLSourceTextPresent(value1 = "${escapedScript}");
+	}
 
-		<execute function="Refresh" />
+	@priority = "5"
+	testViewLiferayPortletListNoXSS {
+		var portalURL = "TestPropsUtil.get('portal.url')";
 
-		<execute function="AssertAlertNotPresent" />
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
 
-		<execute macro="Navigator#openURL" />
+		SitePages.addPublicPage(
+			pageName = "Asset Publisher Page"
+		);
 
-		<execute function="AssertAlertNotPresent" />
-	</command>
+		Navigator.gotoPage(
+			pageName = "Asset Publisher Page"
+		);
 
-	<command name="ViewLookAndFeelNoXSS" priority="5">
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
+		Portlet.addPG(
+			portletName = "Asset Publisher"
+		);
 
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName"><![CDATA[<script>alert(123);</script>]]></var>
-		</execute>
+		Navigator.openSpecificURL(
+			url = "${portalURL}/web/guest/home?p_p_id=com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet&p_p_state=pop_up&_com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet_mvcPath=%2Fedit_configuration.jsp&_com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet_portletResource=com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_7awylRgVDERT;alert(1)//%22;alert(2)//%22;alert(3)//%E2%80%93%3E%3C/script%3E%22%3E%27%3E%3Cscript%3Ealert(4)%3C/script%3E&_com_liferay_portlet_configuration_web_portlet_PortletConfigurationPortlet_resourcePrimKey=asdfxxx"
+		);
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName"><![CDATA[<script>alert(123);</script>]]></var>
-		</execute>
+		AssertAlertNotPresent();
 
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Blogs" />
-		</execute>
+		Refresh();
 
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="Blogs" />
-			<var name="portletOption" value="Look and Feel Configuration" />
-		</execute>
+		AssertAlertNotPresent();
 
-		<execute function="AssertElementNotPresent" locator1="//body[.='123']" />
+		Navigator.openURL();
 
-		<var name="actualScript"><![CDATA[<script>alert(123);</script>]]></var>
-		<var name="escapedScript"><![CDATA[&lt;script&gt;alert(123);&lt;/script&gt;]]></var>
+		AssertAlertNotPresent();
+	}
 
-		<execute function="AssertHTMLSourceTextNotPresent" value1="${actualScript}" />
-		<execute function="AssertHTMLSourceTextPresent" value1="${escapedScript}" />
-	</command>
+	@priority = "5"
+	testViewLookAndFeelNoXSS {
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
 
-	<command name="ViewMobileDeviceRulesNoXSS" priority="5">
-		<description message="This is a use case for LPS-42750." />
+		SitePages.addPublicPage(
+			pageName = '''<script>alert(123);</script>'''
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Mobile Device Families" />
-		</execute>
+		Navigator.gotoPage(
+			pageName = '''<script>alert(123);</script>'''
+		);
 
-		<execute macro="MobileDevice#addDeviceFamilyCP">
-			<var name="deviceFamilyName"><![CDATA[<script>alert(123);</script>]]></var>
-		</execute>
+		Portlet.addPG(
+			portletName = "Blogs"
+		);
 
-		<execute macro="Navigator#openURL" />
+		Portlet.gotoPortletOptions(
+			portletName = "Blogs",
+			portletOption = "Look and Feel Configuration"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Pages" />
-		</execute>
+		AssertElementNotPresent(locator1 = "//body[.='123']");
+		var actualScript = '''<script>alert(123);</script>''';
+		var escapedScript = '''&lt;script&gt;alert(123);&lt;/script&gt;''';
 
-		<execute macro="SitePages#gotoPageMenuItem">
-			<var name="menuItem" value="Configure" />
-			<var name="pageName" value="Welcome" />
-		</execute>
+		AssertHTMLSourceTextNotPresent(value1 = "${actualScript}");
 
-		<execute macro="Navigator#gotoNavTab">
-			<var name="navTab" value="Advanced" />
-		</execute>
+		AssertHTMLSourceTextPresent(value1 = "${escapedScript}");
+	}
 
-		<execute macro="Panel#expandPanel">
-			<var name="panel" value="Mobile Device Rules" />
-		</execute>
+	@description = "This is a use case for LPS-42750."
+	@priority = "5"
+	testViewMobileDeviceRulesNoXSS {
 
-		<execute macro="Page#disableMobileDeviceRulesAreInheritedFromPublicPages" />
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Site Administration",
+			portlet = "Mobile Device Families"
+		);
 
-		<execute macro="Page#selectMobileDeviceFamily">
-			<var name="deviceFamilyName"><![CDATA[<script>alert(123);</script>]]></var>
-		</execute>
+		MobileDevice.addDeviceFamilyCP(
+			deviceFamilyName = '''<script>alert(123);</script>'''
+		);
 
-		<execute function="AssertElementNotPresent" locator1="//body[.='123']" />
+		Navigator.openURL();
 
-		<var name="actualScript"><![CDATA[<script>alert(123);</script>]]></var>
-		<var name="escapedScript"><![CDATA[&lt;script&gt;alert(123);&lt;/script&gt;]]></var>
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Site Pages"
+		);
 
-		<execute function="AssertHTMLSourceTextNotPresent" value1="${actualScript}" />
-		<execute function="AssertHTMLSourceTextPresent" value1="${escapedScript}" />
-	</command>
+		SitePages.gotoPageMenuItem(
+			menuItem = "Configure",
+			pageName = "Welcome"
+		);
 
-	<command name="ViewRecycleBinNoXSS" priority="5">
-		<var name="entryTitle"><![CDATA[<script>alert(123);</script>]]></var>
+		Navigator.gotoNavTab(
+			navTab = "Advanced"
+		);
 
-		<execute macro="Navigator#openURL" />
+		Panel.expandPanel(
+			panel = "Mobile Device Rules"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Blogs" />
-		</execute>
+		Page.disableMobileDeviceRulesAreInheritedFromPublicPages();
 
-		<execute macro="BlogsNavigator#gotoAddEntry" />
+		Page.selectMobileDeviceFamily(
+			deviceFamilyName = '''<script>alert(123);</script>'''
+		);
 
-		<execute function="Type#typeAceEditor" locator1="AlloyEditor#EDITOR" value1="${entryTitle}">
-			<var name="key_editor" value="title" />
-		</execute>
+		AssertElementNotPresent(locator1 = "//body[.='123']");
+		var actualScript = '''<script>alert(123);</script>''';
+		var escapedScript = '''&lt;script&gt;alert(123);&lt;/script&gt;''';
 
-		<execute macro="BlogsEntry#addContent">
-			<var name="entryContent" value="Blogs Entry Content" />
-		</execute>
+		AssertHTMLSourceTextNotPresent(value1 = "${actualScript}");
 
-		<execute macro="PortletEntry#publish" />
+		AssertHTMLSourceTextPresent(value1 = "${escapedScript}");
+	}
 
-		<execute macro="Navigator#openURL" />
+	@priority = "5"
+	testViewRecycleBinNoXSS {
+		var entryTitle = '''<script>alert(123);</script>''';
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Blogs" />
-		</execute>
+		Navigator.openURL();
 
-		<execute macro="Portlet#changeDisplayStyle">
-			<var name="displayStyle" value="descriptive" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Blogs"
+		);
 
-		<execute macro="BlogsEntry#moveToRecycleBinCP">
-			<var name="assetType" value="Blogs Entry" />
-			<var name="entryContent" value="Blogs Entry Content" />
-			<var name="entryTitle" value="${entryTitle}" />
-		</execute>
+		BlogsNavigator.gotoAddEntry();
 
-		<execute macro="Navigator#openURL" />
+		Type.typeAceEditor(locator1 = "AlloyEditor#EDITOR", value1 = "${entryTitle}", key_editor = "title");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Recycle Bin" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Recycle Bin" />
-		</execute>
+		BlogsEntry.addContent(
+			entryContent = "Blogs Entry Content"
+		);
 
-		<execute macro="RecycleBin#restoreCP">
-			<var name="assetName" value="${entryTitle}" />
-			<var name="assetRestoreLocation" value="Blogs" />
-			<var name="assetType" value="Blogs Entry" />
-		</execute>
+		PortletEntry.publish();
 
-		<execute function="AssertElementNotPresent" locator1="//body[.='123']" />
+		Navigator.openURL();
 
-		<var name="actualScript"><![CDATA[<script>alert(123);</script>]]></var>
-		<var name="escapedScript"><![CDATA[&lt;script&gt;alert(123);&lt;/script&gt;]]></var>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Blogs"
+		);
 
-		<execute function="AssertHTMLSourceTextNotPresent" value1="${actualScript}" />
-		<execute function="AssertHTMLSourceTextPresent" value1="${escapedScript}" />
-	</command>
+		Portlet.changeDisplayStyle(
+			displayStyle = "descriptive"
+		);
 
-	<command name="ViewRolesNoXSS" priority="4">
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Users" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Roles" />
-		</execute>
+		BlogsEntry.moveToRecycleBinCP(
+			assetType = "Blogs Entry",
+			entryContent = "Blogs Entry Content",
+			entryTitle = "${entryTitle}"
+		);
 
-		<execute macro="Role#add">
-			<var name="roleTitle"><![CDATA[<script>alert(123);</script>]]></var>
-		</execute>
+		Navigator.openURL();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Users" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Roles" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Recycle Bin",
+			panel = "Site Administration",
+			portlet = "Recycle Bin"
+		);
 
-		<execute macro="Role#viewCP">
-			<var name="roleTitle"><![CDATA[<script>alert(123);</script>]]></var>
-			<var name="roleType" value="Regular" />
-		</execute>
+		RecycleBin.restoreCP(
+			assetName = "${entryTitle}",
+			assetRestoreLocation = "Blogs",
+			assetType = "Blogs Entry"
+		);
 
-		<execute macro="Navigator#openURL" />
+		AssertElementNotPresent(locator1 = "//body[.='123']");
+		var actualScript = '''<script>alert(123);</script>''';
+		var escapedScript = '''&lt;script&gt;alert(123);&lt;/script&gt;''';
 
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Sign In" />
-		</execute>
+		AssertHTMLSourceTextNotPresent(value1 = "${actualScript}");
 
-		<execute macro="PermissionsInline#gotoConfigurationPG">
-			<var name="portletName" value="Sign In" />
-		</execute>
+		AssertHTMLSourceTextPresent(value1 = "${escapedScript}");
+	}
 
-		<execute function="AssertElementNotPresent" locator1="//body[.='123']" />
+	@priority = "4"
+	testViewRolesNoXSS {
+		ProductMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Roles"
+		);
 
-		<var name="actualScript"><![CDATA[<script>alert(123);</script>]]></var>
-		<var name="escapedScript"><![CDATA[&lt;script&gt;alert(123);&lt;/script&gt;]]></var>
+		Role.add(
+			roleTitle = '''<script>alert(123);</script>'''
+		);
 
-		<execute function="AssertHTMLSourceTextNotPresent" value1="${actualScript}" />
-		<execute function="AssertHTMLSourceTextPresent" value1="${escapedScript}" />
-	</command>
+		ProductMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Roles"
+		);
 
-	<command name="ViewURLValidateNoXSS" priority="5">
-		<property name="test.name.skip.portal.instance" value="XSSUsecase#ViewURLValidateNoXSS" />
+		Role.viewCP(
+			roleTitle = '''<script>alert(123);</script>''',
+			roleType = "Regular"
+		);
 
-		<var name="maliciousURL1">
-			<![CDATA[
+		Navigator.openURL();
+
+		Portlet.addPG(
+			portletName = "Sign In"
+		);
+
+		PermissionsInline.gotoConfigurationPG(
+			portletName = "Sign In"
+		);
+
+		AssertElementNotPresent(locator1 = "//body[.='123']");
+		var actualScript = '''<script>alert(123);</script>''';
+		var escapedScript = '''&lt;script&gt;alert(123);&lt;/script&gt;''';
+
+		AssertHTMLSourceTextNotPresent(value1 = "${actualScript}");
+
+		AssertHTMLSourceTextPresent(value1 = "${escapedScript}");
+	}
+
+	@priority = "5"
+	testViewURLValidateNoXSS {
+		property test.name.skip.portal.instance = "XSSUsecase#ViewURLValidateNoXSS";
+		var maliciousURL1 = '''
 				http://localhost:8080/c/portal/flash?title=abc</title><script%0d%0a>alert(3.1415926)</script%0d%0a><title>aaa
-			]]>
-		</var>
-
-		<var name="maliciousURL2">
-			<![CDATA[
+			''';
+		var maliciousURL2 = '''
 				http://localhost:8080/group/control_panel/manage?p_p_id=132&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_132_struts_action=%2Fplugins_admin%2Fedit_plugin&_132_pluginId=116&_132_pluginType=portlet&_132_title=Activities&_132_moduleId=%3Cscript%3Ealert(%22xss%22);%3C/script%3E
-			]]>
-		</var>
-
-		<var name="maliciousURL3">
-			<![CDATA[
+			''';
+		var maliciousURL3 = '''
 				http://localhost:8080/group/control_panel/manage?p_p_id=132&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_132_struts_action=%2Fplugins_admin%2Fedit_plugin&_132_pluginId=116&_132_pluginType=portlet&_132_title=Activities&_132_moduleId=%3Cscript%3Ealert(%22xss%22);%3C/script%3E&_2_backURL=%22%3E%3Cscript%3Ealert%28%27xss%27%29;%3C/script%3E
-			]]>
-		</var>
-
-		<var name="maliciousURL4">
-			<![CDATA[
+			''';
+		var maliciousURL4 = '''
 				http://localhost:8080/group/control_panel/manage?p_p_id=132&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_132_struts_action=%2Fplugins_admin%2Fedit_plugin&_132_pluginId=116&_132_pluginType=portlet&_132_title=Activities&_132_moduleId=%3Cscript%3Ealert(%22xss%22);%3C/script%3E&_2_backURL=alert%28%27xss%27%29
-			]]>
-		</var>
-
-		<var name="maliciousURL5">
-			<![CDATA[
+			''';
+		var maliciousURL5 = '''
 				http://localhost:8080/html/portal/progress_poller.jsp?ProgressId=a%3D1%3Balert(document.cookie)%3B%2F%2F
-			]]>
-		</var>
+			''';
 
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${maliciousURL1}" />
-		</execute>
+		Navigator.openSpecificURL(
+			url = "${maliciousURL1}"
+		);
 
-		<execute function="AssertAlertNotPresent" />
+		AssertAlertNotPresent();
 
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${maliciousURL2}" />
-		</execute>
+		Navigator.openSpecificURL(
+			url = "${maliciousURL2}"
+		);
 
-		<execute function="AssertAlertNotPresent" />
+		AssertAlertNotPresent();
 
-		<execute macro="Navigator#openURL" />
+		Navigator.openURL();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="My Account" />
-			<var name="panel" value="User" />
-			<var name="portlet" value="Account Settings" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "My Account",
+			panel = "User",
+			portlet = "Account Settings"
+		);
 
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${maliciousURL3}" />
-		</execute>
+		Navigator.openSpecificURL(
+			url = "${maliciousURL3}"
+		);
 
-		<execute function="AssertAlertNotPresent" />
+		AssertAlertNotPresent();
 
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${maliciousURL4}" />
-		</execute>
+		Navigator.openSpecificURL(
+			url = "${maliciousURL4}"
+		);
 
-		<execute function="AssertAlertNotPresent" />
+		AssertAlertNotPresent();
 
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${maliciousURL5}" />
-		</execute>
+		Navigator.openSpecificURL(
+			url = "${maliciousURL5}"
+		);
 
-		<execute function="AssertAlertNotPresent" />
-	</command>
+		AssertAlertNotPresent();
+	}
 
-	<command name="ViewWikiNoXSS" priority="5">
-		<execute macro="Navigator#openURL" />
+	@priority = "5"
+	testViewWikiNoXSS {
+		Navigator.openURL();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="My Account" />
-			<var name="panel" value="User" />
-			<var name="portlet" value="Account Settings" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "My Account",
+			panel = "User",
+			portlet = "Account Settings"
+		);
 
-		<execute macro="User#editDetailsViaMyAccount">
-			<var name="userFirstNameEdit"><![CDATA[<script>alert(123);</script>]]></var>
-			<var name="userLastNameEdit"><![CDATA[<script>alert(123);</script>]]></var>
-			<var name="userMiddleNameEdit"><![CDATA[<script>alert(123);</script>]]></var>
-		</execute>
+		User.editDetailsViaMyAccount(
+			userFirstNameEdit = '''<script>alert(123);</script>''',
+			userLastNameEdit = '''<script>alert(123);</script>''',
+			userMiddleNameEdit = '''<script>alert(123);</script>'''
+		);
 
-		<execute macro="Navigator#openURL" />
+		Navigator.openURL();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Wiki" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Wiki"
+		);
 
-		<execute macro="WikiNavigator#gotoNode">
-			<var name="wikiNodeName" value="Main" />
-		</execute>
+		WikiNavigator.gotoNode(
+			wikiNodeName = "Main"
+		);
 
-		<execute macro="WikiPage#addCP">
-			<var name="wikiPageContent" value="Wiki Page Content" />
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
+		WikiPage.addCP(
+			wikiPageContent = "Wiki Page Content",
+			wikiPageTitle = "Wiki Page Title"
+		);
 
-		<execute macro="WikiNavigator#gotoCP">
-			<var name="wikiPageTitle" value="Wiki Page Title" />
-		</execute>
+		WikiNavigator.gotoCP(
+			wikiPageTitle = "Wiki Page Title"
+		);
 
-		<execute function="AssertElementNotPresent" locator1="//body[.='XSS']" />
+		AssertElementNotPresent(locator1 = "//body[.='XSS']");
+		var actualScript = '''<script>alert(123);</script>''';
+		var escapedScript = '''&lt;script&gt;alert(123);&lt;/script&gt;''';
 
-		<var name="actualScript"><![CDATA[<script>alert(123);</script>]]></var>
-		<var name="escapedScript"><![CDATA[&lt;script&gt;alert(123);&lt;/script&gt;]]></var>
+		AssertHTMLSourceTextNotPresent(value1 = "${actualScript}");
 
-		<execute function="AssertHTMLSourceTextNotPresent" value1="${actualScript}" />
-		<execute function="AssertHTMLSourceTextPresent" value1="${escapedScript}" />
-	</command>
-</definition>
+		AssertHTMLSourceTextPresent(value1 = "${escapedScript}");
+	}
+}
