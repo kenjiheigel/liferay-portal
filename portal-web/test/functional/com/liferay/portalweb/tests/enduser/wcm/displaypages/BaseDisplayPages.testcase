@@ -1,189 +1,172 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Display Pages" />
+@component-name = "portal-wcm"
+definition {
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "Display Pages";
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+	setUp {
+		TestCase.setUpPortalInstance();
 
-		<execute macro="User#firstLoginPG" />
+		User.firstLoginPG();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Sites" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Sites" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Sites",
+			panel = "Control Panel",
+			portlet = "Sites"
+		);
 
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Test Site Name" />
-		</execute>
-	</set-up>
+		Site.addBlankCP(siteName = "Test Site Name");
+	}
 
-	<tear-down>
-		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+	tearDown {
+		var testPortalInstance = PropsUtil.get('test.portal.instance');
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Site#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			Site.tearDownCP();
+		}
+	}
 
-	<command name="AddBlankDisplayPage" priority="3">
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Pages" />
-		</execute>
+	@priority = "3"
+	test AddBlankDisplayPage {
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Pages"
+		);
 
-		<execute macro="NavItem#gotoDisplayPages" />
+		NavItem.gotoDisplayPages();
 
-		<execute macro="DisplayPages#add">
-			<var name="displayPageName" value="Display Page Name" />
-		</execute>
+		DisplayPages.add(displayPageName = "Display Page Name");
 
-		<execute macro="PortletEntry#publish" />
-	</command>
+		PortletEntry.publish();
+	}
 
-	<command name="AssertAssetTypeOnlySelectableOnce" priority="4">
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Pages" />
-		</execute>
+	@priority = "4"
+	test AssertAssetTypeOnlySelectableOnce {
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Pages"
+		);
 
-		<execute macro="NavItem#gotoDisplayPages" />
+		NavItem.gotoDisplayPages();
 
-		<execute macro="DisplayPages#add">
-			<var name="displayPageName" value="Display Page Name" />
-		</execute>
+		DisplayPages.add(displayPageName = "Display Page Name");
 
-		<execute macro="DisplayPages#selectAssetType">
-			<var name="assetType" value="Web Content Article" />
-			<var name="subType" value="Basic Web Content" />
-		</execute>
+		DisplayPages.selectAssetType(
+			assetType = "Web Content Article",
+			subType = "Basic Web Content"
+		);
 
-		<execute macro="DisplayPages#assertAssetTypeUnselectable" />
-	</command>
+		DisplayPages.assertAssetTypeUnselectable();
+	}
 
-	<command name="DeleteDisplayPage" priority="5">
-		<property name="portal.acceptance" value="true" />
+	@priority = "5"
+	test DeleteDisplayPage {
+		property portal.acceptance = "true";
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Pages" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Pages"
+		);
 
-		<execute macro="NavItem#gotoDisplayPages" />
+		NavItem.gotoDisplayPages();
 
-		<execute macro="DisplayPages#add">
-			<var name="displayPageName" value="Display Page Name" />
-		</execute>
+		DisplayPages.add(displayPageName = "Display Page Name");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Pages" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Pages"
+		);
 
-		<execute macro="NavItem#gotoDisplayPages" />
+		NavItem.gotoDisplayPages();
 
-		<execute macro="LexiconEntry#delete">
-			<var name="rowEntry" value="Display Page Name" />
-		</execute>
+		LexiconEntry.delete(rowEntry = "Display Page Name");
 
-		<execute macro="LexiconEntry#viewNoEntry">
-			<var name="rowEntry" value="Display Page Name" />
-		</execute>
-	</command>
+		LexiconEntry.viewNoEntry(rowEntry = "Display Page Name");
+	}
 
-	<command name="RenameDisplayPage" priority="4">
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Pages" />
-		</execute>
+	@priority = "4"
+	test RenameDisplayPage {
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Pages"
+		);
 
-		<execute macro="NavItem#gotoDisplayPages" />
+		NavItem.gotoDisplayPages();
 
-		<execute macro="DisplayPages#add">
-			<var name="displayPageName" value="Display Page Name" />
-		</execute>
+		DisplayPages.add(displayPageName = "Display Page Name");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Pages" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Pages"
+		);
 
-		<execute macro="NavItem#gotoDisplayPages" />
+		NavItem.gotoDisplayPages();
 
-		<execute macro="LayoutPageTemplates#rename">
-			<var name="pageTemplateName" value="Display Page Name New" />
-			<var name="rowEntry" value="Display Page Name" />
-		</execute>
+		LayoutPageTemplates.rename(
+			pageTemplateName = "Display Page Name New",
+			rowEntry = "Display Page Name"
+		);
 
-		<execute macro="LexiconEntry#viewEntryName">
-			<var name="rowEntry" value="Display Page Name New" />
-		</execute>
-	</command>
+		LexiconEntry.viewEntryName(rowEntry = "Display Page Name New");
+	}
 
-	<command name="ViewCannotDeleteActiveDisplayPage" priority="4">
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Pages" />
-		</execute>
+	@priority = "4"
+	test ViewCannotDeleteActiveDisplayPage {
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Pages"
+		);
 
-		<execute macro="NavItem#gotoDisplayPages" />
+		NavItem.gotoDisplayPages();
 
-		<execute macro="DisplayPages#add">
-			<var name="displayPageName" value="Display Page Name" />
-		</execute>
+		DisplayPages.add(displayPageName = "Display Page Name");
 
-		<execute macro="DisplayPages#selectAssetType">
-			<var name="assetType" value="Web Content Article" />
-			<var name="subType" value="Basic Web Content" />
-		</execute>
+		DisplayPages.selectAssetType(
+			assetType = "Web Content Article",
+			subType = "Basic Web Content"
+		);
 
-		<execute macro="Button#clickPublish" />
+		Button.clickPublish();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Web Content" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Web Content"
+		);
 
-		<execute macro="WebContent#addArticleCP">
-			<var name="webContentContent" value="Webcontent Content" />
-			<var name="webContentTitle" value="Webcontent Title" />
-		</execute>
+		WebContent.addArticleCP(
+			webContentContent = "Webcontent Content",
+			webContentTitle = "Webcontent Title"
+		);
 
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="Webcontent Title" />
-		</execute>
+		WebContentNavigator.gotoEditCP(webContentTitle = "Webcontent Title");
 
-		<execute macro="WebContent#editDisplayPage">
-			<var name="pageName" value="Display Page Name" />
-			<var name="pageType" value="Display Pages" />
-		</execute>
+		WebContent.editDisplayPage(
+			pageName = "Display Page Name",
+			pageType = "Display Pages"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Pages" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Pages"
+		);
 
-		<execute macro="NavItem#gotoDisplayPages" />
+		NavItem.gotoDisplayPages();
 
-		<execute macro="LexiconEntry#delete">
-			<var name="failure" value="Error:You cannot delete asset display pages that are used by one or more assets." />
-			<var name="rowEntry" value="Display Page Name" />
-		</execute>
-	</command>
-</definition>
+		LexiconEntry.delete(
+			failure = "Error:You cannot delete asset display pages that are used by one or more assets.",
+			rowEntry = "Display Page Name"
+		);
+	}
+}

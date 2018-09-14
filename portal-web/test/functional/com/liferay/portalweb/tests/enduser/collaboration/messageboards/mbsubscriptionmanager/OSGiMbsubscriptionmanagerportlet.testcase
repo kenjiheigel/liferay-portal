@@ -1,26 +1,30 @@
-<definition component-name="portal-plugins-osgi">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="plugins.deployment.type" value="osgi" />
-	<property name="testray.main.component.name" value="Message Boards" />
+@component-name = "portal-plugins-osgi"
+definition {
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property plugins.deployment.type = "osgi";
+	property testray.main.component.name = "Message Boards";
 
-	<set-up>
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+	setUp {
+		User.firstLoginPG();
+	}
 
-	<command name="MBSubscriptionManagerPortletSmoke" priority="4">
-		<property name="portlet.plugins.includes" value="mb-subscription-manager-portlet" />
+	@priority = "4"
+	test MBSubscriptionManagerPortletSmoke {
+		property portlet.plugins.includes = "mb-subscription-manager-portlet";
+		var appName = "Message Boards Subscription Manager";
 
-		<var name="appName" value="Message Boards Subscription Manager" />
+		Navigator.openURL();
 
-		<execute macro="Navigator#openURL" />
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Site Administration",
+			portlet = "Message Boards Subscription Manager"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Message Boards Subscription Manager" />
-		</execute>
-
-		<execute function="AntCommand#antCommand" locator1="build-test.xml" value1="remove-plugin -Dplugin.name=my-subscriptions-portlet" />
-	</command>
-</definition>
+		AntCommand.antCommand(
+			locator1 = "build-test.xml",
+			value1 = "remove-plugin -Dplugin.name=my-subscriptions-portlet"
+		);
+	}
+}

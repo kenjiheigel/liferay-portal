@@ -1,527 +1,367 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Localization" />
-
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
-
-		<execute macro="User#firstLoginPG" />
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Sites" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Sites" />
-		</execute>
-
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Pages" />
-		</execute>
-
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="Test Page Name" />
-		</execute>
-	</set-up>
-
-	<tear-down>
-		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Site#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-
-	<command name="AddWCWithMultipleTranslations" priority="4">
-		<property name="test.name.skip.portal.instance" value="LanguageUsecase#AddWCWithMultipleTranslations" />
-		<property name="testray.component.names" value="Localization,Web Content Administration" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addWithThreeTranslations" />
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Web Content Display" />
-		</execute>
-
-		<execute macro="WebContentDisplayPortlet#selectWebContent">
-			<var name="webContentTitle" value="WC Title" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language Selector" />
-		</execute>
-
-		<execute function="Refresh" />
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="locale" value="es_ES" />
-			<var name="textIcon" value="español-España" />
-		</execute>
-
-		<execute function="Refresh" />
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC Contenido" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditPGViaWCD">
-			<var name="menuItem" value="Editar contenido web" />
-			<var name="webContentTitle" value="WC Titulo" />
-		</execute>
-
-		<execute macro="PortletEntry#changeLocale">
-			<var name="fieldName" value="Título" />
-			<var name="locale" value="es-ES" />
-		</execute>
-
-		<execute macro="WebContent#viewCP">
-			<var name="webContentContent" value="WC Contenido" />
-			<var name="webContentTitle" value="WC Titulo" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute function="Refresh" />
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="locale" value="de-DE" />
-			<var name="textIcon" value="Deutsch-Deutschland" />
-		</execute>
-
-		<execute function="Refresh" />
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC Inhalt" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditPGViaWCD">
-			<var name="menuItem" value="Webcontent bearbeiten" />
-			<var name="webContentTitle" value="WC Titel" />
-		</execute>
-
-		<execute macro="PortletEntry#changeLocale">
-			<var name="fieldName" value="Titel" />
-			<var name="locale" value="de-DE" />
-		</execute>
-
-		<execute macro="WebContent#viewCP">
-			<var name="webContentContent" value="WC Inhalt" />
-			<var name="webContentTitle" value="WC Titel" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute function="Refresh" />
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="locale" value="fi-FI" />
-			<var name="textIcon" value="suomi-Suomi" />
-		</execute>
-
-		<execute function="Refresh" />
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC Pitoisuus" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditPGViaWCD">
-			<var name="menuItem" value="Muokkaa web-sisältöä" />
-			<var name="webContentTitle" value="WC Otsikko" />
-		</execute>
-
-		<execute macro="PortletEntry#changeLocale">
-			<var name="fieldName" value="Otsikko" />
-			<var name="locale" value="fi-FI" />
-		</execute>
-
-		<execute macro="WebContent#viewCP">
-			<var name="webContentContent" value="WC Pitoisuus" />
-			<var name="webContentTitle" value="WC Otsikko" />
-		</execute>
-	</command>
-
-	<command name="AddWCWithTranslation" priority="5">
-		<property name="portal.acceptance" value="true" />
-		<property name="test.name.skip.portal.instance" value="LanguageUsecase#AddWCWithTranslation" />
-		<property name="testray.component.names" value="Localization,Web Content Administration" />
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC Content" />
-			<var name="webContentTitle" value="WC Title" />
-		</execute>
-
-		<execute macro="PortletEntry#changeLocale">
-			<var name="fieldName" value="Title" />
-			<var name="locale" value="es-ES" />
-		</execute>
-
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC Contenido" />
-			<var name="webContentTitle" value="WC Titulo" />
-		</execute>
-
-		<execute macro="PortletEntry#publish" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Content#addPG">
-			<var name="assetTitle" value="WC Title" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language Selector" />
-		</execute>
-
-		<execute macro="LanguagePortlet#selectLanguagePG">
-			<var name="locale" value="es_ES" />
-			<var name="textIcon" value="español-España" />
-		</execute>
-
-		<execute macro="WebContent#viewPGViaWCD">
-			<var name="webContentContent" value="WC Contenido" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoEditPGViaWCD">
-			<var name="menuItem" value="Editar contenido web" />
-			<var name="webContentTitle" value="WC Titulo" />
-		</execute>
-
-		<execute macro="PortletEntry#changeLocale">
-			<var name="fieldName" value="Título" />
-			<var name="locale" value="es-ES" />
-		</execute>
-
-		<execute macro="WebContent#viewCP">
-			<var name="webContentContent" value="WC Contenido" />
-			<var name="webContentTitle" value="WC Titulo" />
-		</execute>
-	</command>
-
-	<command name="MoveCurrentLanguagesToAvailable" priority="4">
-		<property name="test.name.skip.portal.instance" value="LanguageUsecase#MoveCurrentLanguagesToAvailable" />
-		<property name="testray.component.names" value="Localization" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language Selector" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="LanguagePortlet#moveLanguagesToAvailable" />
-
-		<execute macro="LanguagePortlet#moveLanguagesToCurrent">
-			<var name="currentLanguages" value="English (United States),German (Germany),Spanish (Spain)" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewLanguageCurrent">
-			<var name="locale" value="en-us" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewLanguagesAbsent">
-			<var name="missingLocales" value="français-France,magyar-Magyarország,日本語-日本,português-Brasil,中文-中国,עברית-ישראל,suomi-Suomi,català-Espanya,Nederlands-Nederland" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewLanguagesPresent">
-			<var name="currentLocales" value="Deutsch-Deutschland,español-España" />
-		</execute>
-	</command>
-
-	<command name="ViewChangedDefaultPortalLanguageViaWebContent" priority="4">
-		<property name="test.name.skip.portal.instance" value="LanguageUsecase#ViewChangedDefaultPortalLanguageViaWebContent" />
-		<property name="testray.component.names" value="Localization" />
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="PortalSettings#configureCurrentLanguagesCP">
-			<var name="defaultPortalLanguage" value="Spanish (Spain)" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Web Content" />
-		</execute>
-
-		<execute macro="WebContentNavigator#gotoAddCP" />
-
-		<execute macro="PortletEntry#viewLocale">
-			<var name="locale" value="es-ES" />
-		</execute>
-	</command>
-
-	<command name="ViewDisplayOptionsViaLanguagePortlet" priority="4">
-		<property name="test.name.skip.portal.instance" value="LanguageUsecase#ViewDisplayOptionsViaLanguagePortlet" />
-		<property name="testray.component.names" value="Localization" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language Selector" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="LanguagePortlet#toggleDisplayTemplate">
-			<var name="displayStyle" value="Icon Menu" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewLanguageCurrent">
-			<var name="locale" value="en-us" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="LanguagePortlet#toggleDisplayTemplate">
-			<var name="displayStyle" value="Long Text" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewDisplayTemplateLongText">
-			<var name="language" value="suomi" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="LanguagePortlet#toggleDisplayTemplate">
-			<var name="displayStyle" value="Select Box" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewDisplayTemplateSelectBox">
-			<var name="language" value="English" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="LanguagePortlet#toggleDisplayTemplate">
-			<var name="displayStyle" value="Short Text" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewDisplayTemplateShortText">
-			<var name="languageKey" value="HU" />
-		</execute>
-	</command>
-
-	<command name="ViewRemovedCurrentPortalLanguagesViaLanguagePortlet" priority="4">
-		<property name="test.name.skip.portal.instance" value="LanguageUsecase#ViewRemovedCurrentPortalLanguagesViaLanguagePortlet" />
-		<property name="testray.component.names" value="Localization" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language Selector" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Instance Settings" />
-		</execute>
-
-		<execute macro="PortalSettings#configureCurrentLanguagesCP">
-			<var name="currentPortalLanguages" value="Chinese (China),English (United States),French (France)" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewLanguageCurrent">
-			<var name="locale" value="en-us" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewLanguagesAbsent">
-			<var name="missingLocales" value="magyar-Magyarország,日本語-日本,português-Brasil,עברית-ישראל,suomi-Suomi,català-Espanya,Nederlands-Nederland,Deutsch-Deutschland,español-España" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewLanguagesPresent">
-			<var name="currentLocales" value="français-France,中文-中国" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="LanguagePortlet#configureViewCurrentLanguages">
-			<var name="currentLanguages" value="Chinese (China),French (France),English (United States)" />
-		</execute>
-	</command>
-
-	<command name="ViewRemovedCurrentSiteLanguagesViaLanguagePortlet" priority="4">
-		<property name="test.name.skip.portal.instance" value="LanguageUsecase#ViewRemovedCurrentSiteLanguageViaLanguagePortlet" />
-		<property name="testray.component.names" value="Localization" />
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Language Selector" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Site Name" />
-		</execute>
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Site Settings" />
-		</execute>
-
-		<execute macro="Site#configureCurrentLanguagesCP">
-			<var name="currentSiteLanguages" value="English (United States),German (Germany),Spanish (Spain)" />
-			<var name="defaultSiteLanguage" value="English (United States)" />
-			<var name="displaySettings" value="Display Settings" />
-		</execute>
-
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Site Name" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewLanguageCurrent">
-			<var name="locale" value="en-us" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewLanguagesAbsent">
-			<var name="missingLocales" value="français-France,magyar-Magyarország,日本語-日本,português-Brasil,中文-中国,עברית-ישראל,suomi-Suomi,català-Espanya,Nederlands-Nederland" />
-		</execute>
-
-		<execute macro="LanguagePortlet#viewLanguagesPresent">
-			<var name="currentLocales" value="Deutsch-Deutschland,español-España" />
-		</execute>
-
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletOption" value="Configuration" />
-		</execute>
-
-		<execute macro="LanguagePortlet#configureViewCurrentLanguages">
-			<var name="currentLanguages" value="English (United States),German (Germany),Spanish (Spain)" />
-		</execute>
-	</command>
-</definition>
+@component-name = "portal-wcm"
+definition {
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "Localization";
+
+	setUp {
+		TestCase.setUpPortalInstance();
+
+		User.firstLoginPG();
+
+		ProductMenu.gotoPortlet(
+			category = "Sites",
+			panel = "Control Panel",
+			portlet = "Sites"
+		);
+
+		Site.addBlankCP(siteName = "Site Name");
+
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Pages"
+		);
+
+		SitePages.addPublicPage(pageName = "Test Page Name");
+	}
+
+	tearDown {
+		var testPortalInstance = PropsUtil.get('test.portal.instance');
+
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			Site.tearDownCP();
+		}
+	}
+
+	@priority = "4"
+	test AddWCWithMultipleTranslations {
+		property test.name.skip.portal.instance = "LanguageUsecase#AddWCWithMultipleTranslations";
+		property testray.component.names = "Localization,Web Content Administration";
+
+		ProductMenu.gotoSite(site = "Site Name");
+
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Web Content"
+		);
+
+		WebContentNavigator.gotoAddCP();
+
+		WebContent.addWithThreeTranslations();
+
+		PortletEntry.publish();
+
+		Navigator.gotoSitePage(pageName = "Test Page Name", siteName = "Site Name");
+
+		Portlet.addPG(portletName = "Web Content Display");
+
+		WebContentDisplayPortlet.selectWebContent(webContentTitle = "WC Title");
+
+		Navigator.gotoSitePage(pageName = "Test Page Name", siteName = "Site Name");
+
+		Portlet.addPG(portletName = "Language Selector");
+
+		Refresh();
+
+		LanguagePortlet.selectLanguagePG(locale = "es_ES", textIcon = "español-España");
+
+		Refresh();
+
+		WebContent.viewPGViaWCD(webContentContent = "WC Contenido");
+
+		WebContentNavigator.gotoEditPGViaWCD(
+			menuItem = "Editar contenido web",
+			webContentTitle = "WC Titulo"
+		);
+
+		PortletEntry.changeLocale(fieldName = "Título", locale = "es-ES");
+
+		WebContent.viewCP(
+			webContentContent = "WC Contenido",
+			webContentTitle = "WC Titulo"
+		);
+
+		Navigator.gotoSitePage(pageName = "Test Page Name", siteName = "Site Name");
+
+		Refresh();
+
+		LanguagePortlet.selectLanguagePG(
+			locale = "de-DE",
+			textIcon = "Deutsch-Deutschland"
+		);
+
+		Refresh();
+
+		WebContent.viewPGViaWCD(webContentContent = "WC Inhalt");
+
+		WebContentNavigator.gotoEditPGViaWCD(
+			menuItem = "Webcontent bearbeiten",
+			webContentTitle = "WC Titel"
+		);
+
+		PortletEntry.changeLocale(fieldName = "Titel", locale = "de-DE");
+
+		WebContent.viewCP(webContentContent = "WC Inhalt", webContentTitle = "WC Titel");
+
+		Navigator.gotoSitePage(pageName = "Test Page Name", siteName = "Site Name");
+
+		Refresh();
+
+		LanguagePortlet.selectLanguagePG(locale = "fi-FI", textIcon = "suomi-Suomi");
+
+		Refresh();
+
+		WebContent.viewPGViaWCD(webContentContent = "WC Pitoisuus");
+
+		WebContentNavigator.gotoEditPGViaWCD(
+			menuItem = "Muokkaa web-sisältöä",
+			webContentTitle = "WC Otsikko"
+		);
+
+		PortletEntry.changeLocale(fieldName = "Otsikko", locale = "fi-FI");
+
+		WebContent.viewCP(
+			webContentContent = "WC Pitoisuus",
+			webContentTitle = "WC Otsikko"
+		);
+	}
+
+	@priority = "5"
+	test AddWCWithTranslation {
+		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "LanguageUsecase#AddWCWithTranslation";
+		property testray.component.names = "Localization,Web Content Administration";
+
+		ProductMenu.gotoSite(site = "Site Name");
+
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Web Content"
+		);
+
+		WebContentNavigator.gotoAddCP();
+
+		WebContent.addCP(webContentContent = "WC Content", webContentTitle = "WC Title");
+
+		PortletEntry.changeLocale(fieldName = "Title", locale = "es-ES");
+
+		WebContent.addCP(
+			webContentContent = "WC Contenido",
+			webContentTitle = "WC Titulo"
+		);
+
+		PortletEntry.publish();
+
+		Navigator.gotoSitePage(pageName = "Test Page Name", siteName = "Site Name");
+
+		Content.addPG(assetTitle = "WC Title");
+
+		Portlet.addPG(portletName = "Language Selector");
+
+		LanguagePortlet.selectLanguagePG(locale = "es_ES", textIcon = "español-España");
+
+		WebContent.viewPGViaWCD(webContentContent = "WC Contenido");
+
+		WebContentNavigator.gotoEditPGViaWCD(
+			menuItem = "Editar contenido web",
+			webContentTitle = "WC Titulo"
+		);
+
+		PortletEntry.changeLocale(fieldName = "Título", locale = "es-ES");
+
+		WebContent.viewCP(
+			webContentContent = "WC Contenido",
+			webContentTitle = "WC Titulo"
+		);
+	}
+
+	@priority = "4"
+	test MoveCurrentLanguagesToAvailable {
+		property test.name.skip.portal.instance = "LanguageUsecase#MoveCurrentLanguagesToAvailable";
+		property testray.component.names = "Localization";
+
+		Navigator.gotoSitePage(pageName = "Test Page Name", siteName = "Site Name");
+
+		Portlet.addPG(portletName = "Language Selector");
+
+		Navigator.gotoSitePage(pageName = "Test Page Name", siteName = "Site Name");
+
+		Portlet.gotoPortletOptions(portletOption = "Configuration");
+
+		LanguagePortlet.moveLanguagesToAvailable();
+
+		LanguagePortlet.moveLanguagesToCurrent(
+			currentLanguages = "English (United States),German (Germany),Spanish (Spain)"
+		);
+
+		Navigator.gotoSitePage(pageName = "Test Page Name", siteName = "Site Name");
+
+		LanguagePortlet.viewLanguageCurrent(locale = "en-us");
+
+		LanguagePortlet.viewLanguagesAbsent(
+			missingLocales = "français-France,magyar-Magyarország,日本語-日本,português-Brasil,中文-中国,עברית-ישראל,suomi-Suomi,català-Espanya,Nederlands-Nederland"
+		);
+
+		LanguagePortlet.viewLanguagesPresent(
+			currentLocales = "Deutsch-Deutschland,español-España"
+		);
+	}
+
+	@priority = "4"
+	test ViewChangedDefaultPortalLanguageViaWebContent {
+		property test.name.skip.portal.instance = "LanguageUsecase#ViewChangedDefaultPortalLanguageViaWebContent";
+		property testray.component.names = "Localization";
+
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Instance Settings"
+		);
+
+		PortalSettings.configureCurrentLanguagesCP(
+			defaultPortalLanguage = "Spanish (Spain)"
+		);
+
+		ProductMenu.gotoSite(site = "Site Name");
+
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Web Content"
+		);
+
+		WebContentNavigator.gotoAddCP();
+
+		PortletEntry.viewLocale(locale = "es-ES");
+	}
+
+	@priority = "4"
+	test ViewDisplayOptionsViaLanguagePortlet {
+		property test.name.skip.portal.instance = "LanguageUsecase#ViewDisplayOptionsViaLanguagePortlet";
+		property testray.component.names = "Localization";
+
+		Navigator.gotoSitePage(pageName = "Test Page Name", siteName = "Site Name");
+
+		Portlet.addPG(portletName = "Language Selector");
+
+		Navigator.gotoSitePage(pageName = "Test Page Name", siteName = "Site Name");
+
+		Portlet.gotoPortletOptions(portletOption = "Configuration");
+
+		LanguagePortlet.toggleDisplayTemplate(displayStyle = "Icon Menu");
+
+		Navigator.gotoSitePage(pageName = "Test Page Name", siteName = "Site Name");
+
+		LanguagePortlet.viewLanguageCurrent(locale = "en-us");
+
+		Navigator.gotoSitePage(pageName = "Test Page Name", siteName = "Site Name");
+
+		Portlet.gotoPortletOptions(portletOption = "Configuration");
+
+		LanguagePortlet.toggleDisplayTemplate(displayStyle = "Long Text");
+
+		Navigator.gotoSitePage(pageName = "Test Page Name", siteName = "Site Name");
+
+		LanguagePortlet.viewDisplayTemplateLongText(language = "suomi");
+
+		Portlet.gotoPortletOptions(portletOption = "Configuration");
+
+		LanguagePortlet.toggleDisplayTemplate(displayStyle = "Select Box");
+
+		Navigator.gotoSitePage(pageName = "Test Page Name", siteName = "Site Name");
+
+		LanguagePortlet.viewDisplayTemplateSelectBox(language = "English");
+
+		Portlet.gotoPortletOptions(portletOption = "Configuration");
+
+		LanguagePortlet.toggleDisplayTemplate(displayStyle = "Short Text");
+
+		Navigator.gotoSitePage(pageName = "Test Page Name", siteName = "Site Name");
+
+		LanguagePortlet.viewDisplayTemplateShortText(languageKey = "HU");
+	}
+
+	@priority = "4"
+	test ViewRemovedCurrentPortalLanguagesViaLanguagePortlet {
+		property test.name.skip.portal.instance = "LanguageUsecase#ViewRemovedCurrentPortalLanguagesViaLanguagePortlet";
+		property testray.component.names = "Localization";
+
+		Navigator.gotoSitePage(pageName = "Test Page Name", siteName = "Site Name");
+
+		Portlet.addPG(portletName = "Language Selector");
+
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Instance Settings"
+		);
+
+		PortalSettings.configureCurrentLanguagesCP(
+			currentPortalLanguages = "Chinese (China),English (United States),French (France)"
+		);
+
+		Navigator.gotoSitePage(pageName = "Test Page Name", siteName = "Site Name");
+
+		LanguagePortlet.viewLanguageCurrent(locale = "en-us");
+
+		LanguagePortlet.viewLanguagesAbsent(
+			missingLocales = "magyar-Magyarország,日本語-日本,português-Brasil,עברית-ישראל,suomi-Suomi,català-Espanya,Nederlands-Nederland,Deutsch-Deutschland,español-España"
+		);
+
+		LanguagePortlet.viewLanguagesPresent(currentLocales = "français-France,中文-中国");
+
+		Portlet.gotoPortletOptions(portletOption = "Configuration");
+
+		LanguagePortlet.configureViewCurrentLanguages(
+			currentLanguages = "Chinese (China),French (France),English (United States)"
+		);
+	}
+
+	@priority = "4"
+	test ViewRemovedCurrentSiteLanguagesViaLanguagePortlet {
+		property test.name.skip.portal.instance = "LanguageUsecase#ViewRemovedCurrentSiteLanguageViaLanguagePortlet";
+		property testray.component.names = "Localization";
+
+		Navigator.gotoSitePage(pageName = "Test Page Name", siteName = "Site Name");
+
+		Portlet.addPG(portletName = "Language Selector");
+
+		ProductMenu.gotoSite(site = "Site Name");
+
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Site Administration",
+			portlet = "Site Settings"
+		);
+
+		Site.configureCurrentLanguagesCP(
+			currentSiteLanguages = "English (United States),German (Germany),Spanish (Spain)",
+			defaultSiteLanguage = "English (United States)",
+			displaySettings = "Display Settings"
+		);
+
+		Navigator.gotoSitePage(pageName = "Test Page Name", siteName = "Site Name");
+
+		LanguagePortlet.viewLanguageCurrent(locale = "en-us");
+
+		LanguagePortlet.viewLanguagesAbsent(
+			missingLocales = "français-France,magyar-Magyarország,日本語-日本,português-Brasil,中文-中国,עברית-ישראל,suomi-Suomi,català-Espanya,Nederlands-Nederland"
+		);
+
+		LanguagePortlet.viewLanguagesPresent(
+			currentLocales = "Deutsch-Deutschland,español-España"
+		);
+
+		Portlet.gotoPortletOptions(portletOption = "Configuration");
+
+		LanguagePortlet.configureViewCurrentLanguages(
+			currentLanguages = "English (United States),German (Germany),Spanish (Spain)"
+		);
+	}
+}

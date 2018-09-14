@@ -1,169 +1,137 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Fragments" />
+@component-name = "portal-wcm"
+definition {
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "Fragments";
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+	setUp {
+		TestCase.setUpPortalInstance();
 
-		<execute macro="User#firstLoginPG" />
+		User.firstLoginPG();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Sites" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Sites" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Sites",
+			panel = "Control Panel",
+			portlet = "Sites"
+		);
 
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Test Site Name" />
-		</execute>
+		Site.addBlankCP(siteName = "Test Site Name");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Page Fragments" />
-		</execute>
-	</set-up>
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Page Fragments"
+		);
+	}
 
-	<tear-down>
-		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+	tearDown {
+		var testPortalInstance = PropsUtil.get('test.portal.instance');
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Site#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			Site.tearDownCP();
+		}
+	}
 
-	<command name="CannotImportInvalidZip" priority="5">
-		<description message="This is a test case for LPS-80625." />
-		<property name="portal.acceptance" value="true" />
+	@description = "This is a test case for LPS-80625."
+	@priority = "5"
+	test CannotImportInvalidZip {
+		property portal.acceptance = "true";
 
-		<execute macro="Fragment#importCollectionFromDependenciesFolder">
-			<var name="collectionZipFile" value="fragment-invalid-zip.zip" />
-		</execute>
+		Fragment.importCollectionFromDependenciesFolder(
+			collectionZipFile = "fragment-invalid-zip.zip"
+		);
 
-		<execute macro="Button#click">
-			<var name="button" value="Import" />
-		</execute>
+		Button.click(button = "Import");
 
-		<execute macro="Alert#viewErrorMessage">
-			<var name="errorMessage" value="The selected file is not a valid zip file." />
-		</execute>
+		Alert.viewErrorMessage(
+			errorMessage = "The selected file is not a valid zip file."
+		);
 
-		<execute macro="IFrame#closeFrame" />
-	</command>
+		IFrame.closeFrame();
+	}
 
-	<command name="CannotImportNonZip" priority="5">
-		<description message="This is a test case for LPS-80625." />
-		<property name="portal.acceptance" value="true" />
+	@description = "This is a test case for LPS-80625."
+	@priority = "5"
+	test CannotImportNonZip {
+		property portal.acceptance = "true";
 
-		<execute macro="Fragment#importCollectionFromDependenciesFolder">
-			<var name="collectionZipFile" value="Document_1.doc" />
-		</execute>
+		Fragment.importCollectionFromDependenciesFolder(
+			collectionZipFile = "Document_1.doc"
+		);
 
-		<execute function="AssertTextEquals" locator1="Message#ERROR_FORM_VALIDATION" value1="Please enter a file with a valid extension (zip)." />
+		AssertTextEquals(
+			locator1 = "Message#ERROR_FORM_VALIDATION",
+			value1 = "Please enter a file with a valid extension (zip)."
+		);
 
-		<execute macro="IFrame#closeFrame" />
-	</command>
+		IFrame.closeFrame();
+	}
 
-	<command name="ExportImportCollectionViewFragment" priority="5">
-		<property name="portal.acceptance" value="true" />
+	@priority = "5"
+	test ExportImportCollectionViewFragment {
+		property portal.acceptance = "true";
 
-		<execute macro="Fragment#addCollection">
-			<var name="collectionDescription" value="Collection Description" />
-			<var name="collectionName" value="Collection Name" />
-		</execute>
+		Fragment.addCollection(
+			collectionDescription = "Collection Description",
+			collectionName = "Collection Name"
+		);
 
-		<execute macro="Navigator#gotoNavNested">
-			<var name="navNested" value="Collection Name" />
-		</execute>
+		Navigator.gotoNavNested(navNested = "Collection Name");
 
-		<execute macro="Fragment#addFragment">
-			<var name="fragmentName" value="Fragment Name" />
-		</execute>
+		Fragment.addFragment(fragmentName = "Fragment Name");
 
-		<execute macro="TestCase#getFileContent">
-			<return name="htmlSnippet" />
-			<var name="fileName" value="fragment_button.html" />
-		</execute>
+		var htmlSnippet = TestCase.getFileContent(fileName = "fragment_button.html");
 
-		<execute macro="Fragment#typeFragmentEditor">
-			<var name="editor" value="html" />
-			<var name="templateScript" value="${htmlSnippet}" />
-		</execute>
+		Fragment.typeFragmentEditor(editor = "html", templateScript = "${htmlSnippet}");
 
-		<execute macro="TestCase#getFileContent">
-			<return name="cssSnippet" />
-			<var name="fileName" value="fragment_button.css" />
-		</execute>
+		var cssSnippet = TestCase.getFileContent(fileName = "fragment_button.css");
 
-		<execute macro="Fragment#typeFragmentEditor">
-			<var name="editor" value="css" />
-			<var name="templateScript" value="${cssSnippet}" />
-		</execute>
+		Fragment.typeFragmentEditor(editor = "css", templateScript = "${cssSnippet}");
 
-		<execute macro="TestCase#getFileContent">
-			<return name="javascriptSnippet" />
-			<var name="fileName" value="fragment_button.js" />
-		</execute>
+		var javascriptSnippet = TestCase.getFileContent(fileName = "fragment_button.js");
 
-		<execute macro="Fragment#typeFragmentEditor">
-			<var name="editor" value="javascript" />
-			<var name="templateScript" value="${javascriptSnippet}" />
-		</execute>
+		Fragment.typeFragmentEditor(
+			editor = "javascript",
+			templateScript = "${javascriptSnippet}"
+		);
 
-		<execute macro="PortletEntry#publish" />
+		PortletEntry.publish();
 
-		<execute macro="Fragment#exportCollection">
-			<var name="collectionName" value="Collection Name" />
-		</execute>
+		Fragment.exportCollection(collectionName = "Collection Name");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Sites" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Sites" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Sites",
+			panel = "Control Panel",
+			portlet = "Sites"
+		);
 
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="New Site Name" />
-		</execute>
+		Site.addBlankCP(siteName = "New Site Name");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Page Fragments" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Page Fragments"
+		);
 
-		<execute macro="Fragment#importCollectionFromTempFolder" />
+		Fragment.importCollectionFromTempFolder();
 
-		<execute macro="Navigator#gotoNavNested">
-			<var name="navNested" value="Collection Name" />
-		</execute>
+		Navigator.gotoNavNested(navNested = "Collection Name");
 
-		<execute macro="LexiconEntry#gotoEntryMenuItem">
-			<var name="menuItem" value="Edit" />
-			<var name="rowEntry" value="Fragment Name" />
-		</execute>
+		LexiconEntry.gotoEntryMenuItem(menuItem = "Edit", rowEntry = "Fragment Name");
 
-		<execute function="SelectFrame" locator1="Fragment#PREVIEW_IFRAME" />
+		SelectFrame(locator1 = "Fragment#PREVIEW_IFRAME");
 
-		<for list="Submit,Cancel" param="button">
-			<execute macro="Button#viewPresent">
-				<var name="button" value="${button}" />
-			</execute>
-		</for>
+		for (var button : list "Submit,Cancel") {
+			Button.viewPresent(button = "${button}");
+		}
 
-		<execute macro="Button#clickNoError">
-			<var name="button" value="Submit" />
-		</execute>
+		Button.clickNoError(button = "Submit");
 
-		<execute function="Confirm" value1="Form submitted" />
+		Confirm(value1 = "Form submitted");
 
-		<execute macro="IFrame#selectTopFrame" />
-	</command>
-</definition>
+		IFrame.selectTopFrame();
+	}
+}

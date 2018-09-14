@@ -1,46 +1,49 @@
-<definition component-name="portal-deployment-hypersonic">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="test.prepare.bundle.properties" value="false" />
-	<property name="testray.main.component.name" value="Setup Wizard" />
+@component-name = "portal-deployment-hypersonic"
+definition {
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property test.prepare.bundle.properties = "false";
+	property testray.main.component.name = "Setup Wizard";
 
-	<command name="HypersonicToHypersonic" priority="5">
-		<property name="database.types" value="hypersonic" />
-		<property name="portal.acceptance" value="true" />
+	@priority = "5"
+	test HypersonicToHypersonic {
+		property database.types = "hypersonic";
+		property portal.acceptance = "true";
 
-		<execute macro="SetupWizard#configurePG">
-			<var name="administratorEmail" value="test@liferay.com" />
-			<var name="administratorFirstName" value="Test" />
-			<var name="administratorLastName" value="Test" />
-			<var method="PropsUtil#get('database.hypersonic.password')" name="databasePassword" />
-			<var name="databaseType" value="Hypersonic" />
-			<var method="PropsUtil#get('database.hypersonic.username')" name="databaseUserName" />
-			<var method="PropsUtil#get('database.hypersonic.driver')" name="jdbcDriverClassName" />
-			<var method="PropsUtil#get('database.hypersonic.url')" name="jdbcURL" />
-		</execute>
+		SetupWizard.configurePG(
+			administratorEmail = "test@liferay.com",
+			administratorFirstName = "Test",
+			administratorLastName = "Test",
+			databasePassword = PropsUtil.get('database.hypersonic.password'),
+			databaseType = "Hypersonic",
+			databaseUserName = PropsUtil.get('database.hypersonic.username'),
+			jdbcDriverClassName = PropsUtil.get('database.hypersonic.driver'),
+			jdbcURL = PropsUtil.get('database.hypersonic.url')
+		);
 
-		<execute macro="Smoke#viewWelcomePage" />
+		Smoke.viewWelcomePage();
 
-		<execute macro="Smoke#runSmoke" />
-	</command>
+		Smoke.runSmoke();
+	}
 
-	<command name="HypersonicToMySQL" priority="5">
-		<property name="database.types" value="mysql" />
-		<property name="portal.acceptance" value="true" />
+	@priority = "5"
+	test HypersonicToMySQL {
+		property database.types = "mysql";
+		property portal.acceptance = "true";
 
-		<execute macro="SetupWizard#configurePG">
-			<var name="administratorEmail" value="test@liferay.com" />
-			<var name="administratorFirstName" value="Test" />
-			<var name="administratorLastName" value="Test" />
-			<var method="PropsUtil#get('database.mysql.password')" name="databasePassword" />
-			<var name="databaseType" value="MySQL" />
-			<var method="PropsUtil#get('database.mysql.username')" name="databaseUserName" />
-			<var method="PropsUtil#get('database.mysql.driver')" name="jdbcDriverClassName" />
-			<var method="PropsUtil#get('database.mysql.url')" name="jdbcURL" />
-		</execute>
+		SetupWizard.configurePG(
+			administratorEmail = "test@liferay.com",
+			administratorFirstName = "Test",
+			administratorLastName = "Test",
+			databasePassword = PropsUtil.get('database.mysql.password'),
+			databaseType = "MySQL",
+			databaseUserName = PropsUtil.get('database.mysql.username'),
+			jdbcDriverClassName = PropsUtil.get('database.mysql.driver'),
+			jdbcURL = PropsUtil.get('database.mysql.url')
+		);
 
-		<execute macro="Smoke#viewWelcomePage" />
+		Smoke.viewWelcomePage();
 
-		<execute macro="Smoke#runSmoke" />
-	</command>
-</definition>
+		Smoke.runSmoke();
+	}
+}

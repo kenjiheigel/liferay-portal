@@ -1,160 +1,118 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.component.names" value="Site Pages Administration" />
-	<property name="testray.main.component.name" value="Site Pages Administration" />
+@component-name = "portal-wcm"
+definition {
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.component.names = "Site Pages Administration";
+	property testray.main.component.name = "Site Pages Administration";
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+	setUp {
+		TestCase.setUpPortalInstance();
 
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+		User.firstLoginPG();
+	}
 
-	<tear-down>
-		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+	tearDown {
+		var testPortalInstance = PropsUtil.get('test.portal.instance');
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="WebContent#tearDownCP" />
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			WebContent.tearDownCP();
 
-				<execute macro="Page#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
+			Page.tearDownCP();
+		}
+	}
 
-	<command name="AddPageFromExistingPage" priority="5">
-		<property name="testray.component.names" value="Training" />
+	@priority = "5"
+	test AddPageFromExistingPage {
+		property testray.component.names = "Training";
 
-		<execute macro="Navigator#openURL" />
+		Navigator.openURL();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Pages" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Pages"
+		);
 
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="Site Page" />
-		</execute>
+		SitePages.addPublicPage(pageName = "Site Page");
 
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="Site Page Name" />
-			<var name="pageTemplateName" value="Wiki" />
-		</execute>
+		SitePages.addPublicPage(pageName = "Site Page Name", pageTemplateName = "Wiki");
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Site Page Name" />
-		</execute>
+		Navigator.gotoPage(pageName = "Site Page Name");
 
-		<for list="Tags Navigation,Categories Navigation,Wiki" param="portletName">
-			<execute macro="Portlet#viewSpecificPG">
-				<var name="portletName" value="${portletName}" />
-			</execute>
-		</for>
-	</command>
+		for (var portletName : list "Tags Navigation,Categories Navigation,Wiki") {
+			Portlet.viewSpecificPG(portletName = "${portletName}");
+		}
+	}
 
-	<command name="EditPageViaControlMenu" priority="5">
-		<description message="This is a use case for LPS-71160" />
+	@description = "This is a use case for LPS-71160"
+	@priority = "5"
+	test EditPageViaControlMenu {
+		property testray.component.names = "Training";
 
-		<property name="testray.component.names" value="Training" />
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Pages"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Pages" />
-		</execute>
+		SitePages.addPublicPage(pageName = "Site Page");
 
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="Site Page" />
-		</execute>
+		Navigator.gotoPage(pageName = "Site Page");
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Site Page" />
-		</execute>
+		Navigator.gotoEditPageViaControlMenu(pageName = "Site Page");
 
-		<execute macro="Navigator#gotoEditPageViaControlMenu">
-			<var name="pageName" value="Site Page" />
-		</execute>
+		Page.editName(pageNameEdit = "Site Page Edit");
 
-		<execute macro="Page#editName">
-			<var name="pageNameEdit" value="Site Page Edit" />
-		</execute>
+		Navigator.gotoPage(pageName = "Site Page Edit");
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Site Page Edit" />
-		</execute>
+		Page.view(pageName = "Site Page Edit", privacy = "Public Pages");
 
-		<execute macro="Page#view">
-			<var name="pageName" value="Site Page Edit" />
-			<var name="privacy" value="Public Pages" />
-		</execute>
+		Navigator.gotoPage(pageName = "Site Page Edit");
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Site Page Edit" />
-		</execute>
+		Navigator.gotoEditPageViaControlMenu(pageName = "Site Page Edit");
 
-		<execute macro="Navigator#gotoEditPageViaControlMenu">
-			<var name="pageName" value="Site Page Edit" />
-		</execute>
+		Navigator.gotoSEOPanel();
 
-		<execute macro="Navigator#gotoSEOPanel" />
+		Page.editPageMetadata(
+			HTMLTitle = "S.P.A.C.E.Home",
+			metaTagsDescription = "Welcome to S.P.A.C.E., a graduate-level school for those passionate about expanding their horizons through science, research, and space travel",
+			metaTagsKeywords = "space, education, space travel, graduateschool"
+		);
 
-		<execute macro="Page#editPageMetadata">
-			<var name="HTMLTitle" value="S.P.A.C.E.Home" />
-			<var name="metaTagsDescription" value="Welcome to S.P.A.C.E., a graduate-level school for those passionate about expanding their horizons through science, research, and space travel" />
-			<var name="metaTagsKeywords" value="space, education, space travel, graduateschool" />
-		</execute>
+		Navigator.gotoPage(pageName = "Site Page Edit");
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Site Page Edit" />
-		</execute>
+		Navigator.gotoEditPageViaControlMenu(pageName = "Site Page Edit");
 
-		<execute macro="Navigator#gotoEditPageViaControlMenu">
-			<var name="pageName" value="Site Page Edit" />
-		</execute>
+		Navigator.gotoSEOPanel();
 
-		<execute macro="Navigator#gotoSEOPanel" />
+		Page.viewPageMetadata(
+			HTMLTitle = "S.P.A.C.E.Home",
+			metaTagsDescription = "Welcome to S.P.A.C.E., a graduate-level school for those passionate about expanding their horizons through science, research, and space travel",
+			metaTagsKeywords = "space, education, space travel, graduateschool"
+		);
+	}
 
-		<execute macro="Page#viewPageMetadata">
-			<var name="HTMLTitle" value="S.P.A.C.E.Home" />
-			<var name="metaTagsDescription" value="Welcome to S.P.A.C.E., a graduate-level school for those passionate about expanding their horizons through science, research, and space travel" />
-			<var name="metaTagsKeywords" value="space, education, space travel, graduateschool" />
-		</execute>
-	</command>
+	@priority = "4"
+	test EditSitePage {
+		Navigator.openURL();
 
-	<command name="EditSitePage" priority="4">
-		<execute macro="Navigator#openURL" />
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Pages"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Pages" />
-		</execute>
+		SitePages.addPublicPage(pageName = "Site Page");
 
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="Site Page" />
-		</execute>
+		SitePages.gotoPageMenuItem(menuItem = "Configure", pageName = "Site Page");
 
-		<execute macro="SitePages#gotoPageMenuItem">
-			<var name="menuItem" value="Configure" />
-			<var name="pageName" value="Site Page" />
-		</execute>
+		Page.editName(pageNameEdit = "Site Page Edit");
 
-		<execute macro="Page#editName">
-			<var name="pageNameEdit" value="Site Page Edit" />
-		</execute>
+		Navigator.gotoPage(pageName = "Site Page Edit");
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Site Page Edit" />
-		</execute>
-
-		<execute macro="Page#view">
-			<var name="pageName" value="Site Page Edit" />
-			<var name="privacy" value="Public Pages" />
-		</execute>
-	</command>
-</definition>
+		Page.view(pageName = "Site Page Edit", privacy = "Public Pages");
+	}
+}

@@ -1,151 +1,114 @@
-<definition component-name="portal-wcm">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Content Pages" />
+@component-name = "portal-wcm"
+definition {
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "Content Pages";
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+	setUp {
+		TestCase.setUpPortalInstance();
 
-		<execute macro="User#firstLoginPG" />
+		User.firstLoginPG();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Sites" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Sites" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Sites",
+			panel = "Control Panel",
+			portlet = "Sites"
+		);
 
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Test Site Name" />
-		</execute>
+		Site.addBlankCP(siteName = "Test Site Name");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Page Fragments" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Page Fragments"
+		);
 
-		<execute macro="Fragment#addCollection">
-			<var name="collectionDescription" value="Collection Description" />
-			<var name="collectionName" value="Collection Name" />
-		</execute>
-	</set-up>
+		Fragment.addCollection(
+			collectionDescription = "Collection Description",
+			collectionName = "Collection Name"
+		);
+	}
 
-	<tear-down>
-		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+	tearDown {
+		var testPortalInstance = PropsUtil.get('test.portal.instance');
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="Site#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			Site.tearDownCP();
+		}
+	}
 
-	<command name="AddContentPage" priority="5">
-		<property name="portal.acceptance" value="true" />
+	@priority = "5"
+	test AddContentPage {
+		property portal.acceptance = "true";
 
-		<execute macro="Navigator#gotoNavNested">
-			<var name="navNested" value="Collection Name" />
-		</execute>
+		Navigator.gotoNavNested(navNested = "Collection Name");
 
-		<execute macro="Fragment#addFragment">
-			<var name="fragmentName" value="Fragment Name" />
-		</execute>
+		Fragment.addFragment(fragmentName = "Fragment Name");
 
-		<execute macro="TestCase#getFileContent">
-			<return name="htmlSnippet" />
-			<var name="fileName" value="fragment_button.html" />
-		</execute>
+		var htmlSnippet = TestCase.getFileContent(fileName = "fragment_button.html");
 
-		<execute macro="Fragment#typeFragmentEditor">
-			<var name="editor" value="html" />
-			<var name="templateScript" value="${htmlSnippet}" />
-		</execute>
+		Fragment.typeFragmentEditor(editor = "html", templateScript = "${htmlSnippet}");
 
-		<execute macro="TestCase#getFileContent">
-			<return name="cssSnippet" />
-			<var name="fileName" value="fragment_button.css" />
-		</execute>
+		var cssSnippet = TestCase.getFileContent(fileName = "fragment_button.css");
 
-		<execute macro="Fragment#typeFragmentEditor">
-			<var name="editor" value="css" />
-			<var name="templateScript" value="${cssSnippet}" />
-		</execute>
+		Fragment.typeFragmentEditor(editor = "css", templateScript = "${cssSnippet}");
 
-		<execute macro="TestCase#getFileContent">
-			<return name="javascriptSnippet" />
-			<var name="fileName" value="fragment_button.js" />
-		</execute>
+		var javascriptSnippet = TestCase.getFileContent(fileName = "fragment_button.js");
 
-		<execute macro="Fragment#typeFragmentEditor">
-			<var name="editor" value="javascript" />
-			<var name="templateScript" value="${javascriptSnippet}" />
-		</execute>
+		Fragment.typeFragmentEditor(
+			editor = "javascript",
+			templateScript = "${javascriptSnippet}"
+		);
 
-		<execute macro="Button#clickPublish" />
+		Button.clickPublish();
 
-		<execute macro="ProductMenu#gotoSite">
-			<var name="site" value="Test Site Name" />
-		</execute>
+		ProductMenu.gotoSite(site = "Test Site Name");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Pages" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Pages"
+		);
 
-		<execute macro="NavItem#gotoPageTemplates" />
+		NavItem.gotoPageTemplates();
 
-		<execute macro="LayoutPageTemplates#addCollection">
-			<var name="collectionName" value="Page Template Collection" />
-		</execute>
+		LayoutPageTemplates.addCollection(collectionName = "Page Template Collection");
 
-		<execute macro="Navigator#gotoNavNested">
-			<var name="navNested" value="Page Template Collection" />
-		</execute>
+		Navigator.gotoNavNested(navNested = "Page Template Collection");
 
-		<execute macro="LayoutPageTemplates#add">
-			<var name="pageTemplateName" value="Page Template Name" />
-		</execute>
+		LayoutPageTemplates.add(pageTemplateName = "Page Template Name");
 
-		<execute macro="LayoutPageTemplates#selectFragment">
-			<var name="collectionName" value="Collection Name" />
-			<var name="fragmentName" value="Fragment Name" />
-		</execute>
+		LayoutPageTemplates.selectFragment(
+			collectionName = "Collection Name",
+			fragmentName = "Fragment Name"
+		);
 
-		<execute macro="Button#clickPublish" />
+		Button.clickPublish();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Pages" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Pages"
+		);
 
-		<execute macro="NavItem#gotoPages" />
+		NavItem.gotoPages();
 
-		<execute macro="ContentPages#addPage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="pageTemplateName" value="Page Template Name" />
-		</execute>
+		ContentPages.addPage(
+			pageName = "Test Page Name",
+			pageTemplateName = "Page Template Name"
+		);
 
-		<execute macro="Navigator#gotoSitePage">
-			<var name="pageName" value="Test Page Name" />
-			<var name="siteName" value="Test Site Name" />
-		</execute>
+		Navigator.gotoSitePage(pageName = "Test Page Name", siteName = "Test Site Name");
 
-		<for list="Submit,Cancel" param="button">
-			<execute macro="Button#viewPresent">
-				<var name="button" value="${button}" />
-			</execute>
-		</for>
+		for (var button : list "Submit,Cancel") {
+			Button.viewPresent(button = "${button}");
+		}
 
-		<execute macro="Button#clickNoError">
-			<var name="button" value="Submit" />
-		</execute>
+		Button.clickNoError(button = "Submit");
 
-		<execute function="Confirm" value1="Form submitted" />
-	</command>
-</definition>
+		Confirm(value1 = "Form submitted");
+	}
+}

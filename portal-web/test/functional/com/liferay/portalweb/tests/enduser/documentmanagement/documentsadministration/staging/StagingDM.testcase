@@ -1,161 +1,130 @@
-<definition component-name="portal-collaboration">
-	<property name="portal.release" value="true" />
-	<property name="portal.upstream" value="true" />
-	<property name="testray.main.component.name" value="Documents Management" />
+@component-name = "portal-collaboration"
+definition {
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "Documents Management";
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+	setUp {
+		TestCase.setUpPortalInstance();
 
-		<execute macro="User#firstLoginPG" />
+		User.firstLoginPG();
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Sites" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Sites" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Sites",
+			panel = "Control Panel",
+			portlet = "Sites"
+		);
 
-		<execute macro="Site#addBlankCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
+		Site.addBlankCP(siteName = "Site Name");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Pages" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Pages"
+		);
 
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="Staging DM Page" />
-		</execute>
+		SitePages.addPublicPage(pageName = "Staging DM Page");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Publishing" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Staging" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Publishing",
+			panel = "Site Administration",
+			portlet = "Staging"
+		);
 
-		<execute macro="Staging#activateStagingCP">
-			<var name="siteName" value="Site Name" />
-		</execute>
+		Staging.activateStagingCP(siteName = "Site Name");
 
-		<execute macro="Navigator#gotoStagedSitePage">
-			<var name="pageName" value="Staging DM Page" />
-			<var name="siteName" value="Site Name" />
-		</execute>
+		Navigator.gotoStagedSitePage(
+			pageName = "Staging DM Page",
+			siteName = "Site Name"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Documents and Media" />
-		</execute>
-	</set-up>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Documents and Media"
+		);
+	}
 
-	<command name="PublishSubfolderWithDocumentsViaSAP" priority="5">
-		<description message="This test covers LPS-82532. It ensures documents inside the subfolder that's being published to live are also published." />
+	@description = "This test covers LPS-82532. It ensures documents inside the subfolder that's being published to live are also published."
+	@priority = "5"
+	test PublishSubfolderWithDocumentsViaSAP {
+		DMFolder.addCP(
+			dmFolderDescription = "DM Folder Description",
+			dmFolderName = "DM Folder 1"
+		);
 
-		<execute macro="DMFolder#addCP">
-			<var name="dmFolderDescription" value="DM Folder Description" />
-			<var name="dmFolderName" value="DM Folder 1" />
-		</execute>
+		DMFolder.viewCP(dmFolderName = "DM Folder 1");
 
-		<execute macro="DMFolder#viewCP">
-			<var name="dmFolderName" value="DM Folder 1" />
-		</execute>
+		DMDocument.addCP(
+			dmDocumentDescription = "DM Document in Folder 1",
+			dmDocumentFile = "Document_1.txt",
+			dmDocumentTitle = "DM Document in Folder 1"
+		);
 
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="DM Document in Folder 1" />
-			<var name="dmDocumentFile" value="Document_1.txt" />
-			<var name="dmDocumentTitle" value="DM Document in Folder 1" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Documents and Media"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Documents and Media" />
-		</execute>
+		DMFolder.viewCP(dmFolderName = "DM Folder 1", specificNameFolder = "true");
 
-		<execute macro="DMFolder#viewCP">
-			<var name="dmFolderName" value="DM Folder 1" />
-			<var name="specificNameFolder" value="true" />
-		</execute>
+		DMFolder.addSubfolderCP(dmSubFolderName = "DM Folder 2");
 
-		<execute macro="DMFolder#addSubfolderCP">
-			<var name="dmSubFolderName" value="DM Folder 2" />
-		</execute>
+		DMFolder.viewCP(dmFolderName = "DM Folder 2", specificNameFolder = "true");
 
-		<execute macro="DMFolder#viewCP">
-			<var name="dmFolderName" value="DM Folder 2" />
-			<var name="specificNameFolder" value="true" />
-		</execute>
+		DMDocument.addCP(
+			dmDocumentDescription = "DM Document in Folder 2",
+			dmDocumentFile = "Document_2.txt",
+			dmDocumentTitle = "DM Document in Folder 2"
+		);
 
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="DM Document in Folder 2" />
-			<var name="dmDocumentFile" value="Document_2.txt" />
-			<var name="dmDocumentTitle" value="DM Document in Folder 2" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Documents and Media"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Documents and Media" />
-		</execute>
+		DMFolder.viewCP(dmFolderName = "DM Folder 1");
 
-		<execute macro="DMFolder#viewCP">
-			<var name="dmFolderName" value="DM Folder 1" />
-		</execute>
+		DMFolder.viewCP(dmFolderName = "DM Folder 2", specificNameFolder = "true");
 
-		<execute macro="DMFolder#viewCP">
-			<var name="dmFolderName" value="DM Folder 2" />
-			<var name="specificNameFolder" value="true" />
-		</execute>
+		DMFolder.addSubfolderCP(dmSubFolderName = "DM Folder 3");
 
-		<execute macro="DMFolder#addSubfolderCP">
-			<var name="dmSubFolderName" value="DM Folder 3" />
-		</execute>
+		DMFolder.viewCP(dmFolderName = "DM Folder 3", specificNameFolder = "true");
 
-		<execute macro="DMFolder#viewCP">
-			<var name="dmFolderName" value="DM Folder 3" />
-			<var name="specificNameFolder" value="true" />
-		</execute>
+		DMDocument.addCP(
+			dmDocumentDescription = "DM Document in Folder 3",
+			dmDocumentFile = "Document_3.txt",
+			dmDocumentTitle = "DM Document in Folder 3"
+		);
 
-		<execute macro="DMDocument#addCP">
-			<var name="dmDocumentDescription" value="DM Document in Folder 3" />
-			<var name="dmDocumentFile" value="Document_3.txt" />
-			<var name="dmDocumentTitle" value="DM Document in Folder 3" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Documents and Media"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Documents and Media" />
-		</execute>
+		DMFolder.publishFolderViaSAP(dmFolderName = "DM Folder 1");
 
-		<execute macro="DMFolder#publishFolderViaSAP">
-			<var name="dmFolderName" value="DM Folder 1" />
-		</execute>
+		ProductMenu.gotoLiveSite();
 
-		<execute macro="ProductMenu#gotoLiveSite" />
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Documents and Media"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Documents and Media" />
-		</execute>
+		for (var folderCount : list "1,2,3") {
+			DMFolder.viewCP(dmFolderName = "DM Folder ${folderCount}");
 
-		<for list="1,2,3" param="folderCount">
-			<execute macro="DMFolder#viewCP">
-				<var name="dmFolderName" value="DM Folder ${folderCount}" />
-			</execute>
+			DMNavigator.gotoDocumentCP(
+				dmDocumentTitle = "DM Document in Folder ${folderCount}"
+			);
 
-			<execute macro="DMNavigator#gotoDocumentCP">
-				<var name="dmDocumentTitle" value="DM Document in Folder ${folderCount}" />
-			</execute>
+			DMDocument.viewCP(dmDocumentTitle = "DM Document in Folder ${folderCount}");
 
-			<execute macro="DMDocument#viewCP">
-				<var name="dmDocumentTitle" value="DM Document in Folder ${folderCount}" />
-			</execute>
-
-			<execute macro="Navigator#gotoBack" />
-		</for>
-	</command>
-</definition>
+			Navigator.gotoBack();
+		}
+	}
+}
