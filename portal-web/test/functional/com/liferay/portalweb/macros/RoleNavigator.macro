@@ -1,49 +1,39 @@
-<definition>
-	<command name="gotoAssignees">
-		<execute macro="LexiconEntry#gotoEntry">
-			<var name="rowEntry" value="${roleTitle}" />
-		</execute>
+definition {
+	macro gotoAssignees {
+		LexiconEntry.gotoEntry(rowEntry = "${roleTitle}");
 
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="Assignees" />
-		</execute>
-	</command>
+		Navigator.gotoNavItem(navItem = "Assignees");
+	}
 
-	<command name="gotoAssigneeType">
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="${assigneeType}" />
-		</execute>
-	</command>
+	macro gotoAssigneeType {
+		Navigator.gotoNavItem(navItem = "${assigneeType}");
+	}
 
-	<command name="gotoPermissionSectionViaDropdown">
-		<var name="key_navItem" value="${contentTitle}" />
+	macro gotoPermissionSectionViaDropdown {
+		var key_navItem = "${contentTitle}";
 
-		<if>
-			<condition function="IsNotVisible" locator1="RolesPermissionsNavigation#PERMISSIONS_NAVITEM" />
+		if (IsNotVisible(locator1 = "RolesPermissionsNavigation#PERMISSIONS_NAVITEM")) {
+			var key_navItem = "${sectionTitle}";
 
-			<then>
-				<var name="key_navItem" value="${sectionTitle}" />
+			AssertClick(
+				locator1 = "RolesPermissionsNavigation#PERMISSIONS_NAVITEM",
+				value1 = "${sectionTitle}"
+			);
+		}
 
-				<execute function="AssertClick" locator1="RolesPermissionsNavigation#PERMISSIONS_NAVITEM" value1="${sectionTitle}" />
-			</then>
-		</if>
+		if (IsNotVisible(locator1 = "RolesPermissionsNavigation#${permissionName}")) {
+			var key_navItem = "${contentTitle}";
 
-		<if>
-			<condition function="IsNotVisible" locator1="RolesPermissionsNavigation#${permissionName}" />
+			AssertClick(
+				locator1 = "RolesPermissionsNavigation#PERMISSIONS_NAVITEM",
+				value1 = "${contentTitle}"
+			);
+		}
 
-			<then>
-				<var name="key_navItem" value="${contentTitle}" />
+		Click(locator1 = "RolesPermissionsNavigation#${permissionName}");
+	}
 
-				<execute function="AssertClick" locator1="RolesPermissionsNavigation#PERMISSIONS_NAVITEM" value1="${contentTitle}" />
-			</then>
-		</if>
-
-		<execute function="Click" locator1="RolesPermissionsNavigation#${permissionName}" />
-	</command>
-
-	<command name="gotoRoleType">
-		<execute macro="Navigator#gotoNavItem">
-			<var name="navItem" value="${roleType} Roles" />
-		</execute>
-	</command>
-</definition>
+	macro gotoRoleType {
+		Navigator.gotoNavItem(navItem = "${roleType} Roles");
+	}
+}

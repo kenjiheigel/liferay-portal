@@ -1,76 +1,78 @@
-<definition>
-	<command name="addMediaWikiDescription">
-		<execute function="Type" locator1="TextArea#WEB_EDITOR" value1="${wikiPageContent}" />
-	</command>
+definition {
+	macro addMediaWikiDescription {
+		Type(locator1 = "TextArea#WEB_EDITOR", value1 = "${wikiPageContent}");
+	}
 
-	<command name="addPageContent">
-		<execute macro="AlloyEditor#addContent">
-			<var name="content" value="${wikiPageContent}" />
-		</execute>
-	</command>
+	macro addPageContent {
+		AlloyEditor.addContent(content = "${wikiPageContent}");
+	}
 
-	<command name="addPageTitle">
-		<execute macro="AlloyEditor#addTitle">
-			<var name="title" value="${wikiPageTitle}" />
-		</execute>
-	</command>
+	macro addPageTitle {
+		AlloyEditor.addTitle(title = "${wikiPageTitle}");
+	}
 
-	<command name="cancel">
-		<execute function="AssertClick" locator1="Button#CANCEL" value1="Cancel" />
-	</command>
+	macro cancel {
+		AssertClick(locator1 = "Button#CANCEL", value1 = "Cancel");
+	}
 
-	<command name="confirmHTML">
-		<execute function="Confirm" value1="You may lose some formatting when switching from Creole to HTML. Do you want to continue?" />
-	</command>
+	macro confirmHTML {
+		Confirm(
+			value1 = "You may lose some formatting when switching from Creole to HTML. Do you want to continue?"
+		);
+	}
 
-	<command name="confirmMediaWiki">
-		<execute function="Confirm" value1="You may lose some formatting when switching from Creole to MediaWiki. Do you want to continue?" />
-	</command>
+	macro confirmMediaWiki {
+		Confirm(
+			value1 = "You may lose some formatting when switching from Creole to MediaWiki. Do you want to continue?"
+		);
+	}
 
-	<command name="previewPageContent">
-		<execute function="AssertTextEquals" locator1="WikiEntry#BODY" value1="${wikiPageContent}" />
-	</command>
+	macro previewPageContent {
+		AssertTextEquals(locator1 = "WikiEntry#BODY", value1 = "${wikiPageContent}");
+	}
 
-	<command name="previewPageTitle">
-		<var name="key_wikiPageTitle" value="${wikiPageTitle}" />
+	macro previewPageTitle {
+		var key_wikiPageTitle = "${wikiPageTitle}";
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Wiki#PAGE_HEADER" value1="${wikiPageTitle}" />
-	</command>
+		AssertTextEquals.assertPartialText(
+			locator1 = "Wiki#PAGE_HEADER",
+			value1 = "${wikiPageTitle}"
+		);
+	}
 
-	<command name="saveAsDraft">
-		<execute function="AssertClick" locator1="Button#SAVE" value1="Save as Draft" />
+	macro saveAsDraft {
+		AssertClick(locator1 = "Button#SAVE", value1 = "Save as Draft");
 
-		<execute macro="Alert#viewSuccessMessage" />
-	</command>
+		Alert.viewSuccessMessage();
+	}
 
-	<command name="selectPageFormat">
-		<if>
-			<condition function="IsNotVisible" locator1="Wiki#ADD_PAGE_FORMAT_DROPDOWN" />
-			<then>
-				<execute macro="Panel#expandPanel">
-					<var name="panel" value="Configuration" />
-				</execute>
+	macro selectPageFormat {
+		if (IsNotVisible(locator1 = "Wiki#ADD_PAGE_FORMAT_DROPDOWN")) {
+			Panel.expandPanel(panel = "Configuration");
 
-				<execute function="SelectNoError#pauseSelect" locator1="Wiki#ADD_PAGE_FORMAT_DROPDOWN" value1="${pageFormat}" />
-			</then>
-			<elseif>
-				<condition function="IsVisible" locator1="Wiki#ADD_PAGE_FORMAT_DROPDOWN" />
-				<then>
-					<execute function="SelectNoError#pauseSelect" locator1="Wiki#ADD_PAGE_FORMAT_DROPDOWN" value1="${pageFormat}" />
-				</then>
-			</elseif>
-		</if>
-	</command>
+			SelectNoError.pauseSelect(
+				locator1 = "Wiki#ADD_PAGE_FORMAT_DROPDOWN",
+				value1 = "${pageFormat}"
+			);
+		}
+		else if (IsVisible(locator1 = "Wiki#ADD_PAGE_FORMAT_DROPDOWN")) {
+			SelectNoError.pauseSelect(
+				locator1 = "Wiki#ADD_PAGE_FORMAT_DROPDOWN",
+				value1 = "${pageFormat}"
+			);
+		}
+	}
 
-	<command name="viewPageContentBody">
-		<execute function="AssertTextEquals" locator1="WikiEntry#BODY" value1="${wikiPageContent}" />
-	</command>
+	macro viewPageContentBody {
+		AssertTextEquals(locator1 = "WikiEntry#BODY", value1 = "${wikiPageContent}");
+	}
 
-	<command name="viewPageFormat">
-		<execute macro="Panel#expandPanel">
-			<var name="panel" value="Configuration" />
-		</execute>
+	macro viewPageFormat {
+		Panel.expandPanel(panel = "Configuration");
 
-		<execute function="AssertSelectedLabel" locator1="Wiki#ADD_PAGE_FORMAT_DROPDOWN" value1="${pageFormat}" />
-	</command>
-</definition>
+		AssertSelectedLabel(
+			locator1 = "Wiki#ADD_PAGE_FORMAT_DROPDOWN",
+			value1 = "${pageFormat}"
+		);
+	}
+}

@@ -1,595 +1,836 @@
-<definition>
-	<command name="approveProcess">
-		<execute macro="Panel#expandPanel">
-			<var name="panel" value="Assigned to My Roles" />
-		</execute>
-
-		<var name="key_kfProcessName" value="${kfProcessName}" />
-
-		<execute function="AssertTextEquals" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_TASK_1" value1="${workflowTask}" />
-		<execute function="AssertTextEquals" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_NAME_1" value1="${kfProcessName}" />
-		<execute function="AssertElementPresent" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_SUBMISSION_DATE_1" />
-		<execute function="Click" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_ACTIONS_1" />
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Approve" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="KaleoForms#DIALOG_BOX_TITLE" value1="Approve" />
-
-		<if>
-			<isset var="comment" />
-			<then>
-				<execute function="Type" locator1="KaleoForms#DIALOG_BOX_COMMENT_FIELD" value1="${comment}" />
-			</then>
-		</if>
-
-		<execute macro="Button#clickDone" />
-
-		<execute macro="Alert#viewSuccessMessage" />
-	</command>
-
-	<command name="assignProcessToMe">
-		<execute macro="Panel#expandPanel">
-			<var name="panel" value="Assigned to Me" />
-		</execute>
-
-		<var name="key_kfProcessName" value="${kfProcessName}" />
-
-		<execute function="AssertTextEquals" locator1="KaleoForms#ASSIGNED_TO_MY_ROLES_TABLE_TASK" value1="${workflowTask}" />
-		<execute function="AssertTextEquals" locator1="KaleoForms#ASSIGNED_TO_MY_ROLES_TABLE_NAME" value1="${kfProcessName}" />
-		<execute function="AssertElementPresent" locator1="KaleoForms#ASSIGNED_TO_MY_ROLES_TABLE_SUBMISSION_DATE" />
-		<execute function="AssertElementPresent" locator1="KaleoForms#ASSIGNED_TO_MY_ROLES_TABLE_ACTIONS" />
-
-		<execute macro="LexiconEntry#openEntryMenu">
-			<var name="rowEntry" value="${kfProcessName}" />
-		</execute>
-
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Assign to Me" />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="KaleoForms#DIALOG_BOX_TITLE" value1="Assign to Me" />
-
-		<if>
-			<isset var="comment" />
-			<then>
-				<execute function="Type" locator1="KaleoForms#DIALOG_BOX_COMMENT_FIELD" value1="${comment}" />
-			</then>
-		</if>
-
-		<execute macro="Button#clickDone" />
-
-		<execute macro="Alert#viewSuccessMessage" />
-
-		<execute function="AssertTextEquals" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_TASK_1" value1="${workflowTask}" />
-		<execute function="AssertTextEquals" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_NAME_1" value1="${kfProcessName}" />
-		<execute function="AssertElementPresent" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_SUBMISSION_DATE_1" />
-	</command>
-
-	<command name="assignProcessToUser">
-		<var name="key_kfProcessName" value="${kfProcessName}" />
-
-		<execute function="AssertTextEquals" locator1="KaleoForms#ASSIGNED_TO_MY_ROLES_TABLE_TASK" value1="${workflowTask}" />
-		<execute function="AssertTextEquals" locator1="KaleoForms#ASSIGNED_TO_MY_ROLES_TABLE_NAME" value1="${kfProcessName}" />
-		<execute function="AssertElementPresent" locator1="KaleoForms#ASSIGNED_TO_MY_ROLES_TABLE_SUBMISSION_DATE" />
-		<execute function="AssertElementPresent" locator1="KaleoForms#ASSIGNED_TO_MY_ROLES_TABLE_ACTIONS" />
-
-		<execute macro="LexiconEntry#openEntryMenu">
-			<var name="rowEntry" value="${kfProcessName}" />
-		</execute>
-
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Assign to..." />
-		</execute>
-
-		<execute function="AssertTextEquals" locator1="KaleoForms#DIALOG_BOX_TITLE" value1="Assign to..." />
-		<execute function="Select" locator1="KaleoForms#DIALOG_BOX_ASSIGN_TO_SELECT" value1="${userFullName}" />
-
-		<if>
-			<isset var="comment" />
-			<then>
-				<execute function="Type" locator1="KaleoForms#DIALOG_BOX_COMMENT_FIELD" value1="${comment}" />
-			</then>
-		</if>
-
-		<execute macro="Button#clickDone" />
+definition {
+	macro approveProcess {
+		Panel.expandPanel(panel = "Assigned to My Roles");
 
-		<execute macro="Alert#viewSuccessMessage" />
-	</command>
+		var key_kfProcessName = "${kfProcessName}";
 
-	<command name="completeFormForSecondProcessTaskViaTable">
-		<var name="key_kfProcessName" value="${kfProcessName}" />
+		AssertTextEquals(
+			locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_TASK_1",
+			value1 = "${workflowTask}"
+		);
 
-		<execute function="AssertTextEquals" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_TASK_2" value1="${workflowTask}" />
-		<execute function="AssertTextEquals" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_NAME_2" value1="${kfProcessName}" />
-		<execute function="AssertElementPresent" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_SUBMISSION_DATE_2" />
-		<execute function="Click" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_ACTIONS_2" />
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Complete Form" />
-		</execute>
-	</command>
+		AssertTextEquals(
+			locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_NAME_1",
+			value1 = "${kfProcessName}"
+		);
 
-	<command name="completeFormForTaskViaRecordView">
-		<execute function="AssertClick" locator1="KaleoFormsViewProcessRecord#COMPLETE_FORM" value1="Complete Form" />
-	</command>
+		AssertElementPresent(
+			locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_SUBMISSION_DATE_1"
+		);
 
-	<command name="completeFormForTaskViaTable">
-		<var name="key_kfProcessName" value="${kfProcessName}" />
+		Click(locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_ACTIONS_1");
 
-		<execute function="AssertTextEquals" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_TASK_1" value1="${workflowTask}" />
-		<execute function="AssertTextEquals" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_NAME_1" value1="${kfProcessName}" />
-		<execute function="AssertElementPresent" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_SUBMISSION_DATE_1" />
-		<execute function="Click" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_ACTIONS_1" />
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Complete Form" />
-		</execute>
-	</command>
+		MenuItem.click(menuItem = "Approve");
 
-	<command name="populateFieldBoolean">
-		<var name="key_fieldName" value="${fieldName}" />
+		AssertTextEquals(locator1 = "KaleoForms#DIALOG_BOX_TITLE", value1 = "Approve");
 
-		<if>
-			<equals arg1="${kfProcessFieldData}" arg2="true" />
-			<then>
-				<execute function="Check" locator1="DDLEditRecord#BOOLEAN_CHECKBOX" />
-			</then>
-			<elseif>
-				<equals arg1="${kfProcessFieldData}" arg2="false" />
-				<then>
-					<execute function="Uncheck" locator1="DDLEditRecord#BOOLEAN_CHECKBOX" />
-				</then>
-			</elseif>
-		</if>
-	</command>
+		if (isSet(comment)) {
+			Type(locator1 = "KaleoForms#DIALOG_BOX_COMMENT_FIELD", value1 = "${comment}");
+		}
 
-	<command name="populateFieldDate">
-		<var name="key_fieldName" value="${fieldName}" />
+		Button.clickDone();
 
-		<execute function="Type" locator1="DDLEditRecord#DATE_FIELD" value1="${kfProcessFieldData}" />
-		<execute function="Click" locator1="DDLEditRecord#DATE_FIELD" />
-	</command>
+		Alert.viewSuccessMessage();
+	}
 
-	<command name="populateFieldDocumentsAndMedia">
-		<var name="key_fieldName" value="${fieldName}" />
+	macro assignProcessToMe {
+		Panel.expandPanel(panel = "Assigned to Me");
 
-		<execute function="AssertClick" locator1="DDLEditRecord#DOCUMENTS_AND_MEDIA_CHOOSE_FROM_DOCUMENT_LIBRARY_BUTTON" value1="Select" />
+		var key_kfProcessName = "${kfProcessName}";
 
-		<execute function="SelectFrame" locator1="DocumentsAndMediaSelectDocument#SELECT_DOCUMENT_IFRAME" />
-		<execute function="AssertClick" locator1="Button#ADD" value1="Add" />
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Basic Document" />
-		</execute>
+		AssertTextEquals(
+			locator1 = "KaleoForms#ASSIGNED_TO_MY_ROLES_TABLE_TASK",
+			value1 = "${workflowTask}"
+		);
 
-		<execute function="UploadCommonFile" locator1="DocumentsAndMediaEditDocument#FILE_FIELD" value1="${document}" />
+		AssertTextEquals(
+			locator1 = "KaleoForms#ASSIGNED_TO_MY_ROLES_TABLE_NAME",
+			value1 = "${kfProcessName}"
+		);
 
-		<execute macro="PortletEntry#inputTitle">
-			<var name="title" value="${kfProcessFieldData}" />
-		</execute>
+		AssertElementPresent(
+			locator1 = "KaleoForms#ASSIGNED_TO_MY_ROLES_TABLE_SUBMISSION_DATE"
+		);
 
-		<execute function="AssertClick" locator1="Button#PUBLISH" value1="Publish" />
+		AssertElementPresent(locator1 = "KaleoForms#ASSIGNED_TO_MY_ROLES_TABLE_ACTIONS");
 
-		<var name="key_documentTitle" value="${kfProcessFieldData}" />
+		LexiconEntry.openEntryMenu(rowEntry = "${kfProcessName}");
 
-		<execute function="AssertTextEquals" locator1="DocumentsAndMediaSelectDocument#DOCUMENTS_TABLE_DOCUMENT" value1="${kfProcessFieldData}" />
-		<execute function="Click" locator1="DocumentsAndMediaSelectDocument#DOCUMENTS_TABLE_CHOOSE" />
+		MenuItem.click(menuItem = "Assign to Me");
 
-		<execute function="SelectFrame" value1="relative=top" />
-		<execute function="AssertTextEquals" locator1="DDLEditRecord#DOCUMENTS_AND_MEDIA_FIELD" value1="${kfProcessFieldData}" />
-	</command>
+		AssertTextEquals(
+			locator1 = "KaleoForms#DIALOG_BOX_TITLE",
+			value1 = "Assign to Me"
+		);
 
-	<command name="populateFieldHTML">
-		<var name="key_fieldName" value="${fieldName}" />
+		if (isSet(comment)) {
+			Type(locator1 = "KaleoForms#DIALOG_BOX_COMMENT_FIELD", value1 = "${comment}");
+		}
 
-		<execute function="Type#typeCKEditor" locator1="DDLEditRecord#HTML_FIELD" value1="${kfProcessFieldData}" />
-	</command>
+		Button.clickDone();
 
-	<command name="populateFieldLinkToPage">
-		<var name="key_ddlRecordFieldData" value="${ddlRecordFieldData}" />
-		<var name="key_fieldName" value="${fieldName}" />
+		Alert.viewSuccessMessage();
 
-		<execute function="AssertClick" locator1="DDLEditRecord#LINK_TO_PAGE_SELECT_PAGE_BUTTON" value1="Select" />
+		AssertTextEquals(
+			locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_TASK_1",
+			value1 = "${workflowTask}"
+		);
 
-		<var name="key_navItem" value="${pagePrivacy} Pages" />
+		AssertTextEquals(
+			locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_NAME_1",
+			value1 = "${kfProcessName}"
+		);
 
-		<execute function="AssertClick" locator1="DDLEditRecord#LINK_TO_PAGE_NAV_ITEM" value1="${pagePrivacy} Pages" />
+		AssertElementPresent(
+			locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_SUBMISSION_DATE_1"
+		);
+	}
 
-		<var name="key_pageName" value="${ddlRecordFieldData}" />
+	macro assignProcessToUser {
+		var key_kfProcessName = "${kfProcessName}";
 
-		<execute function="Click" locator1="DDLEditRecord#LINK_TO_PAGE_PAGE_RADIO" />
+		AssertTextEquals(
+			locator1 = "KaleoForms#ASSIGNED_TO_MY_ROLES_TABLE_TASK",
+			value1 = "${workflowTask}"
+		);
 
-		<execute function="AssertClick" locator1="Button#SELECT" value1="Select" />
+		AssertTextEquals(
+			locator1 = "KaleoForms#ASSIGNED_TO_MY_ROLES_TABLE_NAME",
+			value1 = "${kfProcessName}"
+		);
 
-		<execute function="AssertTextEquals" locator1="DDLEditRecord#LINK_TO_PAGE_PAGE_SELECT" value1="${ddlRecordFieldData}" />
-	</command>
+		AssertElementPresent(
+			locator1 = "KaleoForms#ASSIGNED_TO_MY_ROLES_TABLE_SUBMISSION_DATE"
+		);
 
-	<command name="populateFieldRadio">
-		<var name="key_fieldName" value="${fieldName}" />
-		<var name="key_kfProcessFieldData" value="${kfProcessFieldData}" />
+		AssertElementPresent(locator1 = "KaleoForms#ASSIGNED_TO_MY_ROLES_TABLE_ACTIONS");
 
-		<execute function="Click" locator1="DDLEditRecord#RADIO_OPTION_RADIO" />
-	</command>
+		LexiconEntry.openEntryMenu(rowEntry = "${kfProcessName}");
 
-	<command name="populateFieldSelect">
-		<var name="key_fieldName" value="${fieldName}" />
+		MenuItem.click(menuItem = "Assign to...");
 
-		<execute function="Select" locator1="DDLEditRecord#SELECT_SELECT" value1="${kfProcessFieldData}" />
-	</command>
+		AssertTextEquals(
+			locator1 = "KaleoForms#DIALOG_BOX_TITLE",
+			value1 = "Assign to..."
+		);
 
-	<command name="populateFieldText">
-		<var name="key_fieldName" value="${fieldName}" />
+		Select(
+			locator1 = "KaleoForms#DIALOG_BOX_ASSIGN_TO_SELECT",
+			value1 = "${userFullName}"
+		);
 
-		<execute function="Type" locator1="DDLEditRecord#TEXT_FIELD" value1="${kfProcessFieldData}" />
-	</command>
+		if (isSet(comment)) {
+			Type(locator1 = "KaleoForms#DIALOG_BOX_COMMENT_FIELD", value1 = "${comment}");
+		}
 
-	<command name="populateFieldTextBox">
-		<var method="StringUtil#replace('${fieldName}', ' ', '_')" name="fieldName" />
-		<var name="key_fieldName" value="${fieldName}" />
+		Button.clickDone();
 
-		<execute function="Type" locator1="DDLEditRecord#TEXT_BOX_FIELD" value1="${kfProcessFieldData}" />
-	</command>
+		Alert.viewSuccessMessage();
+	}
 
-	<command name="rejectProcess">
-		<var name="key_kfProcessName" value="${kfProcessName}" />
+	macro completeFormForSecondProcessTaskViaTable {
+		var key_kfProcessName = "${kfProcessName}";
 
-		<execute function="AssertTextEquals" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_TASK_1" value1="${workflowTask}" />
-		<execute function="AssertTextEquals" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_NAME_1" value1="${kfProcessName}" />
-		<execute function="AssertElementPresent" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_SUBMISSION_DATE_1" />
-		<execute function="Click" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_ACTIONS_1" />
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Reject" />
-		</execute>
+		AssertTextEquals(
+			locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_TASK_2",
+			value1 = "${workflowTask}"
+		);
 
-		<execute function="AssertTextEquals" locator1="KaleoForms#DIALOG_BOX_TITLE" value1="Reject" />
+		AssertTextEquals(
+			locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_NAME_2",
+			value1 = "${kfProcessName}"
+		);
 
-		<if>
-			<isset var="comment" />
-			<then>
-				<execute function="Type" locator1="KaleoForms#DIALOG_BOX_COMMENT_FIELD" value1="${comment}" />
-			</then>
-		</if>
+		AssertElementPresent(
+			locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_SUBMISSION_DATE_2"
+		);
 
-		<execute macro="Button#clickDone" />
+		Click(locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_ACTIONS_2");
 
-		<execute macro="Alert#viewSuccessMessage" />
-	</command>
+		MenuItem.click(menuItem = "Complete Form");
+	}
 
-	<command name="resubmitPendingProcessViaInbox">
-		<var name="key_kfProcessName" value="${kfProcessName}" />
+	macro completeFormForTaskViaRecordView {
+		AssertClick(
+			locator1 = "KaleoFormsViewProcessRecord#COMPLETE_FORM",
+			value1 = "Complete Form"
+		);
+	}
 
-		<execute function="AssertTextEquals" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_TASK_1" value1="${workflowTask}" />
-		<execute function="AssertTextEquals" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_NAME_1" value1="${kfProcessName}" />
-		<execute function="AssertElementPresent" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_SUBMISSION_DATE_1" />
-		<execute function="Click" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_ACTIONS_1" />
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Resubmit" />
-		</execute>
+	macro completeFormForTaskViaTable {
+		var key_kfProcessName = "${kfProcessName}";
 
-		<execute function="AssertTextEquals" locator1="KaleoForms#DIALOG_BOX_TITLE" value1="Resubmit" />
+		AssertTextEquals(
+			locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_TASK_1",
+			value1 = "${workflowTask}"
+		);
 
-		<if>
-			<isset var="comment" />
-			<then>
-				<execute function="Type" locator1="KaleoForms#DIALOG_BOX_COMMENT_FIELD" value1="${comment}" />
-			</then>
-		</if>
+		AssertTextEquals(
+			locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_NAME_1",
+			value1 = "${kfProcessName}"
+		);
 
-		<execute macro="Button#clickDone" />
+		AssertElementPresent(
+			locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_SUBMISSION_DATE_1"
+		);
 
-		<execute macro="Alert#viewSuccessMessage" />
-	</command>
+		Click(locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_ACTIONS_1");
 
-	<command name="resubmitPendingProcessViaMyPendingRequests">
-		<execute function="AssertClick" locator1="KaleoFormsViewProcessRecord#TASKS_TABLE_UPDATE_ACTIONS" value1="Actions" />
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Resubmit" />
-		</execute>
+		MenuItem.click(menuItem = "Complete Form");
+	}
 
-		<execute function="AssertTextEquals" locator1="KaleoForms#DIALOG_BOX_TITLE" value1="Resubmit" />
+	macro populateFieldBoolean {
+		var key_fieldName = "${fieldName}";
 
-		<if>
-			<isset var="comment" />
-			<then>
-				<execute function="Type" locator1="KaleoForms#DIALOG_BOX_COMMENT_FIELD" value1="${comment}" />
-			</then>
-		</if>
+		if ("${kfProcessFieldData}" == "true") {
+			Check(locator1 = "DDLEditRecord#BOOLEAN_CHECKBOX");
+		}
+		else if ("${kfProcessFieldData}" == "false") {
+			Uncheck(locator1 = "DDLEditRecord#BOOLEAN_CHECKBOX");
+		}
+	}
 
-		<execute macro="Button#clickDone" />
+	macro populateFieldDate {
+		var key_fieldName = "${fieldName}";
 
-		<execute macro="Alert#viewSuccessMessage" />
-	</command>
+		Type(locator1 = "DDLEditRecord#DATE_FIELD", value1 = "${kfProcessFieldData}");
 
-	<command name="saveProcessRecord">
-		<execute macro="PortletEntry#save" />
-	</command>
+		Click(locator1 = "DDLEditRecord#DATE_FIELD");
+	}
 
-	<command name="submitNewProcess">
-		<execute function="AssertClick" locator1="KaleoForms#SUBMIT_NEW" value1="Submit New" />
+	macro populateFieldDocumentsAndMedia {
+		var key_fieldName = "${fieldName}";
 
-		<var name="key_kfProcessName" value="${kfProcessName}" />
+		AssertClick(
+			locator1 = "DDLEditRecord#DOCUMENTS_AND_MEDIA_CHOOSE_FROM_DOCUMENT_LIBRARY_BUTTON",
+			value1 = "Select"
+		);
 
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="${kfProcessName}" />
-		</execute>
+		SelectFrame(locator1 = "DocumentsAndMediaSelectDocument#SELECT_DOCUMENT_IFRAME");
 
-		<execute function="AssertTextEquals" locator1="DDLEditRecord#HEADER_TITLE" value1="New ${kfProcessName}" />
-	</command>
+		AssertClick(locator1 = "Button#ADD", value1 = "Add");
 
-	<command name="updateProcessDueDate">
-		<var name="key_kfProcessName" value="${kfProcessName}" />
+		MenuItem.click(menuItem = "Basic Document");
 
-		<if>
-			<isset var="assignedToMyRoles" />
-			<then>
+		UploadCommonFile(
+			locator1 = "DocumentsAndMediaEditDocument#FILE_FIELD",
+			value1 = "${document}"
+		);
 
-				<execute macro="LexiconEntry#openEntryMenu">
-					<var name="rowEntry" value="${kfProcessName}" />
-				</execute>
-			</then>
-			<elseif>
-				<isset var="assignedToMe" />
-				<then>
-					<execute function="Click" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_ACTIONS_1" />
-				</then>
-			</elseif>
-		</if>
+		PortletEntry.inputTitle(title = "${kfProcessFieldData}");
 
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Update Due Date" />
-		</execute>
+		AssertClick(locator1 = "Button#PUBLISH", value1 = "Publish");
 
-		<execute function="AssertTextEquals" locator1="KaleoForms#DIALOG_BOX_TITLE" value1="Update Due Date" />
-		<execute function="Type" locator1="KaleoForms#DIALOG_BOX_UPDATE_DUE_DATE_DATE" value1="${kfProcessDueDateDate}" />
-		<execute function="Type" locator1="KaleoForms#DIALOG_BOX_UPDATE_DUE_DATE_TIME" value1="${kfProcessDueDateTime}" />
-		<execute function="Click" locator1="KaleoForms#DIALOG_BOX_UPDATE_DUE_DATE_DATE" />
-		<execute function="Click" locator1="KaleoForms#DIALOG_BOX_UPDATE_DUE_DATE_TIME" />
+		var key_documentTitle = "${kfProcessFieldData}";
 
-		<if>
-			<isset var="comment" />
-			<then>
-				<execute function="Type" locator1="KaleoForms#DIALOG_BOX_COMMENT_FIELD" value1="${comment}" />
-			</then>
-		</if>
+		AssertTextEquals(
+			locator1 = "DocumentsAndMediaSelectDocument#DOCUMENTS_TABLE_DOCUMENT",
+			value1 = "${kfProcessFieldData}"
+		);
 
-		<execute macro="Button#clickDone" />
+		Click(locator1 = "DocumentsAndMediaSelectDocument#DOCUMENTS_TABLE_CHOOSE");
 
-		<execute macro="Alert#viewSuccessMessage" />
-	</command>
+		SelectFrame(value1 = "relative=top");
 
-	<command name="viewCompleteFormFieldDate">
-		<var name="key_fieldName" value="${fieldName}" />
-		<var name="key_kfProcessFieldData" value="${kfProcessFieldData}" />
+		AssertTextEquals(
+			locator1 = "DDLEditRecord#DOCUMENTS_AND_MEDIA_FIELD",
+			value1 = "${kfProcessFieldData}"
+		);
+	}
 
-		<execute function="AssertTextEquals" locator1="DDLEditRecord#DATE_FIELD" value1="${kfProcessFieldData}" />
-	</command>
+	macro populateFieldHTML {
+		var key_fieldName = "${fieldName}";
 
-	<command name="viewCompleteFormFieldDocumentsAndMedia">
-		<var name="key_fieldName" value="${fieldName}" />
-		<var name="key_kfProcessFieldData" value="${kfProcessFieldData}" />
+		Type.typeCKEditor(
+			locator1 = "DDLEditRecord#HTML_FIELD",
+			value1 = "${kfProcessFieldData}"
+		);
+	}
 
-		<execute function="AssertTextEquals" locator1="DDLEditRecord#DOCUMENTS_AND_MEDIA_FIELD" value1="${kfProcessFieldData}" />
-	</command>
+	macro populateFieldLinkToPage {
+		var key_ddlRecordFieldData = "${ddlRecordFieldData}";
+		var key_fieldName = "${fieldName}";
 
-	<command name="viewCompleteFormFieldDocumentsAndMediaSelect">
-		<var name="key_fieldName" value="${fieldName}" />
-		<var name="key_kfProcessFieldData" value="${kfProcessFieldData}" />
+		AssertClick(
+			locator1 = "DDLEditRecord#LINK_TO_PAGE_SELECT_PAGE_BUTTON",
+			value1 = "Select"
+		);
 
-		<execute function="AssertTextEquals" locator1="DDLEditRecord#DOCUMENTS_AND_MEDIA_CHOOSE_FROM_DOCUMENT_LIBRARY_BUTTON" value1="${kfProcessFieldData}" />
-	</command>
+		var key_navItem = "${pagePrivacy} Pages";
 
-	<command name="viewCompleteFormFieldFieldset">
-		<var name="key_fieldName" value="${fieldName}" />
+		AssertClick(
+			locator1 = "DDLEditRecord#LINK_TO_PAGE_NAV_ITEM",
+			value1 = "${pagePrivacy} Pages"
+		);
 
-		<execute function="AssertTextEquals" locator1="DDLEditRecord#FIELD_FIELDSET" value1="${fieldName}" />
-	</command>
+		var key_pageName = "${ddlRecordFieldData}";
 
-	<command name="viewCompleteFormFieldNotPresent">
-		<var name="key_fieldName" value="${fieldName}" />
+		Click(locator1 = "DDLEditRecord#LINK_TO_PAGE_PAGE_RADIO");
 
-		<execute function="AssertElementNotPresent" locator1="DDLEditRecord#TEXT_FIELD" />
-	</command>
+		AssertClick(locator1 = "Button#SELECT", value1 = "Select");
 
-	<command name="viewCompleteFormFieldSelect">
-		<var name="key_fieldName" value="${fieldName}" />
-		<var name="key_kfProcessFieldData" value="${kfProcessFieldData}" />
+		AssertTextEquals(
+			locator1 = "DDLEditRecord#LINK_TO_PAGE_PAGE_SELECT",
+			value1 = "${ddlRecordFieldData}"
+		);
+	}
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="DDLEditRecord#SELECT_SELECT" value1="${kfProcessFieldData}" />
-	</command>
+	macro populateFieldRadio {
+		var key_fieldName = "${fieldName}";
+		var key_kfProcessFieldData = "${kfProcessFieldData}";
 
-	<command name="viewCompleteFormFieldText">
-		<var name="key_fieldName" value="${fieldName}" />
-		<var name="key_kfProcessFieldData" value="${kfProcessFieldData}" />
+		Click(locator1 = "DDLEditRecord#RADIO_OPTION_RADIO");
+	}
 
-		<execute function="AssertTextEquals" locator1="DDLEditRecord#TEXT_FIELD" value1="${kfProcessFieldData}" />
-	</command>
+	macro populateFieldSelect {
+		var key_fieldName = "${fieldName}";
 
-	<command name="viewCompleteFormFieldTextBox">
-		<var name="key_fieldName" value="${fieldName}" />
-		<var name="key_kfProcessFieldData" value="${kfProcessFieldData}" />
+		Select(
+			locator1 = "DDLEditRecord#SELECT_SELECT",
+			value1 = "${kfProcessFieldData}"
+		);
+	}
 
-		<execute function="AssertTextEquals" locator1="DDLEditRecord#TEXT_BOX_FIELD" value1="${kfProcessFieldData}" />
-	</command>
+	macro populateFieldText {
+		var key_fieldName = "${fieldName}";
 
-	<command name="viewInboxProcessName">
-		<var name="key_kfProcessName" value="${kfProcessName}" />
+		Type(locator1 = "DDLEditRecord#TEXT_FIELD", value1 = "${kfProcessFieldData}");
+	}
 
-		<execute function="AssertTextEquals" locator1="KaleoFormsViewProcessRecord#PROCESS_NAME" value1="${workflowTask}: ${kfProcessName}" />
-	</command>
+	macro populateFieldTextBox {
+		var fieldName = StringUtil.replace('${fieldName}', ' ', '_');
+		var key_fieldName = "${fieldName}";
 
-	<command name="viewMyCompletedRequests">
-		<execute function="AssertClick" locator1="KaleoForms#MY_COMPLETED_REQUESTS" value1="My Completed Requests" />
+		Type(
+			locator1 = "DDLEditRecord#TEXT_BOX_FIELD",
+			value1 = "${kfProcessFieldData}"
+		);
+	}
 
-		<var name="key_kfProcessName" value="${kfProcessName}" />
+	macro rejectProcess {
+		var key_kfProcessName = "${kfProcessName}";
 
-		<execute function="AssertTextEquals" locator1="KaleoForms#MY_COMPLETED_REQUESTS_TABLE_NAME" value1="${kfProcessName}" />
-		<execute function="AssertTextEquals" locator1="KaleoForms#MY_COMPLETED_REQUESTS_TABLE_STATUS" value1="Approved" />
-		<execute function="AssertElementPresent" locator1="KaleoForms#MY_COMPLETED_REQUESTS_TABLE_LAST_ACTIVITY_DATE" />
-		<execute function="AssertElementPresent" locator1="KaleoForms#MY_COMPLETED_REQUESTS_TABLE_END_DATE" />
-		<execute function="AssertElementNotPresent" locator1="KaleoForms#MY_COMPLETED_REQUESTS_TABLE_EXTRA_COLUMN" />
-		<execute function="AssertClick" locator1="KaleoForms#MY_COMPLETED_REQUESTS_TABLE_NAME" value1="${kfProcessName}" />
+		AssertTextEquals(
+			locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_TASK_1",
+			value1 = "${workflowTask}"
+		);
 
-		<execute function="AssertTextEquals" locator1="KaleoFormsViewProcessRecord#WORKFLOW_STATUS" value1="State Approved" />
-		<execute function="AssertTextEquals" locator1="KaleoFormsViewProcessRecord#WORKFLOW_DEFINITION" value1="${workflowDefinitionTitle}" />
-	</command>
+		AssertTextEquals(
+			locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_NAME_1",
+			value1 = "${kfProcessName}"
+		);
 
-	<command name="viewMyCompletedRequestsAllComments">
-		<execute function="AssertClick" locator1="KaleoFormsViewProcessRecord#ACTIVITIES_PANEL_COLLAPSED" value1="Activities" />
+		AssertElementPresent(
+			locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_SUBMISSION_DATE_1"
+		);
 
-		<var name="i" value="1" />
+		Click(locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_ACTIONS_1");
 
-		<for list="${commentList}" param="comment">
-			<execute function="AssertTextEquals" locator1="xpath=(//div[@class='task-activity-comment'])[${i}]" value1="${comment}" />
+		MenuItem.click(menuItem = "Reject");
 
-			<var method="MathUtil#sum('${i}', '1')" name="i" />
-		</for>
+		AssertTextEquals(locator1 = "KaleoForms#DIALOG_BOX_TITLE", value1 = "Reject");
 
-		<execute function="AssertElementNotPresent" locator1="xpath=(//div[@class='task-activity-comment'])[${i}]" />
-	</command>
+		if (isSet(comment)) {
+			Type(locator1 = "KaleoForms#DIALOG_BOX_COMMENT_FIELD", value1 = "${comment}");
+		}
 
-	<command name="viewMyCompletedRequestsComment">
-		<var name="key_comment" value="${comment}" />
+		Button.clickDone();
 
-		<execute function="AssertTextEquals" locator1="KaleoFormsViewProcessRecord#ACTIVITIES_COMMENT" value1="${comment}" />
-	</command>
+		Alert.viewSuccessMessage();
+	}
 
-	<command name="viewMyCompletedRequestsField">
-		<var name="key_fieldName" value="${fieldName}" />
-		<var name="key_kfProcessFieldData" value="${kfProcessFieldData}" />
+	macro resubmitPendingProcessViaInbox {
+		var key_kfProcessName = "${kfProcessName}";
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="KaleoFormsViewProcessRecord#CURRENT_ENTRY_FIELD" value1="${kfProcessFieldData}" />
-	</command>
+		AssertTextEquals(
+			locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_TASK_1",
+			value1 = "${workflowTask}"
+		);
 
-	<command name="viewMyCompletedRequestsFieldNotPresent">
-		<var name="key_fieldName" value="${fieldName}" />
-		<var name="key_kfProcessFieldData" value="${kfProcessFieldData}" />
+		AssertTextEquals(
+			locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_NAME_1",
+			value1 = "${kfProcessName}"
+		);
 
-		<execute function="AssertElementNotPresent" locator1="KaleoFormsViewProcessRecord#CURRENT_ENTRY_FIELD" />
-	</command>
+		AssertElementPresent(
+			locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_SUBMISSION_DATE_1"
+		);
 
-	<command name="viewMyCompletedRequestsProcessName">
-		<var name="key_kfProcessName" value="${kfProcessName}" />
+		Click(locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_ACTIONS_1");
 
-		<execute function="AssertTextEquals" locator1="KaleoFormsViewProcessRecord#PROCESS_NAME" value1="${workflowDefinitionTitle}: ${kfProcessName}" />
-	</command>
+		MenuItem.click(menuItem = "Resubmit");
 
-	<command name="viewMyCompletedRequestsTasks">
-		<execute function="AssertTextEquals" locator1="KaleoFormsViewProcessRecord#TASKS_TABLE_REVIEW_TASK" value1="Review" />
-		<execute function="AssertTextEquals" locator1="KaleoFormsViewProcessRecord#TASKS_TABLE_REVIEW_COMPLETED" value1="Yes" />
-	</command>
+		AssertTextEquals(locator1 = "KaleoForms#DIALOG_BOX_TITLE", value1 = "Resubmit");
 
-	<command name="viewMyPendingRequests">
-		<execute function="AssertClick" locator1="KaleoForms#MY_PENDING_REQUESTS" value1="My Pending Requests" />
+		if (isSet(comment)) {
+			Type(locator1 = "KaleoForms#DIALOG_BOX_COMMENT_FIELD", value1 = "${comment}");
+		}
 
-		<var name="key_kfProcessName" value="${kfProcessName}" />
+		Button.clickDone();
 
-		<execute function="AssertTextEquals" locator1="KaleoForms#MY_PENDING_REQUESTS_TABLE_NAME" value1="${kfProcessName}" />
-		<execute function="AssertTextEquals" locator1="KaleoForms#MY_PENDING_REQUESTS_TABLE_STATUS" value1="${kfProcessStatus}" />
-		<execute function="AssertElementPresent" locator1="KaleoForms#MY_PENDING_REQUESTS_TABLE_LAST_ACTIVITY_DATE" />
-		<execute function="AssertElementPresent" locator1="KaleoForms#MY_PENDING_REQUESTS_TABLE_END_DATE" />
-		<execute function="AssertClick" locator1="KaleoForms#MY_PENDING_REQUESTS_TABLE_NAME" value1="${kfProcessName}" />
+		Alert.viewSuccessMessage();
+	}
 
-		<execute function="AssertTextEquals" locator1="KaleoFormsViewProcessRecord#WORKFLOW_STATUS" value1="State ${kfProcessStatus}" />
-		<execute function="AssertTextEquals" locator1="KaleoFormsViewProcessRecord#WORKFLOW_DEFINITION" value1="${workflowDefinitionTitle}" />
-	</command>
+	macro resubmitPendingProcessViaMyPendingRequests {
+		AssertClick(
+			locator1 = "KaleoFormsViewProcessRecord#TASKS_TABLE_UPDATE_ACTIONS",
+			value1 = "Actions"
+		);
 
-	<command name="viewMyPendingRequestsField">
-		<var name="key_fieldName" value="${fieldName}" />
-		<var name="key_kfProcessFieldData" value="${kfProcessFieldData}" />
+		MenuItem.click(menuItem = "Resubmit");
 
-		<execute function="AssertTextEquals" locator1="KaleoFormsViewProcessRecord#CURRENT_ENTRY_FIELD" value1="${fieldName} ${kfProcessFieldData}" />
-	</command>
+		AssertTextEquals(locator1 = "KaleoForms#DIALOG_BOX_TITLE", value1 = "Resubmit");
 
-	<command name="viewMyPendingRequestsTasksRejected">
-		<execute function="AssertTextEquals" locator1="KaleoFormsViewProcessRecord#TASKS_TABLE_UPDATE_TASK" value1="Update" />
-		<execute function="AssertTextEquals" locator1="KaleoFormsViewProcessRecord#TASKS_TABLE_REVIEW_COMPLETED" value1="No" />
-	</command>
+		if (isSet(comment)) {
+			Type(locator1 = "KaleoForms#DIALOG_BOX_COMMENT_FIELD", value1 = "${comment}");
+		}
 
-	<command name="viewNoCompletedRequests">
-		<execute function="AssertClick" locator1="KaleoForms#MY_COMPLETED_REQUESTS" value1="My Completed Requests" />
-		<execute function="AssertTextEquals" locator1="KaleoForms#MY_COMPLETED_REQUESTS_INFO_MESSAGE" value1="There are no completed publications requested by me." />
-	</command>
+		Button.clickDone();
 
-	<command name="viewNoPermissionPG">
-		<execute function="AssertTextEquals" locator1="Message#ERROR_1_COLUMN_1" value1="You do not have the roles required to access this portlet." />
-	</command>
+		Alert.viewSuccessMessage();
+	}
 
-	<command name="viewNoTasks">
-		<execute macro="Panel#expandPanel">
-			<var name="panel" value="Assigned to Me" />
-		</execute>
+	macro saveProcessRecord {
+		PortletEntry.save();
+	}
 
-		<execute macro="PortletEntry#viewEmptyMessage">
-			<var name="entity" value="Tasks" />
-		</execute>
+	macro submitNewProcess {
+		AssertClick(locator1 = "KaleoForms#SUBMIT_NEW", value1 = "Submit New");
 
-		<execute macro="Panel#expandPanel">
-			<var name="panel" value="Assigned to My Roles" />
-		</execute>
+		var key_kfProcessName = "${kfProcessName}";
 
-		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO_2" value1="There are no tasks." />
-	</command>
+		MenuItem.click(menuItem = "${kfProcessName}");
 
-	<command name="viewProcessAssignedToMe">
-		<var name="key_kfProcessName" value="${kfProcessName}" />
+		AssertTextEquals(
+			locator1 = "DDLEditRecord#HEADER_TITLE",
+			value1 = "New ${kfProcessName}"
+		);
+	}
 
-		<execute function="Click" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_NAME_1" />
-	</command>
+	macro updateProcessDueDate {
+		var key_kfProcessName = "${kfProcessName}";
 
-	<command name="viewProcessDueDate">
-		<var name="key_kfProcessName" value="${kfProcessName}" />
+		if (isSet(assignedToMyRoles)) {
+			LexiconEntry.openEntryMenu(rowEntry = "${kfProcessName}");
+		}
+		else if (isSet(assignedToMe)) {
+			Click(locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_ACTIONS_1");
+		}
 
-		<if>
-			<isset var="assignedToMyRoles" />
-			<then>
-				<execute function="Click" locator1="KaleoForms#ASSIGNED_TO_MY_ROLES_TABLE_NAME" />
-			</then>
-			<elseif>
-				<isset var="assignedToMe" />
-				<then>
-					<execute function="Click" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_NAME_1" />
-				</then>
-			</elseif>
-		</if>
+		MenuItem.click(menuItem = "Update Due Date");
 
-		<execute function="AssertTextEquals" locator1="KaleoFormsViewProcessRecord#DUE_DATE_DATE" value1="Due Date ${kfProcessDueDateFormatted} - (Change)" />
-	</command>
+		AssertTextEquals(
+			locator1 = "KaleoForms#DIALOG_BOX_TITLE",
+			value1 = "Update Due Date"
+		);
 
-	<command name="viewProcessEntryField">
-		<var name="key_fieldName" value="${fieldName}" />
-		<var name="key_kfProcessFieldData" value="${kfProcessFieldData}" />
+		Type(
+			locator1 = "KaleoForms#DIALOG_BOX_UPDATE_DUE_DATE_DATE",
+			value1 = "${kfProcessDueDateDate}"
+		);
 
-		<execute function="AssertTextEquals" locator1="KaleoFormsViewProcessRecord#CURRENT_ENTRY_FIELD" value1="${fieldName} ${kfProcessFieldData}" />
-	</command>
+		Type(
+			locator1 = "KaleoForms#DIALOG_BOX_UPDATE_DUE_DATE_TIME",
+			value1 = "${kfProcessDueDateTime}"
+		);
 
-	<command name="viewSecondProcessAssignedToMe">
-		<var name="key_kfProcessName" value="${kfProcessName}" />
+		Click(locator1 = "KaleoForms#DIALOG_BOX_UPDATE_DUE_DATE_DATE");
 
-		<execute function="Click" locator1="KaleoForms#ASSIGNED_TO_ME_TABLE_NAME_2" />
-	</command>
+		Click(locator1 = "KaleoForms#DIALOG_BOX_UPDATE_DUE_DATE_TIME");
 
-	<command name="withdrawSubmission">
-		<execute function="AssertClick" locator1="KaleoForms#MY_PENDING_REQUESTS" value1="My Pending Requests" />
+		if (isSet(comment)) {
+			Type(locator1 = "KaleoForms#DIALOG_BOX_COMMENT_FIELD", value1 = "${comment}");
+		}
 
-		<var name="key_kfProcessName" value="${kfProcessName}" />
+		Button.clickDone();
 
-		<execute function="AssertTextEquals" locator1="KaleoForms#MY_PENDING_REQUESTS_TABLE_NAME" value1="${kfProcessName}" />
-		<execute function="AssertTextEquals" locator1="KaleoForms#MY_PENDING_REQUESTS_TABLE_STATUS" value1="${kfProcessStatus}" />
-		<execute function="AssertElementPresent" locator1="KaleoForms#MY_PENDING_REQUESTS_TABLE_LAST_ACTIVITY_DATE" />
-		<execute function="AssertElementPresent" locator1="KaleoForms#MY_PENDING_REQUESTS_TABLE_END_DATE" />
+		Alert.viewSuccessMessage();
+	}
 
-		<execute macro="LexiconEntry#openEntryMenu">
-			<var name="rowEntry" value="${kfProcessName}" />
-		</execute>
+	macro viewCompleteFormFieldDate {
+		var key_fieldName = "${fieldName}";
+		var key_kfProcessFieldData = "${kfProcessFieldData}";
 
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Withdraw Submission" />
-		</execute>
+		AssertTextEquals(
+			locator1 = "DDLEditRecord#DATE_FIELD",
+			value1 = "${kfProcessFieldData}"
+		);
+	}
 
-		<execute macro="Alert#viewSuccessMessage" />
+	macro viewCompleteFormFieldDocumentsAndMedia {
+		var key_fieldName = "${fieldName}";
+		var key_kfProcessFieldData = "${kfProcessFieldData}";
 
-		<execute function="AssertTextNotPresent" locator1="KaleoForms#MY_PENDING_REQUESTS_TABLE_NAME" value1="${kfProcessName}" />
-		<execute function="AssertTextNotPresent" locator1="KaleoForms#MY_PENDING_REQUESTS_TABLE_STATUS" value1="${kfProcessStatus}" />
-		<execute function="AssertElementNotPresent" locator1="KaleoForms#MY_PENDING_REQUESTS_TABLE_LAST_ACTIVITY_DATE" />
-		<execute function="AssertElementNotPresent" locator1="KaleoForms#MY_PENDING_REQUESTS_TABLE_END_DATE" />
-		<execute function="AssertTextEquals" locator1="Message#INFO" value1="There are no pending publications requested by me." />
-	</command>
-</definition>
+		AssertTextEquals(
+			locator1 = "DDLEditRecord#DOCUMENTS_AND_MEDIA_FIELD",
+			value1 = "${kfProcessFieldData}"
+		);
+	}
+
+	macro viewCompleteFormFieldDocumentsAndMediaSelect {
+		var key_fieldName = "${fieldName}";
+		var key_kfProcessFieldData = "${kfProcessFieldData}";
+
+		AssertTextEquals(
+			locator1 = "DDLEditRecord#DOCUMENTS_AND_MEDIA_CHOOSE_FROM_DOCUMENT_LIBRARY_BUTTON",
+			value1 = "${kfProcessFieldData}"
+		);
+	}
+
+	macro viewCompleteFormFieldFieldset {
+		var key_fieldName = "${fieldName}";
+
+		AssertTextEquals(
+			locator1 = "DDLEditRecord#FIELD_FIELDSET",
+			value1 = "${fieldName}"
+		);
+	}
+
+	macro viewCompleteFormFieldNotPresent {
+		var key_fieldName = "${fieldName}";
+
+		AssertElementNotPresent(locator1 = "DDLEditRecord#TEXT_FIELD");
+	}
+
+	macro viewCompleteFormFieldSelect {
+		var key_fieldName = "${fieldName}";
+		var key_kfProcessFieldData = "${kfProcessFieldData}";
+
+		AssertTextEquals.assertPartialText(
+			locator1 = "DDLEditRecord#SELECT_SELECT",
+			value1 = "${kfProcessFieldData}"
+		);
+	}
+
+	macro viewCompleteFormFieldText {
+		var key_fieldName = "${fieldName}";
+		var key_kfProcessFieldData = "${kfProcessFieldData}";
+
+		AssertTextEquals(
+			locator1 = "DDLEditRecord#TEXT_FIELD",
+			value1 = "${kfProcessFieldData}"
+		);
+	}
+
+	macro viewCompleteFormFieldTextBox {
+		var key_fieldName = "${fieldName}";
+		var key_kfProcessFieldData = "${kfProcessFieldData}";
+
+		AssertTextEquals(
+			locator1 = "DDLEditRecord#TEXT_BOX_FIELD",
+			value1 = "${kfProcessFieldData}"
+		);
+	}
+
+	macro viewInboxProcessName {
+		var key_kfProcessName = "${kfProcessName}";
+
+		AssertTextEquals(
+			locator1 = "KaleoFormsViewProcessRecord#PROCESS_NAME",
+			value1 = "${workflowTask}: ${kfProcessName}"
+		);
+	}
+
+	macro viewMyCompletedRequests {
+		AssertClick(
+			locator1 = "KaleoForms#MY_COMPLETED_REQUESTS",
+			value1 = "My Completed Requests"
+		);
+
+		var key_kfProcessName = "${kfProcessName}";
+
+		AssertTextEquals(
+			locator1 = "KaleoForms#MY_COMPLETED_REQUESTS_TABLE_NAME",
+			value1 = "${kfProcessName}"
+		);
+
+		AssertTextEquals(
+			locator1 = "KaleoForms#MY_COMPLETED_REQUESTS_TABLE_STATUS",
+			value1 = "Approved"
+		);
+
+		AssertElementPresent(
+			locator1 = "KaleoForms#MY_COMPLETED_REQUESTS_TABLE_LAST_ACTIVITY_DATE"
+		);
+
+		AssertElementPresent(
+			locator1 = "KaleoForms#MY_COMPLETED_REQUESTS_TABLE_END_DATE"
+		);
+
+		AssertElementNotPresent(
+			locator1 = "KaleoForms#MY_COMPLETED_REQUESTS_TABLE_EXTRA_COLUMN"
+		);
+
+		AssertClick(
+			locator1 = "KaleoForms#MY_COMPLETED_REQUESTS_TABLE_NAME",
+			value1 = "${kfProcessName}"
+		);
+
+		AssertTextEquals(
+			locator1 = "KaleoFormsViewProcessRecord#WORKFLOW_STATUS",
+			value1 = "State Approved"
+		);
+
+		AssertTextEquals(
+			locator1 = "KaleoFormsViewProcessRecord#WORKFLOW_DEFINITION",
+			value1 = "${workflowDefinitionTitle}"
+		);
+	}
+
+	macro viewMyCompletedRequestsAllComments {
+		AssertClick(
+			locator1 = "KaleoFormsViewProcessRecord#ACTIVITIES_PANEL_COLLAPSED",
+			value1 = "Activities"
+		);
+
+		var i = "1";
+
+		for (var comment : list "${commentList}") {
+			AssertTextEquals(
+				locator1 = "xpath=(//div[@class='task-activity-comment'])[${i}]",
+				value1 = "${comment}"
+			);
+
+			var i = MathUtil.sum('${i}', '1');
+		}
+
+		AssertElementNotPresent(
+			locator1 = "xpath=(//div[@class='task-activity-comment'])[${i}]"
+		);
+	}
+
+	macro viewMyCompletedRequestsComment {
+		var key_comment = "${comment}";
+
+		AssertTextEquals(
+			locator1 = "KaleoFormsViewProcessRecord#ACTIVITIES_COMMENT",
+			value1 = "${comment}"
+		);
+	}
+
+	macro viewMyCompletedRequestsField {
+		var key_fieldName = "${fieldName}";
+		var key_kfProcessFieldData = "${kfProcessFieldData}";
+
+		AssertTextEquals.assertPartialText(
+			locator1 = "KaleoFormsViewProcessRecord#CURRENT_ENTRY_FIELD",
+			value1 = "${kfProcessFieldData}"
+		);
+	}
+
+	macro viewMyCompletedRequestsFieldNotPresent {
+		var key_fieldName = "${fieldName}";
+		var key_kfProcessFieldData = "${kfProcessFieldData}";
+
+		AssertElementNotPresent(
+			locator1 = "KaleoFormsViewProcessRecord#CURRENT_ENTRY_FIELD"
+		);
+	}
+
+	macro viewMyCompletedRequestsProcessName {
+		var key_kfProcessName = "${kfProcessName}";
+
+		AssertTextEquals(
+			locator1 = "KaleoFormsViewProcessRecord#PROCESS_NAME",
+			value1 = "${workflowDefinitionTitle}: ${kfProcessName}"
+		);
+	}
+
+	macro viewMyCompletedRequestsTasks {
+		AssertTextEquals(
+			locator1 = "KaleoFormsViewProcessRecord#TASKS_TABLE_REVIEW_TASK",
+			value1 = "Review"
+		);
+
+		AssertTextEquals(
+			locator1 = "KaleoFormsViewProcessRecord#TASKS_TABLE_REVIEW_COMPLETED",
+			value1 = "Yes"
+		);
+	}
+
+	macro viewMyPendingRequests {
+		AssertClick(
+			locator1 = "KaleoForms#MY_PENDING_REQUESTS",
+			value1 = "My Pending Requests"
+		);
+
+		var key_kfProcessName = "${kfProcessName}";
+
+		AssertTextEquals(
+			locator1 = "KaleoForms#MY_PENDING_REQUESTS_TABLE_NAME",
+			value1 = "${kfProcessName}"
+		);
+
+		AssertTextEquals(
+			locator1 = "KaleoForms#MY_PENDING_REQUESTS_TABLE_STATUS",
+			value1 = "${kfProcessStatus}"
+		);
+
+		AssertElementPresent(
+			locator1 = "KaleoForms#MY_PENDING_REQUESTS_TABLE_LAST_ACTIVITY_DATE"
+		);
+
+		AssertElementPresent(locator1 = "KaleoForms#MY_PENDING_REQUESTS_TABLE_END_DATE");
+
+		AssertClick(
+			locator1 = "KaleoForms#MY_PENDING_REQUESTS_TABLE_NAME",
+			value1 = "${kfProcessName}"
+		);
+
+		AssertTextEquals(
+			locator1 = "KaleoFormsViewProcessRecord#WORKFLOW_STATUS",
+			value1 = "State ${kfProcessStatus}"
+		);
+
+		AssertTextEquals(
+			locator1 = "KaleoFormsViewProcessRecord#WORKFLOW_DEFINITION",
+			value1 = "${workflowDefinitionTitle}"
+		);
+	}
+
+	macro viewMyPendingRequestsField {
+		var key_fieldName = "${fieldName}";
+		var key_kfProcessFieldData = "${kfProcessFieldData}";
+
+		AssertTextEquals(
+			locator1 = "KaleoFormsViewProcessRecord#CURRENT_ENTRY_FIELD",
+			value1 = "${fieldName} ${kfProcessFieldData}"
+		);
+	}
+
+	macro viewMyPendingRequestsTasksRejected {
+		AssertTextEquals(
+			locator1 = "KaleoFormsViewProcessRecord#TASKS_TABLE_UPDATE_TASK",
+			value1 = "Update"
+		);
+
+		AssertTextEquals(
+			locator1 = "KaleoFormsViewProcessRecord#TASKS_TABLE_REVIEW_COMPLETED",
+			value1 = "No"
+		);
+	}
+
+	macro viewNoCompletedRequests {
+		AssertClick(
+			locator1 = "KaleoForms#MY_COMPLETED_REQUESTS",
+			value1 = "My Completed Requests"
+		);
+
+		AssertTextEquals(
+			locator1 = "KaleoForms#MY_COMPLETED_REQUESTS_INFO_MESSAGE",
+			value1 = "There are no completed publications requested by me."
+		);
+	}
+
+	macro viewNoPermissionPG {
+		AssertTextEquals(
+			locator1 = "Message#ERROR_1_COLUMN_1",
+			value1 = "You do not have the roles required to access this portlet."
+		);
+	}
+
+	macro viewNoTasks {
+		Panel.expandPanel(panel = "Assigned to Me");
+
+		PortletEntry.viewEmptyMessage(entity = "Tasks");
+
+		Panel.expandPanel(panel = "Assigned to My Roles");
+
+		AssertTextEquals(
+			locator1 = "Message#EMPTY_INFO_2",
+			value1 = "There are no tasks."
+		);
+	}
+
+	macro viewProcessAssignedToMe {
+		var key_kfProcessName = "${kfProcessName}";
+
+		Click(locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_NAME_1");
+	}
+
+	macro viewProcessDueDate {
+		var key_kfProcessName = "${kfProcessName}";
+
+		if (isSet(assignedToMyRoles)) {
+			Click(locator1 = "KaleoForms#ASSIGNED_TO_MY_ROLES_TABLE_NAME");
+		}
+		else if (isSet(assignedToMe)) {
+			Click(locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_NAME_1");
+		}
+
+		AssertTextEquals(
+			locator1 = "KaleoFormsViewProcessRecord#DUE_DATE_DATE",
+			value1 = "Due Date ${kfProcessDueDateFormatted} - (Change)"
+		);
+	}
+
+	macro viewProcessEntryField {
+		var key_fieldName = "${fieldName}";
+		var key_kfProcessFieldData = "${kfProcessFieldData}";
+
+		AssertTextEquals(
+			locator1 = "KaleoFormsViewProcessRecord#CURRENT_ENTRY_FIELD",
+			value1 = "${fieldName} ${kfProcessFieldData}"
+		);
+	}
+
+	macro viewSecondProcessAssignedToMe {
+		var key_kfProcessName = "${kfProcessName}";
+
+		Click(locator1 = "KaleoForms#ASSIGNED_TO_ME_TABLE_NAME_2");
+	}
+
+	macro withdrawSubmission {
+		AssertClick(
+			locator1 = "KaleoForms#MY_PENDING_REQUESTS",
+			value1 = "My Pending Requests"
+		);
+
+		var key_kfProcessName = "${kfProcessName}";
+
+		AssertTextEquals(
+			locator1 = "KaleoForms#MY_PENDING_REQUESTS_TABLE_NAME",
+			value1 = "${kfProcessName}"
+		);
+
+		AssertTextEquals(
+			locator1 = "KaleoForms#MY_PENDING_REQUESTS_TABLE_STATUS",
+			value1 = "${kfProcessStatus}"
+		);
+
+		AssertElementPresent(
+			locator1 = "KaleoForms#MY_PENDING_REQUESTS_TABLE_LAST_ACTIVITY_DATE"
+		);
+
+		AssertElementPresent(locator1 = "KaleoForms#MY_PENDING_REQUESTS_TABLE_END_DATE");
+
+		LexiconEntry.openEntryMenu(rowEntry = "${kfProcessName}");
+
+		MenuItem.click(menuItem = "Withdraw Submission");
+
+		Alert.viewSuccessMessage();
+
+		AssertTextNotPresent(
+			locator1 = "KaleoForms#MY_PENDING_REQUESTS_TABLE_NAME",
+			value1 = "${kfProcessName}"
+		);
+
+		AssertTextNotPresent(
+			locator1 = "KaleoForms#MY_PENDING_REQUESTS_TABLE_STATUS",
+			value1 = "${kfProcessStatus}"
+		);
+
+		AssertElementNotPresent(
+			locator1 = "KaleoForms#MY_PENDING_REQUESTS_TABLE_LAST_ACTIVITY_DATE"
+		);
+
+		AssertElementNotPresent(
+			locator1 = "KaleoForms#MY_PENDING_REQUESTS_TABLE_END_DATE"
+		);
+
+		AssertTextEquals(
+			locator1 = "Message#INFO",
+			value1 = "There are no pending publications requested by me."
+		);
+	}
+}

@@ -1,53 +1,42 @@
-<definition>
-	<command name="addComment">
-		<execute function="Click" locator1="AlloyEditor#EDITOR">
-			<var name="key_editor" value="postReply" />
-		</execute>
+definition {
+	macro addComment {
+		Click(locator1 = "AlloyEditor#EDITOR", key_editor = "postReply");
 
-		<execute macro="AlloyEditor#typeEditor">
-			<var name="content" value="${entryComment}" />
-			<var name="editor" value="postReply" />
-		</execute>
+		AlloyEditor.typeEditor(content = "${entryComment}", editor = "postReply");
 
-		<execute function="AssertClick" locator1="Button#REPLY" value1="Reply" />
+		AssertClick(locator1 = "Button#REPLY", value1 = "Reply");
 
-		<execute macro="Alert#viewSuccessMessage" />
-	</command>
+		Alert.viewSuccessMessage();
+	}
 
-	<command name="deleteComment">
-		<execute macro="LexiconEntry#openEntryMenu">
-			<var name="rowEntry" value="${entryComment}" />
-		</execute>
+	macro deleteComment {
+		LexiconEntry.openEntryMenu(rowEntry = "${entryComment}");
 
-		<execute macro="MenuItem#clickNoError">
-			<var name="menuItem" value="Delete" />
-		</execute>
+		MenuItem.clickNoError(menuItem = "Delete");
 
-		<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
+		Confirm(
+			value1 = "Are you sure you want to delete this? It will be deleted immediately."
+		);
 
-		<execute macro="Alert#viewSuccessMessage" />
-	</command>
+		Alert.viewSuccessMessage();
+	}
 
-	<command name="editComment">
-		<execute macro="LexiconEntry#openEntryMenu">
-			<var name="rowEntry" value="${entryComment}" />
-		</execute>
+	macro editComment {
+		LexiconEntry.openEntryMenu(rowEntry = "${entryComment}");
 
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Edit" />
-		</execute>
+		MenuItem.click(menuItem = "Edit");
 
-		<execute macro="AlloyEditor#typeEditor">
-			<var name="content" value="${entryCommentEdit}" />
-			<var name="editor" value="editReply" />
-		</execute>
+		AlloyEditor.typeEditor(content = "${entryCommentEdit}", editor = "editReply");
 
-		<execute macro="PortletEntry#publish" />
-	</command>
+		PortletEntry.publish();
+	}
 
-	<command name="subscribePG">
-		<execute function="AssertClick" locator1="Comments#SUBSCRIBE_TO_COMMENTS_LINK" value1="Subscribe to Comments" />
+	macro subscribePG {
+		AssertClick(
+			locator1 = "Comments#SUBSCRIBE_TO_COMMENTS_LINK",
+			value1 = "Subscribe to Comments"
+		);
 
-		<execute macro="Alert#viewSuccessMessage" />
-	</command>
-</definition>
+		Alert.viewSuccessMessage();
+	}
+}

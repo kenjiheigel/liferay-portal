@@ -1,110 +1,87 @@
-<definition>
-	<command name="_gotoAddCollection">
-		<if>
-			<condition function="IsElementPresent" locator1="NavNested#NAV_NESTED_PLUS" />
-			<then>
-				<execute function="Click" locator1="NavNested#NAV_NESTED_PLUS" />
-			</then>
-			<else>
-				<execute macro="Button#click">
-					<var name="button" value="New" />
-				</execute>
+definition {
+	macro _gotoAddCollection {
+		if (IsElementPresent(locator1 = "NavNested#NAV_NESTED_PLUS")) {
+			Click(locator1 = "NavNested#NAV_NESTED_PLUS");
+		}
+		else {
+			Button.click(button = "New");
 
-				<execute macro="MenuItem#click">
-					<var name="menuItem" value="Collection" />
-				</execute>
-			</else>
-		</if>
-	</command>
+			MenuItem.click(menuItem = "Collection");
+		}
+	}
 
-	<command name="_gotoImportCollection">
-		<if>
-			<condition function="IsElementPresent" locator1="NavNested#NAV_NESTED_ELLIPSIS" />
-			<then>
-				<execute function="Click" locator1="NavNested#NAV_NESTED_ELLIPSIS" />
-			</then>
-			<else>
-				<execute macro="Button#click">
-					<var name="button" value="New" />
-				</execute>
-			</else>
-		</if>
+	macro _gotoImportCollection {
+		if (IsElementPresent(locator1 = "NavNested#NAV_NESTED_ELLIPSIS")) {
+			Click(locator1 = "NavNested#NAV_NESTED_ELLIPSIS");
+		}
+		else {
+			Button.click(button = "New");
+		}
 
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Import" />
-		</execute>
+		MenuItem.click(menuItem = "Import");
 
-		<execute macro="IFrame#selectConfigurationFrame" />
-	</command>
+		IFrame.selectConfigurationFrame();
+	}
 
-	<command name="addCollection">
-		<execute macro="Fragment#_gotoAddCollection" />
+	macro addCollection {
+		Fragment._gotoAddCollection();
 
-		<execute macro="Collection#editCollection">
-			<var name="collectionDescription" value="${collectionDescription}" />
-			<var name="collectionName" value="${collectionName}" />
-		</execute>
+		Collection.editCollection(
+			collectionDescription = "${collectionDescription}",
+			collectionName = "${collectionName}"
+		);
 
-		<execute macro="Button#clickSave" />
-	</command>
+		Button.clickSave();
+	}
 
-	<command name="addFragment">
-		<execute macro="LexiconEntry#gotoAdd" />
+	macro addFragment {
+		LexiconEntry.gotoAdd();
 
-		<execute function="AssertTextEquals" locator1="Modal#HEADER" value1="Add Fragment" />
+		AssertTextEquals(locator1 = "Modal#HEADER", value1 = "Add Fragment");
 
-		<execute macro="PortletEntry#inputName">
-			<var name="name" value="${fragmentName}" />
-		</execute>
+		PortletEntry.inputName(name = "${fragmentName}");
 
-		<execute macro="Button#clickSave" />
-	</command>
+		Button.clickSave();
+	}
 
-	<command name="exportCollection">
-		<execute macro="Navigator#gotoNavNested">
-			<var name="navNested" value="${collectionName}" />
-		</execute>
+	macro exportCollection {
+		Navigator.gotoNavNested(navNested = "${collectionName}");
 
-		<execute macro="LexiconEntry#gotoEllipsisMenuItem">
-			<var name="menuItem" value="Export" />
-		</execute>
-	</command>
+		LexiconEntry.gotoEllipsisMenuItem(menuItem = "Export");
+	}
 
-	<command name="importCollectionFromDependenciesFolder">
-		<execute macro="Fragment#_gotoImportCollection" />
+	macro importCollectionFromDependenciesFolder {
+		Fragment._gotoImportCollection();
 
-		<execute function="UploadCommonFile" locator1="TextInput#FILE" value1="${collectionZipFile}" />
-	</command>
+		UploadCommonFile(locator1 = "TextInput#FILE", value1 = "${collectionZipFile}");
+	}
 
-	<command name="importCollectionFromTempFolder">
-		<execute macro="Fragment#_gotoImportCollection" />
+	macro importCollectionFromTempFolder {
+		Fragment._gotoImportCollection();
 
-		<var method="PropsUtil#get('output.dir.name')" name="tempDir" />
+		var tempDir = PropsUtil.get('output.dir.name');
 
-		<var method="StringUtil#split('**/collections-*.zip')" name="pattern" />
+		var pattern = StringUtil.split('**/collections-*.zip');
+		var fileName = FileUtil.getIncludedResourceURLs('${pattern}', '${tempDir}');
+		var fileName = StringUtil.valueOf('${fileName}');
+		var fileName = RegexUtil.replace('${fileName}', '\[(.*)\]', '1');
+		var shortFileName = FileUtil.getFileName('${fileName}');
 
-		<var method="FileUtil#getIncludedResourceURLs('${pattern}', '${tempDir}')" name="fileName" />
+		UploadTempFile(locator1 = "TextInput#FILE", value1 = "${shortFileName}");
 
-		<var method="StringUtil#valueOf('${fileName}')" name="fileName" />
+		Button.click(button = "Import");
 
-		<var method="RegexUtil#replace('${fileName}', '\[(.*)\]', '1')" name="fileName" />
+		Alert.viewSuccessMessage();
 
-		<var method="FileUtil#getFileName('${fileName}')" name="shortFileName" />
+		IFrame.closeFrame();
+	}
 
-		<execute function="UploadTempFile" locator1="TextInput#FILE" value1="${shortFileName}" />
+	macro typeFragmentEditor {
+		var key_editor = StringUtil.toUpperCase('${editor}');
 
-		<execute macro="Button#click">
-			<var name="button" value="Import" />
-		</execute>
-
-		<execute macro="Alert#viewSuccessMessage" />
-
-		<execute macro="IFrame#closeFrame" />
-	</command>
-
-	<command name="typeFragmentEditor">
-		<var method="StringUtil#toUpperCase('${editor}')" name="key_editor" />
-
-		<execute function="Type#typeAceEditorNoError" locator1="Fragment#${key_editor}_EDITOR" value1="${templateScript}" />
-	</command>
-</definition>
+		Type.typeAceEditorNoError(
+			locator1 = "Fragment#${key_editor}_EDITOR",
+			value1 = "${templateScript}"
+		);
+	}
+}

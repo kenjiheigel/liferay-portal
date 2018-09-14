@@ -1,399 +1,457 @@
-<definition>
-	<command name="configureAnonymousPostingCP">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute function="Click" locator1="Portlet#OPTIONS_ICON" />
-
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Configuration" />
-		</execute>
+definition {
+	macro configureAnonymousPostingCP {
+		Navigator.openURL();
 
-		<execute function="Pause" locator1="10000" />
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Message Boards"
+		);
 
-		<execute function="SelectFrame" locator1="IFrame#CONFIGURATION" />
+		Click(locator1 = "Portlet#OPTIONS_ICON");
 
-		<if>
-			<equals arg1="${anonymousPostingEnabled}" arg2="true" />
-			<then>
-				<execute function="Check" locator1="MessageBoardsAdminConfiguration#GENERAL_ALLOW_ANONYMOUS_POSTING_CHECKBOX" />
-			</then>
-			<elseif>
-				<equals arg1="${anonymousPostingEnabled}" arg2="false" />
-				<then>
-					<execute function="Uncheck" locator1="MessageBoardsAdminConfiguration#GENERAL_ALLOW_ANONYMOUS_POSTING_CHECKBOX" />
-				</then>
-			</elseif>
-		</if>
-
-		<execute macro="PortletEntry#save" />
-	</command>
-
-	<command name="configureGeneralCP">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Message Boards" />
-		</execute>
+		MenuItem.click(menuItem = "Configuration");
 
-		<execute function="Click" locator1="Portlet#OPTIONS_ICON" />
-
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Configuration" />
-		</execute>
+		Pause(locator1 = "10000");
 
-		<execute function="Pause" locator1="10000" />
+		SelectFrame(locator1 = "IFrame#CONFIGURATION");
 
-		<execute function="SelectFrame" locator1="IFrame#CONFIGURATION" />
+		if ("${anonymousPostingEnabled}" == "true") {
+			Check(
+				locator1 = "MessageBoardsAdminConfiguration#GENERAL_ALLOW_ANONYMOUS_POSTING_CHECKBOX"
+			);
+		}
+		else if ("${anonymousPostingEnabled}" == "false") {
+			Uncheck(
+				locator1 = "MessageBoardsAdminConfiguration#GENERAL_ALLOW_ANONYMOUS_POSTING_CHECKBOX"
+			);
+		}
 
-		<if>
-			<equals arg1="${threadAsQuestionByDefaultEnabled}" arg2="true" />
-			<then>
-				<execute function="Check" locator1="MessageBoardsAdminConfiguration#GENERAL_THREAD_AS_QUESTION_BY_DEFAULT_CHECKBOX" />
-			</then>
-		</if>
-
-		<execute macro="PortletEntry#save" />
-	</command>
-
-	<command name="configureMessageAddedEmailCP">
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Message Boards" />
-		</execute>
-
-		<execute function="Click" locator1="Portlet#OPTIONS_ICON" />
+		PortletEntry.save();
+	}
 
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Configuration" />
-		</execute>
+	macro configureGeneralCP {
+		Navigator.openURL();
 
-		<execute function="SelectFrame" locator1="IFrame#CONFIGURATION" />
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Message Boards"
+		);
 
-		<execute function="AssertClick" locator1="MessageBoardsAdminConfiguration#SETUP_NAVIGATION_MESSAGE_ADDED_EMAIL" value1="Message Added Email" />
+		Click(locator1 = "Portlet#OPTIONS_ICON");
 
-		<if>
-			<equals arg1="${messageAddedEmailEnabled}" arg2="false" />
-			<then>
-				<execute function="Uncheck" locator1="MessageBoardsAdminConfiguration#MESSAGE_ADDED_EMAIL_ENABLED_CHECKBOX" />
-			</then>
-			<else>
-				<execute function="AssertChecked" locator1="MessageBoardsAdminConfiguration#MESSAGE_ADDED_EMAIL_ENABLED_CHECKBOX" />
-			</else>
-		</if>
+		MenuItem.click(menuItem = "Configuration");
 
-		<execute macro="PortletEntry#save" />
-	</command>
+		Pause(locator1 = "10000");
 
-	<command name="configureMessageEmailFromCP">
-		<execute macro="Navigator#openURL" />
+		SelectFrame(locator1 = "IFrame#CONFIGURATION");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Message Boards" />
-		</execute>
+		if ("${threadAsQuestionByDefaultEnabled}" == "true") {
+			Check(
+				locator1 = "MessageBoardsAdminConfiguration#GENERAL_THREAD_AS_QUESTION_BY_DEFAULT_CHECKBOX"
+			);
+		}
 
-		<execute function="Click" locator1="Portlet#OPTIONS_ICON" />
+		PortletEntry.save();
+	}
+
+	macro configureMessageAddedEmailCP {
+		Navigator.openURL();
 
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Configuration" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Message Boards"
+		);
+
+		Click(locator1 = "Portlet#OPTIONS_ICON");
+
+		MenuItem.click(menuItem = "Configuration");
+
+		SelectFrame(locator1 = "IFrame#CONFIGURATION");
 
-		<execute function="SelectFrame" locator1="IFrame#CONFIGURATION" />
+		AssertClick(
+			locator1 = "MessageBoardsAdminConfiguration#SETUP_NAVIGATION_MESSAGE_ADDED_EMAIL",
+			value1 = "Message Added Email"
+		);
+
+		if ("${messageAddedEmailEnabled}" == "false") {
+			Uncheck(
+				locator1 = "MessageBoardsAdminConfiguration#MESSAGE_ADDED_EMAIL_ENABLED_CHECKBOX"
+			);
+		}
+		else {
+			AssertChecked(
+				locator1 = "MessageBoardsAdminConfiguration#MESSAGE_ADDED_EMAIL_ENABLED_CHECKBOX"
+			);
+		}
 
-		<execute function="AssertClick" locator1="MessageBoardsAdminConfiguration#SETUP_NAVIGATION_EMAIL_FROM" value1="Email From" />
+		PortletEntry.save();
+	}
 
-		<if>
-			<isset var="emailFromName" />
-			<then>
-				<execute function="Type" locator1="MessageBoardsAdminConfiguration#EMAIL_FROM_NAME" value1="${emailFromName}" />
-			</then>
-		</if>
+	macro configureMessageEmailFromCP {
+		Navigator.openURL();
 
-		<if>
-			<isset var="emailFromAddress" />
-			<then>
-				<execute function="Type" locator1="MessageBoardsAdminConfiguration#EMAIL_FROM_ADDRESS" value1="${emailFromAddress}" />
-			</then>
-		</if>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Message Boards"
+		);
 
-		<execute macro="PortletEntry#save" />
-	</command>
+		Click(locator1 = "Portlet#OPTIONS_ICON");
 
-	<command name="configureMessageUpdatedEmailCP">
-		<execute macro="Navigator#openURL" />
+		MenuItem.click(menuItem = "Configuration");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Message Boards" />
-		</execute>
+		SelectFrame(locator1 = "IFrame#CONFIGURATION");
 
-		<execute function="Click" locator1="Portlet#OPTIONS_ICON" />
+		AssertClick(
+			locator1 = "MessageBoardsAdminConfiguration#SETUP_NAVIGATION_EMAIL_FROM",
+			value1 = "Email From"
+		);
 
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Configuration" />
-		</execute>
+		if (isSet(emailFromName)) {
+			Type(
+				locator1 = "MessageBoardsAdminConfiguration#EMAIL_FROM_NAME",
+				value1 = "${emailFromName}"
+			);
+		}
 
-		<execute function="SelectFrame" locator1="IFrame#CONFIGURATION" />
+		if (isSet(emailFromAddress)) {
+			Type(
+				locator1 = "MessageBoardsAdminConfiguration#EMAIL_FROM_ADDRESS",
+				value1 = "${emailFromAddress}"
+			);
+		}
 
-		<execute function="AssertClick" locator1="MessageBoardsAdminConfiguration#SETUP_NAVIGATION_MESSAGE_UPDATED_EMAIL" value1="Message Updated Email" />
+		PortletEntry.save();
+	}
 
-		<if>
-			<equals arg1="${messageUpdatedEmailEnabled}" arg2="false" />
-			<then>
-				<execute function="Uncheck" locator1="MessageBoardsAdminConfiguration#MESSAGE_UPDATED_EMAIL_ENABLED_CHECKBOX" />
-			</then>
-			<else>
-				<execute function="AssertChecked" locator1="MessageBoardsAdminConfiguration#MESSAGE_UPDATED_EMAIL_ENABLED_CHECKBOX" />
-			</else>
-		</if>
+	macro configureMessageUpdatedEmailCP {
+		Navigator.openURL();
 
-		<execute macro="PortletEntry#save" />
-	</command>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Message Boards"
+		);
 
-	<command name="configureScopePG">
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="${portletName}" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
+		Click(locator1 = "Portlet#OPTIONS_ICON");
 
-		<execute function="SelectFrame" locator1="IFrame#CONFIGURATION" />
+		MenuItem.click(menuItem = "Configuration");
 
-		<execute function="AssertClick" locator1="MessageBoardsConfiguration#NAVIGATION_SCOPE" value1="Scope" />
+		SelectFrame(locator1 = "IFrame#CONFIGURATION");
 
-		<execute function="Select" locator1="Select#SCOPE" value1="${scopeName}" />
+		AssertClick(
+			locator1 = "MessageBoardsAdminConfiguration#SETUP_NAVIGATION_MESSAGE_UPDATED_EMAIL",
+			value1 = "Message Updated Email"
+		);
 
-		<execute macro="PortletEntry#save" />
-	</command>
+		if ("${messageUpdatedEmailEnabled}" == "false") {
+			Uncheck(
+				locator1 = "MessageBoardsAdminConfiguration#MESSAGE_UPDATED_EMAIL_ENABLED_CHECKBOX"
+			);
+		}
+		else {
+			AssertChecked(
+				locator1 = "MessageBoardsAdminConfiguration#MESSAGE_UPDATED_EMAIL_ENABLED_CHECKBOX"
+			);
+		}
 
-	<command name="gotoInlinePermissionsPG">
-		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+		PortletEntry.save();
+	}
 
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Permissions" />
-		</execute>
+	macro configureScopePG {
+		Portlet.gotoPortletOptions(
+			portletName = "${portletName}",
+			portletOption = "Configuration"
+		);
 
-		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
-	</command>
+		SelectFrame(locator1 = "IFrame#CONFIGURATION");
 
-	<command name="gotoRecentPostsPG">
-		<execute function="AssertClick" locator1="MessageBoards#NAVIGATION_RECENT_POSTS" value1="Recent Posts" />
-	</command>
+		AssertClick(
+			locator1 = "MessageBoardsConfiguration#NAVIGATION_SCOPE",
+			value1 = "Scope"
+		);
 
-	<command name="subscribePG">
-		<execute function="Click" locator1="Icon#BODY_VERTICAL_ELLIPSIS" />
+		Select(locator1 = "Select#SCOPE", value1 = "${scopeName}");
 
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Subscribe" />
-		</execute>
+		PortletEntry.save();
+	}
 
-		<execute macro="Alert#viewSuccessMessage" />
-	</command>
+	macro gotoInlinePermissionsPG {
+		Click(locator1 = "Icon#BODY_VERTICAL_ELLIPSIS");
 
-	<command name="tearDownConfigurationEmailCP">
-		<execute macro="Navigator#openURL" />
+		MenuItem.click(menuItem = "Permissions");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Message Boards" />
-		</execute>
+		SelectFrame(locator1 = "IFrame#DIALOG");
+	}
 
-		<execute function="Click" locator1="Portlet#OPTIONS_ICON" />
+	macro gotoRecentPostsPG {
+		AssertClick(
+			locator1 = "MessageBoards#NAVIGATION_RECENT_POSTS",
+			value1 = "Recent Posts"
+		);
+	}
 
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Configuration" />
-		</execute>
+	macro subscribePG {
+		Click(locator1 = "Icon#BODY_VERTICAL_ELLIPSIS");
 
-		<execute function="SelectFrame" locator1="IFrame#CONFIGURATION" />
+		MenuItem.click(menuItem = "Subscribe");
 
-		<execute function="AssertClick" locator1="MessageBoardsAdminConfiguration#SETUP_NAVIGATION_MESSAGE_ADDED_EMAIL" value1="Message Added Email" />
+		Alert.viewSuccessMessage();
+	}
 
-		<execute function="Check" locator1="MessageBoardsAdminConfiguration#MESSAGE_ADDED_EMAIL_ENABLED_CHECKBOX" />
+	macro tearDownConfigurationEmailCP {
+		Navigator.openURL();
 
-		<execute macro="PortletEntry#save" />
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Message Boards"
+		);
 
-		<execute function="AssertClick" locator1="MessageBoardsAdminConfiguration#SETUP_NAVIGATION_MESSAGE_UPDATED_EMAIL" value1="Message Updated Email" />
+		Click(locator1 = "Portlet#OPTIONS_ICON");
 
-		<execute function="Check" locator1="MessageBoardsAdminConfiguration#MESSAGE_UPDATED_EMAIL_ENABLED_CHECKBOX" />
+		MenuItem.click(menuItem = "Configuration");
 
-		<execute macro="PortletEntry#save" />
-	</command>
+		SelectFrame(locator1 = "IFrame#CONFIGURATION");
 
-	<command name="tearDownConfigurationGeneralCP">
-		<execute macro="Navigator#openURL" />
+		AssertClick(
+			locator1 = "MessageBoardsAdminConfiguration#SETUP_NAVIGATION_MESSAGE_ADDED_EMAIL",
+			value1 = "Message Added Email"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Message Boards" />
-		</execute>
+		Check(
+			locator1 = "MessageBoardsAdminConfiguration#MESSAGE_ADDED_EMAIL_ENABLED_CHECKBOX"
+		);
 
-		<execute function="Click" locator1="Portlet#OPTIONS_ICON" />
+		PortletEntry.save();
 
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Configuration" />
-		</execute>
+		AssertClick(
+			locator1 = "MessageBoardsAdminConfiguration#SETUP_NAVIGATION_MESSAGE_UPDATED_EMAIL",
+			value1 = "Message Updated Email"
+		);
 
-		<execute function="SelectFrame" locator1="IFrame#CONFIGURATION" />
+		Check(
+			locator1 = "MessageBoardsAdminConfiguration#MESSAGE_UPDATED_EMAIL_ENABLED_CHECKBOX"
+		);
 
-		<execute function="Check" locator1="MessageBoardsAdminConfiguration#GENERAL_ALLOW_ANONYMOUS_POSTING_CHECKBOX" />
+		PortletEntry.save();
+	}
 
-		<execute macro="PortletEntry#save" />
-	</command>
+	macro tearDownConfigurationGeneralCP {
+		Navigator.openURL();
 
-	<command name="unbanUserCP">
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Message Boards" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Message Boards"
+		);
 
-		<execute function="AssertClick" locator1="MessageBoards#NAVIGATION_BANNED_USERS" value1="Banned Users" />
+		Click(locator1 = "Portlet#OPTIONS_ICON");
 
-		<var name="key_userScreenName" value="${userScreenName}" />
+		MenuItem.click(menuItem = "Configuration");
 
-		<execute macro="LexiconEntry#openEntryMenu">
-			<var name="rowEntry" value="${useScreenName}" />
-		</execute>
+		SelectFrame(locator1 = "IFrame#CONFIGURATION");
 
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Unban This User" />
-		</execute>
+		Check(
+			locator1 = "MessageBoardsAdminConfiguration#GENERAL_ALLOW_ANONYMOUS_POSTING_CHECKBOX"
+		);
 
-		<execute macro="Alert#viewSuccessMessage" />
-		<execute function="AssertElementNotPresent" locator1="MessageBoardsBannedUsers#BANNED_USERS_TABLE_BANNED_USER" />
-		<execute function="AssertTextNotPresent" value1="${userScreenName}" />
-	</command>
+		PortletEntry.save();
+	}
 
-	<command name="viewAnonymousPostingConfigurationCP">
-		<execute function="SelectFrame" locator1="IFrame#CONFIGURATION" />
+	macro unbanUserCP {
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Message Boards"
+		);
 
-		<if>
-			<equals arg1="${anonymousPostingEnabled}" arg2="true" />
-			<then>
-				<execute function="AssertChecked" locator1="MessageBoardsAdminConfiguration#GENERAL_ALLOW_ANONYMOUS_POSTING_CHECKBOX" />
-			</then>
-			<elseif>
-				<equals arg1="${anonymousPostingEnabled}" arg2="false" />
-				<then>
-					<execute function="AssertNotChecked" locator1="MessageBoardsAdminConfiguration#GENERAL_ALLOW_ANONYMOUS_POSTING_CHECKBOX" />
-				</then>
-			</elseif>
-		</if>
-	</command>
+		AssertClick(
+			locator1 = "MessageBoards#NAVIGATION_BANNED_USERS",
+			value1 = "Banned Users"
+		);
 
-	<command name="viewBannedUserCP">
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Message Boards" />
-		</execute>
+		var key_userScreenName = "${userScreenName}";
 
-		<execute function="AssertClick" locator1="MessageBoards#NAVIGATION_BANNED_USERS" value1="Banned Users" />
+		LexiconEntry.openEntryMenu(rowEntry = "${useScreenName}");
 
-		<var name="key_userScreenName" value="${userScreenName}" />
+		MenuItem.click(menuItem = "Unban This User");
 
-		<execute function="AssertTextEquals" locator1="MessageBoardsBannedUsers#BANNED_USERS_TABLE_BANNED_USER" value1="${userScreenName}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="MessageBoardsBannedUsers#BANNED_USERS_TABLE_BANNED_BY" value1="Test Test" />
-		<execute function="AssertVisible" locator1="MessageBoardsBannedUsers#BANNED_USERS_TABLE_UNBAN_DATE" />
+		Alert.viewSuccessMessage();
 
-		<execute macro="LexiconEntry#openEntryMenu">
-			<var name="rowEntry" value="${userScreenName}" />
-		</execute>
+		AssertElementNotPresent(
+			locator1 = "MessageBoardsBannedUsers#BANNED_USERS_TABLE_BANNED_USER"
+		);
 
-		<execute macro="MenuItem#viewPresent">
-			<var name="menuItem" value="Unban This User" />
-		</execute>
+		AssertTextNotPresent(value1 = "${userScreenName}");
+	}
 
-		<execute function="AssertClick" locator1="MessageBoardsBannedUsers#BANNED_USERS_TABLE_BANNED_USER" value1="${userScreenName}" />
+	macro viewAnonymousPostingConfigurationCP {
+		SelectFrame(locator1 = "IFrame#CONFIGURATION");
 
-		<var name="key_siteName" value="${userScreenName}" />
+		if ("${anonymousPostingEnabled}" == "true") {
+			AssertChecked(
+				locator1 = "MessageBoardsAdminConfiguration#GENERAL_ALLOW_ANONYMOUS_POSTING_CHECKBOX"
+			);
+		}
+		else if ("${anonymousPostingEnabled}" == "false") {
+			AssertNotChecked(
+				locator1 = "MessageBoardsAdminConfiguration#GENERAL_ALLOW_ANONYMOUS_POSTING_CHECKBOX"
+			);
+		}
+	}
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="SitePages#SITE_NAME" value1="${userScreenName}" />
-	</command>
+	macro viewBannedUserCP {
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Message Boards"
+		);
 
-	<command name="viewBanPG">
-		<execute function="AssertTextEquals" locator1="Message#ERROR" value1="You have been banned by the moderator." />
-		<execute function="AssertElementNotPresent" locator1="MessageBoards#ADD_CATEGORY_BUTTON" />
-		<execute function="AssertElementNotPresent" locator1="Button#NEW_THREAD" />
-		<execute function="AssertElementNotPresent" locator1="MessageBoards#RSS_LINK" />
-		<execute macro="MenuItem#viewNotPresent">
-			<var name="menuItem" value="Subscribe" />
-		</execute>
+		AssertClick(
+			locator1 = "MessageBoards#NAVIGATION_BANNED_USERS",
+			value1 = "Banned Users"
+		);
 
-		<execute function="AssertElementNotPresent" locator1="MessageBoards#NAVIGATION_MESSAGE_BOARDS_HOME" />
-		<execute function="AssertElementNotPresent" locator1="MessageBoards#NAVIGATION_RECENT_POSTS" />
-		<execute function="AssertElementNotPresent" locator1="MessageBoards#NAVIGATION_MY_POSTS" />
-		<execute function="AssertElementNotPresent" locator1="MessageBoards#NAVIGATION_MY_SUBSCRIPTIONS" />
-		<execute function="AssertElementNotPresent" locator1="MessageBoards#NAVIGATION_STATISTICS" />
-		<execute function="AssertElementNotPresent" locator1="MessageBoards#NAVIGATION_BANNED_USERS" />
-		<execute function="AssertElementNotPresent" locator1="NavBar#BASIC_SEARCH_FIELD" />
-		<execute function="AssertElementNotPresent" locator1="NavBar#BASIC_SEARCH_BUTTON" />
-	</command>
+		var key_userScreenName = "${userScreenName}";
 
-	<command name="viewDefaultEmailFromCP">
-		<execute macro="Navigator#openURL" />
+		AssertTextEquals(
+			locator1 = "MessageBoardsBannedUsers#BANNED_USERS_TABLE_BANNED_USER",
+			value1 = "${userScreenName}"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Message Boards" />
-		</execute>
+		AssertTextEquals.assertPartialText(
+			locator1 = "MessageBoardsBannedUsers#BANNED_USERS_TABLE_BANNED_BY",
+			value1 = "Test Test"
+		);
 
-		<execute function="Click" locator1="Portlet#OPTIONS_ICON" />
+		AssertVisible(
+			locator1 = "MessageBoardsBannedUsers#BANNED_USERS_TABLE_UNBAN_DATE"
+		);
 
-		<execute macro="MenuItem#click">
-			<var name="menuItem" value="Configuration" />
-		</execute>
+		LexiconEntry.openEntryMenu(rowEntry = "${userScreenName}");
 
-		<execute function="SelectFrame" locator1="IFrame#CONFIGURATION" />
+		MenuItem.viewPresent(menuItem = "Unban This User");
 
-		<execute function="AssertClick" locator1="MessageBoardsAdminConfiguration#SETUP_NAVIGATION_EMAIL_FROM" value1="Email From" />
+		AssertClick(
+			locator1 = "MessageBoardsBannedUsers#BANNED_USERS_TABLE_BANNED_USER",
+			value1 = "${userScreenName}"
+		);
 
-		<execute function="AssertTextEquals" locator1="MessageBoardsAdminConfiguration#EMAIL_FROM_NAME" value1="[$MESSAGE_USER_NAME$]" />
-		<execute function="AssertTextEquals" locator1="MessageBoardsAdminConfiguration#EMAIL_FROM_ADDRESS" value1="test@liferay.com" />
-	</command>
+		var key_siteName = "${userScreenName}";
 
-	<command name="viewNoPermissionCP">
-		<var name="key_portletTitle" value="Message Boards" />
+		AssertTextEquals.assertPartialText(
+			locator1 = "SitePages#SITE_NAME",
+			value1 = "${userScreenName}"
+		);
+	}
 
-		<execute function="AssertTextEquals#assertTextCaseInsensitive" locator1="Home#SITE_ADMINISTRATION_PORTLET_TITLE" value1="Message Boards" />
-		<execute function="AssertElementPresent" locator1="NavBar#CONTAINER" />
-		<execute function="AssertTextEquals#assertText" locator1="Message#EMPTY_INFO" value1="There are no threads or categories." />
-	</command>
+	macro viewBanPG {
+		AssertTextEquals(
+			locator1 = "Message#ERROR",
+			value1 = "You have been banned by the moderator."
+		);
 
-	<command name="viewNoSearchResultSubjectPG">
-		<var name="key_threadSubject" value="${threadSubject}" />
+		AssertElementNotPresent(locator1 = "MessageBoards#ADD_CATEGORY_BUTTON");
 
-		<execute function="AssertElementNotPresent" locator1="MessageBoardsSearch#SEARCH_RESULTS_ENTRY_TITLE" />
-	</command>
+		AssertElementNotPresent(locator1 = "Button#NEW_THREAD");
 
-	<command name="viewSearchResultPG">
+		AssertElementNotPresent(locator1 = "MessageBoards#RSS_LINK");
 
-		<var name="key_threadSubject" value="${threadSubject}" />
+		MenuItem.viewNotPresent(menuItem = "Subscribe");
 
-		<execute function="AssertTextEquals" locator1="MessageBoards#THREAD_LIST_THREAD" value1="${threadSubject}" />
+		AssertElementNotPresent(
+			locator1 = "MessageBoards#NAVIGATION_MESSAGE_BOARDS_HOME"
+		);
 
-		<if>
-			<isset var="mbThreadAttachment" />
-			<then>
-				<execute function="AssertClick" locator1="MessageBoards#THREAD_LIST_THREAD" value1="${threadSubject}" />
+		AssertElementNotPresent(locator1 = "MessageBoards#NAVIGATION_RECENT_POSTS");
 
-				<execute function="AssertVisible" locator1="Link#MESSAGE_BOARDS_ATTACHMENT" />
-			</then>
-		</if>
-	</command>
-</definition>
+		AssertElementNotPresent(locator1 = "MessageBoards#NAVIGATION_MY_POSTS");
+
+		AssertElementNotPresent(locator1 = "MessageBoards#NAVIGATION_MY_SUBSCRIPTIONS");
+
+		AssertElementNotPresent(locator1 = "MessageBoards#NAVIGATION_STATISTICS");
+
+		AssertElementNotPresent(locator1 = "MessageBoards#NAVIGATION_BANNED_USERS");
+
+		AssertElementNotPresent(locator1 = "NavBar#BASIC_SEARCH_FIELD");
+
+		AssertElementNotPresent(locator1 = "NavBar#BASIC_SEARCH_BUTTON");
+	}
+
+	macro viewDefaultEmailFromCP {
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Message Boards"
+		);
+
+		Click(locator1 = "Portlet#OPTIONS_ICON");
+
+		MenuItem.click(menuItem = "Configuration");
+
+		SelectFrame(locator1 = "IFrame#CONFIGURATION");
+
+		AssertClick(
+			locator1 = "MessageBoardsAdminConfiguration#SETUP_NAVIGATION_EMAIL_FROM",
+			value1 = "Email From"
+		);
+
+		AssertTextEquals(
+			locator1 = "MessageBoardsAdminConfiguration#EMAIL_FROM_NAME",
+			value1 = "[$MESSAGE_USER_NAME$]"
+		);
+
+		AssertTextEquals(
+			locator1 = "MessageBoardsAdminConfiguration#EMAIL_FROM_ADDRESS",
+			value1 = "test@liferay.com"
+		);
+	}
+
+	macro viewNoPermissionCP {
+		var key_portletTitle = "Message Boards";
+
+		AssertTextEquals.assertTextCaseInsensitive(
+			locator1 = "Home#SITE_ADMINISTRATION_PORTLET_TITLE",
+			value1 = "Message Boards"
+		);
+
+		AssertElementPresent(locator1 = "NavBar#CONTAINER");
+
+		AssertTextEquals.assertText(
+			locator1 = "Message#EMPTY_INFO",
+			value1 = "There are no threads or categories."
+		);
+	}
+
+	macro viewNoSearchResultSubjectPG {
+		var key_threadSubject = "${threadSubject}";
+
+		AssertElementNotPresent(
+			locator1 = "MessageBoardsSearch#SEARCH_RESULTS_ENTRY_TITLE"
+		);
+	}
+
+	macro viewSearchResultPG {
+		var key_threadSubject = "${threadSubject}";
+
+		AssertTextEquals(
+			locator1 = "MessageBoards#THREAD_LIST_THREAD",
+			value1 = "${threadSubject}"
+		);
+
+		if (isSet(mbThreadAttachment)) {
+			AssertClick(
+				locator1 = "MessageBoards#THREAD_LIST_THREAD",
+				value1 = "${threadSubject}"
+			);
+
+			AssertVisible(locator1 = "Link#MESSAGE_BOARDS_ATTACHMENT");
+		}
+	}
+}

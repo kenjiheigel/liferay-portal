@@ -1,141 +1,188 @@
-<definition>
-	<command name="add">
-		<execute function="Type#typeEditor" locator1="Comments#COMMENT_FIELD" value1="${entryComment}" />
+definition {
+	macro add {
+		Type.typeEditor(locator1 = "Comments#COMMENT_FIELD", value1 = "${entryComment}");
 
-		<execute function="AssertClick" locator1="Button#REPLY" value1="Reply" />
+		AssertClick(locator1 = "Button#REPLY", value1 = "Reply");
 
-		<execute macro="Alert#viewSuccessMessage" />
-	</command>
+		Alert.viewSuccessMessage();
+	}
 
-	<command name="addPGAsGuest">
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="${entryContent}" />
-			<var name="entryTitle" value="${entryTitle}" />
-		</execute>
+	macro addPGAsGuest {
+		BlogsNavigator.gotoEntryPG(
+			entryContent = "${entryContent}",
+			entryTitle = "${entryTitle}"
+		);
 
-		<var name="entryComment" value="${entryComment}" />
+		var entryComment = "${entryComment}";
 
-		<execute function="Click" locator1="Comments#COMMENT_FIELD" />
+		Click(locator1 = "Comments#COMMENT_FIELD");
 
-		<execute function="Type" locator1="Comments#COMMENT_FIELD" value1="${entryComment}" />
+		Type(locator1 = "Comments#COMMENT_FIELD", value1 = "${entryComment}");
 
-		<execute function="AssertElementPresent" locator1="UserBar#USER_SIGN_IN" />
+		AssertElementPresent(locator1 = "UserBar#USER_SIGN_IN");
 
-		<execute function="AssertClick" locator1="Button#REPLY_AS" value1="Reply as..." />
+		AssertClick(locator1 = "Button#REPLY_AS", value1 = "Reply as...");
 
-		<execute function="SelectFrame" locator1="IFrame#DIALOG" />
+		SelectFrame(locator1 = "IFrame#DIALOG");
 
-		<execute function="AssertClick" locator1="Link#GUEST" value1="Guest" />
+		AssertClick(locator1 = "Link#GUEST", value1 = "Guest");
 
-		<execute function="Type" locator1="TextInput#FIRST_NAME" value1="${userFirstName}" />
-		<execute function="Type" locator1="TextInput#LAST_NAME" value1="${userLastName}" />
-		<execute function="Type" locator1="TextInput#EMAIL_ADDRESS" value1="${userEmailAddress}" />
+		Type(locator1 = "TextInput#FIRST_NAME", value1 = "${userFirstName}");
 
-		<execute macro="Button#clickSave" />
+		Type(locator1 = "TextInput#LAST_NAME", value1 = "${userLastName}");
 
-		<var name="uniqueSuccess" value="Your comment has already been posted. Would you like to create an account with the provided information?" />
+		Type(locator1 = "TextInput#EMAIL_ADDRESS", value1 = "${userEmailAddress}");
 
-		<var name="key_uniqueSuccess" value="${uniqueSuccess}" />
+		Button.clickSave();
 
-		<execute function="AssertTextEquals" locator1="Message#UNIQUE_SUCCESS" value1="${uniqueSuccess}" />
+		var uniqueSuccess = "Your comment has already been posted. Would you like to create an account with the provided information?";
+		var key_uniqueSuccess = "${uniqueSuccess}";
 
-		<execute function="AssertClick" locator1="Button#CANCEL" value1="Cancel" />
+		AssertTextEquals(
+			locator1 = "Message#UNIQUE_SUCCESS",
+			value1 = "${uniqueSuccess}"
+		);
 
-		<execute function="SelectFrame" value1="relative=top" />
+		AssertClick(locator1 = "Button#CANCEL", value1 = "Cancel");
 
-		<execute function="Pause" value1="1000" />
+		SelectFrame(value1 = "relative=top");
 
-		<execute macro="Alert#viewSuccessMessage" />
-	</command>
+		Pause(value1 = "1000");
 
-	<command name="delete">
-		<var name="key_entryComment" value="${entryComment}" />
+		Alert.viewSuccessMessage();
+	}
 
-		<execute function="MouseOver" locator1="Comments#COMMENT_BODY_SPECIFIC" value1="${entryComment}" />
+	macro delete {
+		var key_entryComment = "${entryComment}";
 
-		<execute macro="LexiconEntry#gotoEllipsisMenuItemNoError">
-			<var name="menuItem" value="Delete" />
-		</execute>
+		MouseOver(
+			locator1 = "Comments#COMMENT_BODY_SPECIFIC",
+			value1 = "${entryComment}"
+		);
 
-		<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
+		LexiconEntry.gotoEllipsisMenuItemNoError(menuItem = "Delete");
 
-		<execute macro="Alert#viewSuccessMessage" />
-		<execute function="AssertTextNotPresent" value1="${entryComment}" />
-	</command>
+		Confirm(
+			value1 = "Are you sure you want to delete this? It will be deleted immediately."
+		);
 
-	<command name="deleteSOPG">
-		<execute macro="BlogsNavigator#gotoEntryPG">
-			<var name="entryContent" value="${entryContent}" />
-			<var name="entryTitle" value="${entryTitle}" />
-		</execute>
+		Alert.viewSuccessMessage();
 
-		<execute function="AssertClickNoError" locator1="Comments#DELETE_LINK" value1="Delete" />
+		AssertTextNotPresent(value1 = "${entryComment}");
+	}
 
-		<execute function="Confirm" value1="Are you sure you want to delete the selected comment?" />
+	macro deleteSOPG {
+		BlogsNavigator.gotoEntryPG(
+			entryContent = "${entryContent}",
+			entryTitle = "${entryTitle}"
+		);
 
-		<execute macro="Alert#viewSuccessMessage" />
-		<execute function="AssertTextNotPresent" value1="${entryComment}" />
-	</command>
+		AssertClickNoError(locator1 = "Comments#DELETE_LINK", value1 = "Delete");
 
-	<command name="edit">
-		<var name="key_entryComment" value="${entryComment}" />
+		Confirm(value1 = "Are you sure you want to delete the selected comment?");
 
-		<execute function="MouseOver" locator1="Comments#COMMENT_BODY_SPECIFIC" />
+		Alert.viewSuccessMessage();
 
-		<execute macro="LexiconEntry#gotoEllipsisMenuItem">
-			<var name="menuItem" value="Edit" />
-		</execute>
+		AssertTextNotPresent(value1 = "${entryComment}");
+	}
 
-		<execute function="Click#clickAt" locator1="Comments#EDIT_COMMENT_FIELD" />
+	macro edit {
+		var key_entryComment = "${entryComment}";
 
-		<execute function="Type" locator1="Comments#EDIT_COMMENT_FIELD" value1="${entryCommentEdit}" />
+		MouseOver(locator1 = "Comments#COMMENT_BODY_SPECIFIC");
 
-		<execute macro="Button#clickSave" />
+		LexiconEntry.gotoEllipsisMenuItem(menuItem = "Edit");
 
-		<var name="key_entryComment" value="${entryCommentEdit}" />
+		Click.clickAt(locator1 = "Comments#EDIT_COMMENT_FIELD");
 
-		<execute macro="Alert#viewSuccessMessage" />
-		<execute function="AssertTextEquals" locator1="Comments#COMMENT_BODY_SPECIFIC" value1="${entryCommentEdit}" />
-	</command>
+		Type(locator1 = "Comments#EDIT_COMMENT_FIELD", value1 = "${entryCommentEdit}");
 
-	<command name="viewCP">
-		<var name="key_entryComment" value="${entryComment}" />
+		Button.clickSave();
 
-		<execute macro="BlogsNavigator#gotoEntryCP">
-			<var name="entryContent" value="${entryContent}" />
-			<var name="entryTitle" value="${entryTitle}" />
-		</execute>
+		var key_entryComment = "${entryCommentEdit}";
 
-		<execute function="AssertTextEquals" locator1="Comments#ENTRY_COUNT_PANEL" value1="${commentCount} Comments" />
-		<execute function="AssertTextEquals" locator1="Comments#COMMENT_BODY_SPECIFIC" value1="${entryComment}" />
-	</command>
+		Alert.viewSuccessMessage();
 
-	<command name="viewDefault">
-		<execute function="AssertTextEquals" locator1="Comments#ENTRY_COUNT_PANEL" value1="0 Comments" />
-		<execute function="AssertTextNotPresent" value1="${entryComment}" />
-	</command>
+		AssertTextEquals(
+			locator1 = "Comments#COMMENT_BODY_SPECIFIC",
+			value1 = "${entryCommentEdit}"
+		);
+	}
 
-	<command name="viewPG">
-		<var name="key_entryComment" value="${entryComment}" />
+	macro viewCP {
+		var key_entryComment = "${entryComment}";
 
-		<execute function="Pause" locator1="1000" />
+		BlogsNavigator.gotoEntryCP(
+			entryContent = "${entryContent}",
+			entryTitle = "${entryTitle}"
+		);
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Comments#ENTRY_COUNT_PANEL" value1="${commentCount} Comment" />
+		AssertTextEquals(
+			locator1 = "Comments#ENTRY_COUNT_PANEL",
+			value1 = "${commentCount} Comments"
+		);
 
-		<var name="key_userFullName" value="${userFullName}" />
+		AssertTextEquals(
+			locator1 = "Comments#COMMENT_BODY_SPECIFIC",
+			value1 = "${entryComment}"
+		);
+	}
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="Comments#USER_NAME" value1="${userFullName}" />
-		<execute function="AssertTextEquals" locator1="Comments#COMMENT_BODY_SPECIFIC" value1="${entryComment}" />
-	</command>
+	macro viewDefault {
+		AssertTextEquals(locator1 = "Comments#ENTRY_COUNT_PANEL", value1 = "0 Comments");
 
-	<command name="viewSearchResultPG">
-		<execute function="AssertTextEquals" locator1="Blogs#SEARCH_RESULTS_ENTRY_TITLE" value1="${entryTitle}" />
-		<execute function="AssertTextEquals" locator1="Blogs#SEARCH_RESULTS_ENTRY_DESCRIPTION" value1="${entryContent}" />
-		<execute function="AssertTextEquals" locator1="Blogs#SEARCH_RESULTS_HIGHLIGHTED" value1="${entrySearchTerm}" />
-		<execute function="AssertTextEquals" locator1="Blogs#SEARCH_RESULTS_ENTRY_COMMENT" value1="${entryComment}" />
-	</command>
+		AssertTextNotPresent(value1 = "${entryComment}");
+	}
 
-	<command name="viewSubscribedPG">
-		<execute function="AssertTextEquals" locator1="Comments#UNSUBSCRIBE_FROM_COMMENTS_LINK" value1="Unsubscribe from Comments" />
-	</command>
-</definition>
+	macro viewPG {
+		var key_entryComment = "${entryComment}";
+
+		Pause(locator1 = "1000");
+
+		AssertTextEquals.assertPartialText(
+			locator1 = "Comments#ENTRY_COUNT_PANEL",
+			value1 = "${commentCount} Comment"
+		);
+
+		var key_userFullName = "${userFullName}";
+
+		AssertTextEquals.assertPartialText(
+			locator1 = "Comments#USER_NAME",
+			value1 = "${userFullName}"
+		);
+
+		AssertTextEquals(
+			locator1 = "Comments#COMMENT_BODY_SPECIFIC",
+			value1 = "${entryComment}"
+		);
+	}
+
+	macro viewSearchResultPG {
+		AssertTextEquals(
+			locator1 = "Blogs#SEARCH_RESULTS_ENTRY_TITLE",
+			value1 = "${entryTitle}"
+		);
+
+		AssertTextEquals(
+			locator1 = "Blogs#SEARCH_RESULTS_ENTRY_DESCRIPTION",
+			value1 = "${entryContent}"
+		);
+
+		AssertTextEquals(
+			locator1 = "Blogs#SEARCH_RESULTS_HIGHLIGHTED",
+			value1 = "${entrySearchTerm}"
+		);
+
+		AssertTextEquals(
+			locator1 = "Blogs#SEARCH_RESULTS_ENTRY_COMMENT",
+			value1 = "${entryComment}"
+		);
+	}
+
+	macro viewSubscribedPG {
+		AssertTextEquals(
+			locator1 = "Comments#UNSUBSCRIBE_FROM_COMMENTS_LINK",
+			value1 = "Unsubscribe from Comments"
+		);
+	}
+}

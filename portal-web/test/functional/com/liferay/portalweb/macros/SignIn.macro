@@ -1,244 +1,216 @@
-<definition>
-	<var name="userEmailAddress" value="test@liferay.com" />
-	<var name="userPassword" value="test" />
-	<var name="userPasswordReminderAnswer" value="test" />
+definition {
+	var userEmailAddress = "test@liferay.com";
+	var userPassword = "test";
+	var userPasswordReminderAnswer = "test";
 
-	<command name="_signIn">
-		<if>
-			<condition function="IsElementNotPresent" locator1="TextInput#EMAIL_ADDRESS" />
-			<then>
-				<execute function="AssertClick" locator1="UserBar#USER_SIGN_IN" value1="Sign In" />
-			</then>
-		</if>
+	macro _signIn {
+		if (IsElementNotPresent(locator1 = "TextInput#EMAIL_ADDRESS")) {
+			AssertClick(locator1 = "UserBar#USER_SIGN_IN", value1 = "Sign In");
+		}
 
-		<execute function="Type" locator1="TextInput#EMAIL_ADDRESS" value1="${userEmailAddress}" />
-		<execute function="Type" locator1="TextInput#PASSWORD" value1="${userPassword}" />
+		Type(locator1 = "TextInput#EMAIL_ADDRESS", value1 = "${userEmailAddress}");
 
-		<if>
-			<equals arg1="${rememberMe}" arg2="true" />
-			<then>
-				<execute function="Check" locator1="Checkbox#REMEMBER_ME" />
-			</then>
-		</if>
+		Type(locator1 = "TextInput#PASSWORD", value1 = "${userPassword}");
 
-		<execute function="AssertClick" locator1="Button#SIGN_IN" value1="Sign In" />
+		if ("${rememberMe}" == "true") {
+			Check(locator1 = "Checkbox#REMEMBER_ME");
+		}
 
-		<execute function="AssertElementNotPresent" locator1="Button#SIGN_IN" />
-	</command>
+		AssertClick(locator1 = "Button#SIGN_IN", value1 = "Sign In");
 
-	<command name="_signInByScreenName">
-		<execute function="Type" locator1="TextInput#SCREEN_NAME" value1="${userScreenName}" />
-		<execute function="Type" locator1="TextInput#PASSWORD" value1="${userPassword}" />
+		AssertElementNotPresent(locator1 = "Button#SIGN_IN");
+	}
 
-		<if>
-			<equals arg1="${rememberMe}" arg2="true" />
-			<then>
-				<execute function="Check" locator1="Checkbox#REMEMBER_ME" />
-			</then>
-		</if>
+	macro _signInByScreenName {
+		Type(locator1 = "TextInput#SCREEN_NAME", value1 = "${userScreenName}");
 
-		<execute function="AssertClick" locator1="Button#SIGN_IN" value1="Sign In" />
-	</command>
+		Type(locator1 = "TextInput#PASSWORD", value1 = "${userPassword}");
 
-	<command name="agreeToTermsOfUse" summary="Agree to Liferay Portal Terms of Use">
-		<execute function="AssertClick" locator1="Button#I_AGREE" value1="I Agree" />
+		if ("${rememberMe}" == "true") {
+			Check(locator1 = "Checkbox#REMEMBER_ME");
+		}
 
-		<execute function="AssertElementNotPresent" locator1="Button#I_AGREE" />
-	</command>
+		AssertClick(locator1 = "Button#SIGN_IN", value1 = "Sign In");
+	}
 
-	<command name="setNewPassword" summary="Set '${userNewPassword}' as new user password">
-		<execute function="Type" locator1="TextInput#NEW_PASSWORD" value1="${userNewPassword}" />
-		<execute function="Type" locator1="TextInput#ENTER_AGAIN" value1="${userNewPassword}" />
+	@summary = "Agree to Liferay Portal Terms of Use"
+	macro agreeToTermsOfUse {
+		AssertClick(locator1 = "Button#I_AGREE", value1 = "I Agree");
 
-		<execute macro="Button#clickSave" />
+		AssertElementNotPresent(locator1 = "Button#I_AGREE");
+	}
 
-		<execute function="AssertElementNotPresent" locator1="Button#SAVE" />
-	</command>
+	@summary = "Set '${userNewPassword}' as new user password"
+	macro setNewPassword {
+		Type(locator1 = "TextInput#NEW_PASSWORD", value1 = "${userNewPassword}");
 
-	<command name="setPasswordReminder" summary="Enter '${userPasswordReminderAnswer}' as password reminder">
-		<execute function="Type" locator1="TextInput#ANSWER" value1="${userPasswordReminderAnswer}" />
+		Type(locator1 = "TextInput#ENTER_AGAIN", value1 = "${userNewPassword}");
 
-		<execute macro="Button#clickSave" />
-	</command>
+		Button.clickSave();
 
-	<command name="signIn" summary="Sign in to Liferay Portal as '${userEmailAddress}' using the password '${userPassword}'">
-		<execute macro="Navigator#openURL" />
+		AssertElementNotPresent(locator1 = "Button#SAVE");
+	}
 
-		<execute macro="SignIn#_signIn">
-			<var name="rememberMe" value="${rememberMe}" />
-			<var name="userEmailAddress" value="${userEmailAddress}" />
-			<var name="userPassword" value="${userPassword}" />
-		</execute>
-	</command>
+	@summary = "Enter '${userPasswordReminderAnswer}' as password reminder"
+	macro setPasswordReminder {
+		Type(locator1 = "TextInput#ANSWER", value1 = "${userPasswordReminderAnswer}");
 
-	<command name="signInByScreenName">
-		<execute macro="Navigator#openURL" />
+		Button.clickSave();
+	}
 
-		<execute macro="SignIn#_signInByScreenName">
-			<var name="rememberMe" value="${rememberMe}" />
-			<var name="userEmailAddress" value="${userScreenName}" />
-			<var name="userPassword" value="${userPassword}" />
-			<var name="userScreenName" value="${userScreenName}" />
-		</execute>
-	</command>
+	@summary = "Sign in to Liferay Portal as '${userEmailAddress}' using the password '${userPassword}'"
+	macro signIn {
+		Navigator.openURL();
 
-	<command name="signInFirstTime" summary="Sign in to Liferay Portal as '${userEmailAddress}' using the password '${userPassword}' for the first time">
-		<execute macro="SignIn#signIn">
-			<var name="rememberMe" value="${rememberMe}" />
-			<var name="userEmailAddress" value="${userEmailAddress}" />
-			<var name="userPassword" value="${userPassword}" />
-		</execute>
+		SignIn._signIn(
+			rememberMe = "${rememberMe}",
+			userEmailAddress = "${userEmailAddress}",
+			userPassword = "${userPassword}"
+		);
+	}
 
-		<execute macro="SignIn#agreeToTermsOfUse" />
+	macro signInByScreenName {
+		Navigator.openURL();
 
-		<execute macro="SignIn#setNewPassword">
-			<var name="userNewPassword" value="${userNewPassword}" />
-		</execute>
+		SignIn._signInByScreenName(
+			rememberMe = "${rememberMe}",
+			userEmailAddress = "${userScreenName}",
+			userPassword = "${userPassword}",
+			userScreenName = "${userScreenName}"
+		);
+	}
 
-		<execute macro="SignIn#setPasswordReminder">
-			<var name="userPasswordReminderAnswer" value="${userPasswordReminderAnswer}" />
-			<var name="userReminderQueryAnswer" value="${userReminderQueryAnswer}" />
-		</execute>
-	</command>
+	@summary = "Sign in to Liferay Portal as '${userEmailAddress}' using the password '${userPassword}' for the first time"
+	macro signInFirstTime {
+		SignIn.signIn(
+			rememberMe = "${rememberMe}",
+			userEmailAddress = "${userEmailAddress}",
+			userPassword = "${userPassword}"
+		);
 
-	<command name="signInPortalInstanceSetUp">
-		<execute macro="SignIn#signInSpecificURL">
-			<var name="url" value="http://localhost:8080/" />
-		</execute>
+		SignIn.agreeToTermsOfUse();
 
-		<if>
-			<condition function="IsElementPresent" locator1="Button#I_AGREE" />
-			<then>
-				<execute macro="SignIn#agreeToTermsOfUse" />
-			</then>
-		</if>
+		SignIn.setNewPassword(userNewPassword = "${userNewPassword}");
 
-		<if>
-			<condition function="IsElementPresent" locator1="Select#QUESTION" />
-			<then>
-				<execute macro="SignIn#setPasswordReminder" />
-			</then>
-		</if>
+		SignIn.setPasswordReminder(
+			userPasswordReminderAnswer = "${userPasswordReminderAnswer}",
+			userReminderQueryAnswer = "${userReminderQueryAnswer}"
+		);
+	}
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Configuration" />
-			<var name="panel" value="Control Panel" />
-			<var name="portlet" value="Virtual Instances" />
-		</execute>
+	macro signInPortalInstanceSetUp {
+		SignIn.signInSpecificURL(url = "http://localhost:8080/");
 
-		<while>
-			<condition function="IsElementPresent" locator1="ContentRow#ENTRY_CONTENT_ROW_NUMBER_ELLIPSIS">
-				<var name="key_rowNumber" value="2" />
-			</condition>
+		if (IsElementPresent(locator1 = "Button#I_AGREE")) {
+			SignIn.agreeToTermsOfUse();
+		}
 
-			<then>
-				<execute function="Click#waitForMenuToggleJSClick" locator1="ContentRow#ENTRY_CONTENT_ROW_NUMBER_ELLIPSIS">
-					<var name="key_rowNumber" value="2" />
-				</execute>
+		if (IsElementPresent(locator1 = "Select#QUESTION")) {
+			SignIn.setPasswordReminder();
+		}
 
-				<execute macro="MenuItem#clickNoError">
-					<var name="menuItem" value="Delete" />
-				</execute>
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Virtual Instances"
+		);
 
-				<execute function="Confirm" value1="Are you sure you want to delete this? It will be deleted immediately." />
+		while (IsElementPresent(locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER_ELLIPSIS", key_rowNumber = "2")) {
+			Click.waitForMenuToggleJSClick(
+				locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER_ELLIPSIS",
+				key_rowNumber = "2"
+			);
 
-				<execute macro="Alert#viewSuccessMessage" />
-			</then>
-		</while>
+			MenuItem.clickNoError(menuItem = "Delete");
 
-		<var method="PropsUtil#get('portal.url')" name="portalURL" />
+			Confirm(
+				value1 = "Are you sure you want to delete this? It will be deleted immediately."
+			);
 
-		<var method="StringUtil#replace('${portalURL}', 'http://', '')" name="portalURL" />
-		<var method="StringUtil#replace('${portalURL}', ':8080', '')" name="portalURL" />
+			Alert.viewSuccessMessage();
+		}
 
-		<execute macro="LexiconEntry#gotoAdd" />
+		var portalURL = PropsUtil.get('portal.url');
+		var portalURL = StringUtil.replace('${portalURL}', 'http://', '');
+		var portalURL = StringUtil.replace('${portalURL}', ':8080', '');
 
-		<execute function="Type" locator1="TextInput#WEB_ID" value1="${portalURL}" />
-		<execute function="Type" locator1="TextInput#VIRTUAL_HOST" value1="${portalURL}" />
-		<execute function="Type" locator1="TextInput#MAIL_DOMAIN" value1="liferay.com" />
+		LexiconEntry.gotoAdd();
 
-		<execute macro="Button#clickSave" />
+		Type(locator1 = "TextInput#WEB_ID", value1 = "${portalURL}");
 
-		<execute macro="Alert#viewSuccessMessage" />
+		Type(locator1 = "TextInput#VIRTUAL_HOST", value1 = "${portalURL}");
 
-		<execute macro="Navigator#openURL" />
-	</command>
+		Type(locator1 = "TextInput#MAIL_DOMAIN", value1 = "liferay.com");
 
-	<command name="signInSite">
-		<execute macro="Navigator#openSiteURL" />
+		Button.clickSave();
 
-		<execute macro="SignIn#_signIn">
-			<var name="rememberMe" value="${rememberMe}" />
-			<var name="userEmailAddress" value="${userEmailAddress}" />
-			<var name="userPassword" value="${userPassword}" />
-		</execute>
-	</command>
+		Alert.viewSuccessMessage();
 
-	<command name="signInSpecificURL">
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="${url}" />
-		</execute>
+		Navigator.openURL();
+	}
 
-		<execute macro="SignIn#_signIn">
-			<var name="rememberMe" value="${rememberMe}" />
-			<var name="userEmailAddress" value="${userEmailAddress}" />
-			<var name="userPassword" value="${userPassword}" />
-		</execute>
-	</command>
+	macro signInSite {
+		Navigator.openSiteURL();
 
-	<command name="signInTestSetup" summary="Sign in to Liferay Portal as '${userEmailAddress}' using the password '${userPassword}'">
-		<execute macro="SignOut#signOut" />
+		SignIn._signIn(
+			rememberMe = "${rememberMe}",
+			userEmailAddress = "${userEmailAddress}",
+			userPassword = "${userPassword}"
+		);
+	}
 
-		<execute macro="SignIn#signIn" />
+	macro signInSpecificURL {
+		Navigator.openSpecificURL(url = "${url}");
 
-		<if>
-			<condition function="IsElementPresent" locator1="Button#I_AGREE" />
-			<then>
-				<execute macro="SignIn#agreeToTermsOfUse" />
-			</then>
-		</if>
+		SignIn._signIn(
+			rememberMe = "${rememberMe}",
+			userEmailAddress = "${userEmailAddress}",
+			userPassword = "${userPassword}"
+		);
+	}
 
-		<if>
-			<condition function="IsElementPresent" locator1="Select#QUESTION" />
-			<then>
-				<execute macro="SignIn#setPasswordReminder" />
-			</then>
-		</if>
-	</command>
+	@summary = "Sign in to Liferay Portal as '${userEmailAddress}' using the password '${userPassword}'"
+	macro signInTestSetup {
+		SignOut.signOut();
 
-	<command name="viewSignInError">
-		<if>
-			<isset var="nodePort" />
-			<then>
-				<execute macro="Navigator#openSpecificURL">
-					<var name="url" value="http://localhost:${nodePort}" />
-				</execute>
-			</then>
-			<elseif>
-				<isset var="specificURL" />
-				<then>
-					<execute macro="Navigator#openSpecificURL">
-						<var name="url" value="${specificURL}" />
-					</execute>
-				</then>
-			</elseif>
-			<else>
-				<execute macro="Navigator#openURL" />
-			</else>
-		</if>
+		SignIn.signIn();
 
-		<execute macro="SignIn#_signIn">
-			<var name="rememberMe" value="${rememberMe}" />
-			<var name="userEmailAddress" value="${userEmailAddress}" />
-			<var name="userPassword" value="${userPassword}" />
-		</execute>
+		if (IsElementPresent(locator1 = "Button#I_AGREE")) {
+			SignIn.agreeToTermsOfUse();
+		}
 
-		<if>
-			<equals arg1="${error}" arg2="internalServerError" />
-			<then>
-				<execute function="AssertTextEquals" locator1="Home#ERROR_MESSAGE_ALERT_ERROR" value1="Internal Server Error" />
-				<execute function="AssertTextEquals#assertPartialText" locator1="Message#URL_ERROR" value1="${urlErrorMessage}" />
-			</then>
-		</if>
-	</command>
-</definition>
+		if (IsElementPresent(locator1 = "Select#QUESTION")) {
+			SignIn.setPasswordReminder();
+		}
+	}
+
+	macro viewSignInError {
+		if (isSet(nodePort)) {
+			Navigator.openSpecificURL(url = "http://localhost:${nodePort}");
+		}
+		else if (isSet(specificURL)) {
+			Navigator.openSpecificURL(url = "${specificURL}");
+		}
+		else {
+			Navigator.openURL();
+		}
+
+		SignIn._signIn(
+			rememberMe = "${rememberMe}",
+			userEmailAddress = "${userEmailAddress}",
+			userPassword = "${userPassword}"
+		);
+
+		if ("${error}" == "internalServerError") {
+			AssertTextEquals(
+				locator1 = "Home#ERROR_MESSAGE_ALERT_ERROR",
+				value1 = "Internal Server Error"
+			);
+
+			AssertTextEquals.assertPartialText(
+				locator1 = "Message#URL_ERROR",
+				value1 = "${urlErrorMessage}"
+			);
+		}
+	}
+}

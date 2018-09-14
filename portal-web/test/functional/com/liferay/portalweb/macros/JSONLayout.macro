@@ -1,29 +1,20 @@
-<definition>
-	<command name="_addLayout">
-		<if>
-			<not>
-				<isset var="groupId" />
-			</not>
-			<then>
-				<fail message="Please set 'groupId'." />
-			</then>
-		</if>
+definition {
 
-		<if>
-			<isset var="layoutName" />
-			<then>
-				<var method="URLUtil#encodeUTF8('${layoutName}')" name="layoutNameEncoded" />
-			</then>
-			<else>
-				<fail message="Please set 'layoutName'." />
-			</else>
-		</if>
+	macro _addLayout {
+		if (!(isSet(groupId))) {
+			fail("Please set 'groupId'.");
+		}
 
-		<execute macro="JSONCompany#getPortalURL">
-			<return name="portalURL" />
-		</execute>
+		if (isSet(layoutName)) {
+			var layoutNameEncoded = URLUtil.encodeUTF8('${layoutName}');
+		}
+		else {
+			fail("Please set 'layoutName'.");
+		}
 
-		<var name="curl"><![CDATA[
+		var portalURL = JSONCompany.getPortalURL();
+
+		var curl = '''
 			${portalURL}/api/jsonws/layout/add-layout \
 				-u test@liferay.com:test \
 				-d groupId=${groupId} \
@@ -35,49 +26,30 @@
 				-d type=portlet \
 				-d hidden=false \
 				-d friendlyURL=
-		]]></var>
+		''';
 
-		<execute macro="JSONGroup#getGroupName">
-			<return name="groupName" />
-			<var name="groupId" value="${groupId}" />
-		</execute>
+		var groupName = JSONGroup.getGroupName(groupId = "${groupId}");
 
-		<echo message="## Adding a 'Layout' with the following info using JSONWS:" />
+		echo("## Adding a 'Layout' with the following info using JSONWS:");
 
-		<echo message="## * Group Name: ${groupName}" />
+		echo("## * Group Name: ${groupName}");
 
-		<echo message="## * Layout Name: ${layoutName}" />
+		echo("## * Layout Name: ${layoutName}");
 
-		<var method="JSONCurlUtil#post('${curl}', '$[\'layoutId\']')" name="layoutId" />
-	</command>
+		var layoutId = JSONCurlUtil.post('${curl}', '$[\'layoutId\']');
+	}
 
-	<command name="addLayoutByGroupName">
-		<if>
-			<not>
-				<isset var="groupName" />
-			</not>
-			<then>
-				<fail message="Please set 'groupName'." />
-			</then>
-		</if>
+	macro addLayoutByGroupName {
+		if (!(isSet(groupName))) {
+			fail("Please set 'groupName'.");
+		}
 
-		<if>
-			<not>
-				<isset var="layoutName" />
-			</not>
-			<then>
-				<fail message="Please set 'layoutName'." />
-			</then>
-		</if>
+		if (!(isSet(layoutName))) {
+			fail("Please set 'layoutName'.");
+		}
 
-		<execute macro="JSONGroup#getGroupIdByName">
-			<return name="groupId" />
-			<var name="groupName" value="${groupName}" />
-		</execute>
+		var groupId = JSONGroup.getGroupIdByName(groupName = "${groupName}");
 
-		<execute macro="JSONLayout#_addLayout">
-			<var name="groupId" value="${groupId}" />
-			<var name="layoutName" value="${layoutName}" />
-		</execute>
-	</command>
-</definition>
+		JSONLayout._addLayout(groupId = "${groupId}", layoutName = "${layoutName}");
+	}
+}

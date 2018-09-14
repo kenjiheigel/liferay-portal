@@ -1,149 +1,157 @@
-<definition>
-	<var name="siteName" value="Liferay" />
+definition {
+	var siteName = "Liferay";
 
-	<command name="add">
-		<if>
-			<equals arg1="${calendarType}" arg2="My Calendars" />
-			<then>
-				<execute function="Click" locator1="Calendar#MY_CALENDARS_MENULIST_ARROW" />
+	macro add {
+		if ("${calendarType}" == "My Calendars") {
+			Click(locator1 = "Calendar#MY_CALENDARS_MENULIST_ARROW");
 
-				<execute function="AssertClick" locator1="Calendar#MY_CALENDARS_MENULIST_ADD_CALENDAR" value1="Add Calendar" />
+			AssertClick(
+				locator1 = "Calendar#MY_CALENDARS_MENULIST_ADD_CALENDAR",
+				value1 = "Add Calendar"
+			);
 
-				<execute function="Type#type" locator1="TextInput#NAME" value1="${calendarName}" />
+			Type.type(locator1 = "TextInput#NAME", value1 = "${calendarName}");
 
-				<execute macro="Button#clickSave" />
+			Button.clickSave();
 
-				<execute function="Click" locator1="Button#SAVE" />
+			Click(locator1 = "Button#SAVE");
 
-				<execute macro="Alert#viewSuccessMessage" />
-			</then>
-			<elseif>
-				<equals arg1="${calendarType}" arg2="Current Site Calendars" />
-				<then>
-					<var name="key_siteName" value="${siteName}" />
+			Alert.viewSuccessMessage();
+		}
+		else if ("${calendarType}" == "Current Site Calendars") {
+			var key_siteName = "${siteName}";
 
-					<execute function="Click" locator1="Calendar#CURRENT_SITE_CALENDARS_MENULIST_ARROW" />
+			Click(locator1 = "Calendar#CURRENT_SITE_CALENDARS_MENULIST_ARROW");
 
-					<execute function="AssertClick" locator1="Calendar#CURRENT_SITE_CALENDARS_MENULIST_ADD_CALENDAR" value1="Add Calendar" />
+			AssertClick(
+				locator1 = "Calendar#CURRENT_SITE_CALENDARS_MENULIST_ADD_CALENDAR",
+				value1 = "Add Calendar"
+			);
 
-					<execute function="Type#type" locator1="TextInput#NAME" value1="${calendarName}" />
+			Type.type(locator1 = "TextInput#NAME", value1 = "${calendarName}");
 
-					<execute macro="Button#clickSave" />
+			Button.clickSave();
 
-					<execute function="Click" locator1="Button#SAVE" />
+			Click(locator1 = "Button#SAVE");
 
-					<execute macro="Alert#viewSuccessMessage" />
-				</then>
-			</elseif>
-			<elseif>
-				<equals arg1="${calendarType}" arg2="Other Calendars" />
-				<then>
-					<execute function="Type" locator1="Calendar#OTHER_CALENDARS_SEARCH" value1="${calendarName}" />
+			Alert.viewSuccessMessage();
+		}
+		else if ("${calendarType}" == "Other Calendars") {
+			Type(locator1 = "Calendar#OTHER_CALENDARS_SEARCH", value1 = "${calendarName}");
 
-					<var name="key_calendarName" value="${calendarName}" />
+			var key_calendarName = "${calendarName}";
 
-					<execute function="AssertClick" locator1="Calendar#OTHER_CALENDARS_SEARCH_LIST_RESULT" value1="${calendarName}" />
+			AssertClick(
+				locator1 = "Calendar#OTHER_CALENDARS_SEARCH_LIST_RESULT",
+				value1 = "${calendarName}"
+			);
 
-					<execute function="AssertTextEquals" locator1="Calendar#OTHER_CALENDARS_CALENDAR" value1="${calendarName}" />
-				</then>
-			</elseif>
-		</if>
-	</command>
+			AssertTextEquals(
+				locator1 = "Calendar#OTHER_CALENDARS_CALENDAR",
+				value1 = "${calendarName}"
+			);
+		}
+	}
 
-	<command name="delete">
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Week" />
-		</execute>
+	macro delete {
+		CalendarNavigator.gotoView(viewType = "Week");
 
-		<var name="key_calendarName" value="${calendarName}" />
-		<var name="key_user" value="${user}" />
+		var key_calendarName = "${calendarName}";
+		var key_user = "${user}";
 
-		<execute function="AssertTextEquals" locator1="Calendar#MY_CALENDARS_CALENDAR_ADDITIONAL" value1="${calendarName}" />
+		AssertTextEquals(
+			locator1 = "Calendar#MY_CALENDARS_CALENDAR_ADDITIONAL",
+			value1 = "${calendarName}"
+		);
 
-		<execute function="Click" locator1="Calendar#MY_CALENDARS_CALENDAR_ADDITIONAL_MENULIST_ARROW" />
+		Click(locator1 = "Calendar#MY_CALENDARS_CALENDAR_ADDITIONAL_MENULIST_ARROW");
 
-		<execute macro="Calendar#_deleteCalendar" />
+		Calendar._deleteCalendar();
 
-		<execute function="AssertElementNotPresent" locator1="Calendar#MY_CALENDARS_CALENDAR_ADDITIONAL" />
-		<execute function="AssertTextNotPresent" value1="${calendarName}" />
-	</command>
+		AssertElementNotPresent(locator1 = "Calendar#MY_CALENDARS_CALENDAR_ADDITIONAL");
 
-	<command name="tearDown">
-		<execute macro="CalendarNavigator#gotoView">
-			<var name="viewType" value="Week" />
-		</execute>
+		AssertTextNotPresent(value1 = "${calendarName}");
+	}
 
-		<while>
-			<condition function="IsElementPresent" locator1="Calendar#MY_CALENDARS_CALENDAR_ADDITIONAL_GENERIC" />
-			<then>
-				<execute function="Click" locator1="Calendar#MY_CALENDARS_CALENDAR_ADDITIONAL_GENERIC_MENULIST_ARROW" />
+	macro tearDown {
+		CalendarNavigator.gotoView(viewType = "Week");
 
-				<execute macro="Calendar#_deleteCalendar" />
-			</then>
-		</while>
+		while (IsElementPresent(locator1 = "Calendar#MY_CALENDARS_CALENDAR_ADDITIONAL_GENERIC")) {
+			Click(
+				locator1 = "Calendar#MY_CALENDARS_CALENDAR_ADDITIONAL_GENERIC_MENULIST_ARROW"
+			);
 
-		<while>
-			<condition function="IsElementPresent" locator1="Calendar#CURRENT_SITE_CALENDARS_CALENDAR_ADDITIONAL_GENERIC" />
-			<then>
-				<execute function="Click" locator1="Calendar#CURRENT_SITE_CALENDARS_CALENDAR_ADDITIONAL_GENERIC_MENULIST_ARROW" />
+			Calendar._deleteCalendar();
+		}
 
-				<execute macro="Calendar#_deleteCalendar" />
-			</then>
-		</while>
+		while (IsElementPresent(locator1 = "Calendar#CURRENT_SITE_CALENDARS_CALENDAR_ADDITIONAL_GENERIC")) {
+			Click(
+				locator1 = "Calendar#CURRENT_SITE_CALENDARS_CALENDAR_ADDITIONAL_GENERIC_MENULIST_ARROW"
+			);
 
-		<while>
-			<condition function="IsElementPresent" locator1="Calendar#OTHER_CALENDARS_CALENDAR_GENERIC" />
-			<then>
-				<execute macro="Calendar#chooseOtherCalendarMenulistOption">
-					<var name="calendarName" value="${calendarName}" />
-					<var name="menuListOption" value="Hide Calendar" />
-				</execute>
-			</then>
-		</while>
+			Calendar._deleteCalendar();
+		}
 
-		<execute function="AssertElementNotPresent" locator1="Calendar#MY_CALENDARS_CALENDAR_ADDITIONAL_GENERIC" />
-		<execute function="AssertElementNotPresent" locator1="Calendar#CURRENT_SITE_CALENDARS_CALENDAR_ADDITIONAL_GENERIC" />
-		<execute function="AssertElementNotPresent" locator1="Calendar#OTHER_CALENDARS_CALENDAR_GENERIC" />
-	</command>
+		while (IsElementPresent(locator1 = "Calendar#OTHER_CALENDARS_CALENDAR_GENERIC")) {
+			Calendar.chooseOtherCalendarMenulistOption(
+				calendarName = "${calendarName}",
+				menuListOption = "Hide Calendar"
+			);
+		}
 
-	<command name="view">
-		<var name="key_calendarName" value="${calendarName}" />
+		AssertElementNotPresent(
+			locator1 = "Calendar#MY_CALENDARS_CALENDAR_ADDITIONAL_GENERIC"
+		);
 
-		<if>
-			<equals arg1="${calendarType}" arg2="My Calendars" />
-			<then>
-				<var name="key_user" value="${user}" />
+		AssertElementNotPresent(
+			locator1 = "Calendar#CURRENT_SITE_CALENDARS_CALENDAR_ADDITIONAL_GENERIC"
+		);
 
-				<execute function="AssertTextEquals" locator1="Calendar#MY_CALENDARS_CALENDAR_ADDITIONAL" value1="${calendarName}" />
-			</then>
-			<elseif>
-				<equals arg1="${calendarType}" arg2="Current Site Calendars" />
-				<then>
-					<var name="key_site" value="${site}" />
+		AssertElementNotPresent(locator1 = "Calendar#OTHER_CALENDARS_CALENDAR_GENERIC");
+	}
 
-					<execute function="AssertTextEquals" locator1="Calendar#MY_CALENDARS_CALENDAR_ADDITIONAL" value1="${calendarName}" />
-				</then>
-			</elseif>
-			<elseif>
-				<equals arg1="${calendarType}" arg2="Other Calendars" />
-				<then>
-					<execute function="Type" locator1="Calendar#OTHER_CALENDARS_SEARCH" value1="${calendarName}" />
+	macro view {
+		var key_calendarName = "${calendarName}";
 
-					<var name="key_calendarName" value="${calendarName}" />
+		if ("${calendarType}" == "My Calendars") {
+			var key_user = "${user}";
 
-					<execute function="AssertClick" locator1="Calendar#OTHER_CALENDARS_SEARCH_LIST_RESULT" value1="${calendarName}" />
+			AssertTextEquals(
+				locator1 = "Calendar#MY_CALENDARS_CALENDAR_ADDITIONAL",
+				value1 = "${calendarName}"
+			);
+		}
+		else if ("${calendarType}" == "Current Site Calendars") {
+			var key_site = "${site}";
 
-					<execute function="AssertTextEquals" locator1="Calendar#OTHER_CALENDARS_CALENDAR" value1="${calendarName}" />
-				</then>
-			</elseif>
-		</if>
-	</command>
+			AssertTextEquals(
+				locator1 = "Calendar#MY_CALENDARS_CALENDAR_ADDITIONAL",
+				value1 = "${calendarName}"
+			);
+		}
+		else if ("${calendarType}" == "Other Calendars") {
+			Type(locator1 = "Calendar#OTHER_CALENDARS_SEARCH", value1 = "${calendarName}");
 
-	<command name="viewDefault">
-		<var name="key_calendarName" value="${calendarName}" />
-		<var name="key_user" value="${user}" />
+			var key_calendarName = "${calendarName}";
 
-		<execute function="AssertElementNotPresent" locator1="Calendar#MY_CALENDARS_CALENDAR_ADDITIONAL" />
-		<execute function="AssertTextNotPresent" value1="${calendarName}" />
-	</command>
-</definition>
+			AssertClick(
+				locator1 = "Calendar#OTHER_CALENDARS_SEARCH_LIST_RESULT",
+				value1 = "${calendarName}"
+			);
+
+			AssertTextEquals(
+				locator1 = "Calendar#OTHER_CALENDARS_CALENDAR",
+				value1 = "${calendarName}"
+			);
+		}
+	}
+
+	macro viewDefault {
+		var key_calendarName = "${calendarName}";
+		var key_user = "${user}";
+
+		AssertElementNotPresent(locator1 = "Calendar#MY_CALENDARS_CALENDAR_ADDITIONAL");
+
+		AssertTextNotPresent(value1 = "${calendarName}");
+	}
+}

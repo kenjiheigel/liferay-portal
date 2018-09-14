@@ -1,71 +1,83 @@
-<definition>
-	<command name="configureDisplayFilter">
-		<execute macro="Portlet#gotoPortletOptions">
-			<var name="portletName" value="${portletName}" />
-			<var name="portletOption" value="Configuration" />
-		</execute>
+definition {
+	macro configureDisplayFilter {
+		Portlet.gotoPortletOptions(
+			portletName = "${portletName}",
+			portletOption = "Configuration"
+		);
 
-		<execute function="SelectFrame" locator1="IFrame#CONFIGURATION" />
+		SelectFrame(locator1 = "IFrame#CONFIGURATION");
 
-		<execute macro="Panel#expandPanel">
-			<var name="panel" value="Source" />
-		</execute>
+		Panel.expandPanel(panel = "Source");
 
-		<if>
-			<isset var="assetTypeFilter" />
-			<then>
-				<execute function="Select" locator1="UserSegmentContentList#SELECT_ASSET_TYPE" value1="${assetTypeFilter}" />
-			</then>
-		</if>
+		if (isSet(assetTypeFilter)) {
+			Select(
+				locator1 = "UserSegmentContentList#SELECT_ASSET_TYPE",
+				value1 = "${assetTypeFilter}"
+			);
+		}
 
-		<if>
-			<isset var="selectMultipleAssetTypes" />
-			<then>
-				<execute function="Select" locator1="UserSegmentContentList#SELECT_ASSET_TYPE" value1="Select More Than One..." />
+		if (isSet(selectMultipleAssetTypes)) {
+			Select(
+				locator1 = "UserSegmentContentList#SELECT_ASSET_TYPE",
+				value1 = "Select More Than One..."
+			);
 
-				<while>
-					<condition function="IsElementPresent" locator1="UserSegmentContentList#SELECTED_ASSETS" />
-					<then>
-						<execute function="Click" locator1="UserSegmentContentList#SELECTED_ASSETS" />
+			while (IsElementPresent(locator1 = "UserSegmentContentList#SELECTED_ASSETS")) {
+				Click(locator1 = "UserSegmentContentList#SELECTED_ASSETS");
 
-						<execute function="Click" locator1="UserSegmentContentList#MOVE_SELECTED_TO_AVAILABLE_BUTTON" />
-					</then>
-				</while>
+				Click(locator1 = "UserSegmentContentList#MOVE_SELECTED_TO_AVAILABLE_BUTTON");
+			}
 
-				<for list="${selectMultipleAssetTypes}" param="assetType">
-					<var name="key_assetType" value="${assetType}" />
+			for (var assetType : list "${selectMultipleAssetTypes}") {
+				var key_assetType = "${assetType}";
 
-					<execute function="Click" locator1="UserSegmentContentList#AVAILABLE_ASSET_TYPE" value1="${assetType}" />
+				Click(
+					locator1 = "UserSegmentContentList#AVAILABLE_ASSET_TYPE",
+					value1 = "${assetType}"
+				);
 
-					<execute function="Click" locator1="UserSegmentContentList#MOVE_AVAILABLE_TO_SELECTED_BUTTON" />
+				Click(locator1 = "UserSegmentContentList#MOVE_AVAILABLE_TO_SELECTED_BUTTON");
 
-					<execute function="AssertTextEquals" locator1="UserSegmentContentList#SELECTED_ASSETS" value1="${assetType}" />
-				</for>
+				AssertTextEquals(
+					locator1 = "UserSegmentContentList#SELECTED_ASSETS",
+					value1 = "${assetType}"
+				);
+			}
 
-				<execute macro="PortletEntry#save" />
+			PortletEntry.save();
 
-				<execute function="Select" locator1="UserSegmentContentList#SELECT_ASSET_TYPE" value1="Select More Than One..." />
+			Select(
+				locator1 = "UserSegmentContentList#SELECT_ASSET_TYPE",
+				value1 = "Select More Than One..."
+			);
 
-				<for list="${selectMultipleAssetTypes}" param="assetType">
-					<var name="key_assetType" value="${assetType}" />
+			for (var assetType : list "${selectMultipleAssetTypes}") {
+				var key_assetType = "${assetType}";
 
-					<execute function="AssertTextEquals" locator1="UserSegmentContentList#SELECTED_ASSETS" value1="${assetType}" />
-				</for>
-			</then>
-		</if>
+				AssertTextEquals(
+					locator1 = "UserSegmentContentList#SELECTED_ASSETS",
+					value1 = "${assetType}"
+				);
+			}
+		}
 
-		<execute macro="PortletEntry#save" />
-	</command>
+		PortletEntry.save();
+	}
 
-	<command name="viewContent">
-		<for list="${viewEntryContentList}" param="entryContent">
-			<var name="key_entryContent" value="${entryContent}" />
+	macro viewContent {
+		for (var entryContent : list "${viewEntryContentList}") {
+			var key_entryContent = "${entryContent}";
 
-			<execute function="AssertTextEquals" locator1="UserSegmentContentList#VIEW_ENTRY_CONTENT" value1="${entryContent}" />
-		</for>
-	</command>
+			AssertTextEquals(
+				locator1 = "UserSegmentContentList#VIEW_ENTRY_CONTENT",
+				value1 = "${entryContent}"
+			);
+		}
+	}
 
-	<command name="viewContentNotPresent">
-		<execute function="AssertElementNotPresent" locator1="UserSegmentContentList#VIEW_ENTRY_CONTENT_BASIC" />
-	</command>
-</definition>
+	macro viewContentNotPresent {
+		AssertElementNotPresent(
+			locator1 = "UserSegmentContentList#VIEW_ENTRY_CONTENT_BASIC"
+		);
+	}
+}

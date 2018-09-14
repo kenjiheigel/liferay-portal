@@ -1,96 +1,129 @@
-<definition>
-	<command name="_backtoInbox">
-		<execute function="AssertClick#assertPartialTextClickAt" locator1="MockMock#MOCKMOCK_HOME_LINK" value1="Home" />
-	</command>
+definition {
+	macro _backtoInbox {
+		AssertClick.assertPartialTextClickAt(
+			locator1 = "MockMock#MOCKMOCK_HOME_LINK",
+			value1 = "Home"
+		);
+	}
 
-	<command name="_gotoMail">
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="http://localhost:8282" />
-		</execute>
+	macro _gotoMail {
+		Navigator.openSpecificURL(url = "http://localhost:8282");
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="MockMock#MOCKMOCK_HEADER_LINK" value1="MockMock" />
-	</command>
+		AssertTextEquals.assertPartialText(
+			locator1 = "MockMock#MOCKMOCK_HEADER_LINK",
+			value1 = "MockMock"
+		);
+	}
 
-	<command name="_gotoMailMessage">
-		<var name="key_columnEntry" value="${asset}" />
+	macro _gotoMailMessage {
+		var key_columnEntry = "${asset}";
 
-		<if>
-			<isset var="recipient" />
-			<then>
-				<var name="key_recipient" value="${recipient}" />
+		if (isSet(recipient)) {
+			var key_recipient = "${recipient}";
 
-				<execute function="AssertClick#assertPartialTextClickAt" locator1="MockMock#MOCKMOCK_SPECIFIC_RECIPIENT_SUBJECT_FIELD_LINK" value1="${asset}" />
-			</then>
-			<else>
-				<execute function="AssertClick#assertPartialTextClickAt" locator1="MockMock#MOCKMOCK_SUBJECT_FIELD_LINK" value1="${asset}" />
-			</else>
-		</if>
-	</command>
+			AssertClick.assertPartialTextClickAt(
+				locator1 = "MockMock#MOCKMOCK_SPECIFIC_RECIPIENT_SUBJECT_FIELD_LINK",
+				value1 = "${asset}"
+			);
+		}
+		else {
+			AssertClick.assertPartialTextClickAt(
+				locator1 = "MockMock#MOCKMOCK_SUBJECT_FIELD_LINK",
+				value1 = "${asset}"
+			);
+		}
+	}
 
-	<command name="_viewMailFromInbox">
-		<var name="key_columnEntry" value="${asset}" />
-		<var name="key_recipient" value="${recipient}" />
-		<var name="key_sender" value="${sender}" />
+	macro _viewMailFromInbox {
+		var key_columnEntry = "${asset}";
+		var key_recipient = "${recipient}";
+		var key_sender = "${sender}";
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="MockMock#MOCKMOCK_HAVE_EMAILS_MESSAGE" value1="You have" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="MockMock#MOCKMOCK_FROM_FIELD" value1="${sender}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="MockMock#MOCKMOCK_TO_FIELD" value1="${recipient}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="MockMock#MOCKMOCK_SUBJECT_FIELD" value1="${asset}" />
-	</command>
+		AssertTextEquals.assertPartialText(
+			locator1 = "MockMock#MOCKMOCK_HAVE_EMAILS_MESSAGE",
+			value1 = "You have"
+		);
 
-	<command name="_viewMailMessage">
-		<var name="key_asset" value="${subject}" />
+		AssertTextEquals.assertPartialText(
+			locator1 = "MockMock#MOCKMOCK_FROM_FIELD",
+			value1 = "${sender}"
+		);
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="MockMock#MOCKMOCK_MESSAGE_BODY" value1="${subject}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="MockMock#MOCKMOCK_MESSAGE_BODY" value1="${content}" />
-	</command>
+		AssertTextEquals.assertPartialText(
+			locator1 = "MockMock#MOCKMOCK_TO_FIELD",
+			value1 = "${recipient}"
+		);
 
-	<command name="clickBodyLink">
-		<execute macro="MockMock#_gotoMailMessage">
-			<var name="asset" value="${asset}" />
-		</execute>
+		AssertTextEquals.assertPartialText(
+			locator1 = "MockMock#MOCKMOCK_SUBJECT_FIELD",
+			value1 = "${asset}"
+		);
+	}
 
-		<var name="key_bodyLink" value="${bodyLink}" />
+	macro _viewMailMessage {
+		var key_asset = "${subject}";
 
-		<execute function="AssertClick" locator1="MockMock#MOCKMOCK_HTML_BODY_LINK" value1="${bodyLink}" />
-	</command>
+		AssertTextEquals.assertPartialText(
+			locator1 = "MockMock#MOCKMOCK_MESSAGE_BODY",
+			value1 = "${subject}"
+		);
 
-	<command name="viewMail">
-		<execute macro="MockMock#_gotoMail" />
+		AssertTextEquals.assertPartialText(
+			locator1 = "MockMock#MOCKMOCK_MESSAGE_BODY",
+			value1 = "${content}"
+		);
+	}
 
-		<execute macro="MockMock#_viewMailFromInbox">
-			<var name="asset" value="${asset}" />
-			<var name="recipient" value="${recipient}" />
-			<var name="sender" value="${sender}" />
-		</execute>
+	macro clickBodyLink {
+		MockMock._gotoMailMessage(asset = "${asset}");
 
-		<execute macro="MockMock#_gotoMailMessage">
-			<var name="asset" value="${asset}" />
-			<var name="recipient" value="${recipient}" />
-		</execute>
+		var key_bodyLink = "${bodyLink}";
 
-		<execute macro="MockMock#_viewMailMessage">
-			<var name="content" value="${content}" />
-			<var name="subject" value="${subject}" />
-		</execute>
+		AssertClick(
+			locator1 = "MockMock#MOCKMOCK_HTML_BODY_LINK",
+			value1 = "${bodyLink}"
+		);
+	}
 
-		<execute macro="MockMock#_backtoInbox" />
-	</command>
+	macro viewMail {
+		MockMock._gotoMail();
 
-	<command name="viewMailCount">
-		<var name="key_emailCount" value="${emailCount}" />
+		MockMock._viewMailFromInbox(
+			asset = "${asset}",
+			recipient = "${recipient}",
+			sender = "${sender}"
+		);
 
-		<execute function="AssertTextEquals#assertPartialText" locator1="MockMock#MOCKMOCK_EMAIL_COUNT_MESSAGE" value1="You have ${emailCount}!" />
-	</command>
+		MockMock._gotoMailMessage(asset = "${asset}", recipient = "${recipient}");
 
-	<command name="viewNoMailCount">
-		<execute function="AssertTextEquals#assertPartialText" locator1="MockMock#MOCKMOCK_NO_EMAILS_MESSAGE" value1="No emails in queue" />
-	</command>
+		MockMock._viewMailMessage(content = "${content}", subject = "${subject}");
 
-	<command name="viewNoMailFromInbox">
-		<var name="key_columnEntry" value="${asset}" />
-		<var name="key_recipient" value="${recipient}" />
+		MockMock._backtoInbox();
+	}
 
-		<execute function="AssertTextNotPresent" locator1="MockMock#MOCKMOCK_TO_FIELD" value1="${recipient}" />
-	</command>
-</definition>
+	macro viewMailCount {
+		var key_emailCount = "${emailCount}";
+
+		AssertTextEquals.assertPartialText(
+			locator1 = "MockMock#MOCKMOCK_EMAIL_COUNT_MESSAGE",
+			value1 = "You have ${emailCount}!"
+		);
+	}
+
+	macro viewNoMailCount {
+		AssertTextEquals.assertPartialText(
+			locator1 = "MockMock#MOCKMOCK_NO_EMAILS_MESSAGE",
+			value1 = "No emails in queue"
+		);
+	}
+
+	macro viewNoMailFromInbox {
+		var key_columnEntry = "${asset}";
+		var key_recipient = "${recipient}";
+
+		AssertTextNotPresent(
+			locator1 = "MockMock#MOCKMOCK_TO_FIELD",
+			value1 = "${recipient}"
+		);
+	}
+}

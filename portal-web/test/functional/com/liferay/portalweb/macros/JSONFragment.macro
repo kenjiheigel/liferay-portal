@@ -1,161 +1,100 @@
-<definition>
-	<command name="_addFragment">
-		<execute macro="JSONGroup#getGroupIdByName">
-			<return name="groupId" />
-			<var name="groupName" value="${groupName}" />
-		</execute>
+definition {
 
-		<execute macro="JSONCompany#getPortalURL">
-			<return name="portalURL" />
-		</execute>
+	macro _addFragment {
+		var groupId = JSONGroup.getGroupIdByName(groupName = "${groupName}");
 
-		<execute macro="JSONFragment#getCollectionIdByName">
-			<return name="collectionId" />
-			<var name="collectionName" value="${collectionName}" />
-			<var name="groupId" value="${groupId}" />
-		</execute>
+		var portalURL = JSONCompany.getPortalURL();
 
-		<if>
-			<not>
-				<isset var="collectionId" />
-			</not>
-			<then>
-				<fail message="Please set 'collectionId'." />
-			</then>
-		</if>
+		var collectionId = JSONFragment.getCollectionIdByName(
+			collectionName = "${collectionName}",
+			groupId = "${groupId}"
+		);
 
-		<var name="curl"><![CDATA[
+		if (!(isSet(collectionId))) {
+			fail("Please set 'collectionId'.");
+		}
+
+		var curl = '''
 			${portalURL}/api/jsonws/fragment.fragmententry/add-fragment-entry \
 			-u test@liferay.com:test \
 			-d groupId=${groupId} \
 			-d fragmentCollectionId=${collectionId} \
 			-d name=${name} \
 			-d status=${status}
-		]]></var>
+		''';
 
-		<execute class="com.liferay.poshi.runner.util.JSONCurlUtil" method="post">
-			<arg value="${curl}" />
-		</execute>
-	</command>
+		com.liferay.poshi.runner.util.JSONCurlUtil.post('${curl}');
+	}
 
-	<command name="_addFragmentCollection">
-		<execute macro="JSONCompany#getPortalURL">
-			<return name="portalURL" />
-		</execute>
+	macro _addFragmentCollection {
+		var portalURL = JSONCompany.getPortalURL();
 
-		<execute macro="JSONGroup#getGroupIdByName">
-			<return name="groupId" />
-			<var name="groupName" value="${groupName}" />
-		</execute>
+		var groupId = JSONGroup.getGroupIdByName(groupName = "${groupName}");
 
-		<if>
-			<not>
-				<isset var="groupId" />
-			</not>
-			<then>
-				<fail message="Please set 'groupId'." />
-			</then>
-		</if>
+		if (!(isSet(groupId))) {
+			fail("Please set 'groupId'.");
+		}
 
-		<var name="curl"><![CDATA[
+		var curl = '''
 			${portalURL}/api/jsonws/fragment.fragmentcollection/add-fragment-collection \
 			-u test@liferay.com:test \
 			-d groupId=${groupId} \
 			-d name=${name} \
 			-d description=
-		]]></var>
+		''';
 
-		<execute class="com.liferay.poshi.runner.util.JSONCurlUtil" method="post">
-			<arg value="${curl}" />
-		</execute>
-	</command>
+		com.liferay.poshi.runner.util.JSONCurlUtil.post('${curl}');
+	}
 
-	<command name="addFragment">
-		<if>
-			<not>
-				<isset var="name" />
-			</not>
-			<then>
-				<fail message="Please set 'name'." />
-			</then>
-		</if>
+	macro addFragment {
+		if (!(isSet(name))) {
+			fail("Please set 'name'.");
+		}
 
-		<if>
-			<not>
-				<isset var="collectionName" />
-			</not>
-			<then>
-				<fail message="Please set 'collectionName'." />
-			</then>
-		</if>
+		if (!(isSet(collectionName))) {
+			fail("Please set 'collectionName'.");
+		}
 
-		<if>
-			<not>
-				<isset var="status" />
-			</not>
-			<then>
-				<var name="status" value="0" />
-			</then>
-		</if>
+		if (!(isSet(status))) {
+			var status = "0";
+		}
 
-		<execute macro="JSONFragment#_addFragment">
-			<var name="collectionName" value="${collectionName}" />
-			<var name="fragmentFile" value="${fragmentFile}" />
-			<var name="groupName" value="${groupName}" />
-			<var name="name" value="${name}" />
-			<var name="status" value="${status}" />
-		</execute>
-	</command>
+		JSONFragment._addFragment(
+			collectionName = "${collectionName}",
+			fragmentFile = "${fragmentFile}",
+			groupName = "${groupName}",
+			name = "${name}",
+			status = "${status}"
+		);
+	}
 
-	<command name="addFragmentCollection">
-		<if>
-			<not>
-				<isset var="name" />
-			</not>
-			<then>
-				<fail message="Please set 'name'." />
-			</then>
-		</if>
+	macro addFragmentCollection {
+		if (!(isSet(name))) {
+			fail("Please set 'name'.");
+		}
 
-		<if>
-			<not>
-				<isset var="groupName" />
-			</not>
-			<then>
-				<fail message="Please set 'groupName'." />
-			</then>
-		</if>
+		if (!(isSet(groupName))) {
+			fail("Please set 'groupName'.");
+		}
 
-		<execute macro="JSONFragment#_addFragmentCollection">
-			<var name="groupName" value="${groupName}" />
-			<var name="name" value="${name}" />
-		</execute>
-	</command>
+		JSONFragment._addFragmentCollection(
+			groupName = "${groupName}",
+			name = "${name}"
+		);
+	}
 
-	<command name="getCollectionIdByName">
-		<execute macro="JSONCompany#getPortalURL">
-			<return name="portalURL" />
-		</execute>
+	macro getCollectionIdByName {
+		var portalURL = JSONCompany.getPortalURL();
 
-		<if>
-			<not>
-				<isset var="collectionName" />
-			</not>
-			<then>
-				<fail message="Please set 'collectionName'." />
-			</then>
-		</if>
+		if (!(isSet(collectionName))) {
+			fail("Please set 'collectionName'.");
+		}
 
-		<if>
-			<not>
-				<isset var="groupId" />
-			</not>
-			<then>
-				<fail message="Please set 'groupId'." />
-			</then>
-		</if>
+		if (!(isSet(groupId))) {
+			fail("Please set 'groupId'.");
+		}
 
-		<var name="curl"><![CDATA[
+		var curl = '''
 			${portalURL}/api/jsonws/fragment.fragmentcollection/get-fragment-collections \
 			-u test@liferay.com:test \
 			-d groupId=${groupId} \
@@ -163,14 +102,11 @@
 			-d <CURL_DATA[start=-1]CURL_DATA> \
 			-d <CURL_DATA[end=-1]CURL_DATA> \
 			-d -orderByComparator=
-		]]></var>
+		''';
+		var collectionId = JSONCurlUtil.post('${curl}', '$..fragmentCollectionId');
+		var collectionId = StringUtil.replace('${collectionId}', '["', '');
+		var collectionId = StringUtil.replace('${collectionId}', '"]', '');
 
-		<var method="JSONCurlUtil#post('${curl}', '$..fragmentCollectionId')" name="collectionId" />
-
-		<var method="StringUtil#replace('${collectionId}', '[&quot;', '')" name="collectionId" />
-
-		<var method="StringUtil#replace('${collectionId}', '&quot;]', '')" name="collectionId" />
-
-		<return value="${collectionId}" />
-	</command>
-</definition>
+		return "${collectionId}";
+	}
+}
