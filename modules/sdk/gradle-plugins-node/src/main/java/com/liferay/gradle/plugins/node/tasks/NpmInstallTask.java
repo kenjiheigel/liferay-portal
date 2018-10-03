@@ -225,7 +225,12 @@ public class NpmInstallTask extends ExecuteNpmTask {
 	protected List<String> getCompleteArgs() {
 		List<String> completeArgs = super.getCompleteArgs();
 
-		if (isUseNpmCI() && (getPackageLockJsonFile() != null)) {
+		if (_npmCacheClean) {
+			completeArgs.add("cache");
+			completeArgs.add("clean");
+			completeArgs.add("--force");
+		}
+		else if (isUseNpmCI() && (getPackageLockJsonFile() != null)) {
 			completeArgs.add("ci");
 		}
 		else {
@@ -460,6 +465,26 @@ public class NpmInstallTask extends ExecuteNpmTask {
 		return false;
 	}
 
+	private void _npmCacheClean() {
+		Logger logger = getLogger();
+
+		try {
+			_npmCacheClean = true;
+
+			super.executeNode();
+		}
+		catch (Exception e) {
+			if (logger.isWarnEnabled()) {
+				logger.warn(
+					e.getMessage() +
+						". Unable to run \"npm cache clean --force\"");
+			}
+		}
+		finally {
+			_npmCacheClean = false;
+		}
+	}
+
 	private void _npmInstall(boolean reset) throws Exception {
 		Logger logger = getLogger();
 		int npmInstallRetries = getNpmInstallRetries();
@@ -484,6 +509,8 @@ public class NpmInstallTask extends ExecuteNpmTask {
 					logger.warn(
 						ioe.getMessage() + ". Running \"npm install\" again");
 				}
+
+				_npmCacheClean();
 			}
 		}
 	}
@@ -544,6 +571,7 @@ public class NpmInstallTask extends ExecuteNpmTask {
 	private Object _nodeModulesCacheDir;
 	private boolean _nodeModulesCacheNativeSync = true;
 	private Object _nodeModulesDigestFile;
+	private boolean _npmCacheClean;
 	private Object _removeShrinkwrappedUrls;
 	private Object _useNpmCI;
 
