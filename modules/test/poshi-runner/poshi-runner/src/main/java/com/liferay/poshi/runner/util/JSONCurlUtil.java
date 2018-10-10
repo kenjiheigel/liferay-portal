@@ -145,7 +145,30 @@ public class JSONCurlUtil {
 
 			String response = ExecUtil.readInputStream(inputStream, true);
 
+			String endString = "Finished executing commands.";
+
+			String garbage = null;
+
+			if (response.contains(endString) && !response.endsWith(endString)) {
+				int index = response.indexOf(endString);
+
+				if (response.length() > (endString.length() + index)) {
+					garbage = response.substring(index + endString.length() + 1);
+
+					response = response.substring(0, index);
+				}
+
+			}
+
 			System.out.println("Response: " + response);
+
+			if (garbage != null) {
+				System.out.println("Garbage: " + garbage);
+
+				for (char c : garbage.toCharArray()) {
+					System.out.println((int)c);
+				}
+			}
 
 			if (process.exitValue() != 0) {
 				inputStream = process.getErrorStream();
