@@ -1,215 +1,178 @@
-<definition component-name="portal-performance-and-fault-tolerance-ee">
-	<property name="app.server.bundles.size" value="1" />
-	<property name="cluster.enabled" value="true" />
-	<property name="remote.elasticsearch.enabled" value="true" />
-	<property name="test.assert.warning.exceptions" value="true" />
-	<property name="test.ignore.tomcat.ext.environment" value="true" />
-	<property name="test.run.environment" value="EE" />
-	<property name="testray.main.component.name" value="Rolling Restart" />
+@component-name = "portal-performance-and-fault-tolerance-ee"
+definition {
+	property app.server.bundles.size = "1";
+	property cluster.enabled = "true";
+	property remote.elasticsearch.enabled = "true";
+	property test.assert.warning.exceptions = "true";
+	property test.ignore.tomcat.ext.environment = "true";
+	property test.run.environment = "EE";
+	property testray.main.component.name = "Rolling Restart";
 
-	<set-up>
-		<execute macro="User#firstLoginPG" />
-	</set-up>
+	setUp {
+		User.firstLoginPG();
+	}
 
-	<command name="InstallFixPackViaRollingRestart" priority="5">
-		<property name="portal.fixpack.release" value="true" />
-		<property name="test.name.skip.portal.instance" value="RollingRestartEE#InstallFixPackViaRollingRestart" />
+	@priority = "5"
+	test InstallFixPackViaRollingRestart {
+		property portal.fixpack.release = "true";
+		property test.name.skip.portal.instance = "RollingRestartEE#InstallFixPackViaRollingRestart";
 
-		<execute macro="Clustering#viewClusterStatusInConsoleEE" />
+		Clustering.viewClusterStatusInConsoleEE();
 
-		<execute macro="Page#assertNodePortPG">
-			<var name="nodePort" value="8080" />
-		</execute>
+		Page.assertNodePortPG(nodePort = "8080");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Web Content" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Web Content"
+		);
 
-		<execute macro="WebContentNavigator#gotoAddCP" />
+		WebContentNavigator.gotoAddCP();
 
-		<execute macro="WebContent#addCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
+		WebContent.addCP(
+			webContentContent = "WC WebContent Content",
+			webContentTitle = "WC WebContent Title"
+		);
 
-		<execute macro="PortletEntry#publish" />
+		PortletEntry.publish();
 
-		<execute macro="WebContent#viewTitle">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
+		WebContent.viewTitle(webContentTitle = "WC WebContent Title");
 
-		<execute macro="User#logoutPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
+		User.logoutPG(password = "test", userEmailAddress = "test@liferay.com");
 
-		<execute macro="User#loginPG">
-			<var name="nodePort" value="9080" />
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
+		User.loginPG(
+			nodePort = "9080",
+			password = "test",
+			userEmailAddress = "test@liferay.com"
+		);
 
-		<execute macro="Page#assertNodePortPG">
-			<var name="nodePort" value="9080" />
-		</execute>
+		Page.assertNodePortPG(nodePort = "9080");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Web Content" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Web Content"
+		);
 
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
+		WebContentNavigator.gotoEditCP(webContentTitle = "WC WebContent Title");
 
-		<execute macro="WebContent#viewCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
+		WebContent.viewCP(
+			webContentContent = "WC WebContent Content",
+			webContentTitle = "WC WebContent Title"
+		);
 
-		<execute macro="Portlet#shutdownSpecificServer">
-			<var name="nodePort" value="8080" />
-		</execute>
+		Portlet.shutdownSpecificServer(nodePort = "8080");
 
-		<execute macro="Navigator#openSpecificURL">
-			<var name="url" value="http://localhost:9080" />
-		</execute>
+		Navigator.openSpecificURL(url = "http://localhost:9080");
 
-		<execute macro="Page#assertNodePortPG">
-			<var name="nodePort" value="9080" />
-		</execute>
+		Page.assertNodePortPG(nodePort = "9080");
 
-		<var method="PropsUtil#get('test.build.fix.pack.zip.url')" name="testBuildFixPackZipURL" />
+		var testBuildFixPackZipURL = PropsUtil.get("test.build.fix.pack.zip.url");
 
-		<execute macro="PatchingTool#installPatchOnSpecificServer">
-			<var name="nodePort" value="8080" />
-			<var name="patchFileZipURL" value="${testBuildFixPackZipURL}" />
-		</execute>
+		PatchingTool.installPatchOnSpecificServer(
+			nodePort = "8080",
+			patchFileZipURL = "${testBuildFixPackZipURL}"
+		);
 
-		<execute macro="Portlet#startSpecificServer">
-			<var name="deleteLiferayHome" value="true" />
-			<var name="keepCachedAppServerData" value="true" />
-			<var name="nodePort" value="8080" />
-		</execute>
+		Portlet.startSpecificServer(
+			deleteLiferayHome = "true",
+			keepCachedAppServerData = "true",
+			nodePort = "8080"
+		);
 
-		<execute function="AssertConsoleTextNotPresent" value1="java.lang.ClassNotFoundException: Unable to load class com.liferay.portal.scheduler.quartz.internal.QuartzTrigger" />
+		AssertConsoleTextNotPresent(
+			value1 = "java.lang.ClassNotFoundException: Unable to load class com.liferay.portal.scheduler.quartz.internal.QuartzTrigger"
+		);
 
-		<execute macro="Page#assertNodePortPG">
-			<var name="nodePort" value="9080" />
-		</execute>
+		Page.assertNodePortPG(nodePort = "9080");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Web Content" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Web Content"
+		);
 
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
+		WebContentNavigator.gotoEditCP(webContentTitle = "WC WebContent Title");
 
-		<execute macro="WebContent#viewCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
+		WebContent.viewCP(
+			webContentContent = "WC WebContent Content",
+			webContentTitle = "WC WebContent Title"
+		);
 
-		<execute macro="User#logoutPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
+		User.logoutPG(password = "test", userEmailAddress = "test@liferay.com");
 
-		<execute macro="User#loginPG">
-			<var name="nodePort" value="8080" />
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
+		User.loginPG(
+			nodePort = "8080",
+			password = "test",
+			userEmailAddress = "test@liferay.com"
+		);
 
-		<execute macro="Page#assertNodePortPG">
-			<var name="nodePort" value="8080" />
-		</execute>
+		Page.assertNodePortPG(nodePort = "8080");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Web Content" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Web Content"
+		);
 
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
+		WebContentNavigator.gotoEditCP(webContentTitle = "WC WebContent Title");
 
-		<execute macro="WebContent#viewCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
+		WebContent.viewCP(
+			webContentContent = "WC WebContent Content",
+			webContentTitle = "WC WebContent Title"
+		);
 
-		<execute macro="Portlet#shutdownSpecificServer">
-			<var name="nodePort" value="9080" />
-		</execute>
+		Portlet.shutdownSpecificServer(nodePort = "9080");
 
-		<execute macro="PatchingTool#installPatchOnSpecificServer">
-			<var name="nodePort" value="9080" />
-			<var name="patchFileZipURL" value="${testBuildFixPackZipURL}" />
-		</execute>
+		PatchingTool.installPatchOnSpecificServer(
+			nodePort = "9080",
+			patchFileZipURL = "${testBuildFixPackZipURL}"
+		);
 
-		<execute macro="Portlet#startSpecificServer">
-			<var name="deleteLiferayHome" value="true" />
-			<var name="keepCachedAppServerData" value="true" />
-			<var name="nodePort" value="9080" />
-		</execute>
+		Portlet.startSpecificServer(
+			deleteLiferayHome = "true",
+			keepCachedAppServerData = "true",
+			nodePort = "9080"
+		);
 
-		<execute macro="Navigator#openURL" />
+		Navigator.openURL();
 
-		<execute macro="Page#assertNodePortPG">
-			<var name="nodePort" value="8080" />
-		</execute>
+		Page.assertNodePortPG(nodePort = "8080");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Web Content" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Web Content"
+		);
 
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
+		WebContentNavigator.gotoEditCP(webContentTitle = "WC WebContent Title");
 
-		<execute macro="WebContent#viewCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
+		WebContent.viewCP(
+			webContentContent = "WC WebContent Content",
+			webContentTitle = "WC WebContent Title"
+		);
 
-		<execute macro="User#logoutPG">
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
+		User.logoutPG(password = "test", userEmailAddress = "test@liferay.com");
 
-		<execute macro="User#loginPG">
-			<var name="nodePort" value="9080" />
-			<var name="password" value="test" />
-			<var name="userEmailAddress" value="test@liferay.com" />
-		</execute>
+		User.loginPG(
+			nodePort = "9080",
+			password = "test",
+			userEmailAddress = "test@liferay.com"
+		);
 
-		<execute macro="Page#assertNodePortPG">
-			<var name="nodePort" value="9080" />
-		</execute>
+		Page.assertNodePortPG(nodePort = "9080");
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Content" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Web Content" />
-		</execute>
+		ProductMenu.gotoPortlet(
+			category = "Content",
+			panel = "Site Administration",
+			portlet = "Web Content"
+		);
 
-		<execute macro="WebContentNavigator#gotoEditCP">
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
+		WebContentNavigator.gotoEditCP(webContentTitle = "WC WebContent Title");
 
-		<execute macro="WebContent#viewCP">
-			<var name="webContentContent" value="WC WebContent Content" />
-			<var name="webContentTitle" value="WC WebContent Title" />
-		</execute>
-	</command>
-</definition>
+		WebContent.viewCP(
+			webContentContent = "WC WebContent Content",
+			webContentTitle = "WC WebContent Title"
+		);
+	}
+}

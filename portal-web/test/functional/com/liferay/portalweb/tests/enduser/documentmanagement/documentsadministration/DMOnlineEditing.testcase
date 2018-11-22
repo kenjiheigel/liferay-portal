@@ -1,104 +1,84 @@
-<definition component-name="portal-document-management">
-	<property name="portal.release" value="false" />
-	<property name="portal.upstream" value="true" />
-	<property name="custom.properties" value="default.layout.template.id=1_column" />
-	<property name="testray.main.component.name" value="Documents Management" />
+@component-name = "portal-document-management"
+definition {
+	property portal.release = "false";
+	property portal.upstream = "true";
+	property custom.properties = "default.layout.template.id=1_column";
+	property testray.main.component.name = "Documents Management";
+	var pageName = "Documents and Media Page";
+	var portletName = "Documents and Media";
 
-	<var name="pageName" value="Documents and Media Page" />
-	<var name="portletName" value="Documents and Media" />
+	setUp {
+		TestCase.setUpPortalInstance();
 
-	<set-up>
-		<execute macro="TestCase#setUpPortalInstance" />
+		User.firstLoginPG();
 
-		<execute macro="User#firstLoginPG" />
+		ProductMenu.gotoPortlet(
+			category = "Build",
+			panel = "Site Administration",
+			portlet = "Pages"
+		);
 
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="Build" />
-			<var name="panel" value="Site Administration" />
-			<var name="portlet" value="Pages" />
-		</execute>
+		SitePages.addPublicPage(
+			pageName = "Documents and Media Page",
+			sitePageType = "Widget Page"
+		);
 
-		<execute macro="SitePages#addPublicPage">
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="sitePageType" value="Widget Page" />
-		</execute>
+		SitePages.configurePage(
+			columnName = "1 Column",
+			pageName = "Documents and Media Page",
+			privacy = "Public Pages",
+			sitePageType = "Widget Page"
+		);
 
-		<execute macro="SitePages#configurePage">
-			<var name="columnName" value="1 Column" />
-			<var name="pageName" value="Documents and Media Page" />
-			<var name="privacy" value="Public Pages" />
-			<var name="sitePageType" value="Widget Page" />
-		</execute>
+		Navigator.gotoPage(pageName = "Documents and Media Page");
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
+		Portlet.addPG(portletName = "Documents and Media");
 
-		<execute macro="Portlet#addPG">
-			<var name="portletName" value="Documents and Media" />
-		</execute>
+		DMDocument.enableActionsMenuOnPortlet();
 
-		<execute macro="DMDocument#enableActionsMenuOnPortlet" />
+		Navigator.gotoPage(pageName = "Documents and Media Page");
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
+		LexiconEntry.changeDisplayStyle(displayStyle = "list");
+	}
 
-		<execute macro="LexiconEntry#changeDisplayStyle">
-			<var name="displayStyle" value="list" />
-		</execute>
-	</set-up>
+	@priority = "4"
+	test EditGoogleDoc {
+		Navigator.gotoPage(pageName = "Documents and Media Page");
 
-	<command name="EditGoogleDoc" priority="4">
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
+		DMDocument.addGoogleApp(dmGoogleApp = "Google Docs");
 
-		<execute macro="DMDocument#addGoogleApp">
-			<var name="dmGoogleApp" value="Google Docs" />
-		</execute>
+		Google.signIn(
+			userEmailAddress = PropsUtil.get("email.address.3"),
+			userPassword = PropsUtil.get("email.password.3"),
+			windowTitle = "Documents and Media Page - Liferay"
+		);
 
-		<execute macro="Google#signIn">
-			<var method="PropsUtil#get('email.address.3')" name="userEmailAddress" />
-			<var method="PropsUtil#get('email.password.3')" name="userPassword" />
-			<var name="windowTitle" value="Documents and Media Page - Liferay" />
-		</execute>
+		Navigator.gotoPage(pageName = "Documents and Media Page");
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
+		DMDocument.viewCheckedoutPG(dmDocumentTitle = "Untitled");
 
-		<execute macro="DMDocument#viewCheckedoutPG">
-			<var name="dmDocumentTitle" value="Untitled" />
-		</execute>
+		Navigator.gotoPage(pageName = "Documents and Media Page");
 
-		<execute macro="Navigator#gotoPage">
-			<var name="pageName" value="Documents and Media Page" />
-		</execute>
+		GoogleDoc.edit(
+			dmDocumentTitle = "Untitled",
+			dmDocumentTitleEdit = "Edited Google Document"
+		);
+	}
 
-		<execute macro="GoogleDoc#edit">
-			<var name="dmDocumentTitle" value="Untitled" />
-			<var name="dmDocumentTitleEdit" value="Edited Google Document" />
-		</execute>
-	</command>
+	tearDown {
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
 
-	<tear-down>
-		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			DMDocument.tearDownCP();
 
-		<if>
-			<equals arg1="${testPortalInstance}" arg2="true" />
-			<then>
-				<execute macro="PortalInstances#tearDownCP" />
-			</then>
-			<else>
-				<execute macro="DMDocument#tearDownCP" />
+			DMFolder.tearDownCP();
 
-				<execute macro="DMFolder#tearDownCP" />
+			DMDocumentType.tearDownCP();
 
-				<execute macro="DMDocumentType#tearDownCP" />
-
-				<execute macro="Page#tearDownCP" />
-			</else>
-		</if>
-	</tear-down>
-</definition>
+			Page.tearDownCP();
+		}
+	}
+}
