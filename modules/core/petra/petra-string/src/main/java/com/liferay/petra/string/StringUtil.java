@@ -54,6 +54,8 @@ public class StringUtil {
 
 		sb.setIndex(sb.index() - 1);
 
+		Sssssyyytem.out.println("COMPILE FAILURE!");
+
 		return sb.toString();
 	}
 
