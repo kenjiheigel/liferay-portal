@@ -22,7 +22,7 @@ import java.util.Properties;
 public class JunitBatchPortalWorkspace extends BatchPortalWorkspace {
 
 	protected JunitBatchPortalWorkspace(
-		String portalGitHubURL, String portalUpstreamBranchName,
+		GitHubURL portalGitHubURL, String portalUpstreamBranchName,
 		String portalBranchSHA) {
 
 		super(portalGitHubURL, portalUpstreamBranchName, portalBranchSHA);

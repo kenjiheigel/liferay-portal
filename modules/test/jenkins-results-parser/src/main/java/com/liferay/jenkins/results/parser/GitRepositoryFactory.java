@@ -87,14 +87,15 @@ public class GitRepositoryFactory {
 	}
 
 	public static RemoteGitRepository getRemoteGitRepository(
-		String hostname, String gitRepositoryName, String username) {
+		GitHubURL gitHubURL) {
+
+		String hostname = gitHubURL.getHostname();
 
 		if (hostname.equalsIgnoreCase("github.com")) {
-			return new GitHubRemoteGitRepository(gitRepositoryName, username);
+			return new GitHubRemoteGitRepository(gitHubURL);
 		}
 
-		return new DefaultRemoteGitRepository(
-			hostname, gitRepositoryName, username);
+		return new DefaultRemoteGitRepository(gitHubURL);
 	}
 
 	public static WorkspaceGitRepository getWorkspaceGitRepository(
@@ -134,24 +135,28 @@ public class GitRepositoryFactory {
 	}
 
 	public static WorkspaceGitRepository getWorkspaceGitRepository(
-		String gitHubURL, PullRequest pullRequest, String upstreamBranchName) {
+		PullRequest pullRequest, String upstreamBranchName) {
 
-		if (gitHubURL.contains("/liferay-jenkins-ee")) {
+		PullRequestGitHubURL gitHubURL = pullRequest.getGitHubURL();
+
+		String repositoryName = gitHubURL.getRepositoryName();
+
+		if (repositoryName.equals("liferay-jenkins-ee")) {
 			return new JenkinsWorkspaceGitRepository(
 				pullRequest, upstreamBranchName);
 		}
 
-		if (gitHubURL.contains("/liferay-plugins")) {
+		if (repositoryName.equals("liferay-plugins")) {
 			return new PluginsWorkspaceGitRepository(
 				pullRequest, upstreamBranchName);
 		}
 
-		if (gitHubURL.contains("/liferay-portal")) {
+		if (repositoryName.equals("liferay-portal")) {
 			return new PrimaryPortalWorkspaceGitRepository(
 				pullRequest, upstreamBranchName);
 		}
 
-		if (gitHubURL.contains("/liferay-qa-portal-legacy-ee")) {
+		if (repositoryName.equals("liferay-qa-portal-legacy-ee")) {
 			return new LegacyWorkspaceGitRepository(
 				pullRequest, upstreamBranchName);
 		}
@@ -160,25 +165,27 @@ public class GitRepositoryFactory {
 	}
 
 	public static WorkspaceGitRepository getWorkspaceGitRepository(
-		String gitHubURL, RemoteGitRef remoteGitRef,
+		GitHubURL gitHubURL, RemoteGitRef remoteGitRef,
 		String upstreamBranchName) {
 
-		if (gitHubURL.contains("/liferay-jenkins-ee")) {
+		String repositoryName = gitHubURL.getRepositoryName();
+
+		if (repositoryName.equals("liferay-jenkins-ee")) {
 			return new JenkinsWorkspaceGitRepository(
 				remoteGitRef, upstreamBranchName);
 		}
 
-		if (gitHubURL.contains("/liferay-plugins")) {
+		if (repositoryName.equals("liferay-plugins")) {
 			return new PluginsWorkspaceGitRepository(
 				remoteGitRef, upstreamBranchName);
 		}
 
-		if (gitHubURL.contains("/liferay-portal")) {
+		if (repositoryName.equals("liferay-portal")) {
 			return new PrimaryPortalWorkspaceGitRepository(
 				remoteGitRef, upstreamBranchName);
 		}
 
-		if (gitHubURL.contains("/liferay-qa-portal-legacy-ee")) {
+		if (repositoryName.equals("liferay-qa-portal-legacy-ee")) {
 			return new LegacyWorkspaceGitRepository(
 				remoteGitRef, upstreamBranchName);
 		}

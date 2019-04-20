@@ -14,6 +14,8 @@
 
 package com.liferay.jenkins.results.parser.docker;
 
+import com.liferay.jenkins.results.parser.GitHubURL;
+import com.liferay.jenkins.results.parser.GitHubURLFactory;
 import com.liferay.jenkins.results.parser.GitUtil;
 import com.liferay.jenkins.results.parser.GitWorkingDirectory;
 import com.liferay.jenkins.results.parser.GitWorkingDirectoryFactory;
@@ -90,9 +92,10 @@ public class LiferayCiInitK8sNodeUtil {
 		GitWorkingDirectory gitWorkingDirectory) {
 
 		String gitRemoteNames = "origin,upstream";
-		String gitRemoteURL = JenkinsResultsParserUtil.combine(
-			"git@github.com:liferay/",
-			gitWorkingDirectory.getGitRepositoryName(), ".git");
+		GitHubURL gitRemoteURL =
+			GitHubURLFactory.newGitHubURL(
+				"github.com", "liferay",
+				gitWorkingDirectory.getGitRepositoryName());
 
 		for (String remoteName : gitRemoteNames.split(",")) {
 			gitWorkingDirectory.addGitRemote(

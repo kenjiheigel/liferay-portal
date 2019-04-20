@@ -20,7 +20,7 @@ package com.liferay.jenkins.results.parser;
 public class BatchPortalWorkspace extends BasePortalWorkspace {
 
 	protected BatchPortalWorkspace(
-		String portalGitHubURL, String portalUpstreamBranchName,
+		GitHubURL portalGitHubURL, String portalUpstreamBranchName,
 		String portalBranchSHA) {
 
 		super(portalGitHubURL, portalUpstreamBranchName, portalBranchSHA);

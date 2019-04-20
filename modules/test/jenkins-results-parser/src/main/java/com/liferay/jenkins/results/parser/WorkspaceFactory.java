@@ -22,15 +22,18 @@ import java.lang.reflect.Proxy;
 public abstract class WorkspaceFactory {
 
 	public static Workspace newBatchWorkspace(
-		String gitHubURL, String upstreamBranchName, String batchName,
+		GitHubURL gitHubURL, String upstreamBranchName, String batchName,
 		String branchSHA) {
 
 		if (gitHubURL == null) {
 			throw new RuntimeException("GitHub URL is null");
 		}
 
-		if (!BasePortalWorkspace.isPortalGitHubURL(gitHubURL)) {
-			throw new RuntimeException("Unsupported GitHub URL " + gitHubURL);
+		String repositoryName = gitHubURL.getRepositoryName();
+
+		if (!repositoryName.contains("liferay-portal")) {
+			throw new RuntimeException(
+				"Unsupported GitHub URL " + gitHubURL.toString());
 		}
 
 		if (batchName == null) {
@@ -79,14 +82,17 @@ public abstract class WorkspaceFactory {
 	}
 
 	public static Workspace newTopLevelWorkspace(
-		String gitHubURL, String upstreamBranchName) {
+		GitHubURL gitHubURL, String upstreamBranchName) {
 
 		if (gitHubURL == null) {
 			throw new RuntimeException("GitHub URL is null");
 		}
 
-		if (!BasePortalWorkspace.isPortalGitHubURL(gitHubURL)) {
-			throw new RuntimeException("Unsupported GitHub URL " + gitHubURL);
+		String repositoryName = gitHubURL.getRepositoryName();
+
+		if (!repositoryName.contains("liferay-portal")) {
+			throw new RuntimeException(
+				"Unsupported GitHub URL " + gitHubURL.toString());
 		}
 
 		Workspace workspace = new TopLevelPortalWorkspace(

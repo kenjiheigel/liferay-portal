@@ -418,9 +418,8 @@ public class MergeCentralGitSubrepositoryUtil {
 		String centralGitRepositoryName =
 			centralGitWorkingDirectory.getGitRepositoryName();
 
-		String originRemoteURL = JenkinsResultsParserUtil.combine(
-			"git@github.com:", receiverUserName, "/", centralGitRepositoryName,
-			".git");
+		GitHubURL originRemoteURL = GitHubURLFactory.newGitHubURL(
+			"github.com", receiverUserName, centralGitRepositoryName);
 
 		GitRemote originGitRemote = centralGitWorkingDirectory.addGitRemote(
 			true, "tempRemote", originRemoteURL);

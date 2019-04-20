@@ -45,7 +45,7 @@ public abstract class PortalBatchBuildRunner
 		PortalBatchBuildData portalBatchBuildData = getBuildData();
 
 		Workspace batchWorkspace = WorkspaceFactory.newBatchWorkspace(
-			portalBatchBuildData.getPortalGitHubURL(),
+			portalBatchBuildData.getPortalBranchGitHubURL(),
 			portalBatchBuildData.getPortalUpstreamBranchName(),
 			portalBatchBuildData.getBatchName(),
 			portalBatchBuildData.getPortalBranchSHA());

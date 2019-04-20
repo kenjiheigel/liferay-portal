@@ -50,27 +50,22 @@ public class PullRequest {
 		return false;
 	}
 
-	public PullRequest(String gitHubURL) {
+	public PullRequest(PullRequestGitHubURL gitHubURL) {
 		this(gitHubURL, _NAME_TEST_SUITE_DEFAULT);
 	}
 
-	public PullRequest(String gitHubURL, String testSuiteName) {
+	public PullRequest(PullRequestGitHubURL gitHubURL, String testSuiteName) {
+		_gitHubURL = gitHubURL;
+
+		_gitHubRemoteGitRepositoryName = gitHubURL.getRepositoryName();
+		_number = gitHubURL.getNumber();
+		_ownerUsername = gitHubURL.getUsername();
+
 		if ((testSuiteName == null) || testSuiteName.isEmpty()) {
 			testSuiteName = _NAME_TEST_SUITE_DEFAULT;
 		}
 
 		_testSuiteName = testSuiteName;
-
-		Matcher matcher = _gitHubPullRequestURLPattern.matcher(gitHubURL);
-
-		if (!matcher.find()) {
-			throw new RuntimeException("Invalid GitHub URL " + gitHubURL);
-		}
-
-		_gitHubRemoteGitRepositoryName = matcher.group(
-			"gitHubRemoteGitRepositoryName");
-		_number = Integer.parseInt(matcher.group("number"));
-		_ownerUsername = matcher.group("owner");
 
 		refresh();
 	}
@@ -196,11 +191,12 @@ public class PullRequest {
 
 	public GitHubRemoteGitRepository getGitHubRemoteGitRepository() {
 		if (_gitHubRemoteGitRepository == null) {
+			GitHubURL gitHubURL = GitHubURLFactory.newGitHubURL(
+				"github.com", getOwnerUsername(), _gitHubRemoteGitRepositoryName);
+
 			_gitHubRemoteGitRepository =
 				(GitHubRemoteGitRepository)
-					GitRepositoryFactory.getRemoteGitRepository(
-						"github.com", _gitHubRemoteGitRepositoryName,
-						getOwnerUsername());
+					GitRepositoryFactory.getRemoteGitRepository(gitHubURL);
 		}
 
 		return _gitHubRemoteGitRepository;
@@ -212,6 +208,10 @@ public class PullRequest {
 
 	public String getGitRepositoryName() {
 		return getGitHubRemoteGitRepositoryName();
+	}
+
+	public PullRequestGitHubURL getGitHubURL() {
+		return _gitHubURL;
 	}
 
 	public String getHtmlURL() {
@@ -238,9 +238,11 @@ public class PullRequest {
 
 	public RemoteGitBranch getLiferayRemoteGitBranch() {
 		if (_liferayRemoteGitBranch == null) {
+			GitHubURL gitHubURL = GitHubURLFactory.newGitHubURL(
+				"github.com", "liferay", getGitRepositoryName());
+
 			_liferayRemoteGitBranch = GitUtil.getRemoteGitBranch(
-				getUpstreamBranchName(), new File("."),
-				"git@github.com:liferay/" + getGitRepositoryName());
+				getUpstreamBranchName(), new File("."), gitHubURL);
 		}
 
 		return _liferayRemoteGitBranch;
@@ -273,10 +275,14 @@ public class PullRequest {
 		return headJSONObject.getString("ref");
 	}
 
-	public String getSenderRemoteURL() {
-		return JenkinsResultsParserUtil.combine(
-			"git@github.com:", getSenderUsername(), "/",
-			getGitHubRemoteGitRepositoryName());
+	public GitHubURL getSenderRemoteURL() {
+		if (_senderRemoteURL == null) {
+			_senderRemoteURL = GitHubURLFactory.newGitHubURL(
+				"github.com", getSenderUsername(),
+				getGitHubRemoteGitRepositoryName());
+		}
+
+		return _senderRemoteURL;
 	}
 
 	public String getSenderSHA() {
@@ -664,6 +670,8 @@ public class PullRequest {
 	private RemoteGitBranch _liferayRemoteGitBranch;
 	private Integer _number;
 	private String _ownerUsername;
+	private PullRequestGitHubURL _gitHubURL;
+	private GitHubURL _senderRemoteURL;
 	private final String _testSuiteName;
 	private TestSuiteStatus _testSuiteStatus = TestSuiteStatus.MISSING;
 

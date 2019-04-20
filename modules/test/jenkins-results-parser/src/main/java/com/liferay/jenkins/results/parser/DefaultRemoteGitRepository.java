@@ -23,10 +23,8 @@ public class DefaultRemoteGitRepository extends BaseRemoteGitRepository {
 		super(gitRemote);
 	}
 
-	protected DefaultRemoteGitRepository(
-		String hostname, String gitRepositoryName, String username) {
-
-		super(hostname, gitRepositoryName, username);
+	protected DefaultRemoteGitRepository(GitHubURL gitHubURL) {
+		super(gitHubURL);
 	}
 
 }

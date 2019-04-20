@@ -31,7 +31,7 @@ public class GitRemote {
 			"(?<gitRepositoryName>[^\\.]+)(.git)?"));
 
 	public String getGitRepositoryName() {
-		return _gitRepositoryName;
+		return _fetchRemoteURL.getRepositoryName();
 	}
 
 	public GitWorkingDirectory getGitWorkingDirectory() {
@@ -39,14 +39,14 @@ public class GitRemote {
 	}
 
 	public String getHostname() {
-		return _hostname;
+		return _fetchRemoteURL.getHostname();
 	}
 
 	public String getName() {
 		return _name;
 	}
 
-	public String getPushRemoteURL() {
+	public GitHubURL getPushRemoteURL() {
 		if (_pushRemoteURL != null) {
 			return _pushRemoteURL;
 		}
@@ -54,30 +54,30 @@ public class GitRemote {
 		return _fetchRemoteURL;
 	}
 
-	public String getRemoteURL() {
+	public GitHubURL getRemoteURL() {
 		return _fetchRemoteURL;
 	}
 
 	public String getUsername() {
-		return _username;
+		return _fetchRemoteURL.getUsername();
 	}
 
 	@Override
 	public String toString() {
+		GitHubURL remoteURL = getRemoteURL();
+
 		return JenkinsResultsParserUtil.combine(
-			getName(), " (", getRemoteURL(), ")");
+			getName(), " (", remoteURL.getRemoteSSHURL(), ")");
 	}
 
 	protected GitRemote(
 		GitWorkingDirectory gitWorkingDirectory, String name,
-		String remoteURL) {
+		GitHubURL remoteURL) {
 
 		_gitWorkingDirectory = gitWorkingDirectory;
 		_fetchRemoteURL = remoteURL;
 		_name = name;
 		_pushRemoteURL = remoteURL;
-
-		parseRemoteURL();
 	}
 
 	protected GitRemote(
@@ -134,21 +134,19 @@ public class GitRemote {
 			}
 		}
 
-		_fetchRemoteURL = fetchRemoteURL;
+		_fetchRemoteURL = GitHubURLFactory.newGitHubURL(fetchRemoteURL);
 		_name = name;
-		_pushRemoteURL = pushRemoteURL;
-
-		parseRemoteURL();
+		_pushRemoteURL = GitHubURLFactory.newGitHubURL(pushRemoteURL);
 	}
 
 	protected void parseRemoteURL() {
 		Matcher remoteURLMatcher = _remoteURLMultiPattern.matches(
-			_fetchRemoteURL);
+			_fetchRemoteURL.toString());
 
 		if (remoteURLMatcher == null) {
 			throw new RuntimeException(
 				JenkinsResultsParserUtil.combine(
-					"fetch remote URL ", _fetchRemoteURL,
+					"fetch remote URL ", _fetchRemoteURL.toString(),
 					" is not a valid remote URL"));
 		}
 
@@ -167,12 +165,12 @@ public class GitRemote {
 		"https://(?<hostname>[^/]+)/(?<username>[^/]+)" +
 			"/(?<gitRepositoryName>[^\\.^\\s]+)(\\.git)?+\\s*");
 
-	private final String _fetchRemoteURL;
+	private final GitHubURL _fetchRemoteURL;
 	private String _gitRepositoryName;
 	private final GitWorkingDirectory _gitWorkingDirectory;
 	private String _hostname;
 	private final String _name;
-	private final String _pushRemoteURL;
+	private final GitHubURL _pushRemoteURL;
 	private String _username;
 
 }

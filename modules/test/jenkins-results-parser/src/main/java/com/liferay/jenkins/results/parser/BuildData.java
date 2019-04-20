@@ -58,6 +58,8 @@ public interface BuildData {
 
 	public String getHostname();
 
+	public BranchGitHubURL getJenkinsBranchGitHubURL();
+
 	public String getJenkinsGitHubBranchName();
 
 	public String getJenkinsGitHubRepositoryName();

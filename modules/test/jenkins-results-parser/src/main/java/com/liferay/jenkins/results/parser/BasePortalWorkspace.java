@@ -63,13 +63,13 @@ public abstract class BasePortalWorkspace
 	}
 
 	protected BasePortalWorkspace(
-		String portalGitHubURL, String portalUpstreamBranchName) {
+		GitHubURL portalGitHubURL, String portalUpstreamBranchName) {
 
 		this(portalGitHubURL, portalUpstreamBranchName, null);
 	}
 
 	protected BasePortalWorkspace(
-		String portalGitHubURL, String portalUpstreamBranchName,
+		GitHubURL portalGitHubURL, String portalUpstreamBranchName,
 		String portalBranchSHA) {
 
 		WorkspaceGitRepository workspaceGitRepository =
@@ -100,7 +100,7 @@ public abstract class BasePortalWorkspace
 
 		workspaceGitRepository = WorkspaceUtil.getWorkspaceGitRepository(
 			LegacyWorkspaceGitRepository.TYPE,
-			_URL_GITHUB_PORTAL_LEGACY_EE_REPOSITORY, "master");
+			GitHubURLFactory.newGitHubURL(_URL_GITHUB_PORTAL_LEGACY_EE_REPOSITORY), "master");
 
 		if (!(workspaceGitRepository instanceof LegacyWorkspaceGitRepository)) {
 			throw new RuntimeException("Invalid workspace Git repository");

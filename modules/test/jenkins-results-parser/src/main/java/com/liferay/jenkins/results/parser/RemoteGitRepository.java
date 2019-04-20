@@ -21,7 +21,7 @@ public interface RemoteGitRepository extends GitRepository {
 
 	public String getHostname();
 
-	public String getRemoteURL();
+	public GitHubURL getRemoteURL();
 
 	public String getUsername();
 

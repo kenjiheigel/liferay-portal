@@ -41,26 +41,32 @@ public class SubrepositoryGitWorkingDirectory extends GitWorkingDirectory {
 	protected void setUpstreamGitRemoteToPrivateGitRepository() {
 		GitRemote upstreamGitRemote = getUpstreamGitRemote();
 
-		String remoteURL = upstreamGitRemote.getRemoteURL();
+		GitHubURL remoteURL = upstreamGitRemote.getRemoteURL();
 
-		if (!remoteURL.contains("-private")) {
-			remoteURL = remoteURL.replace(".git", "-private.git");
-		}
+		String repositoryName = remoteURL.getRepositoryName();
 
-		addGitRemote(true, "upstream-temp", remoteURL);
+		GitHubURL privateRemoteURL =
+			GitHubURLFactory.newGitHubURL(
+				remoteURL.getHostname(), remoteURL.getUsername(),
+				repositoryName + "-private");
+
+		addGitRemote(true, "upstream-temp", privateRemoteURL);
 	}
 
 	@Override
 	protected void setUpstreamGitRemoteToPublicGitRepository() {
 		GitRemote upstreamGitRemote = getUpstreamGitRemote();
 
-		String remoteURL = upstreamGitRemote.getRemoteURL();
+		GitHubURL remoteURL = upstreamGitRemote.getRemoteURL();
 
-		if (remoteURL.contains("-private")) {
-			remoteURL = remoteURL.replace("-private", "");
-		}
+		String repositoryName = remoteURL.getRepositoryName();
 
-		addGitRemote(true, "upstream-temp", remoteURL);
+		GitHubURL publicRemoteURL =
+			GitHubURLFactory.newGitHubURL(
+				remoteURL.getHostname(), remoteURL.getUsername(),
+				repositoryName.replace("-private", ""));
+
+		addGitRemote(true, "upstream-temp", publicRemoteURL);
 	}
 
 }
