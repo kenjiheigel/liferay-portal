@@ -25,10 +25,6 @@ public class GitRemote {
 
 	public static final Pattern gitLsRemotePattern = Pattern.compile(
 		"(?<sha>[^\\s]{40}+)[\\s]+refs/(?<type>[^/]+)+/(?<name>[^\\s]+)");
-	public static final Pattern remoteURLPattern = Pattern.compile(
-		JenkinsResultsParserUtil.combine(
-			"git@(?<hostname>[^:]+):(?<username>[^/]+)/",
-			"(?<gitRepositoryName>[^\\.]+)(.git)?"));
 
 	public String getGitRepositoryName() {
 		return _fetchRemoteURL.getRepositoryName();
@@ -139,38 +135,14 @@ public class GitRemote {
 		_pushRemoteURL = GitHubURLFactory.newGitHubURL(pushRemoteURL);
 	}
 
-	protected void parseRemoteURL() {
-		Matcher remoteURLMatcher = _remoteURLMultiPattern.matches(
-			_fetchRemoteURL.toString());
-
-		if (remoteURLMatcher == null) {
-			throw new RuntimeException(
-				JenkinsResultsParserUtil.combine(
-					"fetch remote URL ", _fetchRemoteURL.toString(),
-					" is not a valid remote URL"));
-		}
-
-		_hostname = remoteURLMatcher.group("hostname");
-		_username = remoteURLMatcher.group("username");
-		_gitRepositoryName = remoteURLMatcher.group("gitRepositoryName");
-	}
-
 	private static final Pattern _remotePattern = Pattern.compile(
 		JenkinsResultsParserUtil.combine(
 			"(?<name>[^\\s]+)[\\s]+(?<remoteURL>[^\\s]+)[\\s]+\\(",
 			"(?<type>[^\\s]+)\\)"));
-	private static final MultiPattern _remoteURLMultiPattern = new MultiPattern(
-		"git@(?<hostname>[^:]+):(?<username>[^/]+)" +
-			"/(?<gitRepositoryName>[^\\.^\\s]+)(\\.git)?+\\s*",
-		"https://(?<hostname>[^/]+)/(?<username>[^/]+)" +
-			"/(?<gitRepositoryName>[^\\.^\\s]+)(\\.git)?+\\s*");
 
 	private final GitHubURL _fetchRemoteURL;
-	private String _gitRepositoryName;
 	private final GitWorkingDirectory _gitWorkingDirectory;
-	private String _hostname;
 	private final String _name;
 	private final GitHubURL _pushRemoteURL;
-	private String _username;
 
 }

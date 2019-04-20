@@ -43,16 +43,6 @@ public class PortalBatchBuildData
 	}
 
 	@Override
-	public String getPortalGitHubBranchName() {
-		return getGitHubBranchName(getPortalGitHubURL());
-	}
-
-	@Override
-	public String getPortalGitHubRepositoryName() {
-		return getGitHubRepositoryName(getPortalGitHubURL());
-	}
-
-	@Override
 	public String getPortalGitHubURL() {
 		TopLevelBuildData topLevelBuildData = getTopLevelBuildData();
 
@@ -64,11 +54,6 @@ public class PortalBatchBuildData
 			(PortalTopLevelBuildData)topLevelBuildData;
 
 		return portalTopLevelBuildData.getPortalGitHubURL();
-	}
-
-	@Override
-	public String getPortalGitHubUsername() {
-		return getGitHubUsername(getPortalGitHubURL());
 	}
 
 	@Override
