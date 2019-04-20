@@ -21,6 +21,16 @@ public interface PortalBuildData extends BuildData {
 
 	public String getPortalBranchSHA();
 
+	default public BranchGitHubURL getPortalBranchGitHubURL() {
+		String jenkinsGitHubURL = getJenkinsGitHubURL();
+
+		if (jenkinsGitHubURL == null) {
+			return null;
+		}
+
+		return (BranchGitHubURL)GitHubURLFactory.newGitHubURL(jenkinsGitHubURL);
+	}
+
 	public String getPortalGitHubBranchName();
 
 	public String getPortalGitHubRepositoryName();

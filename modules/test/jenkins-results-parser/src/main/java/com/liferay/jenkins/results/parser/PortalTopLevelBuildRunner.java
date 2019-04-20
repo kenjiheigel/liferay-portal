@@ -30,7 +30,7 @@ public abstract class PortalTopLevelBuildRunner
 		T portalTopLevelBuildData = getBuildData();
 
 		Workspace topLevelWorkspace = WorkspaceFactory.newTopLevelWorkspace(
-			portalTopLevelBuildData.getPortalGitHubURL(),
+			portalTopLevelBuildData.getPortalBranchGitHubURL(),
 			portalTopLevelBuildData.getPortalUpstreamBranchName());
 
 		if (!(topLevelWorkspace instanceof PortalWorkspace)) {
@@ -39,7 +39,7 @@ public abstract class PortalTopLevelBuildRunner
 
 		if (JenkinsResultsParserUtil.isCINode()) {
 			topLevelWorkspace.addJenkinsWorkspaceGitRepository(
-				portalTopLevelBuildData.getJenkinsGitHubURL());
+				portalTopLevelBuildData.getJenkinsBranchGitHubURL());
 		}
 
 		setWorkspace((S)topLevelWorkspace);

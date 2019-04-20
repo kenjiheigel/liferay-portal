@@ -102,9 +102,13 @@ public class PortalTestSuiteUpstreamControllerBuildRunner
 
 		sb.append("<ul><li><strong>Git ID:</strong> ");
 		sb.append("<a href=\"https://github.com/");
-		sb.append(buildData.getPortalGitHubUsername());
+
+		BranchGitHubURL portalBranchGitHubURL =
+			buildData.getPortalBranchGitHubURL();
+
+		sb.append(portalBranchGitHubURL.getUsername());
 		sb.append("/");
-		sb.append(buildData.getPortalGitHubRepositoryName());
+		sb.append(portalBranchGitHubURL.getRepositoryName());
 		sb.append("/commit/");
 		sb.append(buildData.getPortalBranchSHA());
 		sb.append("\">");
@@ -233,9 +237,13 @@ public class PortalTestSuiteUpstreamControllerBuildRunner
 		sb.append("&CONTROLLER_BUILD_URL=");
 		sb.append(buildData.getBuildURL());
 		sb.append("&JENKINS_GITHUB_BRANCH_NAME=");
-		sb.append(buildData.getJenkinsGitHubBranchName());
+
+		BranchGitHubURL jenkinsBranchGitHubURL =
+			buildData.getJenkinsBranchGitHubURL();
+
+		sb.append(jenkinsBranchGitHubURL.getBranchName());
 		sb.append("&JENKINS_GITHUB_BRANCH_USERNAME=");
-		sb.append(buildData.getJenkinsGitHubUsername());
+		sb.append(jenkinsBranchGitHubURL.getUsername());
 		sb.append("&PORTAL_GIT_COMMIT=");
 		sb.append(buildData.getPortalBranchSHA());
 

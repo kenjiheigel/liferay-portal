@@ -263,10 +263,8 @@ public class GitHubRemoteGitRepository extends BaseRemoteGitRepository {
 		}
 	}
 
-	protected GitHubRemoteGitRepository(
-		String gitHubRemoteGitRepositoryName, String username) {
-
-		super("github.com", gitHubRemoteGitRepositoryName, username);
+	protected GitHubRemoteGitRepository(GitHubURL gitHubURL) {
+		super(gitHubURL);
 	}
 
 	protected String getLabelRequestURL() {

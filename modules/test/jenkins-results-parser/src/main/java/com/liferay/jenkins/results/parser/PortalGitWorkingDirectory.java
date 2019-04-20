@@ -204,26 +204,32 @@ public class PortalGitWorkingDirectory extends GitWorkingDirectory {
 	protected void setUpstreamGitRemoteToPrivateGitRepository() {
 		GitRemote upstreamGitRemote = getUpstreamGitRemote();
 
-		String remoteURL = upstreamGitRemote.getRemoteURL();
+		GitHubURL remoteURL = upstreamGitRemote.getRemoteURL();
 
-		if (!remoteURL.contains("-ee")) {
-			remoteURL = remoteURL.replace(".git", "-ee.git");
-		}
+		String repositoryName = remoteURL.getRepositoryName();
 
-		addGitRemote(true, "upstream-temp", remoteURL);
+		GitHubURL privateRemoteURL =
+			GitHubURLFactory.newGitHubURL(
+				remoteURL.getHostname(), remoteURL.getUsername(),
+				repositoryName + "-ee");
+
+		addGitRemote(true, "upstream-temp", privateRemoteURL);
 	}
 
 	@Override
 	protected void setUpstreamGitRemoteToPublicGitRepository() {
 		GitRemote upstreamGitRemote = getUpstreamGitRemote();
 
-		String remoteURL = upstreamGitRemote.getRemoteURL();
+		GitHubURL remoteURL = upstreamGitRemote.getRemoteURL();
 
-		if (remoteURL.contains("-ee")) {
-			remoteURL = remoteURL.replace("-ee", "");
-		}
+		String repositoryName = remoteURL.getRepositoryName();
 
-		addGitRemote(true, "upstream-temp", remoteURL);
+		GitHubURL publicRemoteURL =
+			GitHubURLFactory.newGitHubURL(
+				remoteURL.getHostname(), remoteURL.getUsername(),
+				repositoryName.replace("-ee", ""));
+
+		addGitRemote(true, "upstream-temp", publicRemoteURL);
 	}
 
 	private boolean _isNPMTestModuleDir(File moduleDir) {

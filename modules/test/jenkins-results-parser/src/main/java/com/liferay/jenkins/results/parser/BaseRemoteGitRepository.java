@@ -57,9 +57,8 @@ public abstract class BaseRemoteGitRepository
 	}
 
 	@Override
-	public String getRemoteURL() {
-		return JenkinsResultsParserUtil.combine(
-			"git@", getHostname(), ":", getUsername(), "/", getName());
+	public GitHubURL getRemoteURL() {
+		return _remoteURL;
 	}
 
 	@Override
@@ -69,22 +68,25 @@ public abstract class BaseRemoteGitRepository
 
 	@Override
 	public int hashCode() {
+		GitHubURL remoteURL = getRemoteURL();
+
 		String hash = JenkinsResultsParserUtil.combine(
-			getHostname(), getName(), getRemoteURL(), getUsername());
+			getHostname(), getName(), remoteURL.getRemoteSSHURL(), getUsername());
 
 		return hash.hashCode();
 	}
 
 	protected BaseRemoteGitRepository(GitRemote gitRemote) {
-		this(
-			gitRemote.getHostname(), gitRemote.getGitRepositoryName(),
-			gitRemote.getUsername());
+		this(gitRemote.getRemoteURL());
 	}
 
-	protected BaseRemoteGitRepository(
-		String hostname, String gitRepositoryName, String username) {
+	protected BaseRemoteGitRepository(GitHubURL gitHubURL) {
+		super(gitHubURL.getRepositoryName());
 
-		super(gitRepositoryName);
+		_remoteURL = gitHubURL;
+
+		String hostname = gitHubURL.getHostname();
+		String username = gitHubURL.getUsername();
 
 		if ((hostname == null) || hostname.isEmpty()) {
 			throw new IllegalArgumentException("Hostname is null");
@@ -101,5 +103,7 @@ public abstract class BaseRemoteGitRepository
 	}
 
 	private static final String[] _KEYS_REQUIRED = {"hostname", "username"};
+
+	private final GitHubURL _remoteURL;
 
 }

@@ -111,7 +111,11 @@ public class SourceFormatBuild extends TopLevelBuild {
 	protected SourceFormatBuild(String url, TopLevelBuild topLevelBuild) {
 		super(url, topLevelBuild);
 
-		_pullRequest = new PullRequest(getParameterValue("PULL_REQUEST_URL"));
+		PullRequestGitHubURL pullRequestGitHubURL =
+			(PullRequestGitHubURL)GitHubURLFactory.newGitHubURL(
+				getParameterValue("PULL_REQUEST_URL"));
+
+		_pullRequest = new PullRequest(pullRequestGitHubURL);
 	}
 
 	@Override

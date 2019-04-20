@@ -155,11 +155,14 @@ public class GitHubDevSyncUtil {
 			GitRemote gitRemote = gitWorkingDirectory.getGitRemote(
 				gitHubDevRemoteName);
 
+			GitHubURL gitHubURL = gitRemote.getRemoteURL();
+
 			if ((gitRemote == null) ||
-				!gitHubDevRemoteURL.equals(gitRemote.getRemoteURL())) {
+				!gitHubDevRemoteURL.equals(gitHubURL.getRemoteSSHURL())) {
 
 				gitRemote = gitWorkingDirectory.addGitRemote(
-					true, gitHubDevRemoteName, gitHubDevRemoteURL);
+					true, gitHubDevRemoteName,
+					GitHubURLFactory.newGitHubURL(gitHubDevRemoteURL));
 			}
 
 			gitHubDevGitRemotes.add(gitRemote);
@@ -402,17 +405,19 @@ public class GitHubDevSyncUtil {
 			}
 		}
 
+		GitHubURL remoteURL = gitRemote.getRemoteURL();
+
 		System.out.println(
 			JenkinsResultsParserUtil.combine(
 				"Deleting ", String.valueOf(expiredRemoteGitBranches.size()),
-				" branches from ", gitRemote.getRemoteURL()));
+				" branches from ", remoteURL.getRemoteSSHURL()));
 
 		gitWorkingDirectory.deleteRemoteGitBranches(expiredRemoteGitBranches);
 
 		System.out.println(
 			JenkinsResultsParserUtil.combine(
 				"Found ", String.valueOf(branchCount), " cache branches on ",
-				gitRemote.getRemoteURL(), " ", String.valueOf(deleteCount),
+				remoteURL.getRemoteSSHURL(), " ", String.valueOf(deleteCount),
 				" were deleted. ", String.valueOf(branchCount - deleteCount),
 				" remain. The oldest branch is ",
 				JenkinsResultsParserUtil.toDurationString(oldestBranchAge),
@@ -663,6 +668,8 @@ public class GitHubDevSyncUtil {
 			sb.append("\n");
 		}
 
+		GitHubURL remoteURL = gitRemote.getRemoteURL();
+
 		System.out.println(
 			JenkinsResultsParserUtil.combine(
 				"Found ",
@@ -670,7 +677,7 @@ public class GitHubDevSyncUtil {
 				" orphaned base cache branches ", "and ",
 				String.valueOf(
 					orphanedTimestampedCachedRemoteGitBranchesMap.size()),
-				" orphaned timestamp branches on ", gitRemote.getRemoteURL(),
+				" orphaned timestamp branches on ", remoteURL.getRemoteSSHURL(),
 				".\n", sb.toString()));
 
 		List<RemoteGitBranch> orphanedCachedRemoteGitBranches = new ArrayList<>(
@@ -972,9 +979,9 @@ public class GitHubDevSyncUtil {
 		try {
 			senderGitRemote = gitWorkingDirectory.addGitRemote(
 				true, "sender-temp",
-				getGitHubRemoteURL(
-					gitWorkingDirectory.getGitRepositoryName(),
-					senderUsername));
+				GitHubURLFactory.newGitHubURL(
+					"github.com", senderUsername,
+					gitWorkingDirectory.getGitRepositoryName()));
 
 			String cachedBranchName = getCachedBranchName(
 				receiverUsername, senderUsername, senderBranchSHA,
@@ -1338,9 +1345,8 @@ public class GitHubDevSyncUtil {
 					gitWorkingDirectory.getUpstreamBranchName(), "-temp-",
 					String.valueOf(System.currentTimeMillis())),
 				senderBranchName,
-				JenkinsResultsParserUtil.combine(
-					"git@github.com:", senderUsername, "/",
-					localGitRepository.getName()),
+				GitHubURLFactory.newGitHubURL(
+					"github.com", senderUsername, localGitRepository.getName()),
 				senderBranchSHA, gitWorkingDirectory.getUpstreamBranchName(),
 				upstreamBranchSHA);
 		}

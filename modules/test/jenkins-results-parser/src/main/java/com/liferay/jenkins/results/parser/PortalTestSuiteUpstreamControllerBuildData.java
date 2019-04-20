@@ -31,9 +31,11 @@ public class PortalTestSuiteUpstreamControllerBuildData
 			return null;
 		}
 
+		BranchGitHubURL portalBranchGitHubURL = getPortalBranchGitHubURL();
+
 		return JenkinsResultsParserUtil.combine(
-			"https://github.com/", getPortalGitHubUsername(), "/",
-			getPortalGitHubRepositoryName(), "/compare/",
+			"https://github.com/", portalBranchGitHubURL.getUsername(), "/",
+			portalBranchGitHubURL.getRepositoryName(), "/compare/",
 			previousPortalBranchSHA, "...", getPortalBranchSHA());
 	}
 
@@ -92,7 +94,10 @@ public class PortalTestSuiteUpstreamControllerBuildData
 		super(runID, jobName, buildURL);
 
 		setPortalBranchSHA(_getPortalBranchSHA());
-		setPortalGitHubURL(_getPortalGitHubURL());
+
+		BranchGitHubURL portalBranchGitHubURL = _getPortalGitHubURL();
+
+		setPortalGitHubURL(portalBranchGitHubURL.toString());
 		setPortalUpstreamBranchName(_getPortalUpstreamBranchName());
 
 		String jenkinsGitHubURL = getBuildParameter("JENKINS_GITHUB_URL");
@@ -109,16 +114,17 @@ public class PortalTestSuiteUpstreamControllerBuildData
 		return remoteGitRef.getSHA();
 	}
 
-	private String _getPortalGitHubURL() {
+	private BranchGitHubURL _getPortalGitHubURL() {
 		String portalGitHubURL = System.getenv("PORTAL_GITHUB_URL");
 
-		if ((portalGitHubURL != null) && !portalGitHubURL.isEmpty()) {
-			return portalGitHubURL;
+		if ((portalGitHubURL == null) || portalGitHubURL.isEmpty()) {
+			portalGitHubURL =
+				JenkinsResultsParserUtil.combine(
+					"https://github.com/liferay/", _getPortalRepositoryName(),
+					"/tree/", _getPortalUpstreamBranchName());
 		}
 
-		return JenkinsResultsParserUtil.combine(
-			"https://github.com/liferay/", _getPortalRepositoryName(), "/tree/",
-			_getPortalUpstreamBranchName());
+		return (BranchGitHubURL)GitHubURLFactory.newGitHubURL(portalGitHubURL);
 	}
 
 	private String _getPortalRepositoryName() {

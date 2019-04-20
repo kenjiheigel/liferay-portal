@@ -34,6 +34,14 @@ public class PortalBatchBuildData
 		return optString("portal_branch_sha");
 	}
 
+	public BranchGitHubURL getPortalBranchGitHubURL() {
+		if (_portalGitHubURL == null) {
+			_portalGitHubURL = PortalBuildData.super.getPortalBranchGitHubURL();
+		}
+
+		return _portalGitHubURL;
+	}
+
 	@Override
 	public String getPortalGitHubBranchName() {
 		return getGitHubBranchName(getPortalGitHubURL());
@@ -116,5 +124,7 @@ public class PortalBatchBuildData
 
 	private static final List<String> _forbiddenKeys = Arrays.asList(
 		"portal_github_url", "portal_upstream_branch_name");
+
+	private BranchGitHubURL _portalGitHubURL;
 
 }

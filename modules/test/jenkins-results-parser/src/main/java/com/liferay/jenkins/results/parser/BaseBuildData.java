@@ -178,6 +178,21 @@ public abstract class BaseBuildData implements BuildData {
 		return optString("hostname");
 	}
 
+	public BranchGitHubURL getJenkinsBranchGitHubURL() {
+		if (_jenkinsGitHubURL == null) {
+			String jenkinsGitHubURL = getJenkinsGitHubURL();
+
+			if (jenkinsGitHubURL == null) {
+				return null;
+			}
+
+			_jenkinsGitHubURL = (BranchGitHubURL) GitHubURLFactory.newGitHubURL(
+				jenkinsGitHubURL);
+		}
+
+		return _jenkinsGitHubURL;
+	}
+
 	@Override
 	public String getJenkinsGitHubBranchName() {
 		return getGitHubBranchName(getJenkinsGitHubURL());
@@ -544,6 +559,7 @@ public abstract class BaseBuildData implements BuildData {
 
 	private Map<String, String> _buildParameters;
 	private Host _host;
+	private BranchGitHubURL _jenkinsGitHubURL;
 	private final JSONObject _jsonObject;
 
 }

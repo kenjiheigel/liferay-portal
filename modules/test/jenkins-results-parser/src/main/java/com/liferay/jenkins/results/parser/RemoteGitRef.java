@@ -31,7 +31,7 @@ public class RemoteGitRef
 		return _remoteGitRepository;
 	}
 
-	public String getRemoteURL() {
+	public GitHubURL getRemoteURL() {
 		RemoteGitRepository remoteRepository = getRemoteGitRepository();
 
 		return remoteRepository.getRemoteURL();

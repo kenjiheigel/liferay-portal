@@ -20,7 +20,7 @@ package com.liferay.jenkins.results.parser;
 public class TopLevelPortalWorkspace extends BasePortalWorkspace {
 
 	protected TopLevelPortalWorkspace(
-		String portalGitHubURL, String portalUpstreamBranchName) {
+		GitHubURL portalGitHubURL, String portalUpstreamBranchName) {
 
 		super(portalGitHubURL, portalUpstreamBranchName);
 	}

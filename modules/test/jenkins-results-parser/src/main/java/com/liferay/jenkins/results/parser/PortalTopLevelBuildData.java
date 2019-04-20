@@ -31,6 +31,14 @@ public class PortalTopLevelBuildData
 		return getString("portal_branch_sha");
 	}
 
+	public BranchGitHubURL getPortalBranchGitHubURL() {
+		if (_portalGitHubURL == null) {
+			_portalGitHubURL = PortalBuildData.super.getPortalBranchGitHubURL();
+		}
+
+		return _portalGitHubURL;
+	}
+
 	@Override
 	public String getPortalGitHubBranchName() {
 		return getGitHubBranchName(getPortalGitHubURL());
@@ -92,5 +100,7 @@ public class PortalTopLevelBuildData
 	};
 
 	private static final String _TYPE = "portal_top_level";
+
+	private BranchGitHubURL _portalGitHubURL;
 
 }
