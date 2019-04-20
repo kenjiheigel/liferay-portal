@@ -40,16 +40,6 @@ import org.json.JSONObject;
  */
 public class PullRequest {
 
-	public static boolean isValidGitHubPullRequestURL(String gitHubURL) {
-		Matcher matcher = _gitHubPullRequestURLPattern.matcher(gitHubURL);
-
-		if (matcher.find()) {
-			return true;
-		}
-
-		return false;
-	}
-
 	public PullRequest(PullRequestGitHubURL gitHubURL) {
 		this(gitHubURL, _NAME_TEST_SUITE_DEFAULT);
 	}
@@ -655,11 +645,6 @@ public class PullRequest {
 	}
 
 	private static final String _NAME_TEST_SUITE_DEFAULT = "default";
-
-	private static final Pattern _gitHubPullRequestURLPattern = Pattern.compile(
-		JenkinsResultsParserUtil.combine(
-			"https://github.com/(?<owner>[^/]+)/",
-			"(?<gitHubRemoteGitRepositoryName>[^/]+)/pull/(?<number>\\d+)"));
 
 	private Boolean _autoCloseCommentAvailable;
 	private GitHubRemoteGitRepository _gitHubRemoteGitRepository;

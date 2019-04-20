@@ -229,16 +229,6 @@ public class GitUtil {
 		return remoteGitRefs;
 	}
 
-	public static boolean isValidGitHubRefURL(String gitHubURL) {
-		Matcher matcher = _gitHubRefURLPattern.matcher(gitHubURL);
-
-		if (!matcher.find()) {
-			return false;
-		}
-
-		return true;
-	}
-
 	public static class ExecutionResult {
 
 		public int getExitValue() {
@@ -351,10 +341,5 @@ public class GitUtil {
 
 	private static final String _HOSTNAME_GITHUB_CACHE_PROXY =
 		"github-dev.liferay.com";
-
-	private static final Pattern _gitHubRefURLPattern = Pattern.compile(
-		JenkinsResultsParserUtil.combine(
-			"https://github.com/(?<username>[^/]+)/",
-			"(?<gitRepositoryName>[^/]+)/tree/(?<refName>[^/]+)"));
 
 }

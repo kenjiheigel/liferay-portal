@@ -31,13 +31,7 @@ public interface PortalBuildData extends BuildData {
 		return (BranchGitHubURL)GitHubURLFactory.newGitHubURL(jenkinsGitHubURL);
 	}
 
-	public String getPortalGitHubBranchName();
-
-	public String getPortalGitHubRepositoryName();
-
 	public String getPortalGitHubURL();
-
-	public String getPortalGitHubUsername();
 
 	public String getPortalUpstreamBranchName();
 
