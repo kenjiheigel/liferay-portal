@@ -155,14 +155,19 @@ public class GitHubDevSyncUtil {
 			GitRemote gitRemote = gitWorkingDirectory.getGitRemote(
 				gitHubDevRemoteName);
 
-			GitHubURL gitHubURL = gitRemote.getRemoteURL();
-
-			if ((gitRemote == null) ||
-				!gitHubDevRemoteURL.equals(gitHubURL.getRemoteSSHURL())) {
-
+			if (gitRemote == null) {
 				gitRemote = gitWorkingDirectory.addGitRemote(
 					true, gitHubDevRemoteName,
 					GitHubURLFactory.newGitHubURL(gitHubDevRemoteURL));
+			}
+			else {
+				GitHubURL gitHubURL = gitRemote.getRemoteURL();
+
+				if (!gitHubDevRemoteURL.equals(gitHubURL.getRemoteSSHURL())) {
+					gitRemote = gitWorkingDirectory.addGitRemote(
+						true, gitHubDevRemoteName,
+						GitHubURLFactory.newGitHubURL(gitHubDevRemoteURL));
+				}
 			}
 
 			gitHubDevGitRemotes.add(gitRemote);
