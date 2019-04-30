@@ -202,34 +202,12 @@ public class PortalGitWorkingDirectory extends GitWorkingDirectory {
 
 	@Override
 	protected void setUpstreamGitRemoteToPrivateGitRepository() {
-		GitRemote upstreamGitRemote = getUpstreamGitRemote();
-
-		GitHubURL remoteURL = upstreamGitRemote.getRemoteURL();
-
-		String repositoryName = remoteURL.getRepositoryName();
-
-		GitHubURL privateRemoteURL =
-			GitHubURLFactory.newGitHubURL(
-				remoteURL.getHostname(), remoteURL.getUsername(),
-				repositoryName + "-ee");
-
-		addGitRemote(true, "upstream-temp", privateRemoteURL);
+		setUpstreamGitRemoteToPrivateGitRepository("ee");
 	}
 
 	@Override
 	protected void setUpstreamGitRemoteToPublicGitRepository() {
-		GitRemote upstreamGitRemote = getUpstreamGitRemote();
-
-		GitHubURL remoteURL = upstreamGitRemote.getRemoteURL();
-
-		String repositoryName = remoteURL.getRepositoryName();
-
-		GitHubURL publicRemoteURL =
-			GitHubURLFactory.newGitHubURL(
-				remoteURL.getHostname(), remoteURL.getUsername(),
-				repositoryName.replace("-ee", ""));
-
-		addGitRemote(true, "upstream-temp", publicRemoteURL);
+		setUpstreamGitRemoteToPublicGitRepository("ee");
 	}
 
 	private boolean _isNPMTestModuleDir(File moduleDir) {
