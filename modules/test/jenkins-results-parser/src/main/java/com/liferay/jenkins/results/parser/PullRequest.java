@@ -44,6 +44,16 @@ public class PullRequest {
 		this(gitHubURL, _NAME_TEST_SUITE_DEFAULT);
 	}
 
+	public PullRequest(String gitHubURL) {
+		this((PullRequestGitHubURL)GitHubURLFactory.newGitHubURL(gitHubURL));
+	}
+
+	public PullRequest(String gitHubURL, String testSuiteName) {
+		this(
+			(PullRequestGitHubURL)GitHubURLFactory.newGitHubURL(gitHubURL),
+			testSuiteName);
+	}
+
 	public PullRequest(PullRequestGitHubURL gitHubURL, String testSuiteName) {
 		_gitHubURL = gitHubURL;
 
