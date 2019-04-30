@@ -14,10 +14,6 @@
 
 package com.liferay.jenkins.results.parser;
 
-import com.google.common.reflect.ClassPath;
-
-import java.io.IOException;
-
 import java.net.MalformedURLException;
 
 import java.util.ArrayList;
@@ -53,31 +49,9 @@ public class GitHubURLFactory {
 	private static final List<GitHubURL> _gitHubURLs =
 		new ArrayList<GitHubURL>() {
 			{
-				try {
-					ClassPath classPath = ClassPath.from(
-						GitHubURL.class.getClassLoader());
-
-					for (ClassPath.ClassInfo classInfo :
-							classPath.getTopLevelClasses(
-								"com.liferay.jenkins.results.parser")) {
-
-						Class<?> clazz = classInfo.load();
-
-						if (BaseGitHubURL.class.isAssignableFrom(clazz)) {
-							BaseGitHubURL gitHubURL =
-								(BaseGitHubURL)clazz.newInstance();
-
-							add(gitHubURL);
-						}
-
-						continue;
-					}
-				}
-				catch (IllegalAccessException | InstantiationException |
-					   IOException e) {
-
-					throw new RuntimeException(e);
-				}
+				add(new BaseGitHubURL());
+				add(new BranchGitHubURL());
+				add(new PullRequestGitHubURL());
 			}
 		};
 
