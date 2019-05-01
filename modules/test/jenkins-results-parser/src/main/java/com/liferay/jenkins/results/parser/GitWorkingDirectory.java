@@ -64,7 +64,8 @@ public class GitWorkingDirectory {
 	}
 
 	public GitRemote addGitRemote(
-		boolean force, String gitRemoteName, GitHubURL gitHubURL, boolean write) {
+		boolean force, String gitRemoteName, GitHubURL gitHubURL,
+		boolean write) {
 
 		if (gitRemoteExists(gitRemoteName)) {
 			if (force) {
@@ -465,6 +466,10 @@ public class GitWorkingDirectory {
 		deleteRemoteGitBranches(Arrays.asList(remoteGitBranch));
 	}
 
+	public void deleteRemoteGitBranch(String branchName, GitHubURL gitHubURL) {
+		deleteRemoteGitBranch(getRemoteGitBranch(branchName, gitHubURL));
+	}
+
 	public void deleteRemoteGitBranch(String branchName, GitRemote gitRemote) {
 		deleteRemoteGitBranch(branchName, gitRemote.getGitHubURL());
 	}
@@ -473,10 +478,6 @@ public class GitWorkingDirectory {
 		String branchName, RemoteGitRepository remoteGitRepository) {
 
 		deleteRemoteGitBranch(branchName, remoteGitRepository.getGitHubURL());
-	}
-
-	public void deleteRemoteGitBranch(String branchName, GitHubURL gitHubURL) {
-		deleteRemoteGitBranch(getRemoteGitBranch(branchName, gitHubURL));
 	}
 
 	public void deleteRemoteGitBranches(
@@ -541,6 +542,64 @@ public class GitWorkingDirectory {
 		System.out.println();
 		System.out.println(executionResult.getStandardOut());
 		System.out.println();
+	}
+
+	public void fetch(GitHubURL gitHubURL) {
+		fetch(gitHubURL, true);
+	}
+
+	public void fetch(GitHubURL gitHubURL, boolean noTags) {
+		if (gitHubURL == null) {
+			throw new IllegalArgumentException("Remote URL is null");
+		}
+
+		StringBuilder gitBranchesSHAReportStringBuilder = new StringBuilder();
+
+		gitBranchesSHAReportStringBuilder.append(
+			_getLocalGitBranchesSHAReport());
+		gitBranchesSHAReportStringBuilder.append("\n");
+		gitBranchesSHAReportStringBuilder.append(
+			_getRemoteGitBranchesSHAReport(null, gitHubURL));
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("git fetch --progress -v -f");
+
+		if (noTags) {
+			sb.append(" --no-tags");
+		}
+		else {
+			sb.append(" --tags");
+		}
+
+		sb.append(" ");
+		sb.append(gitHubURL.getRemoteSSHURL());
+		sb.append(" refs/heads/*:refs/remotes/origin/*");
+
+		long start = System.currentTimeMillis();
+
+		GitUtil.ExecutionResult executionResult = executeBashCommands(
+			3, GitUtil.MILLIS_RETRY_DELAY, 1000 * 60 * 30, sb.toString());
+
+		if (executionResult.getExitValue() != 0) {
+			System.out.println(gitBranchesSHAReportStringBuilder.toString());
+
+			throw new RuntimeException(
+				JenkinsResultsParserUtil.combine(
+					"Unable to fetch from remote url ",
+					gitHubURL.getRemoteSSHURL(), "\n",
+					executionResult.getStandardError()));
+		}
+
+		long duration = System.currentTimeMillis() - start;
+
+		System.out.println(
+			"Fetch completed in " +
+				JenkinsResultsParserUtil.toDurationString(duration));
+
+		if (duration > (1000 * 60)) {
+			System.out.println(gitBranchesSHAReportStringBuilder.toString());
+		}
 	}
 
 	public void fetch(GitRemote gitRemote) {
@@ -690,64 +749,6 @@ public class GitWorkingDirectory {
 
 	public void fetch(RemoteGitRepository remoteGitRepository, boolean noTags) {
 		fetch(remoteGitRepository.getGitHubURL(), noTags);
-	}
-
-	public void fetch(GitHubURL gitHubURL) {
-		fetch(gitHubURL, true);
-	}
-
-	public void fetch(GitHubURL gitHubURL, boolean noTags) {
-		if (gitHubURL == null) {
-			throw new IllegalArgumentException("Remote URL is null");
-		}
-
-		StringBuilder gitBranchesSHAReportStringBuilder = new StringBuilder();
-
-		gitBranchesSHAReportStringBuilder.append(
-			_getLocalGitBranchesSHAReport());
-		gitBranchesSHAReportStringBuilder.append("\n");
-		gitBranchesSHAReportStringBuilder.append(
-			_getRemoteGitBranchesSHAReport(null, gitHubURL));
-
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("git fetch --progress -v -f");
-
-		if (noTags) {
-			sb.append(" --no-tags");
-		}
-		else {
-			sb.append(" --tags");
-		}
-
-		sb.append(" ");
-		sb.append(gitHubURL.getRemoteSSHURL());
-		sb.append(" refs/heads/*:refs/remotes/origin/*");
-
-		long start = System.currentTimeMillis();
-
-		GitUtil.ExecutionResult executionResult = executeBashCommands(
-			3, GitUtil.MILLIS_RETRY_DELAY, 1000 * 60 * 30, sb.toString());
-
-		if (executionResult.getExitValue() != 0) {
-			System.out.println(gitBranchesSHAReportStringBuilder.toString());
-
-			throw new RuntimeException(
-				JenkinsResultsParserUtil.combine(
-					"Unable to fetch from remote url ",
-					gitHubURL.getRemoteSSHURL(), "\n",
-					executionResult.getStandardError()));
-		}
-
-		long duration = System.currentTimeMillis() - start;
-
-		System.out.println(
-			"Fetch completed in " +
-				JenkinsResultsParserUtil.toDurationString(duration));
-
-		if (duration > (1000 * 60)) {
-			System.out.println(gitBranchesSHAReportStringBuilder.toString());
-		}
 	}
 
 	public LocalGitBranch fetch(
@@ -1349,34 +1350,6 @@ public class GitWorkingDirectory {
 	}
 
 	public RemoteGitBranch getRemoteGitBranch(
-		String remoteGitBranchName, GitRemote gitRemote) {
-
-		return getRemoteGitBranch(remoteGitBranchName, gitRemote, false);
-	}
-
-	public RemoteGitBranch getRemoteGitBranch(
-		String remoteGitBranchName, GitRemote gitRemote, boolean required) {
-
-		return getRemoteGitBranch(
-			remoteGitBranchName, gitRemote.getGitHubURL(), required);
-	}
-
-	public RemoteGitBranch getRemoteGitBranch(
-		String remoteGitBranchName, RemoteGitRepository remoteGitRepository) {
-
-		return getRemoteGitBranch(
-			remoteGitBranchName, remoteGitRepository.getGitHubURL(), false);
-	}
-
-	public RemoteGitBranch getRemoteGitBranch(
-		String remoteGitBranchName, RemoteGitRepository remoteGitRepository,
-		boolean required) {
-
-		return getRemoteGitBranch(
-			remoteGitBranchName, remoteGitRepository.getGitHubURL(), required);
-	}
-
-	public RemoteGitBranch getRemoteGitBranch(
 		String remoteGitBranchName, GitHubURL gitHubURL) {
 
 		return getRemoteGitBranch(remoteGitBranchName, gitHubURL, false);
@@ -1404,6 +1377,38 @@ public class GitWorkingDirectory {
 		return null;
 	}
 
+	public RemoteGitBranch getRemoteGitBranch(
+		String remoteGitBranchName, GitRemote gitRemote) {
+
+		return getRemoteGitBranch(remoteGitBranchName, gitRemote, false);
+	}
+
+	public RemoteGitBranch getRemoteGitBranch(
+		String remoteGitBranchName, GitRemote gitRemote, boolean required) {
+
+		return getRemoteGitBranch(
+			remoteGitBranchName, gitRemote.getGitHubURL(), required);
+	}
+
+	public RemoteGitBranch getRemoteGitBranch(
+		String remoteGitBranchName, RemoteGitRepository remoteGitRepository) {
+
+		return getRemoteGitBranch(
+			remoteGitBranchName, remoteGitRepository.getGitHubURL(), false);
+	}
+
+	public RemoteGitBranch getRemoteGitBranch(
+		String remoteGitBranchName, RemoteGitRepository remoteGitRepository,
+		boolean required) {
+
+		return getRemoteGitBranch(
+			remoteGitBranchName, remoteGitRepository.getGitHubURL(), required);
+	}
+
+	public List<RemoteGitBranch> getRemoteGitBranches(GitHubURL gitHubURL) {
+		return getRemoteGitBranches(null, gitHubURL);
+	}
+
 	public List<RemoteGitBranch> getRemoteGitBranches(GitRemote gitRemote) {
 		return getRemoteGitBranches(null, gitRemote);
 	}
@@ -1414,8 +1419,11 @@ public class GitWorkingDirectory {
 		return getRemoteGitBranches(null, remoteGitRepository.getGitHubURL());
 	}
 
-	public List<RemoteGitBranch> getRemoteGitBranches(GitHubURL gitHubURL) {
-		return getRemoteGitBranches(null, gitHubURL);
+	public List<RemoteGitBranch> getRemoteGitBranches(
+		String remoteGitBranchName, GitHubURL gitHubURL) {
+
+		return GitUtil.getRemoteGitBranches(
+			remoteGitBranchName, _workingDirectory, gitHubURL);
 	}
 
 	public List<RemoteGitBranch> getRemoteGitBranches(
@@ -1430,23 +1438,6 @@ public class GitWorkingDirectory {
 
 		return getRemoteGitBranches(
 			remoteGitBranchName, remoteGitRepository.getGitHubURL());
-	}
-
-	public List<RemoteGitBranch> getRemoteGitBranches(
-		String remoteGitBranchName, GitHubURL gitHubURL) {
-
-		return GitUtil.getRemoteGitBranches(
-			remoteGitBranchName, _workingDirectory, gitHubURL);
-	}
-
-	public List<String> getRemoteGitBranchNames(GitRemote gitRemote) {
-		return getRemoteGitBranchNames(gitRemote.getGitHubURL());
-	}
-
-	public List<String> getRemoteGitBranchNames(
-		RemoteGitRepository remoteGitRepository) {
-
-		return getRemoteGitBranchNames(remoteGitRepository.getGitHubURL());
 	}
 
 	public List<String> getRemoteGitBranchNames(GitHubURL gitHubURL) {
@@ -1462,18 +1453,14 @@ public class GitWorkingDirectory {
 		return remoteGitBranchNames;
 	}
 
-	public String getRemoteGitBranchSHA(
-		String remoteGitBranchName, GitRemote gitRemote) {
-
-		return getRemoteGitBranchSHA(
-			remoteGitBranchName, gitRemote.getGitHubURL());
+	public List<String> getRemoteGitBranchNames(GitRemote gitRemote) {
+		return getRemoteGitBranchNames(gitRemote.getGitHubURL());
 	}
 
-	public String getRemoteGitBranchSHA(
-		String remoteGitBranchName, RemoteGitRepository remoteGitRepository) {
+	public List<String> getRemoteGitBranchNames(
+		RemoteGitRepository remoteGitRepository) {
 
-		return getRemoteGitBranchSHA(
-			remoteGitBranchName, remoteGitRepository.getGitHubURL());
+		return getRemoteGitBranchNames(remoteGitRepository.getGitHubURL());
 	}
 
 	public String getRemoteGitBranchSHA(
@@ -1488,7 +1475,8 @@ public class GitWorkingDirectory {
 		}
 
 		String command = JenkinsResultsParserUtil.combine(
-			"git ls-remote -h ", gitHubURL.getRemoteSSHURL(), " ", remoteGitBranchName);
+			"git ls-remote -h ", gitHubURL.getRemoteSSHURL(), " ",
+			remoteGitBranchName);
 
 		GitUtil.ExecutionResult executionResult = executeBashCommands(
 			GitUtil.RETRIES_SIZE_MAX, GitUtil.MILLIS_RETRY_DELAY,
@@ -1513,6 +1501,20 @@ public class GitWorkingDirectory {
 		}
 
 		return null;
+	}
+
+	public String getRemoteGitBranchSHA(
+		String remoteGitBranchName, GitRemote gitRemote) {
+
+		return getRemoteGitBranchSHA(
+			remoteGitBranchName, gitRemote.getGitHubURL());
+	}
+
+	public String getRemoteGitBranchSHA(
+		String remoteGitBranchName, RemoteGitRepository remoteGitRepository) {
+
+		return getRemoteGitBranchSHA(
+			remoteGitBranchName, remoteGitRepository.getGitHubURL());
 	}
 
 	public String getUpstreamBranchName() {
@@ -1652,24 +1654,6 @@ public class GitWorkingDirectory {
 
 	public RemoteGitBranch pushToRemoteGitRepository(
 		boolean force, LocalGitBranch localGitBranch,
-		String remoteGitBranchName, GitRemote gitRemote) {
-
-		return pushToRemoteGitRepository(
-			force, localGitBranch, remoteGitBranchName,
-			gitRemote.getGitHubURL());
-	}
-
-	public RemoteGitBranch pushToRemoteGitRepository(
-		boolean force, LocalGitBranch localGitBranch,
-		String remoteGitBranchName, RemoteGitRepository remoteGitRepository) {
-
-		return pushToRemoteGitRepository(
-			force, localGitBranch, remoteGitBranchName,
-			remoteGitRepository.getGitHubURL());
-	}
-
-	public RemoteGitBranch pushToRemoteGitRepository(
-		boolean force, LocalGitBranch localGitBranch,
 		String remoteGitBranchName, GitHubURL gitHubURL) {
 
 		if (localGitBranch == null) {
@@ -1711,6 +1695,24 @@ public class GitWorkingDirectory {
 		}
 
 		return null;
+	}
+
+	public RemoteGitBranch pushToRemoteGitRepository(
+		boolean force, LocalGitBranch localGitBranch,
+		String remoteGitBranchName, GitRemote gitRemote) {
+
+		return pushToRemoteGitRepository(
+			force, localGitBranch, remoteGitBranchName,
+			gitRemote.getGitHubURL());
+	}
+
+	public RemoteGitBranch pushToRemoteGitRepository(
+		boolean force, LocalGitBranch localGitBranch,
+		String remoteGitBranchName, RemoteGitRepository remoteGitRepository) {
+
+		return pushToRemoteGitRepository(
+			force, localGitBranch, remoteGitBranchName,
+			remoteGitRepository.getGitHubURL());
 	}
 
 	public LocalGitBranch rebase(
@@ -1771,6 +1773,16 @@ public class GitWorkingDirectory {
 	}
 
 	public boolean remoteGitBranchExists(
+		String branchName, GitHubURL gitHubURL) {
+
+		if (getRemoteGitBranch(branchName, gitHubURL) != null) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean remoteGitBranchExists(
 		String branchName, GitRemote gitRemote) {
 
 		return remoteGitBranchExists(branchName, gitRemote.getGitHubURL());
@@ -1781,14 +1793,6 @@ public class GitWorkingDirectory {
 
 		return remoteGitBranchExists(
 			branchName, remoteGitRepository.getGitHubURL());
-	}
-
-	public boolean remoteGitBranchExists(String branchName, GitHubURL gitHubURL) {
-		if (getRemoteGitBranch(branchName, gitHubURL) != null) {
-			return true;
-		}
-
-		return false;
 	}
 
 	public void removeGitRemote(GitRemote gitRemote) {
@@ -2067,10 +2071,9 @@ public class GitWorkingDirectory {
 
 		String repositoryName = gitHubURL.getRepositoryName();
 
-		GitHubURL privateGitHubURL =
-			GitHubURLFactory.newGitHubURL(
-				gitHubURL.getHostname(), gitHubURL.getUsername(),
-				repositoryName + "-" + privateSuffix);
+		GitHubURL privateGitHubURL = GitHubURLFactory.newGitHubURL(
+			gitHubURL.getHostname(), gitHubURL.getUsername(),
+			repositoryName + "-" + privateSuffix);
 
 		addGitRemote(true, "upstream-temp", privateGitHubURL);
 	}
@@ -2090,10 +2093,9 @@ public class GitWorkingDirectory {
 
 		String repositoryName = gitHubURL.getRepositoryName();
 
-		GitHubURL publicGitHubURL =
-			GitHubURLFactory.newGitHubURL(
-				gitHubURL.getHostname(), gitHubURL.getUsername(),
-				repositoryName.replace("-" + privateSuffix, ""));
+		GitHubURL publicGitHubURL = GitHubURLFactory.newGitHubURL(
+			gitHubURL.getHostname(), gitHubURL.getUsername(),
+			repositoryName.replace("-" + privateSuffix, ""));
 
 		addGitRemote(true, "upstream-temp", publicGitHubURL);
 	}

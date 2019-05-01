@@ -19,9 +19,9 @@ package com.liferay.jenkins.results.parser;
  */
 public interface RemoteGitRepository extends GitRepository {
 
-	public String getHostname();
-
 	public GitHubURL getGitHubURL();
+
+	public String getHostname();
 
 	public String getUsername();
 

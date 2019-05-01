@@ -107,6 +107,7 @@ public class PortalTestSuiteUpstreamControllerBuildRunner
 			buildData.getPortalBranchGitHubURL();
 
 		sb.append(portalBranchGitHubURL.getUsername());
+
 		sb.append("/");
 		sb.append(portalBranchGitHubURL.getRepositoryName());
 		sb.append("/commit/");
@@ -242,6 +243,7 @@ public class PortalTestSuiteUpstreamControllerBuildRunner
 			buildData.getJenkinsBranchGitHubURL();
 
 		sb.append(jenkinsBranchGitHubURL.getBranchName());
+
 		sb.append("&JENKINS_GITHUB_BRANCH_USERNAME=");
 		sb.append(jenkinsBranchGitHubURL.getUsername());
 		sb.append("&PORTAL_GIT_COMMIT=");

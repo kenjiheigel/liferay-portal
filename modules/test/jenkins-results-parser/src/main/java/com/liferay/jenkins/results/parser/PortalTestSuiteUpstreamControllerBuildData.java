@@ -98,6 +98,7 @@ public class PortalTestSuiteUpstreamControllerBuildData
 		BranchGitHubURL portalBranchGitHubURL = _getPortalGitHubURL();
 
 		setPortalGitHubURL(portalBranchGitHubURL.toString());
+
 		setPortalUpstreamBranchName(_getPortalUpstreamBranchName());
 
 		String jenkinsGitHubURL = getBuildParameter("JENKINS_GITHUB_URL");
@@ -118,10 +119,9 @@ public class PortalTestSuiteUpstreamControllerBuildData
 		String portalGitHubURL = System.getenv("PORTAL_GITHUB_URL");
 
 		if ((portalGitHubURL == null) || portalGitHubURL.isEmpty()) {
-			portalGitHubURL =
-				JenkinsResultsParserUtil.combine(
-					"https://github.com/liferay/", _getPortalRepositoryName(),
-					"/tree/", _getPortalUpstreamBranchName());
+			portalGitHubURL = JenkinsResultsParserUtil.combine(
+				"https://github.com/liferay/", _getPortalRepositoryName(),
+				"/tree/", _getPortalUpstreamBranchName());
 		}
 
 		return (BranchGitHubURL)GitHubURLFactory.newGitHubURL(portalGitHubURL);

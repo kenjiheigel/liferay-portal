@@ -252,6 +252,10 @@ public class GitHubRemoteGitRepository extends BaseRemoteGitRepository {
 
 	}
 
+	protected GitHubRemoteGitRepository(GitHubURL gitHubURL) {
+		super(gitHubURL);
+	}
+
 	protected GitHubRemoteGitRepository(GitRemote gitRemote) {
 		super(gitRemote);
 
@@ -261,10 +265,6 @@ public class GitHubRemoteGitRepository extends BaseRemoteGitRepository {
 			throw new IllegalArgumentException(
 				getName() + " is not a GitHub repository");
 		}
-	}
-
-	protected GitHubRemoteGitRepository(GitHubURL gitHubURL) {
-		super(gitHubURL);
 	}
 
 	protected String getLabelRequestURL() {

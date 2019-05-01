@@ -25,6 +25,20 @@ import java.util.regex.Pattern;
  */
 public class BaseGitHubURL implements GitHubURL<BaseGitHubURL> {
 
+	public static String getRemoteHTTPSURL(
+		String hostName, String userName, String repositoryName) {
+
+		return JenkinsResultsParserUtil.combine(
+			"https://" + hostName + "/" + userName + "/" + repositoryName);
+	}
+
+	public static String getRemoteSSHURL(
+		String hostName, String userName, String repositoryName) {
+
+		return JenkinsResultsParserUtil.combine(
+			"git@", hostName, ":", userName, "/", repositoryName, ".git");
+	}
+
 	public BaseGitHubURL create(String url) throws MalformedURLException {
 		return new BaseGitHubURL(url);
 	}
@@ -33,23 +47,9 @@ public class BaseGitHubURL implements GitHubURL<BaseGitHubURL> {
 		return _url.getHost();
 	}
 
-	public static String getRemoteHTTPSURL(
-		String hostName, String userName, String repositoryName) {
-
-		return JenkinsResultsParserUtil.combine(
-			"https://" + hostName + "/" + userName + "/" + repositoryName);
-	}
-
 	public String getRemoteHTTPSURL() {
 		return getRemoteHTTPSURL(
 			getHostname(), getUsername(), getRepositoryName());
-	}
-
-	public static String getRemoteSSHURL(
-		String hostName, String userName, String repositoryName) {
-
-		return JenkinsResultsParserUtil.combine(
-			"git@", hostName, ":", userName, "/", repositoryName, ".git");
 	}
 
 	public String getRemoteSSHURL() {
@@ -140,12 +140,12 @@ public class BaseGitHubURL implements GitHubURL<BaseGitHubURL> {
 		_url = url;
 	}
 
+	protected static final String REPOSITORY_END_REGEX = "(|\\.git|/|$)";
+
 	protected static final String REPOSITORY_NAME_KEY = "repositoryName";
 
 	protected static final String REPOSITORY_NAME_REGEX =
 		"/(?<" + REPOSITORY_NAME_KEY + ">[^/\\.]+)";
-
-	protected static final String REPOSITORY_END_REGEX = "(|\\.git|/|$)";
 
 	protected static final String USER_NAME_KEY = "userName";
 

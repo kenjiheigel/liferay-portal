@@ -42,16 +42,6 @@ public class PullRequest {
 		this(gitHubURL, _NAME_TEST_SUITE_DEFAULT);
 	}
 
-	public PullRequest(String gitHubURL) {
-		this((PullRequestGitHubURL)GitHubURLFactory.newGitHubURL(gitHubURL));
-	}
-
-	public PullRequest(String gitHubURL, String testSuiteName) {
-		this(
-			(PullRequestGitHubURL)GitHubURLFactory.newGitHubURL(gitHubURL),
-			testSuiteName);
-	}
-
 	public PullRequest(PullRequestGitHubURL gitHubURL, String testSuiteName) {
 		_gitHubURL = gitHubURL;
 
@@ -66,6 +56,16 @@ public class PullRequest {
 		_testSuiteName = testSuiteName;
 
 		refresh();
+	}
+
+	public PullRequest(String gitHubURL) {
+		this((PullRequestGitHubURL)GitHubURLFactory.newGitHubURL(gitHubURL));
+	}
+
+	public PullRequest(String gitHubURL, String testSuiteName) {
+		this(
+			(PullRequestGitHubURL)GitHubURLFactory.newGitHubURL(gitHubURL),
+			testSuiteName);
 	}
 
 	public Comment addComment(String body) {
@@ -190,7 +190,8 @@ public class PullRequest {
 	public GitHubRemoteGitRepository getGitHubRemoteGitRepository() {
 		if (_gitHubRemoteGitRepository == null) {
 			GitHubURL gitHubURL = GitHubURLFactory.newGitHubURL(
-				"github.com", getOwnerUsername(), _gitHubRemoteGitRepositoryName);
+				"github.com", getOwnerUsername(),
+				_gitHubRemoteGitRepositoryName);
 
 			_gitHubRemoteGitRepository =
 				(GitHubRemoteGitRepository)
@@ -204,12 +205,12 @@ public class PullRequest {
 		return _gitHubRemoteGitRepositoryName;
 	}
 
-	public String getGitRepositoryName() {
-		return getGitHubRemoteGitRepositoryName();
-	}
-
 	public PullRequestGitHubURL getGitHubURL() {
 		return _gitHubURL;
+	}
+
+	public String getGitRepositoryName() {
+		return getGitHubRemoteGitRepositoryName();
 	}
 
 	public String getHtmlURL() {
@@ -657,13 +658,13 @@ public class PullRequest {
 	private Boolean _autoCloseCommentAvailable;
 	private GitHubRemoteGitRepository _gitHubRemoteGitRepository;
 	private String _gitHubRemoteGitRepositoryName;
+	private PullRequestGitHubURL _gitHubURL;
 	private JSONObject _jsonObject;
 	private final List<GitHubRemoteGitRepository.Label> _labels =
 		new ArrayList<>();
 	private RemoteGitBranch _liferayRemoteGitBranch;
 	private Integer _number;
 	private String _ownerUsername;
-	private PullRequestGitHubURL _gitHubURL;
 	private GitHubURL _senderGitHubURL;
 	private final String _testSuiteName;
 	private TestSuiteStatus _testSuiteStatus = TestSuiteStatus.MISSING;

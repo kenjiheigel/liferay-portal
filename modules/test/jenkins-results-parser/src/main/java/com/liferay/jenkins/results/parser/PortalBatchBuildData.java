@@ -29,17 +29,17 @@ public class PortalBatchBuildData
 		return isValidJSONObject(jsonObject, _TYPE);
 	}
 
-	@Override
-	public String getPortalBranchSHA() {
-		return optString("portal_branch_sha");
-	}
-
 	public BranchGitHubURL getPortalBranchGitHubURL() {
 		if (_portalGitHubURL == null) {
 			_portalGitHubURL = PortalBuildData.super.getPortalBranchGitHubURL();
 		}
 
 		return _portalGitHubURL;
+	}
+
+	@Override
+	public String getPortalBranchSHA() {
+		return optString("portal_branch_sha");
 	}
 
 	@Override

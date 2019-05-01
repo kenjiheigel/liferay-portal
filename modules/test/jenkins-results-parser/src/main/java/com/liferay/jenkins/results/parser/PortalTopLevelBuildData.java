@@ -26,17 +26,17 @@ public class PortalTopLevelBuildData
 		return isValidJSONObject(jsonObject, _TYPE);
 	}
 
-	@Override
-	public String getPortalBranchSHA() {
-		return getString("portal_branch_sha");
-	}
-
 	public BranchGitHubURL getPortalBranchGitHubURL() {
 		if (_portalGitHubURL == null) {
 			_portalGitHubURL = PortalBuildData.super.getPortalBranchGitHubURL();
 		}
 
 		return _portalGitHubURL;
+	}
+
+	@Override
+	public String getPortalBranchSHA() {
+		return getString("portal_branch_sha");
 	}
 
 	@Override

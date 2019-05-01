@@ -19,12 +19,12 @@ package com.liferay.jenkins.results.parser;
  */
 public class DefaultRemoteGitRepository extends BaseRemoteGitRepository {
 
-	protected DefaultRemoteGitRepository(GitRemote gitRemote) {
-		super(gitRemote);
-	}
-
 	protected DefaultRemoteGitRepository(GitHubURL gitHubURL) {
 		super(gitHubURL);
+	}
+
+	protected DefaultRemoteGitRepository(GitRemote gitRemote) {
+		super(gitRemote);
 	}
 
 }

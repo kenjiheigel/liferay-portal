@@ -24,15 +24,6 @@ import java.util.List;
  */
 public class GitHubURLFactory {
 
-	public static GitHubURL newGitHubURL(
-		String hostname, String username, String repositoryName) {
-
-		String url =
-			BaseGitHubURL.getRemoteSSHURL(hostname, username, repositoryName);
-
-		return newGitHubURL(url);
-	}
-
 	public static GitHubURL newGitHubURL(String url) {
 		for (GitHubURL gitHubURL : _gitHubURLs) {
 			try {
@@ -44,6 +35,15 @@ public class GitHubURLFactory {
 		}
 
 		throw new RuntimeException("Invalid GitHub URL: " + url);
+	}
+
+	public static GitHubURL newGitHubURL(
+		String hostname, String username, String repositoryName) {
+
+		String url = BaseGitHubURL.getRemoteSSHURL(
+			hostname, username, repositoryName);
+
+		return newGitHubURL(url);
 	}
 
 	private static final List<GitHubURL> _gitHubURLs =
