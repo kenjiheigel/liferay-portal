@@ -27,8 +27,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.TimeZone;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -275,14 +273,14 @@ public class PullRequest {
 		return headJSONObject.getString("ref");
 	}
 
-	public GitHubURL getSenderRemoteURL() {
-		if (_senderRemoteURL == null) {
-			_senderRemoteURL = GitHubURLFactory.newGitHubURL(
+	public GitHubURL getSenderGitHubURL() {
+		if (_senderGitHubURL == null) {
+			_senderGitHubURL = GitHubURLFactory.newGitHubURL(
 				"github.com", getSenderUsername(),
 				getGitHubRemoteGitRepositoryName());
 		}
 
-		return _senderRemoteURL;
+		return _senderGitHubURL;
 	}
 
 	public String getSenderSHA() {
@@ -666,7 +664,7 @@ public class PullRequest {
 	private Integer _number;
 	private String _ownerUsername;
 	private PullRequestGitHubURL _gitHubURL;
-	private GitHubURL _senderRemoteURL;
+	private GitHubURL _senderGitHubURL;
 	private final String _testSuiteName;
 	private TestSuiteStatus _testSuiteStatus = TestSuiteStatus.MISSING;
 

@@ -41,7 +41,7 @@ public abstract class BaseRemoteGitRepository
 				getJSONObject(), baseRemoteGitRepository.getJSONObject()) &&
 			Objects.equals(getName(), baseRemoteGitRepository.getName()) &&
 			Objects.equals(
-				getRemoteURL(), baseRemoteGitRepository.getRemoteURL()) &&
+				getGitHubURL(), baseRemoteGitRepository.getGitHubURL()) &&
 			Objects.equals(
 				getUsername(), baseRemoteGitRepository.getUsername())) {
 
@@ -57,7 +57,7 @@ public abstract class BaseRemoteGitRepository
 	}
 
 	@Override
-	public GitHubURL getRemoteURL() {
+	public GitHubURL getGitHubURL() {
 		return _remoteURL;
 	}
 
@@ -68,16 +68,16 @@ public abstract class BaseRemoteGitRepository
 
 	@Override
 	public int hashCode() {
-		GitHubURL remoteURL = getRemoteURL();
+		GitHubURL gitHubURL = getGitHubURL();
 
 		String hash = JenkinsResultsParserUtil.combine(
-			getHostname(), getName(), remoteURL.getRemoteSSHURL(), getUsername());
+			getHostname(), getName(), gitHubURL.getRemoteSSHURL(), getUsername());
 
 		return hash.hashCode();
 	}
 
 	protected BaseRemoteGitRepository(GitRemote gitRemote) {
-		this(gitRemote.getRemoteURL());
+		this(gitRemote.getGitHubURL());
 	}
 
 	protected BaseRemoteGitRepository(GitHubURL gitHubURL) {
