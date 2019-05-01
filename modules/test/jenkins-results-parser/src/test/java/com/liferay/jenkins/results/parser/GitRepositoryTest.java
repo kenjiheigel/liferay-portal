@@ -56,4 +56,7 @@ public class GitRepositoryTest extends Test {
 	protected static final String USERNAME_REPOSITORY =
 		TestPropertiesValues.USERNAME_REPOSITORY;
 
+	protected static final GitHubURL gitHubURL = GitHubURLFactory.newGitHubURL(
+		HOSTNAME_REPOSITORY, USERNAME_REPOSITORY, NAME_REPOSITORY);
+
 }

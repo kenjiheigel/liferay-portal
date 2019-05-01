@@ -36,17 +36,18 @@ public class GitRepositoryFactoryTest extends GitRepositoryTest {
 	@Test
 	public void testGetRemoteGitRepository() {
 		RemoteGitRepository gitHubRemoteGitRepository =
-			GitRepositoryFactory.getRemoteGitRepository(
-				"github.com", NAME_REPOSITORY, USERNAME_REPOSITORY);
+			GitRepositoryFactory.getRemoteGitRepository(gitHubURL);
 
 		if (!(gitHubRemoteGitRepository instanceof GitHubRemoteGitRepository)) {
 			errorCollector.addError(
 				new Throwable("Invalid GitHubRemoteGitRepository instance"));
 		}
 
+		GitHubURL gitHubDevURL = GitHubURLFactory.newGitHubURL(
+			"github-dev.liferay.com", USERNAME_REPOSITORY, NAME_REPOSITORY);
+
 		RemoteGitRepository remoteGitRepository =
-			GitRepositoryFactory.getRemoteGitRepository(
-				"github-dev.liferay.com", NAME_REPOSITORY, USERNAME_REPOSITORY);
+			GitRepositoryFactory.getRemoteGitRepository(gitHubDevURL);
 
 		if (!(remoteGitRepository instanceof DefaultRemoteGitRepository)) {
 			errorCollector.addError(

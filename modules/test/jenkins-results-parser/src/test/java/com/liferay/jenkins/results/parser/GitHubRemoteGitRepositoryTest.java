@@ -40,8 +40,7 @@ public class GitHubRemoteGitRepositoryTest extends GitRepositoryTest {
 	@Test
 	public void testGetLabelRequestURL() throws Exception {
 		RemoteGitRepository remoteGitRepository =
-			GitRepositoryFactory.getRemoteGitRepository(
-				"github.com", NAME_REPOSITORY, USERNAME_REPOSITORY);
+			GitRepositoryFactory.getRemoteGitRepository(gitHubURL);
 
 		if (!(remoteGitRepository instanceof GitHubRemoteGitRepository)) {
 			throw new RuntimeException(
@@ -228,8 +227,7 @@ public class GitHubRemoteGitRepositoryTest extends GitRepositoryTest {
 
 	private GitHubRemoteGitRepository _getGitHubRemoteGitRepository() {
 		RemoteGitRepository remoteGitRepository =
-			GitRepositoryFactory.getRemoteGitRepository(
-				"github.com", NAME_REPOSITORY, USERNAME_REPOSITORY);
+			GitRepositoryFactory.getRemoteGitRepository(gitHubURL);
 
 		if (!(remoteGitRepository instanceof GitHubRemoteGitRepository)) {
 			errorCollector.addError(

@@ -53,13 +53,16 @@ public class RemoteGitRefTest extends GitRefTest {
 
 		String remoteURL = JenkinsResultsParserUtil.combine(
 			"git@", HOSTNAME_REPOSITORY, ":", USERNAME_REPOSITORY, "/",
-			NAME_REPOSITORY);
+			NAME_REPOSITORY, ".git");
 
-		if (!remoteURL.equals(remoteGitRef.getGitHubURL())) {
+		GitHubURL remoteGitRefGitHubURL = remoteGitRef.getGitHubURL();
+
+		if (!remoteURL.equals(remoteGitRefGitHubURL.getRemoteSSHURL())) {
 			errorCollector.addError(
 				new Throwable(
 					getMismatchMessage(
-						remoteURL, remoteGitRef.getGitHubURL(), "remote URL")));
+						remoteURL, remoteGitRefGitHubURL.getRemoteSSHURL(),
+						"remote URL")));
 		}
 	}
 
@@ -109,8 +112,7 @@ public class RemoteGitRefTest extends GitRefTest {
 	}
 
 	private RemoteGitRepository _getRemoteGitRepository() {
-		return GitRepositoryFactory.getRemoteGitRepository(
-			HOSTNAME_REPOSITORY, NAME_REPOSITORY, USERNAME_REPOSITORY);
+		return GitRepositoryFactory.getRemoteGitRepository(gitHubURL);
 	}
 
 }
