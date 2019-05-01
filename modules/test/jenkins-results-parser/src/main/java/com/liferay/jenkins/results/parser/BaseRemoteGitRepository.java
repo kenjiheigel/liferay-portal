@@ -52,13 +52,13 @@ public abstract class BaseRemoteGitRepository
 	}
 
 	@Override
-	public String getHostname() {
-		return getString("hostname");
+	public GitHubURL getGitHubURL() {
+		return _remoteURL;
 	}
 
 	@Override
-	public GitHubURL getGitHubURL() {
-		return _remoteURL;
+	public String getHostname() {
+		return getString("hostname");
 	}
 
 	@Override
@@ -71,13 +71,10 @@ public abstract class BaseRemoteGitRepository
 		GitHubURL gitHubURL = getGitHubURL();
 
 		String hash = JenkinsResultsParserUtil.combine(
-			getHostname(), getName(), gitHubURL.getRemoteSSHURL(), getUsername());
+			getHostname(), getName(), gitHubURL.getRemoteSSHURL(),
+			getUsername());
 
 		return hash.hashCode();
-	}
-
-	protected BaseRemoteGitRepository(GitRemote gitRemote) {
-		this(gitRemote.getGitHubURL());
 	}
 
 	protected BaseRemoteGitRepository(GitHubURL gitHubURL) {
@@ -100,6 +97,10 @@ public abstract class BaseRemoteGitRepository
 		put("username", username);
 
 		validateKeys(_KEYS_REQUIRED);
+	}
+
+	protected BaseRemoteGitRepository(GitRemote gitRemote) {
+		this(gitRemote.getGitHubURL());
 	}
 
 	private static final String[] _KEYS_REQUIRED = {"hostname", "username"};

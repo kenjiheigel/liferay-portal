@@ -92,10 +92,9 @@ public class LiferayCiInitK8sNodeUtil {
 		GitWorkingDirectory gitWorkingDirectory) {
 
 		String gitRemoteNames = "origin,upstream";
-		GitHubURL gitGitHubURL =
-			GitHubURLFactory.newGitHubURL(
-				"github.com", "liferay",
-				gitWorkingDirectory.getGitRepositoryName());
+		GitHubURL gitGitHubURL = GitHubURLFactory.newGitHubURL(
+			"github.com", "liferay",
+			gitWorkingDirectory.getGitRepositoryName());
 
 		for (String remoteName : gitRemoteNames.split(",")) {
 			gitWorkingDirectory.addGitRemote(

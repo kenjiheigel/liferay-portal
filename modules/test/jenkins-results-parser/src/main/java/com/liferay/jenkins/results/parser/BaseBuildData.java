@@ -186,7 +186,7 @@ public abstract class BaseBuildData implements BuildData {
 				return null;
 			}
 
-			_jenkinsGitHubURL = (BranchGitHubURL) GitHubURLFactory.newGitHubURL(
+			_jenkinsGitHubURL = (BranchGitHubURL)GitHubURLFactory.newGitHubURL(
 				jenkinsGitHubURL);
 		}
 

@@ -75,6 +75,18 @@ public class GitRepositoryFactory {
 	}
 
 	public static RemoteGitRepository getRemoteGitRepository(
+		GitHubURL gitHubURL) {
+
+		String hostname = gitHubURL.getHostname();
+
+		if (hostname.equalsIgnoreCase("github.com")) {
+			return new GitHubRemoteGitRepository(gitHubURL);
+		}
+
+		return new DefaultRemoteGitRepository(gitHubURL);
+	}
+
+	public static RemoteGitRepository getRemoteGitRepository(
 		GitRemote gitRemote) {
 
 		String hostname = gitRemote.getHostname();
@@ -86,16 +98,33 @@ public class GitRepositoryFactory {
 		return new DefaultRemoteGitRepository(gitRemote);
 	}
 
-	public static RemoteGitRepository getRemoteGitRepository(
-		GitHubURL gitHubURL) {
+	public static WorkspaceGitRepository getWorkspaceGitRepository(
+		GitHubURL gitHubURL, RemoteGitRef remoteGitRef,
+		String upstreamBranchName) {
 
-		String hostname = gitHubURL.getHostname();
+		String repositoryName = gitHubURL.getRepositoryName();
 
-		if (hostname.equalsIgnoreCase("github.com")) {
-			return new GitHubRemoteGitRepository(gitHubURL);
+		if (repositoryName.equals("liferay-jenkins-ee")) {
+			return new JenkinsWorkspaceGitRepository(
+				remoteGitRef, upstreamBranchName);
 		}
 
-		return new DefaultRemoteGitRepository(gitHubURL);
+		if (repositoryName.equals("liferay-plugins")) {
+			return new PluginsWorkspaceGitRepository(
+				remoteGitRef, upstreamBranchName);
+		}
+
+		if (repositoryName.equals("liferay-portal")) {
+			return new PrimaryPortalWorkspaceGitRepository(
+				remoteGitRef, upstreamBranchName);
+		}
+
+		if (repositoryName.equals("liferay-qa-portal-legacy-ee")) {
+			return new LegacyWorkspaceGitRepository(
+				remoteGitRef, upstreamBranchName);
+		}
+
+		throw new RuntimeException("Unsupported workspace Git repository");
 	}
 
 	public static WorkspaceGitRepository getWorkspaceGitRepository(
@@ -159,35 +188,6 @@ public class GitRepositoryFactory {
 		if (repositoryName.equals("liferay-qa-portal-legacy-ee")) {
 			return new LegacyWorkspaceGitRepository(
 				pullRequest, upstreamBranchName);
-		}
-
-		throw new RuntimeException("Unsupported workspace Git repository");
-	}
-
-	public static WorkspaceGitRepository getWorkspaceGitRepository(
-		GitHubURL gitHubURL, RemoteGitRef remoteGitRef,
-		String upstreamBranchName) {
-
-		String repositoryName = gitHubURL.getRepositoryName();
-
-		if (repositoryName.equals("liferay-jenkins-ee")) {
-			return new JenkinsWorkspaceGitRepository(
-				remoteGitRef, upstreamBranchName);
-		}
-
-		if (repositoryName.equals("liferay-plugins")) {
-			return new PluginsWorkspaceGitRepository(
-				remoteGitRef, upstreamBranchName);
-		}
-
-		if (repositoryName.equals("liferay-portal")) {
-			return new PrimaryPortalWorkspaceGitRepository(
-				remoteGitRef, upstreamBranchName);
-		}
-
-		if (repositoryName.equals("liferay-qa-portal-legacy-ee")) {
-			return new LegacyWorkspaceGitRepository(
-				remoteGitRef, upstreamBranchName);
 		}
 
 		throw new RuntimeException("Unsupported workspace Git repository");

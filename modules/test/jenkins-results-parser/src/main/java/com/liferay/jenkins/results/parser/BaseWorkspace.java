@@ -20,7 +20,9 @@ package com.liferay.jenkins.results.parser;
 public abstract class BaseWorkspace implements Workspace {
 
 	@Override
-	public void addJenkinsWorkspaceGitRepository(BranchGitHubURL jenkinsBranchGitHubURL) {
+	public void addJenkinsWorkspaceGitRepository(
+		BranchGitHubURL jenkinsBranchGitHubURL) {
+
 		if (!JenkinsResultsParserUtil.isCINode()) {
 			return;
 		}
@@ -31,7 +33,8 @@ public abstract class BaseWorkspace implements Workspace {
 
 		_jenkinsWorkspaceGitRepository =
 			WorkspaceUtil.getWorkspaceGitRepository(
-				JenkinsWorkspaceGitRepository.TYPE, jenkinsBranchGitHubURL, "master");
+				JenkinsWorkspaceGitRepository.TYPE, jenkinsBranchGitHubURL,
+				"master");
 	}
 
 	@Override

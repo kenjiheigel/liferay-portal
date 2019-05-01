@@ -19,9 +19,7 @@ package com.liferay.jenkins.results.parser;
  */
 public interface PortalBuildData extends BuildData {
 
-	public String getPortalBranchSHA();
-
-	default public BranchGitHubURL getPortalBranchGitHubURL() {
+	public default BranchGitHubURL getPortalBranchGitHubURL() {
 		String jenkinsGitHubURL = getJenkinsGitHubURL();
 
 		if (jenkinsGitHubURL == null) {
@@ -30,6 +28,8 @@ public interface PortalBuildData extends BuildData {
 
 		return (BranchGitHubURL)GitHubURLFactory.newGitHubURL(jenkinsGitHubURL);
 	}
+
+	public String getPortalBranchSHA();
 
 	public String getPortalGitHubURL();
 

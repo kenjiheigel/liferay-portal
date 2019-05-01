@@ -26,6 +26,10 @@ public class GitRemote {
 	public static final Pattern gitLsRemotePattern = Pattern.compile(
 		"(?<sha>[^\\s]{40}+)[\\s]+refs/(?<type>[^/]+)+/(?<name>[^\\s]+)");
 
+	public GitHubURL getGitHubURL() {
+		return _fetchGitHubURL;
+	}
+
 	public String getGitRepositoryName() {
 		return _fetchGitHubURL.getRepositoryName();
 	}
@@ -47,10 +51,6 @@ public class GitRemote {
 			return _pushGitHubURL;
 		}
 
-		return _fetchGitHubURL;
-	}
-
-	public GitHubURL getGitHubURL() {
 		return _fetchGitHubURL;
 	}
 

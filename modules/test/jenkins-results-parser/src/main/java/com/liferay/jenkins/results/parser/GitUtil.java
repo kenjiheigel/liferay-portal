@@ -92,7 +92,8 @@ public class GitUtil {
 	}
 
 	public static RemoteGitBranch getRemoteGitBranch(
-		String remoteGitBranchName, File workingDirectory, GitHubURL gitHubURL) {
+		String remoteGitBranchName, File workingDirectory,
+		GitHubURL gitHubURL) {
 
 		RemoteGitRef remoteGitRef = getRemoteGitRef(
 			remoteGitBranchName, workingDirectory, gitHubURL);
@@ -108,7 +109,8 @@ public class GitUtil {
 	}
 
 	public static List<RemoteGitBranch> getRemoteGitBranches(
-		String remoteGitBranchName, File workingDirectory, GitHubURL gitHubURL) {
+		String remoteGitBranchName, File workingDirectory,
+		GitHubURL gitHubURL) {
 
 		List<RemoteGitBranch> remoteGitBranches = new ArrayList<>();
 
@@ -125,11 +127,13 @@ public class GitUtil {
 	}
 
 	public static RemoteGitRef getRemoteGitRef(BranchGitHubURL gitHubURL) {
-		return getRemoteGitRef(gitHubURL.getBranchName(), new File("."), gitHubURL);
+		return getRemoteGitRef(
+			gitHubURL.getBranchName(), new File("."), gitHubURL);
 	}
 
 	public static RemoteGitRef getRemoteGitRef(
-		String remoteGitBranchName, File workingDirectory, GitHubURL gitHubURL) {
+		String remoteGitBranchName, File workingDirectory,
+		GitHubURL gitHubURL) {
 
 		List<RemoteGitRef> remoteGitRefs = null;
 
@@ -174,13 +178,15 @@ public class GitUtil {
 	}
 
 	public static List<RemoteGitRef> getRemoteGitRefs(
-		String remoteGitBranchName, File workingDirectory, GitHubURL gitHubURL) {
+		String remoteGitBranchName, File workingDirectory,
+		GitHubURL gitHubURL) {
 
 		String command = null;
 
 		if (remoteGitBranchName != null) {
 			command = JenkinsResultsParserUtil.combine(
-				"git ls-remote -h ", gitHubURL.getRemoteSSHURL(), " ", remoteGitBranchName);
+				"git ls-remote -h ", gitHubURL.getRemoteSSHURL(), " ",
+				remoteGitBranchName);
 		}
 		else {
 			command = JenkinsResultsParserUtil.combine(

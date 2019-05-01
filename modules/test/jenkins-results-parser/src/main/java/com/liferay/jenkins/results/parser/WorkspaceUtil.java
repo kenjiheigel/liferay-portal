@@ -39,9 +39,8 @@ public class WorkspaceUtil {
 			return null;
 		}
 
-		GitHubURL gitHubURL =
-			GitHubURLFactory.newGitHubURL(
-				workspaceGitRepositoryData.getRepositoryGitHubURL());
+		GitHubURL gitHubURL = GitHubURLFactory.newGitHubURL(
+			workspaceGitRepositoryData.getRepositoryGitHubURL());
 
 		WorkspaceGitRepository dependencyWorkspaceGitRepository = null;
 
@@ -52,8 +51,8 @@ public class WorkspaceUtil {
 				buildDatabase.getWorkspaceGitRepository(repositoryType);
 		}
 		else if (gitHubURL instanceof PullRequestGitHubURL) {
-			PullRequest pullRequest =
-				new PullRequest((PullRequestGitHubURL)gitHubURL);
+			PullRequest pullRequest = new PullRequest(
+				(PullRequestGitHubURL)gitHubURL);
 
 			dependencyWorkspaceGitRepository =
 				GitRepositoryFactory.getDependencyWorkspaceGitRepository(
@@ -61,8 +60,8 @@ public class WorkspaceUtil {
 					upstreamBranchName);
 		}
 		else if (gitHubURL instanceof BranchGitHubURL) {
-			RemoteGitRef remoteGitRef =
-				GitUtil.getRemoteGitRef((BranchGitHubURL)gitHubURL);
+			RemoteGitRef remoteGitRef = GitUtil.getRemoteGitRef(
+				(BranchGitHubURL)gitHubURL);
 
 			dependencyWorkspaceGitRepository =
 				GitRepositoryFactory.getDependencyWorkspaceGitRepository(
@@ -103,8 +102,8 @@ public class WorkspaceUtil {
 				repositoryType);
 		}
 		else if (gitHubURL instanceof PullRequestGitHubURL) {
-			PullRequest pullRequest =
-				new PullRequest((PullRequestGitHubURL)gitHubURL);
+			PullRequest pullRequest = new PullRequest(
+				(PullRequestGitHubURL)gitHubURL);
 
 			workspaceGitRepository =
 				GitRepositoryFactory.getWorkspaceGitRepository(

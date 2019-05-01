@@ -27,14 +27,14 @@ public class RemoteGitRef
 		return name.compareTo(o.getName());
 	}
 
-	public RemoteGitRepository getRemoteGitRepository() {
-		return _remoteGitRepository;
-	}
-
 	public GitHubURL getGitHubURL() {
 		RemoteGitRepository remoteRepository = getRemoteGitRepository();
 
 		return remoteRepository.getGitHubURL();
+	}
+
+	public RemoteGitRepository getRemoteGitRepository() {
+		return _remoteGitRepository;
 	}
 
 	public String getRepositoryName() {
