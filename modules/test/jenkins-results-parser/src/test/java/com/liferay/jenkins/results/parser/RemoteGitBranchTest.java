@@ -55,11 +55,11 @@ public class RemoteGitBranchTest extends GitRefTest {
 			"git@", HOSTNAME_REPOSITORY, ":", USERNAME_REPOSITORY, "/",
 			NAME_REPOSITORY);
 
-		if (!remoteURL.equals(remoteGitBranch.getRemoteURL())) {
+		if (!remoteURL.equals(remoteGitBranch.getGitHubURL())) {
 			errorCollector.addError(
 				new Throwable(
 					getMismatchMessage(
-						remoteURL, remoteGitBranch.getRemoteURL(),
+						remoteURL, remoteGitBranch.getGitHubURL(),
 						"remote URL")));
 		}
 	}

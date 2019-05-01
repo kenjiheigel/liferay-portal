@@ -27,7 +27,7 @@ public class GitRemote {
 		"(?<sha>[^\\s]{40}+)[\\s]+refs/(?<type>[^/]+)+/(?<name>[^\\s]+)");
 
 	public String getGitRepositoryName() {
-		return _fetchRemoteURL.getRepositoryName();
+		return _fetchGitHubURL.getRepositoryName();
 	}
 
 	public GitWorkingDirectory getGitWorkingDirectory() {
@@ -35,45 +35,45 @@ public class GitRemote {
 	}
 
 	public String getHostname() {
-		return _fetchRemoteURL.getHostname();
+		return _fetchGitHubURL.getHostname();
 	}
 
 	public String getName() {
 		return _name;
 	}
 
-	public GitHubURL getPushRemoteURL() {
-		if (_pushRemoteURL != null) {
-			return _pushRemoteURL;
+	public GitHubURL getPushGitHubURL() {
+		if (_pushGitHubURL != null) {
+			return _pushGitHubURL;
 		}
 
-		return _fetchRemoteURL;
+		return _fetchGitHubURL;
 	}
 
-	public GitHubURL getRemoteURL() {
-		return _fetchRemoteURL;
+	public GitHubURL getGitHubURL() {
+		return _fetchGitHubURL;
 	}
 
 	public String getUsername() {
-		return _fetchRemoteURL.getUsername();
+		return _fetchGitHubURL.getUsername();
 	}
 
 	@Override
 	public String toString() {
-		GitHubURL remoteURL = getRemoteURL();
+		GitHubURL gitHubURL = getGitHubURL();
 
 		return JenkinsResultsParserUtil.combine(
-			getName(), " (", remoteURL.getRemoteSSHURL(), ")");
+			getName(), " (", gitHubURL.getRemoteSSHURL(), ")");
 	}
 
 	protected GitRemote(
 		GitWorkingDirectory gitWorkingDirectory, String name,
-		GitHubURL remoteURL) {
+		GitHubURL gitHubURL) {
 
 		_gitWorkingDirectory = gitWorkingDirectory;
-		_fetchRemoteURL = remoteURL;
+		_fetchGitHubURL = gitHubURL;
 		_name = name;
-		_pushRemoteURL = remoteURL;
+		_pushGitHubURL = gitHubURL;
 	}
 
 	protected GitRemote(
@@ -130,9 +130,9 @@ public class GitRemote {
 			}
 		}
 
-		_fetchRemoteURL = GitHubURLFactory.newGitHubURL(fetchRemoteURL);
+		_fetchGitHubURL = GitHubURLFactory.newGitHubURL(fetchRemoteURL);
 		_name = name;
-		_pushRemoteURL = GitHubURLFactory.newGitHubURL(pushRemoteURL);
+		_pushGitHubURL = GitHubURLFactory.newGitHubURL(pushRemoteURL);
 	}
 
 	private static final Pattern _remotePattern = Pattern.compile(
@@ -140,9 +140,9 @@ public class GitRemote {
 			"(?<name>[^\\s]+)[\\s]+(?<remoteURL>[^\\s]+)[\\s]+\\(",
 			"(?<type>[^\\s]+)\\)"));
 
-	private final GitHubURL _fetchRemoteURL;
+	private final GitHubURL _fetchGitHubURL;
 	private final GitWorkingDirectory _gitWorkingDirectory;
 	private final String _name;
-	private final GitHubURL _pushRemoteURL;
+	private final GitHubURL _pushGitHubURL;
 
 }

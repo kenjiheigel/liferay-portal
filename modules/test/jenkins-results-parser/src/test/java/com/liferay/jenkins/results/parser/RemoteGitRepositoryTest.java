@@ -76,7 +76,7 @@ public class RemoteGitRepositoryTest extends GitRepositoryTest {
 			"git@", HOSTNAME_REPOSITORY, ":", USERNAME_REPOSITORY, "/",
 			NAME_REPOSITORY);
 
-		if (!remoteURL.equals(remoteGitRepository.getRemoteURL())) {
+		if (!remoteURL.equals(remoteGitRepository.getGitHubURL())) {
 			errorCollector.addError(
 				new Throwable("The remote URL should be " + remoteURL));
 		}

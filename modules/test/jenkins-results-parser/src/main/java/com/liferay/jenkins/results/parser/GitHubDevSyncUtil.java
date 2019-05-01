@@ -161,7 +161,7 @@ public class GitHubDevSyncUtil {
 					GitHubURLFactory.newGitHubURL(gitHubDevRemoteURL));
 			}
 			else {
-				GitHubURL gitHubURL = gitRemote.getRemoteURL();
+				GitHubURL gitHubURL = gitRemote.getGitHubURL();
 
 				if (!gitHubDevRemoteURL.equals(gitHubURL.getRemoteSSHURL())) {
 					gitRemote = gitWorkingDirectory.addGitRemote(
@@ -410,19 +410,19 @@ public class GitHubDevSyncUtil {
 			}
 		}
 
-		GitHubURL remoteURL = gitRemote.getRemoteURL();
+		GitHubURL gitHubURL = gitRemote.getGitHubURL();
 
 		System.out.println(
 			JenkinsResultsParserUtil.combine(
 				"Deleting ", String.valueOf(expiredRemoteGitBranches.size()),
-				" branches from ", remoteURL.getRemoteSSHURL()));
+				" branches from ", gitHubURL.getRemoteSSHURL()));
 
 		gitWorkingDirectory.deleteRemoteGitBranches(expiredRemoteGitBranches);
 
 		System.out.println(
 			JenkinsResultsParserUtil.combine(
 				"Found ", String.valueOf(branchCount), " cache branches on ",
-				remoteURL.getRemoteSSHURL(), " ", String.valueOf(deleteCount),
+				gitHubURL.getRemoteSSHURL(), " ", String.valueOf(deleteCount),
 				" were deleted. ", String.valueOf(branchCount - deleteCount),
 				" remain. The oldest branch is ",
 				JenkinsResultsParserUtil.toDurationString(oldestBranchAge),
@@ -673,7 +673,7 @@ public class GitHubDevSyncUtil {
 			sb.append("\n");
 		}
 
-		GitHubURL remoteURL = gitRemote.getRemoteURL();
+		GitHubURL gitHubURL = gitRemote.getGitHubURL();
 
 		System.out.println(
 			JenkinsResultsParserUtil.combine(
@@ -682,7 +682,7 @@ public class GitHubDevSyncUtil {
 				" orphaned base cache branches ", "and ",
 				String.valueOf(
 					orphanedTimestampedCachedRemoteGitBranchesMap.size()),
-				" orphaned timestamp branches on ", remoteURL.getRemoteSSHURL(),
+				" orphaned timestamp branches on ", gitHubURL.getRemoteSSHURL(),
 				".\n", sb.toString()));
 
 		List<RemoteGitBranch> orphanedCachedRemoteGitBranches = new ArrayList<>(
@@ -1048,7 +1048,7 @@ public class GitHubDevSyncUtil {
 				LocalGitBranch cachedLocalGitBranch =
 					gitWorkingDirectory.getRebasedLocalGitBranch(
 						cachedBranchName, senderBranchName,
-						senderGitRemote.getRemoteURL(), senderBranchSHA,
+						senderGitRemote.getGitHubURL(), senderBranchSHA,
 						upstreamBranchName, upstreamBranchSHA);
 
 				cacheBranches(

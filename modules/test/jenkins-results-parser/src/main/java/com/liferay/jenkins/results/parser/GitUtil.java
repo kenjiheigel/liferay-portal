@@ -92,29 +92,29 @@ public class GitUtil {
 	}
 
 	public static RemoteGitBranch getRemoteGitBranch(
-		String remoteGitBranchName, File workingDirectory, GitHubURL remoteURL) {
+		String remoteGitBranchName, File workingDirectory, GitHubURL gitHubURL) {
 
 		RemoteGitRef remoteGitRef = getRemoteGitRef(
-			remoteGitBranchName, workingDirectory, remoteURL);
+			remoteGitBranchName, workingDirectory, gitHubURL);
 
 		if (!(remoteGitRef instanceof RemoteGitBranch)) {
 			throw new RuntimeException(
 				JenkinsResultsParserUtil.combine(
 					"Unable to find remote Git branch ", remoteGitBranchName,
-					" on remote URL ", remoteURL.getRemoteSSHURL()));
+					" on remote URL ", gitHubURL.getRemoteSSHURL()));
 		}
 
 		return (RemoteGitBranch)remoteGitRef;
 	}
 
 	public static List<RemoteGitBranch> getRemoteGitBranches(
-		String remoteGitBranchName, File workingDirectory, GitHubURL remoteURL) {
+		String remoteGitBranchName, File workingDirectory, GitHubURL gitHubURL) {
 
 		List<RemoteGitBranch> remoteGitBranches = new ArrayList<>();
 
 		for (RemoteGitRef remoteGitRef :
 				getRemoteGitRefs(
-					remoteGitBranchName, workingDirectory, remoteURL)) {
+					remoteGitBranchName, workingDirectory, gitHubURL)) {
 
 			if (remoteGitRef instanceof RemoteGitBranch) {
 				remoteGitBranches.add((RemoteGitBranch)remoteGitRef);

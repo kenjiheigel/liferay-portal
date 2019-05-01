@@ -31,10 +31,10 @@ public class RemoteGitRef
 		return _remoteGitRepository;
 	}
 
-	public GitHubURL getRemoteURL() {
+	public GitHubURL getGitHubURL() {
 		RemoteGitRepository remoteRepository = getRemoteGitRepository();
 
-		return remoteRepository.getRemoteURL();
+		return remoteRepository.getGitHubURL();
 	}
 
 	public String getRepositoryName() {
@@ -51,7 +51,7 @@ public class RemoteGitRef
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append(getRemoteURL());
+		sb.append(getGitHubURL());
 		sb.append(" (");
 		sb.append(getName());
 		sb.append(" - ");

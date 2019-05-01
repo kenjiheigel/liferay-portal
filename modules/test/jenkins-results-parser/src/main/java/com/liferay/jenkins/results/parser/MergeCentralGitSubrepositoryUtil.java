@@ -418,11 +418,11 @@ public class MergeCentralGitSubrepositoryUtil {
 		String centralGitRepositoryName =
 			centralGitWorkingDirectory.getGitRepositoryName();
 
-		GitHubURL originRemoteURL = GitHubURLFactory.newGitHubURL(
+		GitHubURL originGitHubURL = GitHubURLFactory.newGitHubURL(
 			"github.com", receiverUserName, centralGitRepositoryName);
 
 		GitRemote originGitRemote = centralGitWorkingDirectory.addGitRemote(
-			true, "tempRemote", originRemoteURL);
+			true, "tempRemote", originGitHubURL);
 
 		try {
 			centralGitWorkingDirectory.pushToRemoteGitRepository(
