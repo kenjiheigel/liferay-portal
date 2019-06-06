@@ -1191,6 +1191,10 @@ public class JenkinsResultsParserUtil {
 				remoteURLAuthority, localURLAuthority);
 		}
 
+		if (localURL.contains("https://ci-1-0.liferay.com/")) {
+			localURL = localURL.replace("https://ci-1-0.liferay.com/", "http://ci-1-0.k8s-1.lax.liferay.com/");
+		}
+
 		return localURL + localURLQueryString;
 	}
 
@@ -1482,6 +1486,11 @@ public class JenkinsResultsParserUtil {
 			remoteURL = remoteURL.replaceAll(
 				localURLAuthority, remoteURLAuthority);
 		}
+
+		if (remoteURL.contains("https://ci-1-0.liferay.com/")) {
+			remoteURL = remoteURL.replace("https://ci-1-0.liferay.com/", "http://ci-1-0.k8s-1.lax.liferay.com/");
+		}
+
 
 		return remoteURL + remoteURLQueryString;
 	}

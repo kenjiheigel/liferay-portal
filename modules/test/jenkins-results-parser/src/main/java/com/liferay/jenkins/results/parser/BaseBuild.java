@@ -722,6 +722,10 @@ public abstract class BaseBuild implements Build {
 		String jobURL = JenkinsResultsParserUtil.combine(
 			"https://", _jenkinsMaster.getName(), ".liferay.com/job/", jobName);
 
+		if (jobURL.contains("https://ci-1-0.liferay.com/")) {
+			jobURL = jobURL.replace("https://ci-1-0.liferay.com/", "http://ci-1-0.k8s-1.lax.liferay.com/");
+		}
+
 		try {
 			return JenkinsResultsParserUtil.encode(jobURL);
 		}
@@ -2608,10 +2612,11 @@ public abstract class BaseBuild implements Build {
 
 	protected JSONArray getQueueItemsJSONArray() throws IOException {
 		JSONObject jsonObject = JenkinsResultsParserUtil.toJSONObject(
-			JenkinsResultsParserUtil.combine(
-				"http://", _jenkinsMaster.getName(),
-				"/queue/api/json?tree=items[actions[parameters",
-				"[name,value]],task[name,url]]"),
+			JenkinsResultsParserUtil.getLocalURL(
+				JenkinsResultsParserUtil.combine(
+					"http://ci-1-0.k8s-1.lax.liferay.com/",
+					"/queue/api/json?tree=items[actions[parameters",
+					"[name,value]],task[name,url]]")),
 			false);
 
 		return jsonObject.getJSONArray("items");
