@@ -1611,6 +1611,9 @@ public class JenkinsResultsParserUtil {
 		String hostName = getHostName("");
 
 		if (hostName.startsWith("cloud-10-0-") ||
+			hostName.contains("ci-1") ||
+			hostName.contains("ci-x") ||
+			hostName.contains("k8s-") ||
 			hostName.startsWith("test-")) {
 
 			return true;
