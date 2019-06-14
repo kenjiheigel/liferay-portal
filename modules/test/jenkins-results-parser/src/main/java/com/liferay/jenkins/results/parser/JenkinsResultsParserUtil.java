@@ -1532,6 +1532,12 @@ public class JenkinsResultsParserUtil {
 					buildProperties.getProperty(propertyName.toString()));
 
 				for (String slave : slavesString.split(",")) {
+					slave = slave.trim();
+
+					if (slave.startsWith("slave-ci-")) {
+						slave = slave + ".ssh-svc.ci-1.svc.cluster.local";
+					}
+
 					slaves.add(slave.trim());
 				}
 			}
