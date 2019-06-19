@@ -38,19 +38,26 @@ public class PoshiWhitespaceCheck extends WhitespaceCheck {
 			String fileName, String absolutePath, String content)
 		throws IOException {
 
-		content = _formatWhitespace(content);
-		content = _formatWhitespace(fileName, absolutePath, content);
-		content = _formatWhitespaceOnCommand(content);
-
-		return super.doProcess(fileName, absolutePath, content);
-	}
-
-	private String _formatWhitespace(String content) {
 		int[] multiLineCommentsPositions =
 			PoshiSourceUtil.getMultiLinePositions(
 				content, _multiLineCommentsPattern);
 		int[] multiLineStringPositions = PoshiSourceUtil.getMultiLinePositions(
 			content, _multiLineStringPattern);
+
+		content = _formatWhitespace(
+			content, multiLineCommentsPositions, multiLineStringPositions);
+		content = _formatWhitespace(
+			fileName, absolutePath, content, multiLineCommentsPositions,
+			multiLineStringPositions);
+		content = _formatWhitespaceOnCommand(
+			content, multiLineCommentsPositions, multiLineStringPositions);
+
+		return super.doProcess(fileName, absolutePath, content);
+	}
+
+	private String _formatWhitespace(
+		String content, int[] multiLineCommentsPositions,
+		int[] multiLineStringPositions) {
 
 		Matcher matcher = _incorrectWhitespacePattern.matcher(content);
 
@@ -83,14 +90,9 @@ public class PoshiWhitespaceCheck extends WhitespaceCheck {
 	}
 
 	private String _formatWhitespace(
-			String fileName, String absolutePath, String content)
+			String fileName, String absolutePath, String content,
+			int[] multiLineCommentsPositions, int[] multiLineStringPositions)
 		throws IOException {
-
-		int[] multiLineCommentsPositions =
-			PoshiSourceUtil.getMultiLinePositions(
-				content, _multiLineCommentsPattern);
-		int[] multiLineStringPositions = PoshiSourceUtil.getMultiLinePositions(
-			content, _multiLineStringPattern);
 
 		StringBundler sb = new StringBundler();
 
@@ -134,12 +136,9 @@ public class PoshiWhitespaceCheck extends WhitespaceCheck {
 		return sb.toString();
 	}
 
-	private String _formatWhitespaceOnCommand(String content) {
-		int[] multiLineCommentsPositions =
-			PoshiSourceUtil.getMultiLinePositions(
-				content, _multiLineCommentsPattern);
-		int[] multiLineStringPositions = PoshiSourceUtil.getMultiLinePositions(
-			content, _multiLineStringPattern);
+	private String _formatWhitespaceOnCommand(
+		String content, int[] multiLineCommentsPositions,
+		int[] multiLineStringPositions) {
 
 		Matcher matcher = _incorrectCommandPattern.matcher(content);
 
