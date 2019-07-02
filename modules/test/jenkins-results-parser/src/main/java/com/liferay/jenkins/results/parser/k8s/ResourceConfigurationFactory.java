@@ -20,6 +20,7 @@ import io.kubernetes.client.models.V1Container;
 import io.kubernetes.client.models.V1ContainerPort;
 import io.kubernetes.client.models.V1EmptyDirVolumeSource;
 import io.kubernetes.client.models.V1EnvVar;
+import io.kubernetes.client.models.V1LocalObjectReference;
 import io.kubernetes.client.models.V1ObjectMeta;
 import io.kubernetes.client.models.V1Pod;
 import io.kubernetes.client.models.V1PodSpec;
@@ -55,6 +56,51 @@ public class ResourceConfigurationFactory {
 
 		return getConfigurationPod(
 			_getDatabaseConfigurationName(databaseName, databaseVersion));
+	}
+
+	public static Pod newConfigurationPod(
+		String dockerBaseImageName, String dockerImageName) {
+
+		V1Pod v1Pod = new V1Pod();
+
+		String hostname = JenkinsResultsParserUtil.getHostName(null);
+
+		if (hostname == null) {
+			throw new RuntimeException("Unable to determine hostname");
+		}
+
+		hostname = JenkinsResultsParserUtil.combine(
+			hostname.replaceFirst("\\..*", ""), "-", dockerBaseImageName);
+
+		V1ObjectMeta v1ObjectMeta = _newConfigurationMetaData(hostname);
+
+		v1Pod.setMetadata(v1ObjectMeta);
+
+		V1Container v1Container = _newConfigurationContainer(
+			dockerBaseImageName, dockerImageName);
+
+		v1Container.addCommandItem("tail");
+		v1Container.addCommandItem("-f");
+		v1Container.addCommandItem("/dev/null");
+
+		V1PodSpec v1PodSpec = _newConfigurationPodSpec(v1Container);
+
+		V1LocalObjectReference v1LocalObjectReference =
+			new V1LocalObjectReference();
+
+		v1LocalObjectReference.setName("kenji-test");
+
+		v1PodSpec.addImagePullSecretsItem(v1LocalObjectReference);
+
+		v1PodSpec.setHostname(hostname);
+		v1PodSpec.setVolumes(
+			new ArrayList<>(
+				Arrays.asList(
+					_newEmptyDirConfigurationVolume(dockerBaseImageName))));
+
+		v1Pod.setSpec(v1PodSpec);
+
+		return new Pod(v1Pod);
 	}
 
 	private static String _getDatabaseConfigurationName(
