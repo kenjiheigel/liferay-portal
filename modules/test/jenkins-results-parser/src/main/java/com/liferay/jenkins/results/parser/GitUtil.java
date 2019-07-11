@@ -312,13 +312,6 @@ public class GitUtil {
 					":/opt/dev/projects/github/",
 					matcher.group("gitRepositoryName"));
 			}
-
-			if ((hostname != null)) {
-				return JenkinsResultsParserUtil.combine(
-					"root@", slaveGitHubDevNodeHostname,
-					":/opt/dev/projects/github/",
-					matcher.group("gitRepositoryName"), " ");
-			}
 		}
 
 		throw new IllegalArgumentException(
