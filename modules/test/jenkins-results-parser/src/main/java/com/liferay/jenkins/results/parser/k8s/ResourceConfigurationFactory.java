@@ -183,6 +183,23 @@ public class ResourceConfigurationFactory {
 		return v1PodSpec;
 	}
 
+	private static Pod _newDB2ConfigurationPod(
+	String dockerBaseImageName, String dockerImageName) {
+
+		List<V1ContainerPort> v1ContainerPorts = new ArrayList<>(
+			Arrays.asList(
+				_newConfigurationContainerPort(dockerBaseImageName, 50000)));
+
+		List<V1EnvVar> v1EnvVars = new ArrayList<>(Arrays.asList(
+			_newConfigurationEnvVar("DB2INSTANCE", "db2inst1"),
+			_newConfigurationEnvVar("DB2INST1_PASSWORD", "password"),
+			_newConfigurationEnvVar("DBNAME", "lportal"),
+			_newConfigurationEnvVar("LICENSE", "accept")));
+
+		return _newDatabaseConfigurationPod(
+			dockerBaseImageName, dockerImageName, v1ContainerPorts, v1EnvVars);
+	}
+
 	private static Pod _newDatabaseConfigurationPod(
 		String dockerBaseImageName, String dockerImageName,
 		List<V1ContainerPort> v1ContainerPorts, List<V1EnvVar> v1EnvVars) {
@@ -302,6 +319,12 @@ public class ResourceConfigurationFactory {
 	private static final Map<String, Pod> _podConfigurationsMap =
 		new HashMap<String, Pod>() {
 			{
+				put(
+					"db2111",
+					ResourceConfigurationFactory._newDB2ConfigurationPod(
+						"db2111",
+						_getKubernetesDockerRegistryHostname() +
+						"/store/ibmcorp/db2_developer_c:11.1.4.4-x86_64"));
 				put(
 					"mariadb102",
 					ResourceConfigurationFactory._newMySQLConfigurationPod(
