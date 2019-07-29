@@ -2918,7 +2918,13 @@ log.sanitizer.enabled=false</echo>
 
 					LiferayK8sConnection liferayK8sConnection = LiferayK8sConnection.getInstance();
 
-					liferayK8sConnection.deletePod(ResourceConfigurationFactory.getConfigurationPod("@{database.type}", "@{database.version}"));
+					String databaseType = "@{database.type}";
+
+					liferayK8sConnection.deletePod(ResourceConfigurationFactory.getConfigurationPod(databaseType, "@{database.version}"));
+
+					if (databaseType.contains("mysql")) {
+						pod.exec(new String[] {"/bin/bash", "-c", "while ! mysqladmin ping --silent; do sleep 1; done"});
+					}
 
 					String[] commands = {"iptables -t nat -F"};
 
