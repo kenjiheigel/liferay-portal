@@ -35,6 +35,7 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -259,24 +260,7 @@ public class ResourceConfigurationFactory {
 			Arrays.asList(
 				_newConfigurationContainerPort(dockerBaseImageName, 50000)));
 
-		String db2Password = "password";
-
-		try {
-			Properties buildProperties =
-				JenkinsResultsParserUtil.getBuildProperties();
-
-			db2Password = buildProperties.getProperty(
-				"portal.test.properties[database.db2.password]", db2Password);
-		}
-		catch (IOException ioe) {
-			System.out.println("Unable to get DB2 password");
-		}
-
-		List<V1EnvVar> v1EnvVars = new ArrayList<>(
-			Arrays.asList(
-				_newConfigurationEnvVar("DB2INSTANCE", "db2inst1"),
-				_newConfigurationEnvVar("DB2INST1_PASSWORD", db2Password),
-				_newConfigurationEnvVar("LICENSE", "accept")));
+		List<V1EnvVar> v1EnvVars = Collections.emptyList();
 
 		return _newDatabaseConfigurationPod(
 			dockerBaseImageName, dockerImageName, v1ContainerPorts, v1EnvVars,
@@ -375,7 +359,7 @@ public class ResourceConfigurationFactory {
 					ResourceConfigurationFactory._newDB2ConfigurationPod(
 						"db2111",
 						_getKubernetesDockerRegistryHostname() +
-							"/store/ibmcorp/db2_developer_c:11.1.4.4-x86_64"));
+							"/liferay-ci-slave-db-db2"));
 				put(
 					"mariadb102",
 					ResourceConfigurationFactory._newMySQLConfigurationPod(
