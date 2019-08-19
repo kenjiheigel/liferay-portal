@@ -138,6 +138,8 @@ public class JenkinsResultsParserUtil {
 			sb.append(string);
 		}
 
+		// test
+
 		return sb.toString();
 	}
 
