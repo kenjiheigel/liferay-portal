@@ -356,6 +356,18 @@ jdbc.counter.connectionProperties=oracle.jdbc.ReadTimeout=0;oracle.net.CONNECT_T
 		</sequential>
 	</macrodef>
 
+	<macrodef name="get-dummy-socket-proxy-database-option">
+		<sequential>
+			<var name="dummy.socket.proxy.database.option" unset="true" />
+
+			<get-database-property property.name="database.host" />
+
+			<condition else="" property="dummy.socket.proxy.database.option" value="-DsocksNonProxyHosts=${database.host}">
+				<isset property="env.DOCKER_ENABLED" />
+			</condition>
+		</sequential>
+	</macrodef>
+
 	<macrodef name="get-fixpack-version">
 		<attribute name="patch.file.zip.url" />
 
@@ -10844,6 +10856,21 @@ module.framework.properties.blacklist.portal.profile.names=${blacklist.portal.pr
 							token="${dummy.socket.proxy}"
 							value=""
 						/>
+
+						<get-dummy-socket-proxy-database-option />
+
+						<if>
+							<not>
+								<equals arg1="${dummy.socket.proxy.database.option}" arg2="" />
+							</not>
+							<then>
+								<replace
+									file="${app.server.tomcat.dir}/bin/setenv${file.suffix.bat}"
+									token="${dummy.socket.proxy.database.option}"
+									value=""
+								/>
+							</then>
+						</if>
 					</then>
 				</if>
 			</then>

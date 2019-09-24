@@ -2818,6 +2818,8 @@ log.sanitizer.enabled=false</echo>
 
 	<macrodef name="setup-testable-tomcat-dummy-socket-proxy">
 		<sequential>
+			<get-dummy-socket-proxy-database-option />
+
 			<if>
 				<not>
 					<resourcecontains
@@ -2828,11 +2830,12 @@ log.sanitizer.enabled=false</echo>
 				<then>
 					<echo append="true" file="${app.server.tomcat.dir}/bin/setenv.bat">
 						<![CDATA[
-							set "CATALINA_OPTS=%CATALINA_OPTS% ${dummy.socket.proxy}"
+							set "CATALINA_OPTS=%CATALINA_OPTS% ${dummy.socket.proxy} ${dummy.socket.proxy.database.option}"
 						]]>
 					</echo>
 				</then>
 			</if>
+
 			<if>
 				<not>
 					<resourcecontains
@@ -2843,7 +2846,7 @@ log.sanitizer.enabled=false</echo>
 				<then>
 					<echo append="true" file="${app.server.tomcat.dir}/bin/setenv.sh">
 						<![CDATA[
-							CATALINA_OPTS="${CATALINA_OPTS} ${dummy.socket.proxy}"
+							CATALINA_OPTS="${CATALINA_OPTS} ${dummy.socket.proxy} ${dummy.socket.proxy.database.option}"
 						]]>
 					</echo>
 				</then>
