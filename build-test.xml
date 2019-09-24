@@ -4796,7 +4796,10 @@ create database lportal${databases.size} encoding = 'UNICODE';</echo>
 						<get-database-property property.name="database.username" />
 
 						<if>
-							<isset property="env.KUBERNETES_SERVICE_HOST" />
+							<or>
+								<equals arg1="${env.DOCKER_ENABLED}" arg2="true" />
+								<isset property="env.KUBERNETES_SERVICE_HOST" />
+							</or>
 							<then>
 								<replace
 									file="create.sql"
@@ -4828,7 +4831,10 @@ connect to lportal;</replacevalue>
 						</replace>
 
 						<if>
-							<isset property="env.KUBERNETES_SERVICE_HOST" />
+							<or>
+								<equals arg1="${env.DOCKER_ENABLED}" arg2="true" />
+								<isset property="env.KUBERNETES_SERVICE_HOST" />
+							</or>
 							<then>
 								<replace
 									file="create.sql"
@@ -9574,7 +9580,10 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 							</then>
 							<else>
 								<if>
-									<isset property="env.KUBERNETES_SERVICE_HOST" />
+									<or>
+										<equals arg1="${env.DOCKER_ENABLED}" arg2="true" />
+										<isset property="env.KUBERNETES_SERVICE_HOST" />
+									</or>
 									<then>
 										<get-database-property property.name="database.password" />
 										<get-database-property property.name="database.username" />
