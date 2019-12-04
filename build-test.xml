@@ -10472,11 +10472,11 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 
 									while ! echo exit | nc ${database.host} 5001; do sleep 60; done
 
-									cat sybase.sql
+									cat /tmp/sybase.sql
 
 									cat lportal__srv.log
 
-									${sybase.executable} -P ${database.password} -S ${database.schema} -U ${database.username} -i sybase.sql --retserverror
+									${sybase.executable} -P ${database.password} -S ${database.schema} -U ${database.username} -i /tmp/sybase.sql --retserverror
 								]]>
 							</echo>
 
@@ -10484,7 +10484,7 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 
 							<echo file="sybase.sql">
 								<![CDATA[
-									load database lportal from "${liferay.home}/${database.type}.dmp"
+									load database lportal from "/tmp/sybase.dmp"
 									go
 									online database lportal
 									go
@@ -10493,8 +10493,11 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 								]]>
 							</echo>
 
+							<property location="${liferay.home}/sybase.dmp" name="sybase.dump.file.path" />
+
 							<execute>
 								<![CDATA[
+									docker cp ${sybase.dump.file.path} ${database.host}:/tmp/sybase.dmp
 									docker cp ${sybase.sh.file.path} ${database.host}:/tmp/sybase.sh
 									docker cp ${sybase.sql.file.path} ${database.host}:/tmp/sybase.sql
 
