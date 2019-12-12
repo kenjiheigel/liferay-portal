@@ -6836,8 +6836,18 @@ go</echo>
 		<if>
 			<equals arg1="${add.new.properties}" arg2="true" />
 			<then>
-				<echo append="true" file="${test.app.server.classes.portal.dir}/portal-ext.properties">
+				<if>
+					<equals arg1="${add.cluster.link.properties}" arg2="true" />
+					<then>
+						<echo append="true" file="${test.app.server.classes.portal.dir}/portal-ext.properties">
+cluster.link.bind.addr["cluster-link-control"]=${cluster.node.ip.address}
+cluster.link.bind.addr["cluster-link-udp"]=${cluster.node.ip.address}</echo>
+					</then>
+					<else>
+						<echo append="true" file="${test.app.server.classes.portal.dir}/portal-ext.properties">
 ${update.properties}</echo>
+					</else>
+				</if>
 			</then>
 			<else>
 				<replace
@@ -7327,17 +7337,6 @@ web.server.display.node=true</echo>
 				<echo append="true" file="portal-impl/src/portal-ext.properties">
 
 cluster.link.channel.properties.control=${project.dir}/portal-web/test/functional/com/liferay/portalweb/dependencies/clustering_jdbc_ping.xml</echo>
-			</then>
-		</if>
-
-		<get-testcase-property property.name="cluster.node.ip" />
-
-		<if>
-			<equals arg1="${cluster.node.ip}" arg2="true" />
-			<then>
-				<echo append="true" file="portal-impl/src/portal-ext.properties">
-cluster.link.bind.addr["cluster-link-control"]=${ip.address}
-cluster.link.bind.addr["cluster-link-udp"]=${ip.address}</echo>
 			</then>
 		</if>
 
@@ -10485,219 +10484,222 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 							<property location="sybase.sql" name="sybase.sql.file.path" />
 
 							<echo file="sybase.sql">
-								<![CDATA[
-									load database lportal from "/tmp/sybase.dmp"
-									go
-									online database lportal
-									go
-									sp_helpsort
-									go
-									sp_help Account_
-									go
-									sp_help Address
-									go
-									sp_help AnnouncementsDelivery
-									go
-									sp_help AnnouncementsEntry
-									go
-									sp_help AnnouncementsFlag
-									go
-									sp_help AssetCategory
-									go
-									sp_help AssetEntries_AssetCategories
-									go
-									sp_help AssetEntries_AssetTags
-									go
-									sp_help AssetEntry
-									go
-									sp_help AssetLink
-									go
-									sp_help AssetTag
-									go
-									sp_help AssetVocabulary
-									go
-									sp_help BrowserTracker
-									go
-									sp_help ClassName_
-									go
-									sp_help ClusterGroup
-									go
-									sp_help Company
-									go
-									sp_help Contact_
-									go
-									sp_help Counter
-									go
-									sp_help Country
-									go
-									sp_help DLFileEntry
-									go
-									sp_help DLFileEntryMetadata
-									go
-									sp_help DLFileEntryType
-									go
-									sp_help DLFileEntryTypes_DLFolders
-									go
-									sp_help DLFileShortcut
-									go
-									sp_help DLFileVersion
-									go
-									sp_help DLFolder
-									go
-									sp_help EmailAddress
-									go
-									sp_help ExpandoColumn
-									go
-									sp_help ExpandoRow
-									go
-									sp_help ExpandoTable
-									go
-									sp_help ExpandoValue
-									go
-									sp_help ExportImportConfiguration
-									go
-									sp_help Group_
-									go
-									sp_help Groups_Orgs
-									go
-									sp_help Groups_Roles
-									go
-									sp_help Groups_UserGroups
-									go
-									sp_help Image
-									go
-									sp_help Layout
-									go
-									sp_help LayoutBranch
-									go
-									sp_help LayoutFriendlyURL
-									go
-									sp_help LayoutPrototype
-									go
-									sp_help LayoutRevision
-									go
-									sp_help LayoutSet
-									go
-									sp_help LayoutSetBranch
-									go
-									sp_help LayoutSetPrototype
-									go
-									sp_help ListType
-									go
-									sp_help MembershipRequest
-									go
-									sp_help OrgGroupRole
-									go
-									sp_help OrgLabor
-									go
-									sp_help Organization_
-									go
-									sp_help PasswordPolicy
-									go
-									sp_help PasswordPolicyRel
-									go
-									sp_help PasswordTracker
-									go
-									sp_help Phone
-									go
-									sp_help PluginSetting
-									go
-									sp_help PortalPreferences
-									go
-									sp_help Portlet
-									go
-									sp_help PortletItem
-									go
-									sp_help PortletPreferences
-									go
-									sp_help RatingsEntry
-									go
-									sp_help RatingsStats
-									go
-									sp_help RecentLayoutBranch
-									go
-									sp_help RecentLayoutRevision
-									go
-									sp_help RecentLayoutSetBranch
-									go
-									sp_help Region
-									go
-									sp_help Release_
-									go
-									sp_help Repository
-									go
-									sp_help RepositoryEntry
-									go
-									sp_help ResourceAction
-									go
-									sp_help ResourcePermission
-									go
-									sp_help Role_
-									go
-									sp_help ServiceComponent
-									go
-									sp_help SocialActivity
-									go
-									sp_help SocialActivityAchievement
-									go
-									sp_help SocialActivityCounter
-									go
-									sp_help SocialActivityLimit
-									go
-									sp_help SocialActivitySet
-									go
-									sp_help SocialActivitySetting
-									go
-									sp_help SocialRelation
-									go
-									sp_help SocialRequest
-									go
-									sp_help SystemEvent
-									go
-									sp_help Team
-									go
-									sp_help Ticket
-									go
-									sp_help UserGroup
-									go
-									sp_help UserGroupGroupRole
-									go
-									sp_help UserGroupRole
-									go
-									sp_help UserGroups_Teams
-									go
-									sp_help UserIdMapper
-									go
-									sp_help UserNotificationDelivery
-									go
-									sp_help UserNotificationEvent
-									go
-									sp_help UserTracker
-									go
-									sp_help UserTrackerPath
-									go
-									sp_help User_
-									go
-									sp_help Users_Groups
-									go
-									sp_help Users_Orgs
-									go
-									sp_help Users_Roles
-									go
-									sp_help Users_Teams
-									go
-									sp_help Users_UserGroups
-									go
-									sp_help VirtualHost
-									go
-									sp_help WebDAVProps
-									go
-									sp_help Website
-									go
-									sp_help WorkflowDefinitionLink
-									go
-									sp_help WorkflowInstanceLink
-									go
+								<![CDATA[load database lportal from "/tmp/sybase.dmp"
+go
+online database lportal
+go
+use lportal
+go
+sp_helpsort
+go
+use lportal
+go
+sp_help Account_
+go
+sp_help Address
+go
+sp_help AnnouncementsDelivery
+go
+sp_help AnnouncementsEntry
+go
+sp_help AnnouncementsFlag
+go
+sp_help AssetCategory
+go
+sp_help AssetEntries_AssetCategories
+go
+sp_help AssetEntries_AssetTags
+go
+sp_help AssetEntry
+go
+sp_help AssetLink
+go
+sp_help AssetTag
+go
+sp_help AssetVocabulary
+go
+sp_help BrowserTracker
+go
+sp_help ClassName_
+go
+sp_help ClusterGroup
+go
+sp_help Company
+go
+sp_help Contact_
+go
+sp_help Counter
+go
+sp_help Country
+go
+sp_help DLFileEntry
+go
+sp_help DLFileEntryMetadata
+go
+sp_help DLFileEntryType
+go
+sp_help DLFileEntryTypes_DLFolders
+go
+sp_help DLFileShortcut
+go
+sp_help DLFileVersion
+go
+sp_help DLFolder
+go
+sp_help EmailAddress
+go
+sp_help ExpandoColumn
+go
+sp_help ExpandoRow
+go
+sp_help ExpandoTable
+go
+sp_help ExpandoValue
+go
+sp_help ExportImportConfiguration
+go
+sp_help Group_
+go
+sp_help Groups_Orgs
+go
+sp_help Groups_Roles
+go
+sp_help Groups_UserGroups
+go
+sp_help Image
+go
+sp_help Layout
+go
+sp_help LayoutBranch
+go
+sp_help LayoutFriendlyURL
+go
+sp_help LayoutPrototype
+go
+sp_help LayoutRevision
+go
+sp_help LayoutSet
+go
+sp_help LayoutSetBranch
+go
+sp_help LayoutSetPrototype
+go
+sp_help ListType
+go
+sp_help MembershipRequest
+go
+sp_help OrgGroupRole
+go
+sp_help OrgLabor
+go
+sp_help Organization_
+go
+sp_help PasswordPolicy
+go
+sp_help PasswordPolicyRel
+go
+sp_help PasswordTracker
+go
+sp_help Phone
+go
+sp_help PluginSetting
+go
+sp_help PortalPreferences
+go
+sp_help Portlet
+go
+sp_help PortletItem
+go
+sp_help PortletPreferences
+go
+sp_help RatingsEntry
+go
+sp_help RatingsStats
+go
+sp_help RecentLayoutBranch
+go
+sp_help RecentLayoutRevision
+go
+sp_help RecentLayoutSetBranch
+go
+sp_help Region
+go
+sp_help Release_
+go
+sp_help Repository
+go
+sp_help RepositoryEntry
+go
+sp_help ResourceAction
+go
+sp_help ResourcePermission
+go
+sp_help Role_
+go
+sp_help ServiceComponent
+go
+sp_help SocialActivity
+go
+sp_help SocialActivityAchievement
+go
+sp_help SocialActivityCounter
+go
+sp_help SocialActivityLimit
+go
+sp_help SocialActivitySet
+go
+sp_help SocialActivitySetting
+go
+sp_help SocialRelation
+go
+sp_help SocialRequest
+go
+sp_help SystemEvent
+go
+sp_help Team
+go
+sp_help Ticket
+go
+sp_help UserGroup
+go
+sp_help UserGroupGroupRole
+go
+sp_help UserGroupRole
+go
+sp_help UserGroups_Teams
+go
+sp_help UserIdMapper
+go
+sp_help UserNotificationDelivery
+go
+sp_help UserNotificationEvent
+go
+sp_help UserTracker
+go
+sp_help UserTrackerPath
+go
+sp_help User_
+go
+sp_help Users_Groups
+go
+sp_help Users_Orgs
+go
+sp_help Users_Roles
+go
+sp_help Users_Teams
+go
+sp_help Users_UserGroups
+go
+sp_help VirtualHost
+go
+sp_help WebDAVProps
+go
+sp_help Website
+go
+sp_help WorkflowDefinitionLink
+go
+sp_help WorkflowInstanceLink
+go
 								]]>
 							</echo>
 
