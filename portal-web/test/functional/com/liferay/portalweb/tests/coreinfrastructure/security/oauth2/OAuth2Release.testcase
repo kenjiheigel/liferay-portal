@@ -2,7 +2,7 @@
 definition {
 
 	property portal.release = "true";
-	property portal.upstream = "true";
+	property osgi.app.includes = "oauth2-provider";
 	property testray.main.component.name = "OAuth 2";
 
 	setUp {
@@ -23,12 +23,8 @@ definition {
 	}
 
 	test AddAndEditApplication {
-		property app.server.types = "jboss,tcserver,tomcat,weblogic,websphere,wildfly";
-		property database.types = "db2,hypersonic,mariadb,mysql,oracle,postgresql,sqlserver,sybase";
-		property portal.upstream = "quarantine";
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "OAuth 2 Administration");
 
@@ -109,10 +105,8 @@ definition {
 	}
 
 	test AddAndEditOAuthSAPEntries {
-		property test.name.skip.portal.instance = "OAuth2#AddAndEditOAuthSAPEntries";
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "Service Access Policy");
 
@@ -123,8 +117,8 @@ definition {
 			serviceClass = "com.liferay.portal.kernel.service.PortalService",
 			title = "read Portal version");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "OAuth 2 Administration");
 
@@ -155,12 +149,12 @@ definition {
 
 		var portalVersionOutput = JSONCurlUtil.post("${portalVersionCurl}");
 
-		if (!(contains("${portalVersionOutput}", "7.3"))) {
+		if (!(contains("${portalVersionOutput}", "7.2"))) {
 			fail("JSON-WS call failed to return Portal version");
 		}
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "Service Access Policy");
 
@@ -174,8 +168,8 @@ definition {
 			fail("Access denied message was not returned");
 		}
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "OAuth 2 Administration");
 
@@ -184,8 +178,8 @@ definition {
 			removedScope = "read.portalversion",
 			resourcePanels = "Portal Services");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "Service Access Policy");
 
@@ -195,7 +189,7 @@ definition {
 
 		var portalVersionOutput = JSONCurlUtil.post("${portalVersionCurl}");
 
-		if (!(contains("${portalVersionOutput}", "7.3"))) {
+		if (!(contains("${portalVersionOutput}", "7.2"))) {
 			fail("JSON-WS call failed to return Portal version");
 		}
 
@@ -205,8 +199,8 @@ definition {
 			policyName = "OAUTH2_read.portalversion",
 			title = "read Portal build number");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "OAuth 2 Administration");
 
@@ -231,7 +225,7 @@ definition {
 
 		var buildNumberOutput = JSONCurlUtil.post("${buildNumberCurl}");
 
-		if (!(contains("${buildNumberOutput}", "73"))) {
+		if (!(contains("${buildNumberOutput}", "72"))) {
 			fail("JSON-WS call failed to return build number");
 		}
 	}
@@ -243,10 +237,10 @@ definition {
 		property cluster.enabled = "true";
 		property custom.properties = "virtual.hosts.default.site.name=Guest";
 		property remote.elasticsearch.enabled = "true";
-		property test.name.skip.portal.instance = "OAuth2#AssertAuthorizationCodeWorksInCluster";
+		property test.name.skip.portal.instance = "OAuth2Release#AssertAuthorizationCodeWorksInCluster";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "OAuth 2 Administration");
 
@@ -269,8 +263,8 @@ definition {
 			password = "test",
 			userEmailAddress = "test@liferay.com");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "OAuth 2 Administration");
 
@@ -292,8 +286,8 @@ definition {
 			password = "test",
 			userEmailAddress = "test@liferay.com");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "OAuth 2 Administration");
 
@@ -325,16 +319,13 @@ definition {
 	@description = "This is a use case for OAUTH2-259."
 	@priority = "4"
 	test AssertClientCredentialsIsUserScoped {
-		property portal.upstream = "quarantine";
-		property test.name.skip.portal.instance = "OAuth2#AssertClientCredentialsIsUserScoped";
-
 		JSONWebcontent.addWebContent(
 			content = "WC Content",
 			groupName = "Guest",
 			title = "WC Title");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "Service Access Policy");
 
@@ -351,8 +342,8 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "OAuth 2 Administration");
 
@@ -374,8 +365,6 @@ definition {
 
 		var portalURL = PropsUtil.get("portal.url");
 
-		var siteName = TestCase.getSiteName(siteName = "${siteName}");
-
 		var tokenCurl = '''
 			${portalURL}/o/oauth2/token \
 				--data grant_type=client_credentials&client_id=abc123&client_secret=abc123
@@ -387,7 +376,7 @@ definition {
 			groupName = "Guest",
 			title = "WC Title");
 
-		var liferaySiteId = JSONGroupAPI._getGroupIdByName(groupName = "Guest", site = "true");
+		var liferaySiteId = JSONGroupAPI._getGroupIdByName(groupName = "Guest");
 
 		var deleteCurl = '''
 			-H 'Authorization: Bearer ${accessToken}' ${portalURL}/api/jsonws/journal.journalarticle/delete-article \
@@ -415,67 +404,23 @@ definition {
 
 		ProductMenu.gotoPortlet(
 			category = "Content &amp; Data",
-			portlet = "Web Content",
-			site = "${siteName}");
+			panel = "Site Administration",
+			portlet = "Web Content");
 
 		AssertTextNotPresent(value1 = "WC Title");
-	}
-
-	@description = "This is a use case for LPS-110393."
-	@priority = "4"
-	test AssertExpandPanelsOnGlobalScopes {
-		property test.name.skip.portal.instance = "OAuth2#AssertExpandPanelsOnGlobalScopes";
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Configuration",
-			panel = "Control Panel",
-			portlet = "System Settings");
-
-		SystemSettings.gotoConfiguration(
-			configurationCategory = "OAuth 2",
-			configurationName = "Bundle PrefixHandlerFactory",
-			configurationScope = "System Scope");
-
-		SystemSettings.gotoConfigurationEntry(configurationEntry = "Default");
-
-		SystemSettings.deleteConfiguration();
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "OAuth 2 Administration");
-
-		LexiconEntry.gotoEntryMenuItem(
-			menuItem = "Edit",
-			rowEntry = "Analytics Cloud");
-
-		AssertClick(
-			key_navItem = "Scopes",
-			locator1 = "NavBar#NAV_ITEM_LINK",
-			value1 = "Scopes");
-
-		AssertElementPresent(
-			key_navItem = "Scopes",
-			locator1 = "NavBar#ACTIVE_NAV_ITEM_LINK");
-
-		Navigator.gotoNavUnderline(navUnderline = "Global scopes");
-
-		for (var globalPanel : list "analytics.read,analytics.write,everything.write,everything.read,everything") {
-			OAuth2.expandGlobalPanel(globalPanel = "${globalPanel}");
-		}
 	}
 
 	test AuthorizeExternalApplication {
 		property custom.properties = "virtual.hosts.default.site.name=Guest";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "OAuth 2 Administration");
-
 		var clientId = "abc123";
 		var clientSecret = "abc123";
 		var portalURL = PropsUtil.get("portal.url");
+
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "OAuth 2 Administration");
 
 		OAuth2.addApplication(
 			applicationName = "Third-party Application",
@@ -516,105 +461,12 @@ definition {
 			value1 = "test@liferay.com");
 	}
 
-	@description = "This is a use case for LPS-105158."
-	@priority = "4"
-	test ConfigureOnSystemLevelWillApplyToInstanceLevel {
-		property test.name.skip.portal.instance = "OAuth2#ConfigureOnSystemLevelWillApplyToInstanceLevel";
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Configuration",
-			panel = "Control Panel",
-			portlet = "System Settings");
-
-		SystemSettings.gotoConfiguration(
-			configurationCategory = "OAuth 2",
-			configurationName = "Bundle PrefixHandlerFactory",
-			configurationScope = "System Scope");
-
-		SystemSettings.gotoConfigurationEntry(configurationEntry = "Default");
-
-		SystemSettings.deleteConfiguration();
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "OAuth 2 Administration");
-
-		LexiconEntry.gotoEntryMenuItem(
-			menuItem = "Edit",
-			rowEntry = "Analytics Cloud");
-
-		AssertClick(
-			key_navItem = "Scopes",
-			locator1 = "NavBar#NAV_ITEM_LINK",
-			value1 = "Scopes");
-
-		AssertElementPresent(
-			key_navUnderline = "Resource scopes",
-			locator1 = "NavUnderline#NAV_UNDERLINE_LINK");
-
-		AssertElementPresent(
-			key_navUnderline = "Global scopes",
-			locator1 = "NavUnderline#NAV_UNDERLINE_LINK");
-
-		ApplicationsMenu.gotoPortlet(
-			category = "System",
-			panel = "Control Panel",
-			portlet = "Virtual Instances");
-
-		PortalInstances.addCP(
-			mailDomain = "www.able.com",
-			virtualHost = "www.able.com",
-			webId = "www.able.com");
-
-		PortalInstances.viewCP(virtualHost = "www.able.com");
-
-		User.firstLoginPG(
-			password = "test",
-			userEmailAddress = "test@www.able.com",
-			virtualHostsURL = "http://www.able.com:8080");
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
-
-		User.unassignRegularRoleCP(
-			regularRoleName = "Power User",
-			userScreenName = "test");
-
-		Navigator.openSpecificURL(url = "http://www.able.com:8080");
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "OAuth 2 Administration");
-
-		LexiconEntry.gotoEntryMenuItem(
-			menuItem = "Edit",
-			rowEntry = "Analytics Cloud");
-
-		AssertClick(
-			key_navItem = "Scopes",
-			locator1 = "NavBar#NAV_ITEM_LINK",
-			value1 = "Scopes");
-
-		AssertElementNotPresent(
-			key_navUnderline = "Resource scopes",
-			locator1 = "NavUnderline#NAV_UNDERLINE_LINK");
-
-		for (var resourcePanel : list "Bulk Processing,Content Delivery,Dynamic Data Lists,Forms,Portal Services,Taxonomy Administration,User Administration,Workflow Administration") {
-
-			AssertHTMLSourceTextNotPresent(value1 = "${resourcePanel}");
-		}
-	}
-
 	test EditApplicationScopesAndViewLanguageKeys {
 		property liferay.dependency.jars = "com.liferay.oauth2.provider.scope.sample.qa.jar";
 		property osgi.module.configuration.file.names = "com.liferay.oauth2.provider.scope.internal.configuration.ConfigurableScopeMapperConfiguration-default.config";
 		property osgi.module.configurations = "mapping=[&quot;example-scope-1,example-scope-2\=everything&quot;]${line.separator}osgi.jaxrs.name=&quot;liferay-oauth2-scope-sample-qa-app&quot;${line.separator}passthrough=&quot;true&quot;";
 
-		ApplicationsMenu.gotoPortlet(
+		ProductMenu.gotoPortlet(
 			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "System Settings");
@@ -628,8 +480,8 @@ definition {
 
 		SystemSettings.deleteConfiguration();
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "OAuth 2 Administration");
 
@@ -702,210 +554,11 @@ definition {
 			resourcePanels = "Portal Services,Sample QA app");
 	}
 
-	@priority = "4"
-	test RefreshTokenTime {
-		property custom.properties = "virtual.hosts.default.site.name=Guest";
-		property osgi.module.configuration.file.names = "com.liferay.oauth2.provider.rest.internal.spi.bearer.token.provider.configuration.DefaultBearerTokenProviderConfiguration.config";
-		property osgi.module.configurations = "access.token.expires.in=&quot;5&quot;";
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "OAuth 2 Administration");
-
-		var clientId = "abc123";
-		var clientSecret = "abc123";
-		var portalURL = PropsUtil.get("portal.url");
-
-		OAuth2.addApplication(
-			applicationName = "Third-party Application",
-			callbackURI = '''http://martamedio.com/oauth2-tester/?url=${portalURL}&client_id=${clientId}''',
-			clientProfile = "Web Application");
-
-		OAuth2.inputApplicationValues(
-			clientId = "${clientId}",
-			clientSecret = "${clientSecret}");
-
-		Navigator.gotoBack();
-
-		OAuth2.editScopes(
-			applicationName = "Third-party Application",
-			resourceCheckList = "liferay-json-web-services.everything.read.userprofile",
-			resourcePanels = "Portal Services");
-
-		Navigator.openSpecificURL(url = "http://martamedio.com/oauth2-tester/");
-
-		Type(
-			locator1 = "OAuth2#OAUTH2_TESTER_CLIENT_ID",
-			value1 = "${clientId}");
-
-		Button.click(button = "Authorize My Application");
-
-		Button.click(button = "Authorize");
-
-		Type(
-			locator1 = "OAuth2#OAUTH2_TESTER_CLIENT_SECRET",
-			value1 = "${clientSecret}");
-
-		Button.click(button = "Obtain OAuth2 Access");
-
-		Pause(locator1 = "6000");
-
-		Button.click(button = "Launch Request");
-
-		AssertConfirm.assertConfirmationNoError(value1 = "403 - Unauthorized!");
-
-		AssertTextEquals.assertPartialText(
-			locator1 = "OAuth2#OAUTH2_TESTER_REQUEST_RESULTS",
-			value1 = "");
-
-		Button.click(button = "Refresh Token");
-
-		Button.click(button = "Launch Request");
-
-		AssertTextEquals.assertPartialText(
-			locator1 = "OAuth2#OAUTH2_TESTER_REQUEST_RESULTS",
-			value1 = "test@liferay.com");
-	}
-
-	@description = "This is a use case for LPS-105156."
-	@priority = "5"
-	test RemoveExpiredAuthorization {
-		property osgi.module.configuration.file.names = "com.liferay.oauth2.provider.rest.internal.spi.bearer.token.provider.configuration.DefaultBearerTokenProviderConfiguration.config:com.liferay.oauth2.provider.configuration.OAuth2ProviderConfiguration.config";
-		property osgi.module.configurations = "access.token.expires.in=&quot;30&quot;${line.separator}refresh.token.expires.in=&quot;60&quot;:oauth2.expired.authorizations.afterlife.duration=&quot;30&quot;${line.separator}oauth2.expired.authorizations.check.interval=&quot;30&quot;";
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "OAuth 2 Administration");
-
-		var clientId = "abc123";
-		var clientSecret = "abc123";
-		var portalURL = PropsUtil.get("portal.url");
-
-		OAuth2.addApplication(
-			applicationName = "Test Expired Application",
-			callbackURI = '''http://martamedio.com/oauth2-tester/?url=${portalURL}&client_id=${clientId}''');
-
-		Navigator.gotoBack();
-
-		OAuth2.editScopes(
-			applicationName = "Test Expired Application",
-			resourceCheckList = "liferay-json-web-services.everything.read.userprofile",
-			resourcePanels = "Portal Services");
-
-		LexiconEntry.gotoEntryMenuItem(
-			menuItem = "Edit",
-			rowEntry = "Test Expired Application");
-
-		OAuth2.inputApplicationValues(
-			clientId = "${clientId}",
-			clientSecret = "${clientSecret}");
-
-		var authorizationCode = OAuth2.getAuthorizationCode();
-
-		Type(
-			locator1 = "OAuth2#OAUTH2_TESTER_CLIENT_SECRET",
-			value1 = "${clientSecret}");
-
-		Button.click(button = "Obtain OAuth2 Access");
-
-		AssertElementPresent(
-			key_text = "Launch Request",
-			locator1 = "Button#ANY");
-
-		Navigator.openURL();
-
-		OAuth2.viewGrantedAuthViaUser(applicationName = "Test Expired Application");
-
-		AssertElementPresent(
-			key_activity = "Last Access",
-			locator1 = "OAuth2#USER_CONNECTED_APP_ACTIVITY");
-
-		Pause(locator1 = "20000");
-
-		Refresh();
-
-		AssertTextEquals.assertPartialText(
-			locator1 = "OAuth2#USER_CONNECTED_APP_EXPIRATION_VALUE",
-			value1 = "Within");
-
-		Pause(locator1 = "30000");
-
-		Refresh();
-
-		AssertTextEquals.assertPartialText(
-			locator1 = "OAuth2#USER_CONNECTED_APP_EXPIRATION_VALUE",
-			value1 = "Seconds Ago");
-
-		Pause(locator1 = "30000");
-
-		Refresh();
-
-		AssertElementPresent(locator1 = "UserBar#USER_AVATAR_IMAGE");
-
-		AssertElementNotPresent(
-			key_appName = "Test Expired Application",
-			locator1 = "OAuth2#USER_CONNECTED_APP_TABLE_NAME");
-	}
-
-	@description = "This is a use case for LPS-105158."
-	@priority = "4"
-	test ScopesDisplayAsListOnInstanceLevel {
-		property test.name.skip.portal.instance = "OAuth2#ScopesDisplayAsListOnInstanceLevel";
-
-		ApplicationsMenu.gotoPortlet(
-			category = "System",
-			panel = "Control Panel",
-			portlet = "Virtual Instances");
-
-		PortalInstances.addCP(
-			mailDomain = "www.able.com",
-			virtualHost = "www.able.com",
-			webId = "www.able.com");
-
-		PortalInstances.viewCP(virtualHost = "www.able.com");
-
-		User.firstLoginPG(
-			password = "test",
-			userEmailAddress = "test@www.able.com",
-			virtualHostsURL = "http://www.able.com:8080");
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
-
-		User.unassignRegularRoleCP(
-			regularRoleName = "Power User",
-			userScreenName = "test");
-
-		Navigator.openSpecificURL(url = "http://www.able.com:8080");
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "OAuth 2 Administration");
-
-		LexiconEntry.gotoEntryMenuItem(
-			menuItem = "Edit",
-			rowEntry = "Analytics Cloud");
-
-		AssertClick(
-			key_navItem = "Scopes",
-			locator1 = "NavBar#NAV_ITEM_LINK",
-			value1 = "Scopes");
-
-		AssertElementNotPresent(
-			key_panel = "Analytics",
-			locator1 = "OAuth2#ADMIN_RESOURCE_PANEL_COLLAPSED");
-	}
-
 	test UpdateScopeBundlePrefixes {
 		property liferay.dependency.jars = "com.liferay.oauth2.provider.scope.sample.qa.jar";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "OAuth 2 Administration");
 
@@ -920,7 +573,7 @@ definition {
 			resourcePanels = "Portal Services,Sample QA app",
 			scopeAliasList = "liferay-json-web-services.everything,liferay-oauth2-scope-sample-qa-app.example-scope-1");
 
-		ApplicationsMenu.gotoPortlet(
+		ProductMenu.gotoPortlet(
 			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "System Settings");
@@ -934,8 +587,8 @@ definition {
 
 		SystemSettings.deleteConfiguration();
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "OAuth 2 Administration");
 
@@ -950,8 +603,8 @@ definition {
 			separator = "_",
 			serviceProperties = "osgi.jaxrs.application.base");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "OAuth 2 Administration");
 
@@ -966,7 +619,7 @@ definition {
 		property osgi.module.configuration.file.names = "com.liferay.oauth2.provider.scope.internal.configuration.ConfigurableScopeMapperConfiguration-liferay-oauth2-scope-sample-qa-app.config";
 		property osgi.module.configurations = "mapping=[&quot;example-scope-1,example-scope-2\=everything.read,everything.write&quot;]${line.separator}osgi.jaxrs.name=&quot;liferay-oauth2-scope-sample-qa-app&quot;${line.separator}passthrough=&quot;false&quot;";
 
-		ApplicationsMenu.gotoPortlet(
+		ProductMenu.gotoPortlet(
 			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "System Settings");
@@ -980,8 +633,8 @@ definition {
 
 		SystemSettings.deleteConfiguration();
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "OAuth 2 Administration");
 
@@ -996,14 +649,8 @@ definition {
 	}
 
 	test ViewAndRevokeGrantedAuthorizations {
-		property app.server.types = "jboss,tcserver,tomcat,weblogic,websphere,wildfly";
-		property database.types = "db2,hypersonic,mariadb,mysql,oracle,postgresql,sqlserver,sybase";
-		property environment.acceptance = "true";
-		property portal.acceptance = "true";
-		property portal.upstream = "quarantine";
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "OAuth 2 Administration");
 
@@ -1011,30 +658,13 @@ definition {
 			applicationName = "OAuth Application",
 			checkboxUncheckList = "Authorization Code");
 
-		Navigator.gotoBack();
-
-		OAuth2.editScopes(
-			applicationName = "OAuth Application",
-			resourceCheckList = "liferay-json-web-services.everything.read,liferay-json-web-services.everything.write,liferay-json-web-services.everything.read.documents.download,liferay-json-web-services.everything.read.userprofile",
-			resourcePanels = "Portal Services");
-
-		LexiconEntry.gotoEntryMenuItem(
-			menuItem = "Edit",
-			rowEntry = "OAuth Application");
-
-		AssertTextEquals(
-			locator1 = "Portlet#HEADER",
-			value1 = "OAuth Application");
-
 		var generatedClientId = selenium.getElementValue("OAuth2#ADMIN_INPUT_FORM_CLIENT_ID");
 		var generatedClientSecret = selenium.getElementValue("OAuth2#ADMIN_INPUT_FORM_CLIENT_SECRET");
 		var portalURL = PropsUtil.get("portal.url");
 
 		var curl = '''
 			${portalURL}/o/oauth2/token \
-				-d client_id=${generatedClientId} \
-				-d client_secret=${generatedClientSecret} \
-				-d grant_type=client_credentials
+				--data grant_type=client_credentials&client_id=${generatedClientId}&client_secret=${generatedClientSecret}
 		''';
 
 		com.liferay.poshi.runner.util.JSONCurlUtil.post("${curl}");
@@ -1048,11 +678,6 @@ definition {
 		OAuth2.revokeGrantedAuthViaAdmin(
 			applicationName = "OAuth Application",
 			userName = "Test Test");
-
-		OAuth2.viewScopes(
-			applicationName = "OAuth Application",
-			resourceCheckedList = "liferay-json-web-services.everything.read,liferay-json-web-services.everything.write,liferay-json-web-services.everything.read.documents.download,liferay-json-web-services.everything.read.userprofile",
-			resourcePanels = "Portal Services");
 
 		OAuth2.viewGrantedAuthViaAdmin(
 			applicationName = "OAuth Application",
@@ -1072,8 +697,8 @@ definition {
 		property osgi.module.configuration.file.names = "com.liferay.oauth2.provider.scope.internal.configuration.BundlePrefixHandlerFactoryConfiguration-default.config";
 		property osgi.module.configurations = "include.bundle.symbolic.name=&quot;false&quot;${line.separator}osgi.jaxrs.name=&quot;Default&quot;${line.separator}separator=&quot;&quot;${line.separator}service.properties=&quot;&quot;";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "OAuth 2 Administration");
 
@@ -1124,8 +749,8 @@ definition {
 			key_resourceName = "sample-app",
 			locator1 = "OAuth2#AUTHORIZATION_REQUEST_RESOURCE_NAME");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
 			panel = "Control Panel",
 			portlet = "OAuth 2 Administration");
 
