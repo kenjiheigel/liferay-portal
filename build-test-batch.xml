@@ -3396,6 +3396,25 @@ log.sanitizer.enabled=false</echo>
 		<run-empty-temp-dir-test />
 	</target>
 
+	<target name="findbugs-test-jdk8">
+		<run-batch-test>
+			<test-action>
+				<for keepgoing="true" param="gradle.plugin.dir">
+					<path>
+						<dirset
+							dir="modules/sdk"
+							excludes="${gradle.plugins.test.excludes}"
+							includes="gradle-plugins-*"
+						/>
+					</path>
+					<sequential>
+						<gradle-execute dir="@{gradle.plugin.dir}" task="findbugsMain" />
+					</sequential>
+				</for>
+			</test-action>
+		</run-batch-test>
+	</target>
+
 	<target name="functional-bundle-jboss-db2111-jdk8">
 		<run-functional-test
 			app.server.type="jboss"
