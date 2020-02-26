@@ -459,6 +459,16 @@ public abstract class BaseMobileDriverImpl
 	}
 
 	@Override
+	public void selectFieldTextCopy() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void selectFieldTextPaste() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public void selectPopUp(String windowID) {
 		throw new UnsupportedOperationException();
 	}

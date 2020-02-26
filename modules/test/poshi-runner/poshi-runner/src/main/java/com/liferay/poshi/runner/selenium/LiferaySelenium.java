@@ -374,6 +374,10 @@ public interface LiferaySelenium {
 
 	public void selectFieldText();
 
+	public void selectFieldTextCopy();
+
+	public void selectFieldTextPaste();
+
 	public void selectFrame(String locator);
 
 	public void selectPopUp(String windowID);

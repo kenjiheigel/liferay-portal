@@ -653,6 +653,26 @@ public class LiferaySeleniumHelper {
 		keyboard.keyUp(KeyEvent.VK_CONTROL);
 	}
 
+	public static void selectFieldTextCopy() {
+		Keyboard keyboard = new DesktopKeyboard();
+
+		keyboard.keyDown(KeyEvent.VK_CONTROL);
+
+		keyboard.type("c");
+
+		keyboard.keyUp(KeyEvent.VK_CONTROL);
+	}
+
+	public static void selectFieldTextPaste() {
+		Keyboard keyboard = new DesktopKeyboard();
+
+		keyboard.keyDown(KeyEvent.VK_CONTROL);
+
+		keyboard.type("v");
+
+		keyboard.keyUp(KeyEvent.VK_CONTROL);
+	}
+
 	public static void typeScreen(String value) {
 		Keyboard keyboard = new DesktopKeyboard();
 
