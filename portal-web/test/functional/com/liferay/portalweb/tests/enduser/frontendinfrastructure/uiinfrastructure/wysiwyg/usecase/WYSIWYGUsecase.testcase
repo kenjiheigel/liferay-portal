@@ -75,6 +75,46 @@ definition {
 	}
 
 	@priority = "4"
+	test AddWebContentArticleCopyPasteContent {
+		Navigator.openSpecificURL(url = "http://www.standards-schmandards.com/exhibits/wysiwyg/sampledoc.htm");
+
+		SelectFieldText(locator1 = "//body");
+
+		SelectFieldText.selectFieldTextCopy();
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			panel = "Site Administration",
+			portlet = "Web Content");
+
+		WebContentNavigator.gotoAddCP();
+
+		PortletEntry.inputTitle(title = "Web Content Title");
+
+		Click(
+			key_editor = "content",
+			locator1 = "AlloyEditor#EDITOR");
+
+		SelectFieldText.selectFieldTextPaste();
+
+		takeScreenshot();
+
+		PortletEntry.publish();
+
+		WebContentNavigator.gotoPreviewEntryCP(webContentTitle = "Web Content Title");
+
+		SelectFrame(locator1 = "IFrame#DIALOG");
+
+		AssertTextEquals.assertPartialText(
+			locator1 = "//div[@class='portlet-body']/div[contains(@class,'mt-2')]",
+			value1 = "Sample document for editor area test");
+
+		AssertElementPresent(locator1 = "//img[contains(@src,'redhead.JPG')]");
+	}
+
+	@priority = "4"
 	test AddWebContentArticleWithImageViaURL {
 		Navigator.openURL();
 
