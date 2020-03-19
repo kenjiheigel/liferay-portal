@@ -2853,6 +2853,12 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 
 			typeKeys(locator, value);
 
+			String webElementTagNametagName = webElement.getTagName();
+
+			if (!webElementTagNametagName.equals("input")) {
+				break;
+			}
+
 			String typedValue = webElement.getAttribute("value");
 
 			if (typedValue.equals(value)) {
