@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -363,6 +364,14 @@ public class PoshiRunnerExecutor {
 	}
 
 	public void runFailElement(Element element) throws Exception {
+		Random random = new Random();
+
+		if (random.nextBoolean()) {
+			runEchoElement(element);
+
+			return;
+		}
+
 		PoshiRunnerStackTraceUtil.setCurrentElement(element);
 
 		_poshiLogger.logMessage(element);
