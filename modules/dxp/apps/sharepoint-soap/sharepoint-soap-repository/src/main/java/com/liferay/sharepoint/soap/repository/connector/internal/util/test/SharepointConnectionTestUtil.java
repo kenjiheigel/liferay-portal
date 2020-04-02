@@ -64,6 +64,8 @@ public class SharepointConnectionTestUtil {
 
 			String payload = payloadStream.collect(Collectors.joining());
 
+			System.out.println(payload);
+
 			Matcher matcher = _pattern.matcher(payload);
 
 			if (!matcher.matches()) {
