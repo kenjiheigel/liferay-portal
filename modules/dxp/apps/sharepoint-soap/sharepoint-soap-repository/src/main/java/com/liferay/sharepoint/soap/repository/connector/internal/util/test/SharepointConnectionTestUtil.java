@@ -68,7 +68,7 @@ public class SharepointConnectionTestUtil {
 
 			Matcher matcher = _pattern.matcher(payload);
 
-			if (!matcher.matches()) {
+			if (!matcher.find()) {
 				if (_log.isErrorEnabled()) {
 					_log.error(
 						"JSON payload did not contains Sharepoint hostname: " +
