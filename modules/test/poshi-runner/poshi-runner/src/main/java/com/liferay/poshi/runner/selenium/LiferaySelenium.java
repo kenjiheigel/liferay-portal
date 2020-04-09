@@ -313,6 +313,9 @@ public interface LiferaySelenium {
 			String sourceLocator, String targetLocator)
 		throws Exception;
 
+	public void javaScriptDragOver(String sourceLocator, String targetLocator)
+		throws Exception;
+
 	public void javaScriptMouseDown(String locator);
 
 	public void javaScriptMouseUp(String locator);
