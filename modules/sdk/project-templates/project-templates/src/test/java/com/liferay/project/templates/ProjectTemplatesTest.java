@@ -68,10 +68,7 @@ public class ProjectTemplatesTest implements BaseProjectTemplatesTestCase {
 
 	@Test
 	public void testBuildTemplateInWorkspace() throws Exception {
-		_testBuildTemplateWithWorkspace(
-			null, "hello-world-portlet",
-			"build/libs/hello.world.portlet-1.0.0.jar",
-			"--dependency-management-enabled");
+		throw new Exception("Fake exception");
 	}
 
 	@Test
