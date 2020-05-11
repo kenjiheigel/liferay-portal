@@ -644,6 +644,38 @@ public abstract class TopLevelBuild extends BaseBuild {
 			buildFailureElements.add(
 				Dom4JUtil.getNewElement(
 					"h4", null, "This pull contains no unique failures."));
+
+			boolean whitelistedUniqueFailures = true;
+
+			for (Map.Entry<Build, Element> entry :
+					downstreamBuildFailureMessages.entrySet()) {
+
+				Build failingBuild = entry.getKey();
+
+				String jobVariant = failingBuild.getJobVariant();
+
+				List<String> batchNameWhitelist = new ArrayList<>(
+					Arrays.asList(
+						"modules-semantic-versioning-jdk8",
+						"modules-unit-project-templates-jdk8"));
+
+				if (!batchNameWhitelist.contains(jobVariant)) {
+					whitelistedUniqueFailures = false;
+
+					System.out.println("didn't match batch name:");
+					System.out.println(jobVariant);
+
+					break;
+				}
+				else {
+					System.out.println("matched batch name:");
+					System.out.println(jobVariant);
+				}
+			}
+
+			if (whitelistedUniqueFailures) {
+				setResult("SUCCESS");
+			}
 		}
 		else {
 			String failureTitle = "Failures unique to this pull:";
