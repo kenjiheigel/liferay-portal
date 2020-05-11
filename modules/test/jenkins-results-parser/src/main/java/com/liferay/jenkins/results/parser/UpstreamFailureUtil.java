@@ -216,7 +216,7 @@ public class UpstreamFailureUtil {
 		String url = JenkinsResultsParserUtil.getLocalURL(
 			JenkinsResultsParserUtil.combine(
 				_URL_BASE_UPSTREAM_FAILURES_JOB,
-				jobName.replace("pullrequest", "upstream-dxp"),
+				jobName,
 				"/builds/latest/test.results.json"));
 
 		try {
@@ -259,7 +259,7 @@ public class UpstreamFailureUtil {
 	}
 
 	private static final String _URL_BASE_UPSTREAM_FAILURES_JOB =
-		"https://test-1-0.liferay.com/userContent/testResults/";
+		"https://test-5-1.liferay.com/userContent/testResults/";
 
 	private static boolean _upstreamComparisonAvailable = true;
 	private static JSONObject _upstreamFailuresJobJSONObject;
