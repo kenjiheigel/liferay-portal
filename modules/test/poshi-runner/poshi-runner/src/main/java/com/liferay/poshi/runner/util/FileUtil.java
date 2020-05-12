@@ -80,6 +80,17 @@ public class FileUtil {
 		}
 	}
 
+	public static void delete(String filePath) {
+		try {
+			File file = new File(filePath);
+
+			file.delete();
+		}
+		catch (SecurityException securityException) {
+			securityException.printStackTrace();
+		}
+	}
+
 	public static boolean exists(File file) {
 		return file.exists();
 	}
