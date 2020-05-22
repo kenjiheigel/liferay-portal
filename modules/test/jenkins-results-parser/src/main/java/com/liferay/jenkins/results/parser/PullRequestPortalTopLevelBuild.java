@@ -50,9 +50,18 @@ public class PullRequestPortalTopLevelBuild extends PortalTopLevelBuild {
 
 	@Override
 	public String getResult() {
+		System.out.println("###");
+		System.out.println("PullRequestPortalTopLevelBuild.getResult()");
+		System.out.println("###");
+
 		String result = super.getResult();
 
 		List<Build> downstreamBuildFailures = getFailedDownstreamBuilds();
+
+		System.out.println("Null / Success evaluation");
+
+		System.out.println("	" + (result == null));
+		System.out.println("	" + downstreamBuildFailures.isEmpty());
 
 		if ((result == null) || downstreamBuildFailures.isEmpty()) {
 			return result;
@@ -74,6 +83,16 @@ public class PullRequestPortalTopLevelBuild extends PortalTopLevelBuild {
 
 		String testSuiteName = getTestSuiteName();
 
+		System.out.println("Enabled and test suite evaluation");
+
+		System.out.println(
+			"	" +
+				!Boolean.parseBoolean(
+					pullRequestForwardUpstreamFailureComparisonEnabled));
+		System.out.println(
+			"	" + !testSuiteName.matches("relevant|stable") + " " +
+				testSuiteName);
+
 		if (!Boolean.parseBoolean(
 				pullRequestForwardUpstreamFailureComparisonEnabled) ||
 			!testSuiteName.matches("relevant|stable")) {
@@ -87,13 +106,23 @@ public class PullRequestPortalTopLevelBuild extends PortalTopLevelBuild {
 		List<String> batchNames = new ArrayList<>(
 			Arrays.asList(batchWhitelist.split(",")));
 
+		System.out.println("Downstream build failure evaluation");
+
 		for (Build downstreamBuild : downstreamBuildFailures) {
+			System.out.println(
+				"	" + downstreamBuild.isUniqueFailure() + " " +
+					downstreamBuild.getJobVariant());
+			System.out.println(
+				"	" + !batchNames.contains(downstreamBuild.getJobVariant()));
+
 			if (downstreamBuild.isUniqueFailure() ||
 				!batchNames.contains(downstreamBuild.getJobVariant())) {
 
 				return result;
 			}
 		}
+
+		System.out.println("WOW, approved");
 
 		return "APPROVED";
 	}
