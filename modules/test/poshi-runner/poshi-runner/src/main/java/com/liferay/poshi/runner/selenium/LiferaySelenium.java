@@ -175,6 +175,9 @@ public interface LiferaySelenium {
 	public void executeJavaScript(
 		String javaScript, String argument1, String argument2);
 
+	public void executeJavaScriptByElement(
+		String javaScript, String argument1, String argument2);
+
 	public void fail(String message);
 
 	public String getAlert();

@@ -1013,6 +1013,26 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 	}
 
 	@Override
+	public void executeJavaScriptByElement(
+		String javaScript, String argument1, String argument2) {
+
+		WebElement webElement = getWebElement("//body");
+
+		WrapsDriver wrapsDriver = (WrapsDriver)webElement;
+
+		WebDriver wrappedWebDriver = wrapsDriver.getWrappedDriver();
+
+		WebElement webElement1 = getWebElement(argument1);
+
+		WebElement webElement2 = getWebElement(argument2);
+
+		JavascriptExecutor javascriptExecutor =
+			(JavascriptExecutor)wrappedWebDriver;
+
+		javascriptExecutor.executeScript(javaScript, webElement1, webElement2);
+	}
+
+	@Override
 	public void fail(String message) {
 		LiferaySeleniumUtil.fail(message);
 	}
