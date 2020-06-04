@@ -87,6 +87,45 @@ definition {
 		selenium.assertLiferayErrors();
 	}
 
+	function javaScriptDragAndDropIE {
+		WaitForSPARefresh();
+
+		var javaScript = '''
+Simulate = {
+	dragAndDrop: function (source, target) {
+		const dispatchEvent = function (type, element) {
+			const rect = element.getBoundingClientRect();
+			const event = document.createEvent('customEvent');
+			event.initEvent(type, true, true);
+			event.relatedTarget = element;
+			(event.clientX = rect.left + rect.width / 2),
+				(event.clientY = rect.top + rect.height / 2),
+				element.dispatchEvent(event);
+			return Promise.resolve();
+		};
+		dispatchEvent('dragstart', source)
+			.then(function () {
+				dispatchEvent('dragover', target);
+			})
+			.then(function () {
+				dispatchEvent('drop', target);
+			})
+			.then(function () {
+				dispatchEvent('dragend', source);
+			});
+	}
+};
+
+Simulate.dragAndDrop(arguments[0], arguments[1]);
+		''';
+
+		selenium.executeJavaScriptByElement("${javaScript}", "${locator1}", "${locator2}");
+
+		selenium.assertJavaScriptErrors();
+
+		selenium.assertLiferayErrors();
+	}
+
 	function javaScriptDragAndDropToObject {
 		WaitForSPARefresh();
 
