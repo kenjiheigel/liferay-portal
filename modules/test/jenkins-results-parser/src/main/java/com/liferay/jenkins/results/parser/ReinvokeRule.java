@@ -57,6 +57,14 @@ public class ReinvokeRule {
 			}
 		}
 
+		_reinvokeRules.add(
+			new ReinvokeRule(
+				"axisVariable=.*\nconsole=kenji's custom message\n" +
+					"jobVariant=.*\n" +
+						"notificationRecipients=kenji.heigel@liferay.com\n" +
+							"topLevelJobName=.*(pullrequest|testsuite).*\n",
+				"kenji-rule"));
+
 		return _reinvokeRules;
 	}
 
