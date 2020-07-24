@@ -1503,6 +1503,11 @@ public abstract class BaseBuild implements Build {
 	}
 
 	@Override
+	public String toString() {
+		return getBuildURL();
+	}
+
+	@Override
 	public void update() {
 		String status = getStatus();
 
@@ -3270,13 +3275,23 @@ public abstract class BaseBuild implements Build {
 	}
 
 	protected void reset() {
+		System.out.println("resetting...");
+
 		setResult(null);
+
+		System.out.println("getBuildNumber(): " + getBuildNumber());
 
 		badBuildNumbers.add(getBuildNumber());
 
+		System.out.println(badBuildNumbers);
+
 		setBuildNumber(-1);
 
+		System.out.println(downstreamBuilds);
+
 		downstreamBuilds.clear();
+
+		System.out.println(downstreamBuilds);
 	}
 
 	protected void setBuildNumber(int buildNumber) {
