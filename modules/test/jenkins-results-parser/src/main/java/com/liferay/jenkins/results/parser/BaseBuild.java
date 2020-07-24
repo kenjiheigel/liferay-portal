@@ -1541,6 +1541,9 @@ public abstract class BaseBuild implements Build {
 
 							setStatus("missing");
 						}
+						else if (status.equals("missing")) {
+
+						}
 					}
 				}
 
