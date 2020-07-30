@@ -1529,6 +1529,9 @@ public abstract class BaseBuild implements Build {
 					}
 					else {
 						if (getBuildNumber() == -1) {
+							System.out.println(status);
+							System.out.println("sleeping for 60 seconds");
+
 							JenkinsResultsParserUtil.sleep(60000L);
 						}
 
