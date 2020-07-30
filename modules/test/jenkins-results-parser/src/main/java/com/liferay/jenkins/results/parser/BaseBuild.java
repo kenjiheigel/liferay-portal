@@ -1528,6 +1528,10 @@ public abstract class BaseBuild implements Build {
 						setBuildNumber(runningBuildJSONObject.getInt("number"));
 					}
 					else {
+						if (getBuildNumber() == -1) {
+							JenkinsResultsParserUtil.sleep(60000L);
+						}
+
 						JSONObject queueItemJSONObject =
 							getQueueItemJSONObject();
 
