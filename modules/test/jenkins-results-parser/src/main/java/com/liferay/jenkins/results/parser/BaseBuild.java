@@ -1406,6 +1406,8 @@ public abstract class BaseBuild implements Build {
 			}
 		}
 
+		System.out.println("why here?");
+
 		String invocationURL = getInvocationURL();
 
 		try {
@@ -2920,6 +2922,8 @@ public abstract class BaseBuild implements Build {
 
 	protected String getReinvokedMessage() {
 		StringBuffer sb = new StringBuffer();
+
+		System.out.println(getBuildURL());
 
 		sb.append("Reinvoked: ");
 		sb.append(getBuildURL());

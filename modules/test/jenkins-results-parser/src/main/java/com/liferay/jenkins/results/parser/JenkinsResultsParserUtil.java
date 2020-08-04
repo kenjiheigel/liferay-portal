@@ -825,6 +825,11 @@ public class JenkinsResultsParserUtil {
 				return properties;
 			}
 
+			System.out.println("what?");
+			System.out.println(checkCache);
+			System.out.println(_buildProperties.size());
+
+
 			if (_buildPropertiesURLs == null) {
 				_buildPropertiesURLs = URLS_BUILD_PROPERTIES_DEFAULT;
 			}
@@ -854,8 +859,14 @@ public class JenkinsResultsParserUtil {
 	public static String getBuildProperty(String propertyName)
 		throws IOException {
 
+		System.out.println(propertyName);
+
+		calls++;
+
 		return getBuildProperty(false, propertyName);
 	}
+
+	public static int calls = 0;
 
 	public static List<String> getBuildPropertyAsList(
 			boolean checkCache, String key)
