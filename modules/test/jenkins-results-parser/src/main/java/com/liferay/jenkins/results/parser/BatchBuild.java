@@ -397,6 +397,8 @@ public class BatchBuild extends BaseBuild {
 			return;
 		}
 
+		JenkinsResultsParserUtil.sleep(30000);
+
 		String status = getStatus();
 		String result = getResult();
 
