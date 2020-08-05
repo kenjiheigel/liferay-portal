@@ -426,6 +426,8 @@ public class BatchBuild extends BaseBuild {
 					continue;
 				}
 
+				System.out.println("reinvoking batch build here:");
+
 				reinvoke(reinvokeRule);
 
 				reinvoked = true;
