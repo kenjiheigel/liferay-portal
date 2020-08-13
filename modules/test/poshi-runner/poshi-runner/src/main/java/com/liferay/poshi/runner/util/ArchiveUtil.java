@@ -66,6 +66,8 @@ public class ArchiveUtil {
 						archiveZipEntries.add(
 							new ArchiveZipEntry(targetFilePathString, file));
 
+						System.out.println(targetFilePathString);
+
 						return FileVisitResult.CONTINUE;
 					}
 
@@ -91,6 +93,8 @@ public class ArchiveUtil {
 					new FileOutputStream(tmpFile))) {
 
 				for (ArchiveZipEntry archiveZipEntry : archiveZipEntries) {
+					System.out.println(archiveZipEntry.getName());
+
 					archiveZipEntry.writeToZipOutputStream(zipOutputStream);
 				}
 			}
