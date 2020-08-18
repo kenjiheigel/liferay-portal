@@ -46,14 +46,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
-import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -128,8 +126,6 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 
 	public BaseWebDriverImpl(String browserURL, WebDriver webDriver) {
 		_webDriver = webDriver;
-
-		initKeysSpecialChars();
 
 		setDefaultWindowHandle(webDriver.getWindowHandle());
 		setNavigationBarHeight(120);
@@ -3155,25 +3151,15 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 
 		int i = 0;
 
-		Set<Integer> specialCharIndexes = getSpecialCharIndexes(value);
+		Matcher matcher = _tabPattern.matcher(value);
 
-		for (int specialCharIndex : specialCharIndexes) {
-			webElement.sendKeys(value.substring(i, specialCharIndex));
+		while (matcher.find()) {
+			webElement.sendKeys(
+				value.substring(matcher.start(), matcher.end() - 1));
 
-			String specialChar = String.valueOf(value.charAt(specialCharIndex));
+			webElement.sendKeys(Keys.TAB);
 
-			if (specialChar.equals("-")) {
-				webElement.sendKeys(Keys.SUBTRACT);
-			}
-			else if (specialChar.equals("\t")) {
-				webElement.sendKeys(Keys.TAB);
-			}
-			else {
-				webElement.sendKeys(
-					Keys.SHIFT, _keysSpecialChars.get(specialChar));
-			}
-
-			i = specialCharIndex + 1;
+			i = matcher.end();
 		}
 
 		webElement.sendKeys(value.substring(i));
@@ -4203,27 +4189,6 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 		};
 	}
 
-	protected Set<Integer> getSpecialCharIndexes(String value) {
-		Set<Integer> specialCharIndexes = new TreeSet<>();
-
-		Set<String> specialChars = new TreeSet<>();
-
-		specialChars.addAll(_keysSpecialChars.keySet());
-
-		specialChars.add("-");
-		specialChars.add("\t");
-
-		for (String specialChar : specialChars) {
-			while (value.contains(specialChar)) {
-				specialCharIndexes.add(value.indexOf(specialChar));
-
-				value = StringUtil.replaceFirst(value, specialChar, " ");
-			}
-		}
-
-		return specialCharIndexes;
-	}
-
 	protected Condition getTextCaseInsensitiveCondition(
 		String locator, String value) {
 
@@ -4458,18 +4423,6 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 		return point.getY();
 	}
 
-	protected void initKeysSpecialChars() {
-		_keysSpecialChars.put("!", "1");
-		_keysSpecialChars.put("#", "3");
-		_keysSpecialChars.put("$", "4");
-		_keysSpecialChars.put("%", "5");
-		_keysSpecialChars.put("&", "7");
-		_keysSpecialChars.put("(", "9");
-		_keysSpecialChars.put(")", "0");
-		_keysSpecialChars.put("<", ",");
-		_keysSpecialChars.put(">", ".");
-	}
-
 	protected boolean isObscured(WebElement webElement) {
 		WrapsDriver wrapsDriver = (WrapsDriver)webElement;
 
@@ -4673,11 +4626,12 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 				put("SHIFT", Integer.valueOf(KeyEvent.VK_SHIFT));
 			}
 		};
+	private static final Pattern _tabPattern = Pattern.compile(
+		".*?(\\t).*?", Pattern.DOTALL);
 
 	private String _clipBoard = "";
 	private String _defaultWindowHandle;
 	private Stack<WebElement> _frameWebElements = new Stack<>();
-	private final Map<String, String> _keysSpecialChars = new HashMap<>();
 	private int _navigationBarHeight;
 	private final String _outputDirName;
 	private String _primaryTestSuiteName;
