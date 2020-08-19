@@ -3149,20 +3149,17 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 			value = value.replaceAll("line-number=\"\\d+\"", "");
 		}
 
-		int i = 0;
+		for (int index = 0; index < value.length(); index++) {
+			char valueChar = value.charAt(index);
 
-		Matcher matcher = _tabPattern.matcher(value);
+			if (valueChar == '\t') {
+				webElement.sendKeys(Keys.TAB);
 
-		while (matcher.find()) {
-			webElement.sendKeys(
-				value.substring(matcher.start(), matcher.end() - 1));
+				continue;
+			}
 
-			webElement.sendKeys(Keys.TAB);
-
-			i = matcher.end();
+			webElement.sendKeys(Character.toString(valueChar));
 		}
-
-		webElement.sendKeys(value.substring(i));
 	}
 
 	@Override
@@ -4626,8 +4623,6 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 				put("SHIFT", Integer.valueOf(KeyEvent.VK_SHIFT));
 			}
 		};
-	private static final Pattern _tabPattern = Pattern.compile(
-		".*?(\\t).*?", Pattern.DOTALL);
 
 	private String _clipBoard = "";
 	private String _defaultWindowHandle;
