@@ -73,6 +73,7 @@ import java.util.regex.Pattern;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -81,6 +82,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
 import jodd.util.Base32;
+
+import junit.framework.TestCase;
 
 import net.jsourcerer.webdriver.jserrorcollector.JavaScriptError;
 
@@ -1094,7 +1097,7 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 
 		hex = StringUtil.replace(String.format("%16s", hex), CharPool.SPACE, CharPool.NUMBER_0);
 
-		try{
+		try {
 			Mac mac = Mac.getInstance(otpAlgorithm);
 
 			mac.init(new SecretKeySpec(secret, "RAW"));
@@ -1117,11 +1120,11 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 		}
 		catch (InvalidKeyException invalidKeyException) {
 			throw new IllegalArgumentException(
-				"Invalid secret key for algorithm " + otpAlgorithm,invalidKeyException);
+				"Invalid secret key for algorithm " + otpAlgorithm, invalidKeyException);
 		}
 		catch (NoSuchAlgorithmException noSuchAlgorithmException) {
 			throw new IllegalArgumentException(
-				"Invalid algorithm " + otpAlgorithm,noSuchAlgorithmException);
+				"Invalid algorithm " + otpAlgorithm, noSuchAlgorithmException);
 		}
 	}
 
