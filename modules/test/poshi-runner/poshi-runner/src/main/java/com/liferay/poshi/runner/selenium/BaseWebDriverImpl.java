@@ -39,8 +39,13 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.StringReader;
 
+import java.math.BigInteger;
+
 import java.net.URI;
 import java.net.URL;
+
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,6 +71,8 @@ import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -73,7 +80,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
-import junit.framework.TestCase;
+import jodd.util.Base32;
 
 import net.jsourcerer.webdriver.jserrorcollector.JavaScriptError;
 
@@ -1065,6 +1072,57 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 	@Override
 	public void get(String url) {
 		_webDriver.get(url);
+	}
+
+	@Override
+	public String generateTOTP(String locator) {
+		String otpAlgorithm = "HmacSHA1";
+
+		WebElement webElement = getWebElement(locator);
+
+		String text = webElement.getAttribute("value");
+
+		byte[] secret = Base32.decode(text);
+
+		long time = (System.currentTimeMillis() - 3000) / 30000;
+
+		String hex = StringUtil.toUpperCase(Long.toHexString(time));
+
+		if (hex.length() > 16) {
+			return hex;
+		}
+
+		hex = StringUtil.replace(String.format("%16s", hex), CharPool.SPACE, CharPool.NUMBER_0);
+
+		try{
+			Mac mac = Mac.getInstance(otpAlgorithm);
+
+			mac.init(new SecretKeySpec(secret, "RAW"));
+
+			BigInteger bigInteger = new BigInteger("10" + hex, 16);
+
+			byte[] byteArray = bigInteger.toByteArray();
+
+			byte[] hash = mac.doFinal(Arrays.copyOfRange(byteArray, 1, byteArray.length));
+
+			int offset = hash[hash.length - 1] & 0xf;
+
+			int binary =
+				((hash[offset] & 0x7f) << 24) | ((hash[offset + 1] & 0xff) << 16) |
+				((hash[offset + 2] & 0xff) << 8) | (hash[offset + 3] & 0xff);
+
+			int otp = binary % (int)Math.pow(10, 6);
+
+			return String.format("%0" + 6 + "d", otp);
+		}
+		catch (InvalidKeyException invalidKeyException) {
+			throw new IllegalArgumentException(
+				"Invalid secret key for algorithm " + otpAlgorithm,invalidKeyException);
+		}
+		catch (NoSuchAlgorithmException noSuchAlgorithmException) {
+			throw new IllegalArgumentException(
+				"Invalid algorithm " + otpAlgorithm,noSuchAlgorithmException);
+		}
 	}
 
 	@Override
