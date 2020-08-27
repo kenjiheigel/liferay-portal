@@ -181,6 +181,8 @@ public interface LiferaySelenium {
 
 	public void fail(String message);
 
+	public String generateTOTP(String locator) throws Exception;
+
 	public String getAlert();
 
 	public String getAttribute(String attributeLocator);
