@@ -1981,6 +1981,14 @@ public abstract class BaseBuild implements Build {
 			return _duration;
 		}
 
+		public Long getMegabytesWrittenStart() {
+			return _megabytesWrittenStart;
+		}
+
+		public Long getMegabytesWrittenTotal() {
+			return _megabytesWrittenTotal;
+		}
+
 		public String getName() {
 			return _name;
 		}
@@ -2040,6 +2048,14 @@ public abstract class BaseBuild implements Build {
 
 		public void setDuration(long duration) {
 			_duration = duration;
+		}
+
+		public void setMegabytesWrittenStart(long megabytesWritten) {
+			_megabytesWrittenStart = megabytesWritten;
+		}
+
+		public void setMegabytesWrittenTotal(long megabytesWritten) {
+			_megabytesWrittenTotal = megabytesWritten - _megabytesWrittenStart;
 		}
 
 		@Override
@@ -2125,7 +2141,14 @@ public abstract class BaseBuild implements Build {
 					JenkinsResultsParserUtil.toDurationString(getDuration()));
 			}
 
-			Dom4JUtil.getNewElement("td", buildInfoElement, "&nbsp;");
+			if (getMegabytesWrittenTotal() == null) {
+				Dom4JUtil.getNewElement("td", buildInfoElement, "&nbsp;");
+			}
+			else {
+				Dom4JUtil.getNewElement(
+					"td", buildInfoElement,
+					getMegabytesWrittenTotal() + " MB written");
+			}
 
 			Dom4JUtil.getNewElement("td", buildInfoElement, "&nbsp;");
 
@@ -2175,6 +2198,8 @@ public abstract class BaseBuild implements Build {
 		private final BaseBuild _baseBuild;
 		private Set<StopWatchRecord> _childStopWatchRecords;
 		private Long _duration;
+		private Long _megabytesWrittenStart;
+		private Long _megabytesWrittenTotal;
 		private final String _name;
 		private StopWatchRecord _parentStopWatchRecord;
 		private final Long _startTimestamp;
@@ -3128,6 +3153,38 @@ public abstract class BaseBuild implements Build {
 					stopWatchRecord.setDuration(duration);
 				}
 			}
+
+			matcher = megabytesWrittenStartPattern.matcher(line);
+
+			if (matcher.matches()) {
+				String stopWatchName = matcher.group("name");
+
+				StopWatchRecord stopWatchRecord = stopWatchRecordsGroup.get(
+					stopWatchName);
+
+				if (stopWatchRecord != null) {
+					long megabytesWritten = Long.parseLong(
+						matcher.group("megabytesWritten"));
+
+					stopWatchRecord.setMegabytesWrittenStart(megabytesWritten);
+				}
+			}
+
+			matcher = megabytesWrittenTotalPattern.matcher(line);
+
+			if (matcher.matches()) {
+				String stopWatchName = matcher.group("name");
+
+				StopWatchRecord stopWatchRecord = stopWatchRecordsGroup.get(
+					stopWatchName);
+
+				if (stopWatchRecord != null) {
+					long megabytesWritten = Long.parseLong(
+						matcher.group("megabytesWritten"));
+
+					stopWatchRecord.setMegabytesWrittenTotal(megabytesWritten);
+				}
+			}
 		}
 
 		stopWatchRecordConsoleReadCursor = consoleTextLength;
@@ -3545,6 +3602,16 @@ public abstract class BaseBuild implements Build {
 			"buildWithParameters\\?(?<queryString>.*)"));
 	protected static final Pattern jobNamePattern = Pattern.compile(
 		"(?<baseJob>[^\\(]+)\\((?<branchName>[^\\)]+)\\)");
+	protected static final Pattern megabytesWrittenStartPattern =
+		Pattern.compile(
+			JenkinsResultsParserUtil.combine(
+				"\\s*\\[echo\\] (?<name>.*)\\.start\\.megabytes\\.written: ",
+				"(?<megabytesWritten>[0-9]*)$"));
+	protected static final Pattern megabytesWrittenTotalPattern =
+		Pattern.compile(
+			JenkinsResultsParserUtil.combine(
+				"\\s*\\[echo\\] (?<name>.*)\\.total\\.megabytes\\.written: ",
+				"(?<megabytesWritten>[0-9]*)$"));
 	protected static final Pattern stopWatchPattern = Pattern.compile(
 		JenkinsResultsParserUtil.combine(
 			"\\s*\\[stopwatch\\]\\s*\\[(?<name>[^:]+): ",
