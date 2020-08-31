@@ -1105,6 +1105,23 @@ information.
 		</sequential>
 	</macrodef>
 
+	<macrodef name="iostats">
+		<attribute name="action" />
+		<attribute name="name" />
+		<sequential>
+			<sleep seconds="45" />
+
+			<local name="megabytes.written" />
+
+			<exec executable="/bin/bash" failonerror="false" outputproperty="megabytes.written">
+				<arg value="-c" />
+				<arg value="iostat -dm | awk '/sda/ {print $6}'" />
+			</exec>
+
+			<echo>@{name}.@{action}.megabytes.written: ${megabytes.written}</echo>
+		</sequential>
+	</macrodef>
+
 	<macrodef name="install-portal-artifact">
 		<attribute default="jar" name="packaging" />
 		<attribute default="false" name="snapshot" />
@@ -1272,6 +1289,8 @@ information.
 			</if>
 
 			<stopwatch action="@{action}" name="@{name}" />
+
+			<iostats action="@{action}" name="@{name}" />
 		</sequential>
 	</macrodef>
 
