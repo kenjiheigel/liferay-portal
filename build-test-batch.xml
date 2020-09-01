@@ -1048,11 +1048,25 @@ app.server.type=@{app.server.type}]]></echo>
 		<attribute default="true" name="setup.testable.tomcat" />
 
 		<sequential>
+			<lstopwatch action="start" name="prepare.test.environment.setup.libs" />
+
 			<antcall inheritAll="false" target="setup-libs" />
+
+			<lstopwatch action="total" name="prepare.test.environment.setup.libs" />
+
+			<lstopwatch action="start" name="prepare.test.environment.setup.sdk" />
 
 			<antcall inheritAll="false" target="setup-sdk" />
 
+			<lstopwatch action="total" name="prepare.test.environment.setup.sdk" />
+
+			<lstopwatch action="start" name="prepare.test.environment.setup.yarn" />
+
 			<antcall inheritAll="false" target="setup-yarn" />
+
+			<lstopwatch action="total" name="prepare.test.environment.setup.yarn" />
+
+			<lstopwatch action="start" name="prepare.test.environment.untar.source" />
 
 			<untar
 				compression="gzip"
@@ -1060,17 +1074,23 @@ app.server.type=@{app.server.type}]]></echo>
 				src="liferay-portal-source.tar.gz"
 			/>
 
+			<lstopwatch action="total" name="prepare.test.environment.untar.source" />
+
 			<local name="bundle.src.file.name" />
 
 			<condition else="liferay-portal-bundle-@{app.server.type}.tar.gz" property="bundle.src.file.name" value="liferay-portal-bundle-@{app.server.type}-@{app.server.version}.tar.gz">
 				<available file="liferay-portal-bundle-@{app.server.type}-@{app.server.version}.tar.gz" />
 			</condition>
 
+			<lstopwatch action="start" name="prepare.test.environment.untar.bundle" />
+
 			<untar
 				compression="gzip"
 				dest="."
 				src="${bundle.src.file.name}"
 			/>
+
+			<lstopwatch action="total" name="prepare.test.environment.untar.source" />
 
 			<chmod
 				perm="a+x"
@@ -1084,13 +1104,29 @@ app.server.type=@{app.server.type}]]></echo>
 				</fileset>
 			</chmod>
 
+			<lstopwatch action="start" name="prepare.test.environment.setup.libs" />
+
 			<setup-libs />
+
+			<lstopwatch action="total" name="prepare.test.environment.setup.libs" />
+
+			<lstopwatch action="start" name="prepare.test.environment.setup.yarn" />
 
 			<setup-yarn />
 
+			<lstopwatch action="total" name="prepare.test.environment.setup.yarn" />
+
+			<lstopwatch action="start" name="prepare.test.environment.install.portal.snapshots" />
+
 			<antcall inheritAll="false" target="install-portal-snapshots" />
 
+			<lstopwatch action="total" name="prepare.test.environment.install.portal.snapshots" />
+
+			<lstopwatch action="start" name="prepare.test.environment.update.commerce.modules" />
+
 			<update-commerce-modules />
+
+			<lstopwatch action="total" name="prepare.test.environment.update.commerce.modules" />
 
 			<echo if:set="env.JENKINS_HOME">ANT_OPTS=${env.ANT_OPTS}</echo>
 
@@ -1113,10 +1149,14 @@ app.server.type=@{app.server.type}]]></echo>
 						/>
 					</copy>
 
+					<lstopwatch action="start" name="setup.test.batch.testable.tomcat" />
+
 					<setup-test-batch-testable-tomcat
 						setup.proxy="@{setup.proxy}"
 						test.portal.bundle.version="${test.portal.bundle.version}"
 					/>
+
+					<lstopwatch action="total" name="setup.test.batch.testable.tomcat" />
 				</then>
 			</if>
 		</sequential>
