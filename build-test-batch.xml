@@ -228,6 +228,8 @@ lportal_BS
 		<element name="test-action" />
 
 		<sequential>
+			<lstopwatch action="start" name="database.test.run.test" />
+
 			<var name="database.type" unset="true" />
 
 			<property name="database.type" value="@{database.type}" />
@@ -358,6 +360,8 @@ mariadb.executable=${mariadb.executable}]]></echo>
 
 			<database-test-action database.type="@{database.type}">
 				<action>
+					<lstopwatch action="start" name="database.test.run.test.start.database" />
+
 					<set-portal-impl-portal-test-ext-properties />
 
 					<set-portal-impl-system-ext-properties />
@@ -402,6 +406,10 @@ mariadb.executable=${mariadb.executable}]]></echo>
 						</then>
 					</if>
 
+					<lstopwatch action="total" name="database.test.run.test.start.database" />
+
+					<lstopwatch action="start" name="database.test.run.test.prepare.dependencies" />
+
 					<antcall inheritall="false" target="copy-optional-jars">
 						<param name="database.type" value="@{database.type}" />
 						<param name="todir" value="lib/development" />
@@ -420,7 +428,15 @@ mariadb.executable=${mariadb.executable}]]></echo>
 						<param name="database.type" value="@{database.type}" />
 					</antcall>
 
+					<lstopwatch action="total" name="database.test.run.test.prepare.dependencies" />
+
+					<lstopwatch action="start" name="database.test.run.test.run.test" />
+
 					<test-action />
+
+					<lstopwatch action="total" name="database.test.run.test.run.test" />
+
+					<lstopwatch action="start" name="database.test.run.test.stop" />
 
 					<if if:true="@{stop.app.server}">
 						<available file=".testable.portal.started" />
@@ -451,8 +467,12 @@ mariadb.executable=${mariadb.executable}]]></echo>
 							</exec>
 						</else>
 					</if>
+
+					<lstopwatch action="total" name="database.test.run.test.stop" />
 				</action>
 			</database-test-action>
+
+			<lstopwatch action="total" name="database.test.run.test" />
 		</sequential>
 	</macrodef>
 
