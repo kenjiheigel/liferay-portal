@@ -5,25 +5,45 @@
 
 	<macrodef name="build-dist-tomcat-bare">
 		<sequential>
+			<lstopwatch action="start" name="build.dist.tomcat.bare" />
+
 			<if>
 				<equals arg1="${tomcat.keep.app.server.properties}" arg2="true" />
 				<then>
+					<lstopwatch action="start" name="build.dist.tomcat.bare.update.sdk.properties" />
+
 					<antcall inheritAll="false" target="update-sdk-properties" />
 
+					<lstopwatch action="total" name="build.dist.tomcat.bare.update.sdk.properties" />
+
+					<lstopwatch action="start" name="build.dist.tomcat.bare.unzip.tomcat" />
+
 					<antcall inheritAll="false" target="unzip-tomcat" />
+
+					<lstopwatch action="total" name="build.dist.tomcat.bare.unzip.tomcat" />
 				</then>
 				<else>
 					<app-server-properties-update>
 						app.server.type=tomcat
 					</app-server-properties-update>
 
+					<lstopwatch action="start" name="build.dist.tomcat.bare.update.sdk.properties" />
+
 					<antcall inheritAll="false" target="update-sdk-properties" />
 
+					<lstopwatch action="total" name="build.dist.tomcat.bare.update.sdk.properties" />
+
+					<lstopwatch action="start" name="build.dist.tomcat.bare.unzip.tomcat" />
+
 					<antcall target="unzip-tomcat" />
+
+					<lstopwatch action="total" name="build.dist.tomcat.bare.unzip.tomcat" />
 				</else>
 			</if>
 
 			<delete dir="${project.dir}/portal-web/classes" />
+
+			<lstopwatch action="total" name="build.dist.tomcat.bare" />
 		</sequential>
 	</macrodef>
 
@@ -300,7 +320,11 @@
 	<target name="build-dist-tomcat">
 		<build-dist-tomcat-bare />
 
+		<lstopwatch action="start" name="build-dist-tomcat.deploy" />
+
 		<ant inheritAll="false" target="deploy" />
+
+		<lstopwatch action="total" name="build-dist-tomcat.deploy" />
 
 		<if>
 			<not>
@@ -311,11 +335,15 @@
 			</then>
 		</if>
 
+		<lstopwatch action="start" name="build-dist-tomcat.deploy.plugins" />
+
 		<antcall target="deploy-plugins">
 			<param name="deployer.dest.dir" value="${app.server.parent.dir}/tomcat-${app.server.tomcat.version}/webapps" />
 			<param name="deployer.app.server.type" value="tomcat" />
 			<param name="deployer.app.server.lib.portal.dir" value="${app.server.parent.dir}/tomcat-${app.server.tomcat.version}/webapps/ROOT/WEB-INF/lib" />
 		</antcall>
+
+		<lstopwatch action="total" name="build-dist-tomcat.deploy.plugins" />
 	</target>
 
 	<target name="build-dist-tomcat-bare">
