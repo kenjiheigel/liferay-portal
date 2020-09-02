@@ -1613,6 +1613,8 @@ app.server.type=@{app.server.type}]]></echo>
 					</test-action>
 
 					<test-set-up>
+						<lstopwatch action="start" name="run-functional-test.setup.bundle" />
+
 						<antcall target="record-test-generated-properties" />
 
 						<if>
@@ -1717,6 +1719,10 @@ app.server.type=@{app.server.type}]]></echo>
 							</else>
 						</if>
 
+						<lstopwatch action="total" name="run-functional-test.setup.bundle" />
+
+						<lstopwatch action="start" name="run-functional-test.setup.plugins" />
+
 						<if>
 							<matches pattern="https?://" string="@{test.plugin.zip.url}" />
 							<then>
@@ -1728,6 +1734,10 @@ app.server.type=@{app.server.type}]]></echo>
 								/>
 							</then>
 						</if>
+
+						<lstopwatch action="total" name="run-functional-test.setup.plugins" />
+
+						<lstopwatch action="start" name="run-functional-test.setup.solr" />
 
 						<if>
 							<isset property="env.CI_TEST_SUITE" />
@@ -1746,6 +1756,8 @@ app.server.type=@{app.server.type}]]></echo>
 						</if>
 
 						<echo if:set="env.JENKINS_HOME">ANT_OPTS=${env.ANT_OPTS}</echo>
+
+						<lstopwatch action="total" name="run-functional-test.setup.solr" />
 					</test-set-up>
 
 					<test-tear-down>
