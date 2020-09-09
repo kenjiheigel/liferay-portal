@@ -11948,15 +11948,30 @@ if (ppstate.equals("normal")) {
 	</target>
 
 	<target name="record-test-generated-properties">
-		<lstopwatch action="start" name="record.test.generated.properties.setup-libs" />
+		<if>
+			<isset property="recorded.generated.properties" />
+			<then>
+				<lstopwatch action="start" name="record.test.generated.properties.setup-libs" />
+			</then>
+		</if>
 
 		<setup-libs />
 
-		<lstopwatch action="total" name="record.test.generated.properties.setup-libs" />
+		<if>
+			<isset property="recorded.generated.properties" />
+			<then>
+				<lstopwatch action="total" name="record.test.generated.properties.setup-libs" />
+			</then>
+		</if>
 
 		<delete failonerror="false" file="${test.ext.properties.file}" />
 
-		<lstopwatch action="start" name="record.test.generated.properties.prepare-poshi-runner-properties" />
+		<if>
+			<isset property="recorded.generated.properties" />
+			<then>
+				<lstopwatch action="start" name="record.test.generated.properties.prepare-poshi-runner-properties" />
+			</then>
+		</if>
 
 		<if>
 			<isset property="test.base.dir.name" />
@@ -11973,7 +11988,12 @@ if (ppstate.equals("normal")) {
 
 		<poshi-execute task="writePoshiProperties" />
 
-		<lstopwatch action="total" name="record.test.generated.properties.prepare-poshi-runner-properties" />
+		<if>
+			<isset property="recorded.generated.properties" />
+			<then>
+				<lstopwatch action="total" name="record.test.generated.properties.prepare-poshi-runner-properties" />
+			</then>
+		</if>
 
 		<move
 			file="portal-web/test.generated.properties"
@@ -12043,6 +12063,8 @@ if (ppstate.equals("normal")) {
 				<echo></echo>
 			</then>
 		</if>
+
+		<property name="recorded.generated.properties" value="true" />
 	</target>
 
 	<target name="record-test-js-csv-report">
