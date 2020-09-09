@@ -1389,9 +1389,17 @@ war.path=${app.server.portal.dir}/</echo>
 							<available file="tools/sdk" />
 						</not>
 						<then>
+							<lstopwatch action="start" name="poshi.execute.setup.sdk" />
+
 							<antcall inheritAll="false" target="setup-sdk" />
 
+							<lstopwatch action="total" name="poshi.execute.setup.sdk" />
+
+							<lstopwatch action="start" name="poshi.execute.setup.yarn" />
+
 							<antcall inheritAll="false" target="setup-yarn" />
+
+							<lstopwatch action="total" name="poshi.execute.setup.yarn" />
 						</then>
 					</if>
 
@@ -11940,9 +11948,15 @@ if (ppstate.equals("normal")) {
 	</target>
 
 	<target name="record-test-generated-properties">
+		<lstopwatch action="start" name="record.test.generated.properties.setup-libs" />
+
 		<setup-libs />
 
+		<lstopwatch action="total" name="record.test.generated.properties.setup-libs" />
+
 		<delete failonerror="false" file="${test.ext.properties.file}" />
+
+		<lstopwatch action="start" name="record.test.generated.properties.prepare-poshi-runner-properties" />
 
 		<if>
 			<isset property="test.base.dir.name" />
@@ -11958,6 +11972,8 @@ if (ppstate.equals("normal")) {
 		</if>
 
 		<poshi-execute task="writePoshiProperties" />
+
+		<lstopwatch action="total" name="record.test.generated.properties.prepare-poshi-runner-properties" />
 
 		<move
 			file="portal-web/test.generated.properties"
