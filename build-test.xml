@@ -9148,6 +9148,8 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 	</target>
 
 	<target name="prepare-selenium">
+		<lstopwatch action="start" name="prepare.selenium" />
+
 		<delete file="${test.ext.properties.file}" />
 
 		<antcall target="prepare-poshi-runner-properties">
@@ -9348,6 +9350,8 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 				</echo>
 			</then>
 		</if>
+
+		<lstopwatch action="total" name="prepare.selenium" />
 	</target>
 
 	<target name="prepare-selenium-analytics-cloud-properties">
@@ -12336,6 +12340,8 @@ if (ppstate.equals("normal")) {
 	</target>
 
 	<target depends="prepare-selenium" name="run-selenium-test">
+		<lstopwatch action="start" name="run.selenium.test" />
+
 		<if>
 			<and>
 				<equals arg1="${test.class}" arg2="PortalWebTestSuite" />
@@ -12418,9 +12424,13 @@ jdbc.default.password=${database.mysql.password}</echo>
 		<antcall target="clean-up-mobile-device" />
 
 		<antcall target="clean-up-selenium-driver" />
+
+		<lstopwatch action="total" name="run.selenium.test" />
 	</target>
 
 	<target name="run-simple-server">
+		<lstopwatch action="start" name="run.simple.server.prepare" />
+
 		<if>
 			<not>
 				<available file="tools/sdk" />
@@ -12779,6 +12789,10 @@ module.framework.properties.blacklist.portal.profile.names=${blacklist.portal.pr
 			</then>
 		</if>
 
+		<lstopwatch action="total" name="run.simple.server.prepare" />
+
+		<lstopwatch action="start" name="run.simple.server.deploy" />
+
 		<antcall target="deploy-osgi-apps" />
 
 		<antcall target="hot-deploy-osgi-apps" />
@@ -12814,6 +12828,10 @@ module.framework.properties.blacklist.portal.profile.names=${blacklist.portal.pr
 				<antcall target="deploy-osgi-module-configurations" />
 			</then>
 		</if>
+
+		<lstopwatch action="total" name="run.simple.server.deploy" />
+
+		<lstopwatch action="start" name="run.simple.server.app.server.prep" />
 
 		<get-testcase-property property.name="app.server.bundles.size" />
 
@@ -12872,11 +12890,15 @@ module.framework.properties.blacklist.portal.profile.names=${blacklist.portal.pr
 
 		<get-testcase-property property.name="skip.start-app-server" />
 
+		<lstopwatch action="total" name="run.simple.server.app.server.prep" />
+
 		<if>
 			<not>
 				<equals arg1="${skip.start-app-server}" arg2="true" />
 			</not>
 			<then>
+				<lstopwatch action="start" name="run.simple.server.app.server.start" />
+
 				<get-testcase-property property.name="theme.file.name" />
 
 				<if>
@@ -12986,8 +13008,12 @@ module.framework.properties.blacklist.portal.profile.names=${blacklist.portal.pr
 						</then>
 					</elseif>
 				</if>
+
+				<lstopwatch action="total" name="run.simple.server.app.server.start" />
 			</then>
 		</if>
+
+		<lstopwatch action="start" name="run.simple.server.other" />
 
 		<get-testcase-property property.name="analytics.cloud.enabled" />
 
@@ -13193,6 +13219,8 @@ url=${short.hostname}:8080</echo>
 		<stop-remote-search-engine />
 
 		<antcall target="clean-up-web-xml" />
+
+		<lstopwatch action="total" name="run.simple.server.other" />
 	</target>
 
 	<target name="set-portal-impl-portal-test-ext-properties">
