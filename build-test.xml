@@ -12675,6 +12675,8 @@ jdbc.default.password=${database.mysql.password}</echo>
 	</target>
 
 	<target name="run-simple-server">
+		<lstopwatch action="start" name="run.simple.server" />
+
 		<if>
 			<not>
 				<available file="tools/sdk" />
@@ -12685,6 +12687,8 @@ jdbc.default.password=${database.mysql.password}</echo>
 				<antcall inheritAll="false" target="setup-yarn" />
 			</then>
 		</if>
+
+		<lstopwatch action="start" name="run.simple.server.setup" />
 
 		<get-testcase-property property.name="test.prepare.bundle.properties" />
 
@@ -13257,6 +13261,10 @@ module.framework.properties.blacklist.portal.profile.names=${blacklist.portal.pr
 			</then>
 		</if>
 
+		<lstopwatch action="total" name="run.simple.server.setup" />
+
+		<lstopwatch action="start" name="run.simple.server.test" />
+
 		<if>
 			<equals arg1="${functional.test.type}" arg2="analytics-cloud" />
 			<then>
@@ -13330,6 +13338,10 @@ url=${short.hostname}:8080</echo>
 				</if>
 			</else>
 		</if>
+
+		<lstopwatch action="total" name="run.simple.server.test" />
+
+		<lstopwatch action="start" name="run.simple.server.shutdown" />
 
 		<if>
 			<or>
@@ -13449,6 +13461,10 @@ url=${short.hostname}:8080</echo>
 		<stop-remote-search-engine />
 
 		<antcall target="clean-up-web-xml" />
+
+		<lstopwatch action="total" name="run.simple.server.shutdown" />
+
+		<lstopwatch action="total" name="run.simple.server" />
 	</target>
 
 	<target name="set-portal-impl-portal-test-ext-properties">
