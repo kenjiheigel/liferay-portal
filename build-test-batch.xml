@@ -1076,11 +1076,27 @@ app.server.type=@{app.server.type}]]></echo>
 		<attribute default="true" name="setup.testable.tomcat" />
 
 		<sequential>
+			<lstopwatch action="start" name="prepare-test-environment" />
+
+			<lstopwatch action="start" name="prepare-test-environment.setup.libs" />
+
 			<antcall inheritAll="false" target="setup-libs" />
+
+			<lstopwatch action="total" name="prepare-test-environment.setup.libs" />
+
+			<lstopwatch action="start" name="prepare-test-environment.setup.sdk" />
 
 			<antcall inheritAll="false" target="setup-sdk" />
 
+			<lstopwatch action="total" name="prepare-test-environment.setup.sdk" />
+
+			<lstopwatch action="start" name="prepare-test-environment.setup.yarn" />
+
 			<antcall inheritAll="false" target="setup-yarn" />
+
+			<lstopwatch action="total" name="prepare-test-environment.setup.yarn" />
+
+			<lstopwatch action="start" name="prepare-test-environment.untar" />
 
 			<untar
 				compression="gzip"
@@ -1100,6 +1116,8 @@ app.server.type=@{app.server.type}]]></echo>
 				src="${bundle.src.file.name}"
 			/>
 
+			<lstopwatch action="total" name="prepare-test-environment.untar" />
+
 			<chmod
 				perm="a+x"
 				type="file"
@@ -1112,11 +1130,19 @@ app.server.type=@{app.server.type}]]></echo>
 				</fileset>
 			</chmod>
 
+			<lstopwatch action="start" name="prepare-test-environment.setup.again" />
+
 			<setup-libs />
 
 			<setup-yarn />
 
+			<lstopwatch action="total" name="prepare-test-environment.setup.again" />
+
+			<lstopwatch action="start" name="prepare-test-environment.install.portal.snapshots" />
+
 			<antcall inheritAll="false" target="install-portal-snapshots" />
+
+			<lstopwatch action="total" name="prepare-test-environment.install.portal.snapshots" />
 
 			<update-commerce-modules />
 
