@@ -502,11 +502,11 @@ public class PoshiValidation {
 		}
 		else if (filePath.endsWith(".macro")) {
 			primaryAttributeNames = Arrays.asList(
-				"function", "macro", "method");
+				"function", "macro", "method", "selenium");
 		}
 		else if (filePath.endsWith(".testcase")) {
 			primaryAttributeNames = Arrays.asList(
-				"function", "macro", "method", "test-case");
+				"function", "macro", "method", "selenium", "test-case");
 		}
 
 		String primaryAttributeName = getPrimaryAttributeName(

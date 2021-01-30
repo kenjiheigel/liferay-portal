@@ -65,8 +65,7 @@ public class ExecutePoshiElement extends PoshiElement {
 			poshiScript);
 		String fileExtension = getFileExtension();
 
-		if (fileExtension.equals("function") &&
-			poshiScript.startsWith("selenium.")) {
+		if (poshiScript.startsWith("selenium.")) {
 
 			addAttribute("selenium", getCommandName(poshiScript));
 
