@@ -108,6 +108,8 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.virtualauthenticator.HasVirtualAuthenticator;
+import org.openqa.selenium.virtualauthenticator.VirtualAuthenticatorOptions;
 
 import org.sikuli.api.DesktopScreenRegion;
 import org.sikuli.api.ImageTarget;
@@ -176,6 +178,21 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 		else {
 			select.selectByVisibleText(optionLocator);
 		}
+	}
+
+	@Override
+	public void addVirtualAuthenticator() {
+		VirtualAuthenticatorOptions virtualAuthenticatorOptions =
+			new VirtualAuthenticatorOptions();
+
+		virtualAuthenticatorOptions.setProtocol(
+			VirtualAuthenticatorOptions.Protocol.U2F);
+
+		HasVirtualAuthenticator hasVirtualAuthenticator =
+			(HasVirtualAuthenticator)_webDriver;
+
+		hasVirtualAuthenticator.addVirtualAuthenticator(
+			virtualAuthenticatorOptions);
 	}
 
 	@Override
