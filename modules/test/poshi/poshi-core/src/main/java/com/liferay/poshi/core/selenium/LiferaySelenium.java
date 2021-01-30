@@ -24,6 +24,8 @@ public interface LiferaySelenium {
 
 	public void addSelection(String locator, String optionLocator);
 
+	public void addVirtualAuthenticator();
+
 	public void antCommand(String fileName, String target) throws Exception;
 
 	public void assertAccessible() throws Exception;
