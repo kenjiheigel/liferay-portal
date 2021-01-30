@@ -1,0 +1,49 @@
+@component-name = "portal-smoke"
+definition {
+
+	property testray.main.component.name = "Smoke";
+
+	setUp {
+		Open(locator1 = "localhost:8080");
+	}
+
+	@priority = "5"
+	test Smoke {
+		selenium.pause("60000");
+
+/*
+	Followed test steps from https://issues.liferay.com/browse/LRQA-63225
+
+	Login in as test@liferay.com
+
+	Navigate to Control Panel > Instance Settings > MFA
+
+		Check 'Enabled MFA'
+
+	Navigate to FIDO2 tab
+
+		Check 'Enabled FIDO2'
+
+		Check 'Allow Origin Port'
+
+	Navigate to Account Settings > MFA
+
+*/
+
+		selenium.addVirtualAuthenticator();
+
+		selenium.echo("Added virtual authenticator");
+
+		selenium.pause("180000");
+
+/*
+		Wait for 'Added virtual authenticator' message in Poshi console
+
+		Click 'Register a FIDO2 Authenticator' button
+
+	Teardown: Disable MFA
+*/
+
+	}
+
+}
