@@ -1408,7 +1408,7 @@ jdbc.counter.connectionProperties=oracle.jdbc.ReadTimeout=0;oracle.net.CONNECT_T
 					</then>
 				</elseif>
 				<else>
-					<var name="test.url" value="http://localhost:8080" />
+					<var name="test.url" value="http://${env.HOSTNAME}:8080" />
 				</else>
 			</if>
 
@@ -4370,6 +4370,54 @@ org.apache.catalina.startup.ClassLoaderFactory.level=INFO]]>
 		</sequential>
 	</macrodef>
 
+	<macrodef name="start-docker-browser">
+		<sequential>
+			<local name="browser.docker.network.run.option" />
+
+			<condition else="" property="browser.docker.network.run.option" value="--network=${env.DOCKER_NETWORK_NAME}">
+				<isset property="env.DOCKER_NETWORK_NAME" />
+			</condition>
+
+			<local name="docker.browser.start.script" />
+
+			<property name="docker.browser.start.script" value="docker_browser_start.sh" />
+
+			<echo file="${docker.browser.start.script}">
+				<![CDATA[
+					docker run \
+						--detach \
+						--hostname=${env.HOSTNAME}_chrome \
+						--interactive \
+						--name=${env.HOSTNAME}_chrome \
+						--tty \
+						\
+						${browser.docker.network.run.option} \
+						\
+						liferay/liferay-ci:chrome-86_1.0.0
+				]]>
+			</echo>
+
+			<chmod
+				perm="a+x"
+			>
+				<fileset
+					dir="."
+					includes="${docker.browser.start.script}"
+				/>
+			</chmod>
+
+			<exec executable="/bin/bash" os="${os.apple},${os.unix}">
+				<arg value="${docker.browser.start.script}" />
+			</exec>
+
+			<exec executable="cmd.exe" os="${os.windows}">
+				<arg value="${docker.browser.start.script}" />
+			</exec>
+
+			<delete file="${docker.browser.start.script}" />
+		</sequential>
+	</macrodef>
+
 	<macrodef name="start-docker-database">
 		<sequential>
 			<get-database-property property.name="database.host" />
@@ -4936,6 +4984,43 @@ org.apache.catalina.startup.ClassLoaderFactory.level=INFO]]>
 					</execute>
 				</else>
 			</if>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="stop-docker-browser">
+		<sequential>
+			<local name="docker.stop.script" />
+
+			<property name="docker.stop.script" value="docker_stop.sh" />
+
+			<echo file="${docker.stop.script}">
+				<![CDATA[
+					docker kill ${env.HOSTNAME}_chrome
+
+					docker rm -f ${env.HOSTNAME}_chrome
+
+					docker network disconnect -f ${env.DOCKER_NETWORK_NAME} ${env.HOSTNAME}_chrome 2>/dev/null
+				]]>
+			</echo>
+
+			<chmod
+				perm="a+x"
+			>
+				<fileset
+					dir="."
+					includes="${docker.stop.script}"
+				/>
+			</chmod>
+
+			<exec executable="/bin/bash" failonerror="false" os="${os.apple},${os.unix}">
+				<arg value="${docker.stop.script}" />
+			</exec>
+
+			<exec executable="cmd.exe" failonerror="false" os="${os.windows}">
+				<arg value="${docker.stop.script}" />
+			</exec>
+
+			<delete file="${docker.stop.script}" />
 		</sequential>
 	</macrodef>
 
@@ -9536,7 +9621,7 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 			</then>
 			<else>
 				<echo append="true" file="${test.ext.properties.file}">
-					default.portal.url=http://localhost:8080
+					default.portal.url=${test.url}
 				</echo>
 			</else>
 		</if>
@@ -10357,6 +10442,7 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 		<echo append="true" file="${test.ext.properties.file}">
 			portal.url=${test.url}
 			selenium.executable.dir=${basedir.unix}/tools/selenium/
+			selenium.remote.driver.url=http://${env.HOSTNAME}_chrome:4444
 			test.class.command.name=${test.class}
 		</echo>
 	</target>
