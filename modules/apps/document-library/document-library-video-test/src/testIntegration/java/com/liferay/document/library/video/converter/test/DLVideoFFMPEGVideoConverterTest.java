@@ -52,7 +52,6 @@ import org.junit.runner.RunWith;
 /**
  * @author Alejandro Tardín
  */
-@Ignore
 @RunWith(Arquillian.class)
 public class DLVideoFFMPEGVideoConverterTest {
 
