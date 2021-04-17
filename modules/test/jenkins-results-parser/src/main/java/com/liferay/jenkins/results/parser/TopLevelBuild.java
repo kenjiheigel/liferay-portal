@@ -29,6 +29,11 @@ import com.liferay.jenkins.results.parser.failure.message.generator.JenkinsSourc
 import com.liferay.jenkins.results.parser.failure.message.generator.PoshiTestFailureMessageGenerator;
 import com.liferay.jenkins.results.parser.failure.message.generator.PoshiValidationFailureMessageGenerator;
 import com.liferay.jenkins.results.parser.failure.message.generator.RebaseFailureMessageGenerator;
+import com.liferay.jenkins.results.parser.test.clazz.group.FunctionalBatchTestClassGroup;
+import com.liferay.jenkins.results.parser.test.clazz.group.FunctionalSegmentTestClassGroup;
+import com.liferay.jenkins.results.parser.test.clazz.group.JUnitSegmentTestClassGroup;
+import com.liferay.jenkins.results.parser.test.clazz.group.SegmentTestClassGroup;
+import com.liferay.jenkins.results.parser.test.clazz.group.TestClassGroup;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -47,6 +52,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.regex.Matcher;
@@ -429,6 +435,180 @@ public abstract class TopLevelBuild extends BaseBuild {
 			downstreamBatchBuilds, new BaseBuild.BuildDisplayNameComparator());
 
 		return downstreamBatchBuilds;
+	}
+
+	public JSONObject getFailedBatchesJSONObject() {
+		Job job = getJob();
+
+		List<SegmentTestClassGroup> segmentTestClassGroups = new ArrayList<>(
+			job.getSegmentTestClassGroups());
+
+		if (job instanceof BatchDependentJob) {
+			BatchDependentJob batchDependentJob = (BatchDependentJob)job;
+
+			segmentTestClassGroups.addAll(
+				batchDependentJob.getDependentSegmentTestClassGroups());
+		}
+
+		JSONArray failedBatchesJSONArray = new JSONArray();
+
+		for (SegmentTestClassGroup segmentTestClassGroup :
+				segmentTestClassGroups) {
+
+			String segmentName = segmentTestClassGroup.getSegmentName();
+
+			BatchBuild batchBuild = getDownstreamBatchBuild(segmentName);
+
+			String result = "UNTESTED";
+
+			Set<String> failedTests = new TreeSet<>();
+
+			if (batchBuild != null) {
+				result = batchBuild.getResult();
+
+				for (TestResult testResult : batchBuild.getTestResults()) {
+					if (!testResult.isFailing()) {
+						continue;
+					}
+
+					failedTests.add(testResult.getDisplayName());
+				}
+			}
+
+			if (segmentTestClassGroup instanceof
+					FunctionalSegmentTestClassGroup) {
+
+				for (TestClassGroup.TestClass testClass :
+						segmentTestClassGroup.getTestClasses()) {
+
+					if (!(testClass instanceof
+							FunctionalBatchTestClassGroup.
+								FunctionalTestClass)) {
+
+						continue;
+					}
+
+					FunctionalBatchTestClassGroup.FunctionalTestClass
+						functionalTestClass =
+							(FunctionalBatchTestClassGroup.FunctionalTestClass)
+								testClass;
+
+					String testClassMethodName =
+						functionalTestClass.getTestClassMethodName();
+
+					if (batchBuild == null) {
+						failedTests.add(testClassMethodName);
+
+						continue;
+					}
+
+					for (TestResult testResult : batchBuild.getTestResults()) {
+						if (!testClassMethodName.equals(
+								testResult.getDisplayName())) {
+
+							continue;
+						}
+
+						if (testResult.isFailing()) {
+							failedTests.add(testClassMethodName);
+						}
+					}
+				}
+			}
+			else if (segmentTestClassGroup instanceof
+						JUnitSegmentTestClassGroup) {
+
+				for (TestClassGroup.TestClass testClass :
+						segmentTestClassGroup.getTestClasses()) {
+
+					if (testClass.isIgnored()) {
+						continue;
+					}
+
+					String testClassName =
+						JenkinsResultsParserUtil.getCanonicalPath(
+							testClass.getTestClassFile());
+
+					testClassName = testClassName.substring(
+						testClassName.indexOf("com/"));
+
+					testClassName = testClassName.replaceAll("/", ".");
+
+					testClassName = testClassName.replaceAll(
+						"(.*)\\.java", "$1");
+
+					for (TestClassGroup.TestClass.TestClassMethod
+							testClassMethod : testClass.getTestClassMethods()) {
+
+						if (testClassMethod.isIgnored()) {
+							continue;
+						}
+
+						String testClassMethodName =
+							JenkinsResultsParserUtil.combine(
+								testClassName, ".", testClassMethod.getName());
+
+						if (batchBuild == null) {
+							failedTests.add(testClassMethodName);
+
+							continue;
+						}
+
+						TestClassResult testClassResult =
+							batchBuild.getTestClassResult(testClassName);
+
+						if (testClassResult == null) {
+							failedTests.add(testClassMethodName);
+
+							continue;
+						}
+
+						TestResult testResult = testClassResult.getTestResult(
+							testClassMethod.getName());
+
+						if (testResult == null) {
+							failedTests.add(testClassMethodName);
+						}
+					}
+				}
+			}
+
+			if ((batchBuild != null) && !batchBuild.isFailing() &&
+				failedTests.isEmpty()) {
+
+				continue;
+			}
+
+			JSONArray failedTestsJSONArray = new JSONArray();
+
+			for (String failedTest : failedTests) {
+				failedTestsJSONArray.put(failedTest);
+			}
+
+			JSONObject failingBatchJSONObject = new JSONObject();
+
+			failingBatchJSONObject.put("failedTests", failedTestsJSONArray);
+			failingBatchJSONObject.put("jobVariant", segmentName);
+			failingBatchJSONObject.put("result", result);
+
+			failedBatchesJSONArray.put(failingBatchJSONObject);
+		}
+
+		JSONObject failedBatchesJSONObject = new JSONObject();
+
+		failedBatchesJSONObject.put(
+			"buildNumber", String.valueOf(getBuildNumber()));
+		failedBatchesJSONObject.put("failedBatches", failedBatchesJSONArray);
+		failedBatchesJSONObject.put("jobURL", getJobURL());
+
+		BranchInformation branchInformation = getBranchInformation("portal");
+
+		if (branchInformation != null) {
+			failedBatchesJSONObject.put(
+				"SHA", branchInformation.getSenderBranchSHA());
+		}
+
+		return failedBatchesJSONObject;
 	}
 
 	@Override
