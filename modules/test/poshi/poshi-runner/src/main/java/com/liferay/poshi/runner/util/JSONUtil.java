@@ -17,6 +17,8 @@ package com.liferay.poshi.runner.util;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 
+import com.liferay.poshi.core.util.StringPool;
+
 import java.util.List;
 
 import org.json.JSONArray;
@@ -93,10 +95,28 @@ public class JSONUtil {
 		}
 
 		if (object instanceof List) {
+			StringBuilder sb = new StringBuilder();
+
 			List<Object> list = (List)object;
 
-			if (list.size() == 1) {
-				object = list.get(0);
+			if (list.isEmpty()) {
+				sb.append(StringPool.BLANK);
+
+				return sb.toString();
+			}
+
+			if (!list.isEmpty()) {
+				for (int i = 0; i < list.size(); i++) {
+					object = list.get(i);
+
+					sb.append(object.toString());
+
+					if ((i + 1) < list.size()) {
+						sb.append(StringPool.COMMA);
+					}
+				}
+
+				return sb.toString();
 			}
 		}
 
