@@ -95,17 +95,11 @@ public class JSONUtil {
 		}
 
 		if (object instanceof List) {
-			StringBuilder sb = new StringBuilder();
-
 			List<Object> list = (List)object;
 
-			if (list.isEmpty()) {
-				sb.append(StringPool.BLANK);
-
-				return sb.toString();
-			}
-
 			if (!list.isEmpty()) {
+				StringBuilder sb = new StringBuilder();
+
 				for (int i = 0; i < list.size(); i++) {
 					object = list.get(i);
 
