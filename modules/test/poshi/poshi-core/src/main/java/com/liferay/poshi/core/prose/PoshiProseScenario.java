@@ -115,11 +115,21 @@ public class PoshiProseScenario extends BasePoshiProse {
 		}
 
 		for (Map.Entry<String, String> entry : _tagMap.entrySet()) {
+			String entryKey = entry.getKey();
+			String entryValue = entry.getValue();
+
+			if (entryKey.equals("description") || entryKey.equals("ignore") ||
+				entryKey.equals("priority")) {
+
+				commandElement.addAttribute(entryKey, entryValue);
+
+				continue;
+			}
+
 			commandElement.add(
 				Dom4JUtil.getNewElement(
-					"property", null,
-					new DefaultAttribute("name", entry.getKey()),
-					new DefaultAttribute("value", entry.getValue())));
+					"property", null, new DefaultAttribute("name", entryKey),
+					new DefaultAttribute("value", entryValue)));
 		}
 
 		for (PoshiProseStatement poshiProseStatement : _poshiProseStatements) {
