@@ -1704,6 +1704,19 @@ public abstract class BaseBuild implements Build {
 
 		String invocationURL = getInvocationURL();
 
+		Matcher invocationURLMatcher = invocationURLPattern.matcher(
+			invocationURL);
+
+		invocationURLMatcher.find();
+
+		invocationURL = invocationURL.replace(
+			invocationURLMatcher.group("masterURL"),
+			JenkinsResultsParserUtil.getMostAvailableMasterURL(
+				JenkinsResultsParserUtil.combine(
+					"http://", JenkinsResultsParserUtil.getCohortName(),
+					".liferay.com"),
+				1));
+
 		try {
 			JenkinsResultsParserUtil.toString(
 				JenkinsResultsParserUtil.getLocalURL(invocationURL));
@@ -3774,7 +3787,7 @@ public abstract class BaseBuild implements Build {
 		"[\\'\\\"].*[\\'\\\"] started at (?<url>.+)\\.");
 	protected static final Pattern invocationURLPattern = Pattern.compile(
 		JenkinsResultsParserUtil.combine(
-			"\\w+://(?<master>[^/]+)/+job/+(?<jobName>[^/]+).*/",
+			"(?<masterURL>\\w+://(?<master>[^/]+))/+job/+(?<jobName>[^/]+).*/",
 			"buildWithParameters\\?(?<queryString>.*)"));
 	protected static final Pattern jobNamePattern = Pattern.compile(
 		"(?<baseJob>[^\\(]+)\\((?<branchName>[^\\)]+)\\)");
