@@ -2967,7 +2967,14 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 		int retryCount = 0;
 
 		while (retryCount < maxRetries) {
-			webElement.clear();
+			CharSequence controlCharSequence = Keys.CONTROL;
+
+			if (OSDetector.isApple()) {
+				controlCharSequence = Keys.COMMAND;
+			}
+
+			webElement.sendKeys(Keys.chord(
+				controlCharSequence,"a", Keys.DELETE));
 
 			if (retryCount == 0) {
 				typeKeys(locator, value);
