@@ -21,26 +21,23 @@ definition {
 
 		var portletIds = ListUtil.toString("${list}");
 
-		var list = ListUtil.newList();
+		var JSON = JSONUtil.newJSONObject();
 
 		for (var portletId : list "${portletIds}") {
 			var result = JSONPortlet.hasPortlet(portletId = "${portletId}");
 
-			if ("${portletId}" == "${unCheckedContent}") {
-				var attribute = '''"staged--staged-portlet_${portletId}--" : "false"''';
-			}
-
-			else {
-				var attribute = '''"staged--staged-portlet_${portletId}--" : "true"''';
-			}
-
 			if ("${result}" == "true") {
-				ListUtil.add("${list}","${attribute}");
+				if ("${portletId}" == "${unCheckedContent}") {
+					JSONUtil.put("${JSON}", "staged--staged-portlet_${portletId}--", "false");
+				}
+
+				else {
+					JSONUtil.put("${JSON}", "staged--staged-portlet_${portletId}--", "true");
+				}
 			}
 		}
 
-		var attributes = ListUtil.toString("${list}");
-		var attributes = '''{${attributes}}''';
+		var attributes = JSONUtil.toString("${JSON}");
 
 		return "${attributes}";
 	}
