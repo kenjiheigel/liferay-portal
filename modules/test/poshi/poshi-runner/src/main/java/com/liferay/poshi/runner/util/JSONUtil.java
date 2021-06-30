@@ -109,6 +109,25 @@ public class JSONUtil {
 		return object.toString();
 	}
 
+	public static JSONObject newJSONObject() {
+		return new JSONObject();
+	}
+
+	public static void put(
+		JSONObject jsonObject, String key, List<String> value) {
+
+		jsonObject.put(key, value);
+	}
+
+	public static void put(JSONObject jsonObject, String key, String value) {
+		if (value.startsWith("{")) {
+			jsonObject.put(key, toJSONObject(value));
+		}
+		else {
+			jsonObject.put(key, value);
+		}
+	}
+
 	public static JSONArray toJSONArray(String json) {
 		try {
 			return new JSONArray(json);
@@ -125,6 +144,10 @@ public class JSONUtil {
 		catch (JSONException jsonException) {
 			throw new RuntimeException("Invalid JSON: '" + json + "'");
 		}
+	}
+
+	public static String toString(JSONObject jsonObject) {
+		return jsonObject.toString();
 	}
 
 }
