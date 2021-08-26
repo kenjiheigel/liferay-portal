@@ -8670,7 +8670,19 @@ virtualHostname="localhost"
 								}
 							}
 
-							File updatedTestResultsFile = new File(project.getProperty("dest.dir"), testResultsFile.getName());
+							String destinationDir = project.getProperty("dest.dir");
+
+							Element rootElement = document.getRootElement();
+
+							String packageName = rootElement.attributeValue("package");
+
+							if (packageName != null) {
+								destinationDir = project.getProperty("dest.dir") + "/" + packageName;
+							}
+
+							File updatedTestResultsFile = new File(destinationDir, testResultsFile.getName());
+
+							updatedTestResultsFile.mkdirs();
 
 							JenkinsResultsParserUtil.write(updatedTestResultsFile, Dom4JUtil.format(document.getRootElement()));
 
@@ -8690,7 +8702,7 @@ virtualHostname="localhost"
 					dir="${dest.dir}"
 					erroronmissingdir="false"
 				>
-					<include name="TEST-*.xml" />
+					<include name="**/TEST-*.xml" />
 				</fileset>
 				<report format="frames" todir="test-results/html" />
 			</junitreport>
