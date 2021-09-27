@@ -11,6 +11,30 @@ definition {
 			expected = "${expected}");
 	}
 
+	macro assertShadowRootElementTextEquals {
+		WaitForSPARefresh();
+
+		var javascript = '''
+var rootElement = document.evaluate("${xPath}", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+
+var primary = rootElement.shadowRoot;
+
+var primaryElement = primary.querySelector("${css1}");
+
+var secondary = primaryElement.shadowRoot;
+
+var element = secondary.querySelector("${css2}");
+
+return element.getAttribute("${attribute}");
+		''';
+
+		var actual = selenium.getEval("${javascript}");
+
+		TestUtils.assertEquals(
+			actual = "${actual}",
+			expected = "${value}");
+	}
+
 	macro getCssValue {
 		WaitForSPARefresh();
 
