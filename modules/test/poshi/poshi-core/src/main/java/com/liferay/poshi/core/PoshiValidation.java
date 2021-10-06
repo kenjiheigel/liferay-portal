@@ -945,6 +945,18 @@ public class PoshiValidation {
 		}
 	}
 
+	protected static void validateMacroCommandName(
+		Element element, String filePath) {
+
+		String attributeName = element.attributeValue("name");
+
+		if (attributeName.contains("Url")) {
+			_exceptions.add(
+				new ValidationException(
+					element, "Please change Url to URL\n", filePath));
+		}
+	}
+
 	protected static void validateMacroContext(
 		Element element, String macroType, String filePath) {
 
@@ -972,6 +984,7 @@ public class PoshiValidation {
 			}
 
 			if (childElementName.equals("command")) {
+				validateMacroCommandName(childElement, filePath);
 				validateCommandElement(childElement, filePath);
 				validateHasChildElements(childElement, filePath);
 
