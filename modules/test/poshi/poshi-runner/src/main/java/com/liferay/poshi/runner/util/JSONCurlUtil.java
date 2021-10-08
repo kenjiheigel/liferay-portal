@@ -323,6 +323,8 @@ public class JSONCurlUtil {
 				optionValue = optionValue.replaceAll("(?<!\\\\)\"", "\\\\\\\"");
 
 				optionValue = StringUtil.replace(optionValue, "&", "^&");
+				optionValue = StringUtil.replace(optionValue, "<", "^<");
+				optionValue = StringUtil.replace(optionValue, ">", "^>");
 
 				sb.append(optionValue);
 
