@@ -14,6 +14,7 @@
 
 package com.liferay.source.formatter;
 
+import com.liferay.poshi.core.PoshiContext;
 import com.liferay.poshi.core.elements.PoshiElement;
 import com.liferay.poshi.core.elements.PoshiNodeFactory;
 import com.liferay.poshi.core.script.PoshiScriptParserException;
@@ -31,6 +32,25 @@ import java.util.Set;
  * @author Hugo Huijser
  */
 public class PoshiSourceProcessor extends BaseSourceProcessor {
+
+	public PoshiSourceProcessor() {
+		try {
+			for (String fileName : doGetFileNames()) {
+				File file = new File(fileName);
+
+				if (fileName.endsWith(".function")) {
+					PoshiContext.setFunctionFileNames(file.getName());
+				}
+
+				if (fileName.endsWith(".macro")) {
+					PoshiContext.setMacroFileNames(file.getName());
+				}
+			}
+		}
+		catch (Exception exception) {
+			throw new RuntimeException(exception);
+		}
+	}
 
 	@Override
 	protected List<String> doGetFileNames() throws IOException {
