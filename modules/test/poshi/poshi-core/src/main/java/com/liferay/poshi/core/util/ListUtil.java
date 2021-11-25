@@ -95,6 +95,10 @@ public class ListUtil {
 		list.remove(item);
 	}
 
+	public static String size(List<String> list) {
+		return String.valueOf(list.size());
+	}
+
 	public static <E> List<E> sort(List<E> list) {
 		return sort(list, null);
 	}
