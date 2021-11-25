@@ -41,8 +41,13 @@ public class ListUtil {
 		return new ArrayList<>(master);
 	}
 
-	public static String get(List<String> list, int index) {
-		return list.get(index);
+	public static String get(List<String> list, String index) {
+		try {
+			return list.get(Integer.parseInt(index));
+		}
+		catch (IndexOutOfBoundsException | NumberFormatException exception) {
+			return null;
+		}
 	}
 
 	public static boolean isEmpty(List<?> list) {
