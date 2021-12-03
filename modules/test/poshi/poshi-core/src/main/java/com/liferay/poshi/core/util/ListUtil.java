@@ -46,12 +46,7 @@ public class ListUtil {
 	}
 
 	public static String get(List<String> list, String index) {
-		try {
-			return list.get(Integer.parseInt(index));
-		}
-		catch (IndexOutOfBoundsException | NumberFormatException exception) {
-			return null;
-		}
+		return list.get(Integer.parseInt(index));
 	}
 
 	public static boolean isEmpty(List<?> list) {
