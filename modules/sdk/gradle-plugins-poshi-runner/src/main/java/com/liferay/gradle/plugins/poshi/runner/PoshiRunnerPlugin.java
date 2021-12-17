@@ -15,6 +15,7 @@
 package com.liferay.gradle.plugins.poshi.runner;
 
 import com.github.erdi.gradle.webdriver.WebDriverBinariesPlugin;
+import com.github.erdi.gradle.webdriver.WebDriverBinariesPluginExtension;
 
 import com.liferay.gradle.util.GradleUtil;
 import com.liferay.gradle.util.OSDetector;
@@ -93,6 +94,13 @@ public class PoshiRunnerPlugin implements Plugin<Project> {
 		final PoshiRunnerExtension poshiRunnerExtension =
 			GradleUtil.addExtension(
 				project, "poshiRunner", PoshiRunnerExtension.class);
+
+		WebDriverBinariesPluginExtension webDriverBinariesPluginExtension =
+			GradleUtil.getExtension(
+				project, WebDriverBinariesPluginExtension.class);
+
+		_configureExtensionWebDriverBinariesPlugin(
+			webDriverBinariesPluginExtension);
 
 		_addConfigurationPoshiRunner(project, poshiRunnerExtension);
 		_addConfigurationSikuli(project, poshiRunnerExtension);
@@ -394,6 +402,12 @@ public class PoshiRunnerPlugin implements Plugin<Project> {
 		javaExec.setMain("com.liferay.poshi.core.PoshiContext");
 
 		return javaExec;
+	}
+
+	private void _configureExtensionWebDriverBinariesPlugin(
+		WebDriverBinariesPluginExtension webDriverBinariesPluginExtension) {
+
+		webDriverBinariesPluginExtension.setChromedriver("86.0.4240.22");
 	}
 
 	private void _configureTaskEvaluatePoshiConsole(
