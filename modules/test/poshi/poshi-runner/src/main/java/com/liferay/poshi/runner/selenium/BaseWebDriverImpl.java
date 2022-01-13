@@ -917,7 +917,9 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 	}
 
 	@Override
-	public void dragAndDrop(String locator, String coordinatePairs) {
+	public void dragAndDrop(
+		String locator, String coordinatePairs, String coordString) {
+
 		try {
 			Matcher matcher = _coordinatePairsPattern.matcher(coordinatePairs);
 
@@ -936,7 +938,21 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 
 			Actions actions = new Actions(webDriver);
 
-			actions.clickAndHold(webElement);
+			if (Validator.isNotNull(coordString) && coordString.contains(",")) {
+				String[] coords = coordString.split(",");
+
+				int x = GetterUtil.getInteger(coords[0]);
+				int y = GetterUtil.getInteger(coords[1]);
+
+				actions.moveToElement(webElement, x, y);
+
+				actions.clickAndHold();
+			}
+			else {
+				actions.moveToElement(webElement);
+
+				actions.clickAndHold();
+			}
 
 			actions.pause(1500);
 

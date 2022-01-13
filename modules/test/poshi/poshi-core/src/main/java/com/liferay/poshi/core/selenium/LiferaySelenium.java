@@ -174,7 +174,8 @@ public interface LiferaySelenium {
 
 	public void doubleClickAt(String locator, String coordString);
 
-	public void dragAndDrop(String locator, String movementsString);
+	public void dragAndDrop(
+		String locator, String movementsString, String offset);
 
 	public void dragAndDropToObject(
 		String locatorOfObjectToBeDragged,
