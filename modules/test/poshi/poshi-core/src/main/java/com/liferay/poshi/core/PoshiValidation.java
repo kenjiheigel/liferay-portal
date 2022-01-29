@@ -15,6 +15,7 @@
 package com.liferay.poshi.core;
 
 import com.liferay.poshi.core.elements.PoshiElement;
+import com.liferay.poshi.core.script.PoshiScriptParserUtil;
 import com.liferay.poshi.core.util.OSDetector;
 import com.liferay.poshi.core.util.PropsUtil;
 import com.liferay.poshi.core.util.StringUtil;
@@ -416,14 +417,13 @@ public class PoshiValidation {
 		}
 		else if (classType.equals("testcase")) {
 			List<String> possibleAttributeNames = Arrays.asList(
-				"component-name", "extends", "ignore", "ignore-command-names",
-				"line-number");
+				"extends", "ignore", "ignore-command-names", "line-number");
 
 			validatePossibleAttributeNames(
 				element, possibleAttributeNames, filePath);
 
 			validateRequiredAttributeNames(
-				element, Arrays.asList("component-name"), filePath);
+				element, possibleAttributeNames, filePath);
 		}
 	}
 
@@ -1013,6 +1013,49 @@ public class PoshiValidation {
 			_exceptions.add(
 				new ValidationException(
 					element, "Missing message attribute\n", filePath));
+		}
+	}
+
+	protected static void validateMethodElement(
+		Element element, String filePath) {
+
+		String methodValue = element.attributeValue("method");
+
+		if ((methodValue != null) && methodValue.contains("selenium")) {
+			Matcher matcher = _seleniumPattern.matcher(methodValue);
+
+			while (matcher.find()) {
+				String seleniumMethodName = matcher.group(1);
+
+				if (seleniumMethodName.equals("getCurrentUrl")) {
+					continue;
+				}
+
+				int parameterCount = PoshiContext.getSeleniumParameterCount(
+					seleniumMethodName);
+
+				List<String> parameters =
+					PoshiScriptParserUtil.getMethodParameters(matcher.group(2));
+
+				if (parameters.size() != parameterCount) {
+					_exceptions.add(
+						new ValidationException(
+							element, "Incorrect parameter count", "\n",
+							filePath));
+				}
+
+				for (String parameter : parameters) {
+					Matcher exceptionMatcher = _seleniumErrorPattern.matcher(
+						parameter);
+
+					if (exceptionMatcher.find()) {
+						_exceptions.add(
+							new ValidationException(
+								element, "Remove locator|value 1-3", "\n",
+								filePath));
+					}
+				}
+			}
 		}
 	}
 
@@ -1631,6 +1674,8 @@ public class PoshiValidation {
 		validateRequiredAttributeNames(
 			element, Arrays.asList("name"), filePath);
 
+		validateMethodElement(element, filePath);
+
 		List<Attribute> attributes = element.attributes();
 
 		int minimumAttributeSize = 2;
@@ -1788,6 +1833,10 @@ public class PoshiValidation {
 
 	private static final Set<Exception> _exceptions = new HashSet<>();
 	private static final Pattern _pattern = Pattern.compile("\\$\\{([^}]*)\\}");
+	private static final Pattern _seleniumErrorPattern = Pattern.compile(
+		"^(locator|value)");
+	private static final Pattern _seleniumPattern = Pattern.compile(
+		"^selenium#(get[A-z]+)(?:\\((.*|)\\))?$");
 
 	private static class ValidationException extends Exception {
 
