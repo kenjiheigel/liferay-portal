@@ -1,10 +1,25 @@
 buildscript {
 	dependencies {
-		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.defaults", version: "latest.release"
+		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.defaults", version: "7.0.278"
 	}
 
 	repositories {
 		mavenLocal()
+
+		File tmpMavenRepositoryDir = null
+
+		if (hasProperty("tmp.maven.repository.dir")) {
+			tmpMavenRepositoryDir = file(properties["tmp.maven.repository.dir"])
+		}
+		else {
+			tmpMavenRepositoryDir = file("../../../../.m2-tmp")
+		}
+
+		if (tmpMavenRepositoryDir.exists()) {
+			maven {
+				url tmpMavenRepositoryDir
+			}
+		}
 
 		maven {
 			url "https://repository-cdn.liferay.com/nexus/content/groups/public"
@@ -13,3 +28,7 @@ buildscript {
 }
 
 apply plugin: "com.liferay.poshi.defaults"
+
+poshiRunner {
+	version = "1.0.337"
+}
