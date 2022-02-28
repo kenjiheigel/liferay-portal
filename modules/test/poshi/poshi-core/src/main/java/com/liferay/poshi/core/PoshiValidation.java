@@ -1139,9 +1139,15 @@ public class PoshiValidation {
 			PoshiGetterUtil.getNamespaceFromNamespacedClassCommandName(
 				namespacedClassCommandName);
 
+		System.out.println(namespace);
+
 		if (namespace.equals(defaultNamespace)) {
+			System.out.println("namespace is same");
+
 			namespace = PoshiContext.getNamespaceFromFilePath(
 				_getFilePath(poshiElement));
+
+			System.out.println("namespace from filepath: " + namespace);
 		}
 
 		if (!PoshiContext.isRootElement(classType, className, namespace) &&
