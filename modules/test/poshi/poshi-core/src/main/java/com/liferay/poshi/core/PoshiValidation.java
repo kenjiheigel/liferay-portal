@@ -1123,6 +1123,8 @@ public class PoshiValidation {
 		PoshiElement poshiElement, String namespacedClassCommandName,
 		String classType) {
 
+		System.out.println("namespacedClassCommandName: " + namespacedClassCommandName);
+
 		String classCommandName =
 			PoshiGetterUtil.getClassCommandNameFromNamespacedClassCommandName(
 				namespacedClassCommandName);
@@ -1146,6 +1148,10 @@ public class PoshiValidation {
 			!PoshiContext.isRootElement(
 				classType, className, defaultNamespace)) {
 
+			System.out.println("invalid ___ class: " + className);
+			System.out.println("namespace: " + namespace);
+			System.out.println("defaultNamespace: " + defaultNamespace);
+
 			_exceptions.add(
 				new PoshiElementException(
 					poshiElement, "Invalid ", classType, " class ", className));
@@ -1155,6 +1161,11 @@ public class PoshiValidation {
 				classType, classCommandName, namespace) &&
 			!PoshiContext.isCommandElement(
 				classType, classCommandName, defaultNamespace)) {
+
+			System.out.println("invalid ___ command: " + namespacedClassCommandName);
+			System.out.println("namespace: " + namespace);
+			System.out.println("defaultNamespace: " + defaultNamespace);
+
 
 			_exceptions.add(
 				new PoshiElementException(
