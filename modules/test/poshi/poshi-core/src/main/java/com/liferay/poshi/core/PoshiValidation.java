@@ -1123,7 +1123,7 @@ public class PoshiValidation {
 		PoshiElement poshiElement, String namespacedClassCommandName,
 		String classType) {
 
-		System.out.println("namespacedClassCommandName: " + namespacedClassCommandName);
+//		System.out.println("namespacedClassCommandName: " + namespacedClassCommandName);
 
 		String classCommandName =
 			PoshiGetterUtil.getClassCommandNameFromNamespacedClassCommandName(
