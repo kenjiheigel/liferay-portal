@@ -255,8 +255,12 @@ public class PoshiContext {
 			return _DEFAULT_NAMESPACE;
 		}
 
+		System.out.println("default filepath: " + filePath);
+
 		for (Map.Entry<String, String> entry : _filePaths.entrySet()) {
 			String value = entry.getValue();
+
+			System.out.println("stored file path: " + value);
 
 			if (value.equals(filePath)) {
 				String key = entry.getKey();
