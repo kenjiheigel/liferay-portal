@@ -689,6 +689,109 @@ public class PoshiContext {
 			testCaseNamespacedClassCommandName;
 	}
 
+	public static class SeleniumMethod {
+
+		public static Map<String, Method> seleniumMethods =
+			Collections.synchronizedMap(new HashMap<>());
+		public static List<String> seleniumParameterNames = Arrays.asList(
+			"locator1", "value1", "locator2");
+		public static Map<String, String[]> uniqueSeleniumMethods =
+			Collections.synchronizedMap(new HashMap<>());
+
+		public SeleniumMethod(Method seleniumMethod) {
+			String methodName = seleniumMethod.getName();
+
+			if (methodName.equals("assertAlertText") ||
+				methodName.equals("assertConfirmation") ||
+				methodName.equals("assertConsoleTextNotPresent") ||
+				methodName.equals("assertConsoleTextPresent") ||
+				methodName.equals("assertHTMLSourceTextNotPresent") ||
+				methodName.equals("assertHTMLSourceTextPresent") ||
+				methodName.equals("assertLocation") ||
+				methodName.equals("assertNotLocation") ||
+				methodName.equals("assertPartialConfirmation") ||
+				methodName.equals("assertPartialLocation") ||
+				methodName.equals("assertTextNotPresent") ||
+				methodName.equals("assertTextPresent") ||
+				methodName.equals("isConsoleTextNotPresent") ||
+				methodName.equals("isConsoleTextPresent") ||
+				methodName.equals("scrollBy") ||
+				methodName.equals("typeAlert") ||
+				methodName.equals("waitForConfirmation") ||
+				methodName.equals("waitForConsoleTextNotPresent") ||
+				methodName.equals("waitForConsoleTextPresent") ||
+				methodName.equals("waitForTextNotPresent") ||
+				methodName.equals("waitForTextPresent")) {
+
+				String[] params = {"value1"};
+
+				uniqueSeleniumMethods.put(methodName, params);
+			}
+			else if (methodName.equals("clickAt")) {
+				String[] params = {"locator1", ""};
+
+				uniqueSeleniumMethods.put(methodName, params);
+			}
+			else if (methodName.equals("assertCSSValue")) {
+				String[] params = {"locator1", "locator2", "value1"};
+
+				uniqueSeleniumMethods.put(methodName, params);
+			}
+			else if (methodName.equals("ocularAssertElementImage")) {
+				String[] params = {"locator1", "value1", "value2"};
+
+				uniqueSeleniumMethods.put(methodName, params);
+			}
+			else if (_isJavaScriptMethod(methodName)) {
+				String[] params = {"value1", "value2", "value3"};
+
+				uniqueSeleniumMethods.put(methodName, params);
+			}
+			else {
+				seleniumMethods.put(methodName, seleniumMethod);
+			}
+		}
+
+		public List<String> getParameterNames(String methodName) {
+			if (seleniumMethods.containsKey(methodName)) {
+				int parameterCount = getSeleniumParameterCount(methodName);
+
+				List<String> seleniumMethodParameters = new ArrayList<>();
+
+				if (parameterCount == 0) {
+					return seleniumMethodParameters;
+				}
+
+				for (int i = 0; i < parameterCount; i++) {
+					String parameter = seleniumParameterNames.get(i);
+
+					seleniumMethodParameters.add(parameter);
+				}
+
+				return seleniumMethodParameters;
+			}
+
+			if (uniqueSeleniumMethods.containsKey(methodName)) {
+				return Arrays.asList(uniqueSeleniumMethods.get(methodName));
+			}
+
+			//REMOVE THE BELOW LINE
+
+			return seleniumParameterNames;
+		}
+
+		public Method getSeleniumMethod(String methodName) {
+			return seleniumMethods.get(methodName);
+		}
+
+		public int getSeleniumParameterCount(String methodName) {
+			Method seleniumMethod = getSeleniumMethod(methodName);
+
+			return seleniumMethod.getParameterCount();
+		}
+
+	}
+
 	private static void _executePoshiFileCallables(
 			String poshiFileType, List<PoshiFileCallable> poshiFileCallables,
 			int threadPoolSize)
@@ -1011,6 +1114,20 @@ public class PoshiContext {
 		return false;
 	}
 
+	private static boolean _isJavaScriptMethod(String methodName) {
+		if (methodName.equals("assertJavaScript") ||
+			methodName.equals("executeJavaScript") ||
+			methodName.equals("getJavaScriptResult") ||
+			methodName.equals("waitForJavaScript") ||
+			methodName.equals("waitForJavaScriptNoError") ||
+			methodName.equals("verifyJavaScript")) {
+
+			return true;
+		}
+
+		return false;
+	}
+
 	private static void _overrideRootElement(
 			Element rootElement, String filePath, String namespace)
 		throws Exception {
@@ -1311,12 +1428,10 @@ public class PoshiContext {
 		Method[] methods = LiferaySelenium.class.getMethods();
 
 		for (Method method : methods) {
-			Class<?>[] classes = method.getParameterTypes();
+			SeleniumMethod seleniumMethod = new SeleniumMethod(method);
 
-			_seleniumParameterCounts.put(method.getName(), classes.length);
+			_seleniumMethods.put(method.getName(), seleniumMethod);
 		}
-
-		_seleniumParameterCounts.put("open", 1);
 	}
 
 	private static void _storePathElement(
@@ -1941,6 +2056,8 @@ public class PoshiContext {
 		Collections.synchronizedMap(new HashMap<>());
 	private static final Map<String, List<Element>> _rootVarElements =
 		Collections.synchronizedMap(new HashMap<>());
+	private static final Map<String, SeleniumMethod> _seleniumMethods =
+		new HashMap<>();
 	private static final Map<String, Integer> _seleniumParameterCounts =
 		Collections.synchronizedMap(new HashMap<>());
 	private static final Map<String, String> _testCaseDescriptions =
