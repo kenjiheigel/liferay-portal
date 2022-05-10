@@ -108,17 +108,6 @@ public class FileUtil {
 		return filePath;
 	}
 
-	public static void getFileContents(String filePath){
-		File directory = new File(filePath);
-
-		File[] filesList = directory.listFiles();
-		for(File f : filesList){
-			if(f.isDirectory() || f.isFile()) {
-				System.out.println(f.getName());
-			}
-		}
-	}
-
 	public static String getCanonicalPath(String filePath) {
 		try {
 			File file = new File(filePath);
@@ -130,6 +119,22 @@ public class FileUtil {
 		}
 
 		return filePath;
+	}
+
+	public static List<String> getFileContents(String filePath) {
+		File sourceDir = new File(filePath);
+
+		File[] filesList = sourceDir.listFiles();
+
+		List<String> dirContents = new ArrayList<>();
+
+		for (File file : filesList) {
+			if (file.isDirectory() || file.isFile()) {
+				dirContents.add(file.getName());
+			}
+		}
+
+		return dirContents;
 	}
 
 	public static String getFileName(String filePath) {
