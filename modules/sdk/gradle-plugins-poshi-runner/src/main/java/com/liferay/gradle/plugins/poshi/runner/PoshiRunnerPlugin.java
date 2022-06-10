@@ -101,6 +101,8 @@ public class PoshiRunnerPlugin implements Plugin<Project> {
 	public void apply(Project project) {
 		GradleUtil.applyPlugin(project, BasePlugin.class);
 
+		System.out.println("fake chagne");
+
 		final PoshiRunnerExtension poshiRunnerExtension =
 			GradleUtil.addExtension(
 				project, "poshiRunner", PoshiRunnerExtension.class);
