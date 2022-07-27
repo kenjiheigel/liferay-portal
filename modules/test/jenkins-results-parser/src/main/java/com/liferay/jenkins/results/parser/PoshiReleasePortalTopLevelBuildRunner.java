@@ -256,6 +256,8 @@ public class PoshiReleasePortalTopLevelBuildRunner
 			invocationParameters.put(
 				"GITHUB_PULL_REQUEST_NUMBER", pullRequest.getNumber());
 			invocationParameters.put(
+				"GITHUB_RECEIVER_USERNAME", pullRequest.getReceiverUsername());
+			invocationParameters.put(
 				"JENKINS_GITHUB_BRANCH_NAME",
 				_getGitHubBranchName("JENKINS_GITHUB_URL"));
 			invocationParameters.put(
@@ -301,7 +303,7 @@ public class PoshiReleasePortalTopLevelBuildRunner
 		for (WorkspaceGitRepository workspaceGitRepository :
 				workspace.getWorkspaceGitRepositories()) {
 
-			System.out.println(workspaceGitRepository);
+			System.out.println("workspaceGitRepository: " + workspaceGitRepository);
 
 			File workspaceGitRepositoryDir = workspaceGitRepository.getDirectory();
 

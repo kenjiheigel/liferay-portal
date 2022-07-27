@@ -230,12 +230,6 @@ public abstract class BaseWorkspaceGitRepository
 			_setSenderBranchUsername(_senderRemoteGitRef.getUsername());
 		}
 		else if (GitUtil.isValidGitHubRefURL(gitHubURL)) {
-			_upstreamRemoteGitRef = _getUpstreamRemoteGitRef();
-
-			_setBaseBranchHeadSHA(_upstreamRemoteGitRef.getSHA());
-			setBaseBranchSHA(_upstreamRemoteGitRef.getSHA());
-			_setBaseBranchUsername(_upstreamRemoteGitRef.getUsername());
-
 			_senderRemoteGitRef = GitUtil.getRemoteGitRef(gitHubURL);
 
 			_setSenderBranchHeadSHA(_senderRemoteGitRef.getSHA());
@@ -243,13 +237,19 @@ public abstract class BaseWorkspaceGitRepository
 			setSenderBranchSHA(_senderRemoteGitRef.getSHA());
 			_setSenderBranchUsername(_senderRemoteGitRef.getUsername());
 
-//			System.out.println("rebase: " + _rebase);
-//
-//			if (_rebase) {
-//				_setBaseBranchHeadSHA(_upstreamRemoteGitRef.getSHA());
-//				setBaseBranchSHA(_upstreamRemoteGitRef.getSHA());
-//				_setBaseBranchUsername(_upstreamRemoteGitRef.getUsername());
-//			}
+			_upstreamRemoteGitRef = _getUpstreamRemoteGitRef();
+
+			_setBaseBranchHeadSHA(_upstreamRemoteGitRef.getSHA());
+			setBaseBranchSHA(_upstreamRemoteGitRef.getSHA());
+			_setBaseBranchUsername(_upstreamRemoteGitRef.getUsername());
+
+			System.out.println("rebase: " + _rebase);
+
+			if (_rebase) {
+				_setBaseBranchHeadSHA(_upstreamRemoteGitRef.getSHA());
+				setBaseBranchSHA(_upstreamRemoteGitRef.getSHA());
+				_setBaseBranchUsername(_upstreamRemoteGitRef.getUsername());
+			}
 		}
 		else {
 			throw new RuntimeException("Invalid GitHub URL " + gitHubURL);
