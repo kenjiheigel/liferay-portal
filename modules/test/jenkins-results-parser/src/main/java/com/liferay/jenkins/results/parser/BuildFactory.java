@@ -185,6 +185,11 @@ public class BuildFactory {
 				url, (TopLevelBuild)parentBuild);
 		}
 
+		if (jobName.equals("test-poshi-release")) {
+			return new PoshiReleasePortalTopLevelBuild(
+				url, (TopLevelBuild)parentBuild);
+		}
+
 		if (jobName.matches("test-subrepository-acceptance-pullrequest.*")) {
 			return new PullRequestSubrepositoryTopLevelBuild(
 				url, (TopLevelBuild)parentBuild);

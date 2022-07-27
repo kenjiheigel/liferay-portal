@@ -204,9 +204,9 @@ public abstract class BaseWorkspaceGitRepository
 			throw new RuntimeException("GitHub URL is null");
 		}
 
-		if (gitHubURL.equals(optString("git_hub_url"))) {
-			return;
-		}
+//		if (gitHubURL.equals(optString("git_hub_url")) && !_rebase) {
+//			return;
+//		}
 
 		_localGitBranch = null;
 
@@ -230,15 +230,26 @@ public abstract class BaseWorkspaceGitRepository
 			_setSenderBranchUsername(_senderRemoteGitRef.getUsername());
 		}
 		else if (GitUtil.isValidGitHubRefURL(gitHubURL)) {
+			_upstreamRemoteGitRef = _getUpstreamRemoteGitRef();
+
+			_setBaseBranchHeadSHA(_upstreamRemoteGitRef.getSHA());
+			setBaseBranchSHA(_upstreamRemoteGitRef.getSHA());
+			_setBaseBranchUsername(_upstreamRemoteGitRef.getUsername());
+
 			_senderRemoteGitRef = GitUtil.getRemoteGitRef(gitHubURL);
 
-			_setBaseBranchHeadSHA(_senderRemoteGitRef.getSHA());
-			setBaseBranchSHA(_senderRemoteGitRef.getSHA());
-			_setBaseBranchUsername(_senderRemoteGitRef.getUsername());
 			_setSenderBranchHeadSHA(_senderRemoteGitRef.getSHA());
 			_setSenderBranchName(_senderRemoteGitRef.getName());
 			setSenderBranchSHA(_senderRemoteGitRef.getSHA());
 			_setSenderBranchUsername(_senderRemoteGitRef.getUsername());
+
+//			System.out.println("rebase: " + _rebase);
+//
+//			if (_rebase) {
+//				_setBaseBranchHeadSHA(_upstreamRemoteGitRef.getSHA());
+//				setBaseBranchSHA(_upstreamRemoteGitRef.getSHA());
+//				_setBaseBranchUsername(_upstreamRemoteGitRef.getUsername());
+//			}
 		}
 		else {
 			throw new RuntimeException("Invalid GitHub URL " + gitHubURL);
@@ -281,6 +292,8 @@ public abstract class BaseWorkspaceGitRepository
 
 		gitWorkingDirectory.createLocalGitBranch(
 			getUpstreamBranchName(), true, getBaseBranchSHA());
+
+		System.out.println("BaseWorkspaceGitRepository.setUp(): base branch SHA: " + getBaseBranchSHA());
 
 		gitWorkingDirectory.reset("--hard " + localGitBranch.getSHA());
 
@@ -716,6 +729,14 @@ public abstract class BaseWorkspaceGitRepository
 	private LocalGitBranch _localGitBranch;
 	private final Set<String> _propertyOptions = new HashSet<>();
 	private RemoteGitRef _senderRemoteGitRef;
+
+	public void setRebase(boolean rebase) {
+		_rebase = rebase;
+
+		System.out.println("setRebase, _rebase: " + _rebase);
+	}
+
+	private boolean _rebase;
 	private boolean _setUp;
 	private RemoteGitRef _upstreamRemoteGitRef;
 

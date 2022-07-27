@@ -59,6 +59,11 @@ public abstract class PortalTopLevelBuildRunner
 		WorkspaceGitRepository primaryWorkspaceGitRepository =
 			_workspace.getPrimaryWorkspaceGitRepository();
 
+		System.out.println("portal github repo name: " + portalTopLevelBuildData.getPortalGitHubRepositoryName());
+		System.out.println("upstream branch name: " + portalTopLevelBuildData.getPortalUpstreamBranchName());
+		System.out.println("top level branch name: " + portalTopLevelBuildData.getTopLevelJobName());
+		System.out.println("portal github url: " + portalTopLevelBuildData.getPortalGitHubURL());
+
 		primaryWorkspaceGitRepository.setGitHubURL(
 			portalTopLevelBuildData.getPortalGitHubURL());
 
@@ -67,6 +72,10 @@ public abstract class PortalTopLevelBuildRunner
 
 	protected PortalTopLevelBuildRunner(T portalTopLevelBuildData) {
 		super(portalTopLevelBuildData);
+	}
+
+	public void setWorkspace(Workspace workspace) {
+		_workspace = workspace;
 	}
 
 	private Workspace _workspace;

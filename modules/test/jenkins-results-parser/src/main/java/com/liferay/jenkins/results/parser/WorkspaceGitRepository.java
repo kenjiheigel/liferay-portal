@@ -52,6 +52,8 @@ public interface WorkspaceGitRepository extends LocalGitRepository {
 
 	public void setUp();
 
+	public void setRebase(boolean rebase);
+
 	public void storeCommitHistory(List<String> commitSHAs);
 
 	public void synchronizeToGitHubDev();
