@@ -2511,6 +2511,9 @@ public class GitWorkingDirectory {
 
 			String upstreamGitBranchSHA = upstreamRemoteGitBranch.getSHA();
 
+			System.out.println("upstreamGitBranchSHA: " + upstreamGitBranchSHA);
+			System.out.println("localSHAExists: " + localSHAExists(upstreamGitBranchSHA));
+
 			if (!localSHAExists(upstreamGitBranchSHA)) {
 				fetch(upstreamRemoteGitBranch);
 			}
