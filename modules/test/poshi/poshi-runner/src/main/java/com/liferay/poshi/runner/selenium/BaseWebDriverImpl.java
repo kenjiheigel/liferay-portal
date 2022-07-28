@@ -706,19 +706,19 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 	public void assertTable(String locator, String tableString)
 		throws Exception {
 
-		List<List<String>> htmlRawDataList = getRawDataList(locator);
+		List<List<String>> htmlTableDataList = getHTMLTableDataList(locator);
 
-		List<List<String>> rawDataList = TableUtil.getRawDataListFromString(
+		List<List<String>> tableDataList = TableUtil.getTableDataListFromString(
 			tableString);
 
-		if (htmlRawDataList.size() != rawDataList.size()) {
+		if (htmlTableDataList.size() != tableDataList.size()) {
 			throw new Exception("Table row numbers do not match");
 		}
 
-		for (int i = 0; i < htmlRawDataList.size(); i++) {
-			List<String> htmlRows = htmlRawDataList.get(i);
+		for (int i = 0; i < htmlTableDataList.size(); i++) {
+			List<String> htmlRows = htmlTableDataList.get(i);
 
-			List<String> rows = rawDataList.get(i);
+			List<String> rows = tableDataList.get(i);
 
 			if (htmlRows.size() != rows.size()) {
 				throw new Exception("Table entry numbers do not match");
@@ -3802,6 +3802,31 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 		return _frameWebElements;
 	}
 
+	protected List<List<String>> getHTMLTableDataList(String locator) {
+		List<List<String>> htmlTableDataList = new ArrayList<>();
+
+		List<WebElement> htmlRowElements = findElements(
+			By.xpath(locator + "//tr"));
+		List<WebElement> htmlColumnElements;
+
+		for (int i = 2; i <= htmlRowElements.size(); i++) {
+			List<String> htmlRowList = new ArrayList<>();
+			htmlColumnElements = findElements(
+				By.xpath(locator + "//tr[" + i + "]//td"));
+
+			for (int j = 1; j <= htmlColumnElements.size(); j++) {
+				WebElement entryContent = findElement(
+					By.xpath(locator + "//tr[" + i + "]//td[" + j + "]"));
+
+				htmlRowList.add(entryContent.getText());
+			}
+
+			htmlTableDataList.add(htmlRowList);
+		}
+
+		return htmlTableDataList;
+	}
+
 	protected ImageTarget getImageTarget(String image) throws Exception {
 		String fileName =
 			FileUtil.getSeparator() + getSikuliImagesDirName() + image;
@@ -4088,30 +4113,6 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 			}
 
 		};
-	}
-
-	protected List<List<String>> getRawDataList(String locator) {
-		List<List<String>> rawDataList = new ArrayList<>();
-
-		List<WebElement> rowsList = findElements(By.xpath(locator + "//tr"));
-		List<WebElement> columnsList;
-
-		for (int i = 2; i <= rowsList.size(); i++) {
-			List<String> rowContent = new ArrayList<>();
-			columnsList = findElements(
-				By.xpath(locator + "//tr[" + i + "]//td"));
-
-			for (int j = 1; j <= columnsList.size(); j++) {
-				WebElement entryContent = findElement(
-					By.xpath(locator + "//tr[" + i + "]//td[" + j + "]"));
-
-				rowContent.add(entryContent.getText());
-			}
-
-			rawDataList.add(rowContent);
-		}
-
-		return rawDataList;
 	}
 
 	protected int getScrollOffsetX() {
