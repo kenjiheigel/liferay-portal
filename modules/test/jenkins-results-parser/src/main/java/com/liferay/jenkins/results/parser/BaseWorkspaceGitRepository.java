@@ -286,12 +286,20 @@ public abstract class BaseWorkspaceGitRepository
 
 		GitWorkingDirectory gitWorkingDirectory = getGitWorkingDirectory();
 
+		System.out.println(1);
+
 		LocalGitBranch localGitBranch = getLocalGitBranch();
+
+		System.out.println(2);
 
 		gitWorkingDirectory.checkoutLocalGitBranch(localGitBranch);
 
+		System.out.println(3);
+
 		gitWorkingDirectory.createLocalGitBranch(
 			getUpstreamBranchName(), true, getBaseBranchSHA());
+
+		System.out.println(4);
 
 		System.out.println("BaseWorkspaceGitRepository.setUp(): base branch SHA: " + getBaseBranchSHA());
 
