@@ -24,12 +24,12 @@ import java.util.regex.Pattern;
  */
 public class TableUtil {
 
-	public static List<List<String>> getRawDataListFromString(
-		String rawDataString) {
+	public static List<List<String>> getTableDataListFromString(
+		String tableDataString) {
 
-		Matcher rowMatcher = _rowPattern.matcher(rawDataString);
+		Matcher rowMatcher = _rowPattern.matcher(tableDataString);
 
-		List<List<String>> rawData = new ArrayList<>();
+		List<List<String>> tableDataList = new ArrayList<>();
 
 		while (rowMatcher.find()) {
 			String row = rowMatcher.group("row");
@@ -44,38 +44,38 @@ public class TableUtil {
 				rowList.add(entry.trim());
 			}
 
-			rawData.add(rowList);
+			tableDataList.add(rowList);
 		}
 
-		return rawData;
+		return tableDataList;
 	}
 
-	public static int getRawDataListWidth(List<List<String>> rawDataList) {
-		if ((rawDataList == null) || rawDataList.isEmpty()) {
+	public static int getTableDataListWidth(List<List<String>> tableDataList) {
+		if ((tableDataList == null) || tableDataList.isEmpty()) {
 			return 0;
 		}
 
-		List<String> firstRow = rawDataList.get(0);
+		List<String> firstRow = tableDataList.get(0);
 
 		return firstRow.size();
 	}
 
-	public static List<List<String>> getTransposedRawDataList(
-		List<List<String>> rawDataList) {
+	public static List<List<String>> getTransposedTableDataList(
+		List<List<String>> tableDataList) {
 
-		List<List<String>> transposedRawDataList = new ArrayList<>();
+		List<List<String>> transposedTableDataList = new ArrayList<>();
 
-		for (int i = 0; i < getRawDataListWidth(rawDataList); i++) {
+		for (int i = 0; i < getTableDataListWidth(tableDataList); i++) {
 			List<String> column = new ArrayList<>();
 
-			for (List<String> row : rawDataList) {
+			for (List<String> row : tableDataList) {
 				column.add(row.get(i));
 			}
 
-			transposedRawDataList.add(column);
+			transposedTableDataList.add(column);
 		}
 
-		return transposedRawDataList;
+		return transposedTableDataList;
 	}
 
 	private static final Pattern _entryPattern = Pattern.compile(
