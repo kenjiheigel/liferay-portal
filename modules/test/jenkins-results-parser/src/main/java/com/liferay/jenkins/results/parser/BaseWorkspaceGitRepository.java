@@ -230,18 +230,18 @@ public abstract class BaseWorkspaceGitRepository
 			_setSenderBranchUsername(_senderRemoteGitRef.getUsername());
 		}
 		else if (GitUtil.isValidGitHubRefURL(gitHubURL)) {
+			_upstreamRemoteGitRef = _getUpstreamRemoteGitRef();
+
+			_setBaseBranchHeadSHA(_upstreamRemoteGitRef.getSHA());
+			setBaseBranchSHA(_upstreamRemoteGitRef.getSHA());
+			_setBaseBranchUsername(_upstreamRemoteGitRef.getUsername());
+
 			_senderRemoteGitRef = GitUtil.getRemoteGitRef(gitHubURL);
 
 			_setSenderBranchHeadSHA(_senderRemoteGitRef.getSHA());
 			_setSenderBranchName(_senderRemoteGitRef.getName());
 			setSenderBranchSHA(_senderRemoteGitRef.getSHA());
 			_setSenderBranchUsername(_senderRemoteGitRef.getUsername());
-
-			_upstreamRemoteGitRef = _getUpstreamRemoteGitRef();
-
-			_setBaseBranchHeadSHA(_upstreamRemoteGitRef.getSHA());
-			setBaseBranchSHA(_upstreamRemoteGitRef.getSHA());
-			_setBaseBranchUsername(_upstreamRemoteGitRef.getUsername());
 
 			System.out.println("rebase: " + _rebase);
 
