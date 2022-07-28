@@ -2500,6 +2500,9 @@ public class GitWorkingDirectory {
 
 		List<String> commands = new ArrayList<>();
 
+		System.out.println("currentBranchName: " + currentBranchName);
+		System.out.println("localGitBranchName: " + localGitBranchName);
+
 		if ((currentBranchName == null) ||
 			currentBranchName.equals(localGitBranchName)) {
 
