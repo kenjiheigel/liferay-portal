@@ -1264,7 +1264,7 @@ public class PoshiRunnerExecutor {
 				String varType = element.attributeValue("type");
 
 				if (varType.equals("Table")) {
-					varValue = TableUtil.getRawDataListFromString(
+					varValue = TableUtil.getTableDataListFromString(
 						element.getText());
 				}
 				else if ((varType.equals("HashesTable") ||
