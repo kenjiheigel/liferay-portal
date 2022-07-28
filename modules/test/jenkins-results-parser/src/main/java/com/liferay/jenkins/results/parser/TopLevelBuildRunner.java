@@ -188,6 +188,8 @@ public abstract class TopLevelBuildRunner<T extends TopLevelBuildData>
 			File jenkinsReportFile = new File(
 				topLevelBuildData.getWorkspaceDir(), "jenkins-report.html");
 
+			_topLevelBuild.update();
+
 			JenkinsResultsParserUtil.write(
 				jenkinsReportFile, jenkinsReportString);
 
