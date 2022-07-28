@@ -733,6 +733,8 @@ public class PoshiRunnerExecutor {
 
 		int attempts = 0;
 
+		String exceptionMessage = null;
+
 		while (attempts < retries) {
 			try {
 				attempts++;
@@ -761,9 +763,12 @@ public class PoshiRunnerExecutor {
 
 					_macroReturnValue = null;
 				}
+
 				break;
 			}
 			catch (Exception exception) {
+				exceptionMessage = exception.getMessage();
+
 				if (attempts == retries) {
 					SummaryLogger.failSummary(
 						executeElement, exception.getMessage(),
@@ -776,15 +781,16 @@ public class PoshiRunnerExecutor {
 
 		if (attempts >= 2) {
 			SummaryLogger.warnSummary(executeElement, "Retried macro");
-			_poshiLogger.warnCommand(executeElement);
-		} else {
+			System.out.println(
+				"Macro attempts: " + attempts + "\nWarning: " +
+					exceptionMessage);
+		}
+		else {
 			SummaryLogger.passSummary(executeElement);
 			_poshiLogger.updateStatus(executeElement, "pass");
 		}
 
 		PoshiStackTraceUtil.popStackTrace();
-
-
 	}
 
 	public void runMethodExecuteElement(Element executeElement)
