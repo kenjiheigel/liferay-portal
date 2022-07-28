@@ -723,44 +723,68 @@ public class PoshiRunnerExecutor {
 		Element commandElement = PoshiContext.getMacroCommandElement(
 			classCommandName, namespace);
 
-		try {
-			runMacroCommandElement(commandElement, namespacedClassCommandName);
+		int retries = 1;
 
-			Element returnElement = executeElement.element("return");
+		String retryableValue = commandElement.attributeValue("retryable");
 
-			if (returnElement != null) {
-				if (_macroReturnValue == null) {
-					throw new RuntimeException(
-						"No value was returned from macro command '" +
-							namespacedClassCommandName + "'");
-				}
+		if (Validator.isNotNull(retryableValue)) {
+			retries = GetterUtil.getInteger(retryableValue);
+		}
 
-				String returnName = returnElement.attributeValue("name");
+		int attempts = 0;
 
-				if (PoshiVariablesUtil.containsKeyInStaticMap(returnName)) {
-					PoshiVariablesUtil.putIntoStaticMap(
+		while (attempts < retries) {
+			try {
+				attempts++;
+
+				runMacroCommandElement(
+					commandElement, namespacedClassCommandName);
+
+				Element returnElement = executeElement.element("return");
+
+				if (returnElement != null) {
+					if (_macroReturnValue == null) {
+						throw new RuntimeException(
+							"No value was returned from macro command '" +
+								namespacedClassCommandName + "'");
+					}
+
+					String returnName = returnElement.attributeValue("name");
+
+					if (PoshiVariablesUtil.containsKeyInStaticMap(returnName)) {
+						PoshiVariablesUtil.putIntoStaticMap(
+							returnName, _macroReturnValue);
+					}
+
+					PoshiVariablesUtil.putIntoCommandMap(
 						returnName, _macroReturnValue);
+
+					_macroReturnValue = null;
 				}
+				break;
+			}
+			catch (Exception exception) {
+				if (attempts == retries) {
+					SummaryLogger.failSummary(
+						executeElement, exception.getMessage(),
+						_poshiLogger.getDetailsLinkId());
 
-				PoshiVariablesUtil.putIntoCommandMap(
-					returnName, _macroReturnValue);
-
-				_macroReturnValue = null;
+					throw exception;
+				}
 			}
 		}
-		catch (Exception exception) {
-			SummaryLogger.failSummary(
-				executeElement, exception.getMessage(),
-				_poshiLogger.getDetailsLinkId());
 
-			throw exception;
+		if (attempts >= 2) {
+			SummaryLogger.warnSummary(executeElement, "Retried macro");
+			_poshiLogger.warnCommand(executeElement);
+		} else {
+			SummaryLogger.passSummary(executeElement);
+			_poshiLogger.updateStatus(executeElement, "pass");
 		}
-
-		SummaryLogger.passSummary(executeElement);
 
 		PoshiStackTraceUtil.popStackTrace();
 
-		_poshiLogger.updateStatus(executeElement, "pass");
+
 	}
 
 	public void runMethodExecuteElement(Element executeElement)
