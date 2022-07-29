@@ -185,6 +185,18 @@ public class PoshiReleasePortalTopLevelBuildRunner
 		GitWorkingDirectory gitWorkingDirectory) {
 
 		try {
+			if (gitWorkingDirectory.getUpstreamBranchName().equals("master")) {
+				PortalTopLevelBuildData portalTopLevelBuildData = getBuildData();
+
+				return PullRequestFactory.newPullRequest(
+				gitWorkingDirectory.createPullRequest(
+				"Testing Poshi Release", portalTopLevelBuildData.getPortalGitHubBranchName(),
+				portalTopLevelBuildData.getPortalGitHubUsername(),
+				portalTopLevelBuildData.getPortalGitHubUsername(),
+				"Poshi Release | " +
+				gitWorkingDirectory.getUpstreamBranchName()));
+			}
+
 			LocalGitBranch localGitBranch = createLocalGitBranch(
 				gitWorkingDirectory);
 
@@ -311,9 +323,13 @@ public class PoshiReleasePortalTopLevelBuildRunner
 
 			WorkspaceGitRepository primaryWorkspaceGitRepository = workspace.getPrimaryWorkspaceGitRepository();
 
-			if (workspaceGitRepositoryDir.equals(primaryWorkspaceGitRepository.getDirectory())) {
-				continue;
-			}
+//			if (workspaceGitRepositoryDir.equals(primaryWorkspaceGitRepository.getDirectory())) {
+//				PortalWorkspaceGitRepository portalWorkspaceGitRepository = (PortalWorkspaceGitRepository) workspaceGitRepository;
+//
+//				GitWorkingDirectory gitWorkingDirectory = portalWorkspaceGitRepository.getGitWorkingDirectory();
+//
+//				continue;
+//			}
 
 			if (workspaceGitRepository instanceof
 					PortalWorkspaceGitRepository) {
