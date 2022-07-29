@@ -115,12 +115,13 @@ public class PoshiReleasePortalTopLevelBuildRunner
 		waitForDownstreamBuildsToComplete();
 
 		publishJenkinsReport();
+
+		deleteRemoteGitBranches();
 	}
 
-	@Override
-	public void tearDown() {
+	public void deleteRemoteGitBranches() {
 		for (Map.Entry<GitWorkingDirectory, RemoteGitBranch> entry :
-				_remoteGitBranches.entrySet()) {
+			_remoteGitBranches.entrySet()) {
 
 			RemoteGitBranch remoteGitBranch = entry.getValue();
 
@@ -133,7 +134,6 @@ public class PoshiReleasePortalTopLevelBuildRunner
 			}
 		}
 
-		super.tearDown();
 	}
 
 	public void updateGradlePluginsPoshiRunnerDependency(

@@ -374,6 +374,8 @@ public abstract class TopLevelBuildRunner<T extends TopLevelBuildData>
 		topLevelBuildData.setBuildStatus(_topLevelBuild.getStatus());
 
 		for (Build downstreamBuild : _topLevelBuild.getDownstreamBuilds(null)) {
+			System.out.println(downstreamBuild.getBuildURL());
+
 			String buildURL = downstreamBuild.getBuildURL();
 
 			if (buildURL == null) {
