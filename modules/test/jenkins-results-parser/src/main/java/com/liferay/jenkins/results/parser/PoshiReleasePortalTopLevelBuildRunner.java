@@ -127,6 +127,8 @@ public class PoshiReleasePortalTopLevelBuildRunner
 			if (remoteGitBranch != null) {
 				GitWorkingDirectory gitWorkingDirectory = entry.getKey();
 
+				System.out.println("Deleting remote git branch: " + gitWorkingDirectory.getGitDirectory());
+
 				gitWorkingDirectory.deleteRemoteGitBranch(remoteGitBranch);
 			}
 		}
