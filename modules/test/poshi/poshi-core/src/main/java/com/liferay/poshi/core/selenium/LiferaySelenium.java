@@ -30,6 +30,8 @@ public interface LiferaySelenium {
 
 	public void assertAlert(String pattern) throws Exception;
 
+	public void assertAlertExpression(String pattern) throws Exception;
+
 	public void assertAlertNotPresent() throws Exception;
 
 	public void assertAlertText(String pattern) throws Exception;
