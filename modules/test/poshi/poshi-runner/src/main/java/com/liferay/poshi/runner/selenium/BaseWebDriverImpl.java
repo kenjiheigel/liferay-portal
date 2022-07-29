@@ -245,6 +245,20 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 		TestCase.assertEquals(pattern, getAlertText());
 	}
 
+	public void assertAlertExpression(String pattern) throws Exception {
+		Alert alert = getAlert();
+
+		String alertText = alert.getText();
+
+		if (!alertText.matches(pattern)) {
+			String message = StringUtil.combine(
+				"Actual Text \"", alertText,
+				"\" does not match expression pattern \"", pattern, "\"");
+
+			throw new Exception(message);
+		}
+	}
+
 	@Override
 	public void assertAlertNotPresent() throws Exception {
 		if (isAlertPresent()) {
