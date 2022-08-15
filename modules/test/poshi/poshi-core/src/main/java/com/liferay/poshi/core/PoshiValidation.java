@@ -1411,13 +1411,16 @@ public class PoshiValidation {
 			List<String> propertyValues = Arrays.asList(
 				StringUtil.split(propertyPoshiElement.attributeValue("value")));
 
+			URL filePathURL = propertyPoshiElement.getFilePathURL();
+
 			for (String propertyValue : propertyValues) {
 				if (!possiblePropertyValues.contains(propertyValue.trim())) {
 					_exceptions.add(
 						new PoshiElementException(
 							propertyPoshiElement, "Invalid property value '",
 							propertyValue.trim(), "' for property name '",
-							propertyName.trim()));
+							propertyName.trim() + "\nFilePath: " +
+								filePathURL.getPath()));
 				}
 			}
 		}
