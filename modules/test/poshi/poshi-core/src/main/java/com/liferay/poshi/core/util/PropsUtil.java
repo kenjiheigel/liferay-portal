@@ -41,6 +41,10 @@ public class PropsUtil {
 		return _propsUtil._props;
 	}
 
+	public static String getSystemProperty(String key) {
+		return System.getenv(key);
+	}
+
 	public static void set(String key, String value) {
 		_propsUtil._set(key, value);
 	}
