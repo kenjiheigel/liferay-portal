@@ -270,6 +270,8 @@ public class PoshiRunner {
 	@Test
 	public void test() throws Exception {
 		try {
+			System.out.println(System.getenv());
+
 			_runCommand();
 
 			LiferaySeleniumUtil.assertNoPoshiWarnings();
