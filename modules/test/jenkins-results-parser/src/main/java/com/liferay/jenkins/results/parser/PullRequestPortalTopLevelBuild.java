@@ -218,6 +218,11 @@ public class PullRequestPortalTopLevelBuild
 				System.out.println(build.getJobVariant());
 			}
 
+			System.out.println("stable batch names");
+			for (String batchName : stableJobBatchNames) {
+				System.out.println(batchName);
+			}
+
 			return null;
 		}
 
