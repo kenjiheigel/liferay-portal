@@ -175,10 +175,14 @@ public class PullRequestPortalTopLevelBuild
 		Job stableJob = _getStableJob();
 
 		if (stableJob == null) {
+			System.out.println("CI_DEBUG: stableJob is null");
+
 			return null;
 		}
 
 		if (_stableJobResult != null) {
+			System.out.println("CI_DEBUG: _stableJobResult is null");
+
 			return _stableJobResult;
 		}
 
@@ -187,6 +191,8 @@ public class PullRequestPortalTopLevelBuild
 		int stableJobDownstreamBuildsSize = stableJobDownstreamBuilds.size();
 
 		if (stableJobDownstreamBuildsSize == 0) {
+			System.out.println("CI_DEBUG: non zero stable downstream build size");
+
 			return null;
 		}
 
@@ -199,6 +205,8 @@ public class PullRequestPortalTopLevelBuild
 
 		if (stableJobDownstreamBuildsCompletedCount !=
 				stableJobDownstreamBuildsSize) {
+
+			System.out.println("CI_DEBUG: stable completed count & downstream build size mismatch");
 
 			return null;
 		}
@@ -217,6 +225,8 @@ public class PullRequestPortalTopLevelBuild
 		else {
 			_stableJobResult = "FAILURE";
 		}
+
+		System.out.println("CI_DEBUG: returning _stableJobResult: " + _stableJobResult);
 
 		return _stableJobResult;
 	}
