@@ -208,6 +208,16 @@ public class PullRequestPortalTopLevelBuild
 
 			System.out.println("CI_DEBUG: stable completed count & downstream build size mismatch");
 
+			System.out.println("stable downstream builds");
+			for (Build build : stableJobDownstreamBuilds) {
+				System.out.println(build.getJobVariant());
+			}
+
+			System.out.println("stable completed downstream builds");
+			for (Build build : getJobVariantsDownstreamBuilds(stableJobBatchNames, null, "completed")) {
+				System.out.println(build.getJobVariant());
+			}
+
 			return null;
 		}
 
