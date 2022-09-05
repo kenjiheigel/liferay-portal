@@ -92,6 +92,30 @@ public class GradleBuildFile {
 		_saveSource(sourceLines);
 	}
 
+	public List<GradleDependency> getBuildscriptDependencies() {
+		GradleBuildFileVisitor gradleBuildFileVisitor = _walkAST();
+
+		return gradleBuildFileVisitor.getBuildscriptDependencies();
+	}
+
+	public List<GradleDependency> getBuildscriptDependencies(
+		String configuration) {
+
+		GradleBuildFileVisitor gradleBuildFileVisitor = _walkAST();
+
+		List<GradleDependency> gradleDependencies =
+			gradleBuildFileVisitor.getBuildscriptDependencies();
+
+		Stream<GradleDependency> stream = gradleDependencies.stream();
+
+		return stream.filter(
+			gradleDependency -> Objects.equals(
+				configuration, gradleDependency.getConfiguration())
+		).collect(
+			Collectors.toList()
+		);
+	}
+
 	public List<GradleDependency> getGradleDependencies() {
 		GradleBuildFileVisitor gradleBuildFileVisitor = _walkAST();
 
@@ -120,7 +144,7 @@ public class GradleBuildFile {
 
 	public List<String> getSourceLines() {
 		return Stream.of(
-			_source.split(System.lineSeparator())
+			_source.split("\n")
 		).collect(
 			Collectors.toList()
 		);
@@ -173,7 +197,7 @@ public class GradleBuildFile {
 	private void _saveSource(List<String> lines) {
 		Stream<String> stream = lines.stream();
 
-		_source = stream.collect(Collectors.joining(System.lineSeparator()));
+		_source = stream.collect(Collectors.joining("\n"));
 	}
 
 	private GradleBuildFileVisitor _walkAST() {
