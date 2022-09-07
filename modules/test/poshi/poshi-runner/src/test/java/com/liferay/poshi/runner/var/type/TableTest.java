@@ -40,7 +40,7 @@ public class TableTest extends PoshiRunnerTestCase {
 	@Before
 	@Override
 	public void setUp() throws Exception {
-		_rawDataList = TableUtil.getRawDataListFromString(_RAW_DATA_STRING);
+		_rawDataList = TableUtil.getTableDataListFromString(_RAW_DATA_STRING);
 
 		setUpPoshiRunner(_TEST_BASE_DIR_NAME);
 	}
@@ -120,13 +120,15 @@ public class TableTest extends PoshiRunnerTestCase {
 	@Test
 	public void testTransposedTable() throws Exception {
 		RawTable transposedTable = (RawTable)TableFactory.newTable(
-			TableUtil.getTransposedRawDataList(_rawDataList), "RawTable");
+			TableUtil.getTransposedTableDataList(_rawDataList), "RawTable");
 
 		Iterable<List<String>> actual = transposedTable.getTable();
 
 		List<List<String>> expected = new ArrayList<>();
 
-		for (int i = 0; i < TableUtil.getRawDataListWidth(_rawDataList); i++) {
+		for (int i = 0; i < TableUtil.getTableDataListWidth(_rawDataList);
+			 i++) {
+
 			List<String> column = new ArrayList<>();
 
 			for (List<String> row : _rawDataList) {
