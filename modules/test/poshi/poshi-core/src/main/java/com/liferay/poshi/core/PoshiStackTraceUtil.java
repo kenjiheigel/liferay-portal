@@ -16,6 +16,7 @@ package com.liferay.poshi.core;
 
 import com.liferay.poshi.core.util.Validator;
 
+import java.util.ListIterator;
 import java.util.Stack;
 
 import org.dom4j.Element;
@@ -81,6 +82,39 @@ public final class PoshiStackTraceUtil {
 			sb.append(PoshiGetterUtil.getFileNameFromFilePath(currentFilePath));
 			sb.append(":");
 			sb.append(PoshiGetterUtil.getLineNumber(_currentElement));
+		}
+
+		return sb.toString();
+	}
+
+	public static String getStackTrace() {
+		StringBuilder sb = new StringBuilder();
+
+		String currentFilePath = _filePaths.peek();
+
+		if (!currentFilePath.contains(".function")) {
+			sb.append(currentFilePath);
+			sb.append(":");
+			sb.append(PoshiGetterUtil.getLineNumber(_currentElement));
+			sb.append("\n");
+		}
+
+		ListIterator<String> listIterator = _stackTrace.listIterator(
+			_stackTrace.size());
+
+		while (listIterator.hasPrevious()) {
+			String filePath = listIterator.previous();
+
+			if (filePath.contains(".function")) {
+				continue;
+			}
+
+			sb.append(filePath);
+			sb.append("\n");
+		}
+
+		if (sb.length() != 0) {
+			sb.setLength(sb.length() - 1);
 		}
 
 		return sb.toString();
