@@ -723,21 +723,18 @@ public class PoshiRunnerExecutor {
 		Element commandElement = PoshiContext.getMacroCommandElement(
 			classCommandName, namespace);
 
-		int retries = 1;
+		int maxRetries = 1;
 
-		String retryableValue = commandElement.attributeValue("retryable");
-
-		if (Validator.isNotNull(retryableValue)) {
-			retries = GetterUtil.getInteger(retryableValue);
+		if (Validator.isNotNull(commandElement.attributeValue("retries"))) {
+			maxRetries = GetterUtil.getInteger(
+				commandElement.attributeValue("retries"));
 		}
 
-		int attempts = 0;
+		int retryCount = 0;
 
-		String exceptionMessage = null;
-
-		while (attempts < retries) {
+		while (retryCount < maxRetries) {
 			try {
-				attempts++;
+				retryCount++;
 
 				runMacroCommandElement(
 					commandElement, namespacedClassCommandName);
@@ -764,30 +761,31 @@ public class PoshiRunnerExecutor {
 					_macroReturnValue = null;
 				}
 
+				if (retryCount > 1) {
+					SummaryLogger.warnSummary(executeElement, "Retried macro");
+				}
+				else {
+					SummaryLogger.passSummary(executeElement);
+					_poshiLogger.updateStatus(executeElement, "pass");
+				}
+
 				break;
 			}
 			catch (Exception exception) {
-				exceptionMessage = exception.getMessage();
-
-				if (attempts == retries) {
+				if (retryCount == maxRetries) {
 					SummaryLogger.failSummary(
 						executeElement, exception.getMessage(),
 						_poshiLogger.getDetailsLinkId());
 
 					throw exception;
 				}
-			}
-		}
 
-		if (attempts >= 2) {
-			SummaryLogger.warnSummary(executeElement, "Retried macro");
-			System.out.println(
-				"Macro attempts: " + attempts + "\nWarning: " +
-					exceptionMessage);
-		}
-		else {
-			SummaryLogger.passSummary(executeElement);
-			_poshiLogger.updateStatus(executeElement, "pass");
+				System.out.println(
+					"POSHI_WARNING: Retrying attempt #" + retryCount + " for " +
+						classCommandName + ". " + exception.getMessage());
+
+				System.out.println(PoshiStackTraceUtil.getStackTrace());
+			}
 		}
 
 		PoshiStackTraceUtil.popStackTrace();
