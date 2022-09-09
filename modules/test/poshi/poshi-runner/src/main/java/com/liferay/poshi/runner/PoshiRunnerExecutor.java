@@ -959,16 +959,47 @@ public class PoshiRunnerExecutor {
 			parameterClasses.add(String.class);
 		}
 
-		_poshiLogger.logSeleniumCommand(executeElement, arguments);
+		String currentFilePath = PoshiStackTraceUtil.getCurrentFilePath();
 
-		LiferaySelenium liferaySelenium = SeleniumUtil.getSelenium();
+		try {
+			_poshiLogger.logSeleniumCommand(executeElement, arguments);
 
-		Class<?> clazz = liferaySelenium.getClass();
+			LiferaySelenium liferaySelenium = SeleniumUtil.getSelenium();
 
-		_returnObject = invokeLiferaySeleniumMethod(
-			clazz.getMethod(
-				selenium, parameterClasses.toArray(new Class<?>[0])),
-			arguments.toArray(new String[0]));
+			Class<?> clazz = liferaySelenium.getClass();
+
+			_returnObject = invokeLiferaySeleniumMethod(
+				clazz.getMethod(
+					selenium, parameterClasses.toArray(new Class<?>[0])),
+				arguments.toArray(new String[0]));
+		}
+		catch (Throwable throwable) {
+			if (currentFilePath.contains(".macro") ||
+				currentFilePath.contains(".testcase")) {
+
+				_poshiLogger.startCommand(executeElement);
+
+				SummaryLogger.startSummary(executeElement);
+
+				System.out.println("log fail");
+
+				SummaryLogger.failSummary(
+					executeElement, throwable.getMessage(),
+					_poshiLogger.getDetailsLinkId());
+
+				_poshiLogger.failCommand(executeElement);
+
+				_poshiLogger.updateStatus(executeElement, "fail");
+			}
+
+			throw throwable;
+		}
+
+		if (currentFilePath.contains(".macro") ||
+			currentFilePath.contains(".testcase")) {
+
+			_poshiLogger.updateStatus(executeElement, "pass");
+		}
 	}
 
 	public void runTakeScreenshotElement(Element element) throws Exception {

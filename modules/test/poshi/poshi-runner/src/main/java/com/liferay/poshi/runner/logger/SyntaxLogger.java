@@ -246,6 +246,10 @@ public abstract class SyntaxLogger {
 						loggerElement.addChildLoggerElement(
 							getMethodExecuteLoggerElement(childElement));
 					}
+					else if (childElement.attributeValue("selenium") != null) {
+						loggerElement.addChildLoggerElement(
+							getSeleniumExecuteElement(childElement));
+					}
 					else if (childElement.attributeValue("test-case") != null) {
 						loggerElement.addChildLoggerElement(
 							getTestCaseExecuteLoggerElement(childElement));
@@ -405,6 +409,12 @@ public abstract class SyntaxLogger {
 		return getLineGroupLoggerElement("return", element);
 	}
 
+	protected LoggerElement getSeleniumExecuteElement(Element executeElement)
+		throws Exception {
+
+		return getLineGroupLoggerElement("selenium", executeElement);
+	}
+
 	protected LoggerElement getTakeScreenshotLoggerElement(Element element) {
 		return getLineGroupLoggerElement("take-screenshot", element);
 	}
@@ -461,7 +471,7 @@ public abstract class SyntaxLogger {
 		List<Element> childElements = element.elements();
 
 		if ((!childElements.isEmpty() && !isExecutingFunction(element) &&
-			 !isExecutingMethod(element)) ||
+			 !isExecutingMethod(element) && !isExecutingSelenium(element)) ||
 			isExecutingMacro(element) || isExecutingTestCase(element)) {
 
 			return true;
@@ -472,7 +482,8 @@ public abstract class SyntaxLogger {
 
 	protected boolean isExecuting(Element element) {
 		if (isExecutingFunction(element) || isExecutingMacro(element) ||
-			isExecutingMethod(element) || isExecutingTestCase(element)) {
+			isExecutingMethod(element) || isExecutingSelenium(element) ||
+			isExecutingTestCase(element)) {
 
 			return true;
 		}
@@ -498,6 +509,14 @@ public abstract class SyntaxLogger {
 
 	protected boolean isExecutingMethod(Element element) {
 		if (element.attributeValue("method") != null) {
+			return true;
+		}
+
+		return false;
+	}
+
+	protected boolean isExecutingSelenium(Element element) {
+		if (element.attributeValue("selenium") != null) {
 			return true;
 		}
 

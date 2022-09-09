@@ -128,6 +128,9 @@ public class PoshiLogger {
 
 		_commandLogger.logExternalMethodCommand(
 			element, arguments, returnValue, _syntaxLogger);
+
+		_linkLoggerElements(
+			_getSyntaxLoggerElement(), _commandLogger.lineGroupLoggerElement);
 	}
 
 	public void logMessage(Element element) throws PoshiRunnerLoggerException {
@@ -151,7 +154,10 @@ public class PoshiLogger {
 	public void logSeleniumCommand(Element element, List<String> arguments)
 		throws PoshiRunnerLoggerException {
 
-		_commandLogger.logSeleniumCommand(element, arguments);
+		_commandLogger.logSeleniumCommand(element, arguments, _syntaxLogger);
+
+		_linkLoggerElements(
+			_getSyntaxLoggerElement(), _commandLogger.lineGroupLoggerElement);
 	}
 
 	public void ocularCommand(Element element)

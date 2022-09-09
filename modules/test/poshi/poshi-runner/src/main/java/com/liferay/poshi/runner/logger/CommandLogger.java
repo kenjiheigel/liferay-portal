@@ -17,6 +17,7 @@ package com.liferay.poshi.runner.logger;
 import com.liferay.poshi.core.PoshiContext;
 import com.liferay.poshi.core.PoshiStackTraceUtil;
 import com.liferay.poshi.core.PoshiVariablesUtil;
+import com.liferay.poshi.core.elements.PoshiElement;
 import com.liferay.poshi.core.selenium.LiferaySelenium;
 import com.liferay.poshi.core.util.FileUtil;
 import com.liferay.poshi.core.util.GetterUtil;
@@ -82,7 +83,11 @@ public final class CommandLogger {
 	public void failCommand(Element element, SyntaxLogger syntaxLogger)
 		throws PoshiRunnerLoggerException {
 
+		System.out.println("fail command");
+
 		if (!_isCurrentCommand(element)) {
+			System.out.println("not current element");
+
 			return;
 		}
 
@@ -109,6 +114,8 @@ public final class CommandLogger {
 			Element element, List<String> arguments, Object returnValue,
 			SyntaxLogger syntaxLogger)
 		throws Exception {
+
+		_takeScreenshot("before", _detailsLinkId);
 
 		lineGroupLoggerElement = new LoggerElement();
 
@@ -148,7 +155,31 @@ public final class CommandLogger {
 			_getDividerLineLoggerElement(namespacedClassCommandName));
 	}
 
-	public void logSeleniumCommand(Element element, List<String> arguments) {
+	public void logSeleniumCommand(
+		Element element, List<String> arguments, SyntaxLogger syntaxLogger) {
+
+		if (lineGroupLoggerElement == null) {
+			System.out.println(lineGroupLoggerElement);
+
+			lineGroupLoggerElement = new LoggerElement();
+
+			lineGroupLoggerElement.setClassName("line-group linkable");
+			lineGroupLoggerElement.setName("li");
+			lineGroupLoggerElement.addChildLoggerElement(
+				_getRunLineLoggerElement(element, arguments));
+
+			_commandLogLoggerElement.addChildLoggerElement(
+				lineGroupLoggerElement);
+
+			LoggerElement scriptLoggerElement =
+				syntaxLogger.getSyntaxLoggerElement(
+					PoshiStackTraceUtil.getSimpleStackTrace());
+
+			_linkLoggerElements(scriptLoggerElement);
+
+			return;
+		}
+
 		LoggerElement loggerElement = lineGroupLoggerElement.loggerElement(
 			"ul");
 
@@ -359,8 +390,7 @@ public final class CommandLogger {
 	}
 
 	private LoggerElement _getExternalMethodLineLoggerElement(
-			Element element, List<String> arguments, Object returnValue)
-		throws Exception {
+		Element element, List<String> arguments, Object returnValue) {
 
 		LoggerElement loggerElement = new LoggerElement();
 
@@ -372,8 +402,7 @@ public final class CommandLogger {
 	}
 
 	private String _getExternalMethodLineText(
-			Element element, List<String> arguments, Object returnValue)
-		throws Exception {
+		Element element, List<String> arguments, Object returnValue) {
 
 		StringBuilder sb = new StringBuilder();
 
@@ -420,36 +449,51 @@ public final class CommandLogger {
 
 		String namespacedClassCommandName = element.attributeValue("function");
 
-		sb.append(_getLineItemText("command-name", namespacedClassCommandName));
+		if (Validator.isNotNull(namespacedClassCommandName)) {
+			sb.append(
+				_getLineItemText("command-name", namespacedClassCommandName));
 
-		for (int i = 0; i < PoshiContext.getFunctionMaxArgumentCount(); i++) {
-			String locatorKey = "locator" + (i + 1);
+			for (int i = 0; i < PoshiContext.getFunctionMaxArgumentCount();
+				 i++) {
 
-			if (PoshiVariablesUtil.containsKeyInExecuteMap(locatorKey)) {
-				sb.append(_getLineItemText("misc", " with "));
-				sb.append(_getLineItemText("param-type", locatorKey));
+				String locatorKey = "locator" + (i + 1);
 
-				String paramValue = PoshiVariablesUtil.getStringFromExecuteMap(
-					locatorKey);
+				if (PoshiVariablesUtil.containsKeyInExecuteMap(locatorKey)) {
+					sb.append(_getLineItemText("misc", " with "));
+					sb.append(_getLineItemText("param-type", locatorKey));
 
-				sb.append(
-					_getLineItemText(
-						"param-value", HtmlUtil.escape(paramValue)));
+					String paramValue =
+						PoshiVariablesUtil.getStringFromExecuteMap(locatorKey);
+
+					sb.append(
+						_getLineItemText(
+							"param-value", HtmlUtil.escape(paramValue)));
+				}
+
+				String valueKey = "value" + (i + 1);
+
+				if (PoshiVariablesUtil.containsKeyInExecuteMap(valueKey)) {
+					sb.append(_getLineItemText("misc", " with "));
+					sb.append(_getLineItemText("param-type", valueKey));
+
+					String paramValue =
+						PoshiVariablesUtil.getStringFromExecuteMap(valueKey);
+
+					sb.append(
+						_getLineItemText(
+							"param-value", HtmlUtil.escape(paramValue)));
+				}
 			}
+		}
 
-			String valueKey = "value" + (i + 1);
+		if ((Validator.isNotNull(element.attributeValue("method")) ||
+			 Validator.isNotNull(element.attributeValue("selenium"))) &&
+			(element instanceof PoshiElement)) {
 
-			if (PoshiVariablesUtil.containsKeyInExecuteMap(valueKey)) {
-				sb.append(_getLineItemText("misc", " with "));
-				sb.append(_getLineItemText("param-type", valueKey));
+			PoshiElement poshiElement = (PoshiElement)element;
 
-				String paramValue = PoshiVariablesUtil.getStringFromExecuteMap(
-					valueKey);
-
-				sb.append(
-					_getLineItemText(
-						"param-value", HtmlUtil.escape(paramValue)));
-			}
+			sb.append(
+				_getLineItemText("command-name", poshiElement.toPoshiScript()));
 		}
 
 		return sb.toString();
@@ -463,8 +507,10 @@ public final class CommandLogger {
 		loggerElement.setClassName("line-group linkable");
 		loggerElement.setName("li");
 
-		loggerElement.addChildLoggerElement(
-			_getButtonLoggerElement(_btnLinkId));
+		if (Validator.isNotNull(element.attributeValue("function"))) {
+			loggerElement.addChildLoggerElement(
+				_getButtonLoggerElement(_btnLinkId));
+		}
 
 		loggerElement.addChildLoggerElement(
 			_getLineContainerLoggerElement(element));
@@ -696,7 +742,8 @@ public final class CommandLogger {
 			 !Objects.equals(element.getName(), "execute") &&
 			 !Objects.equals(element.getName(), "var")) ||
 			(Validator.isNull(element.attributeValue("function")) &&
-			 Validator.isNull(element.attributeValue("method")))) {
+			 Validator.isNull(element.attributeValue("method")) &&
+			 Validator.isNull(element.attributeValue("selenium")))) {
 
 			return false;
 		}
