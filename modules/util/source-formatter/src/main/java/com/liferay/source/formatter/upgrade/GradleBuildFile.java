@@ -14,6 +14,8 @@
 
 package com.liferay.source.formatter.upgrade;
 
+import com.liferay.portal.kernel.util.Validator;
+
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
@@ -205,6 +207,10 @@ public class GradleBuildFile {
 
 		GradleBuildFileVisitor gradleBuildFileVisitor =
 			new GradleBuildFileVisitor();
+
+		if (Validator.isNull(_source)) {
+			return gradleBuildFileVisitor;
+		}
 
 		for (ASTNode astNode :
 				astBuilder.buildFromString(CompilePhase.CONVERSION, _source)) {
