@@ -14,6 +14,8 @@
 
 package com.liferay.source.formatter.upgrade;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.stream.Stream;
 import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.ClassNode;
 import org.codehaus.groovy.ast.builder.AstBuilder;
+import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilePhase;
 
 /**
@@ -212,18 +215,29 @@ public class GradleBuildFile {
 
 		AstBuilder astBuilder = new AstBuilder();
 
-		for (ASTNode astNode :
-				astBuilder.buildFromString(CompilePhase.CONVERSION, _source)) {
+		try {
+			for (ASTNode astNode :
+					astBuilder.buildFromString(
+						CompilePhase.CONVERSION, _source)) {
 
-			if (astNode instanceof ClassNode) {
-				continue;
+				if (astNode instanceof ClassNode) {
+					continue;
+				}
+
+				astNode.visit(gradleBuildFileVisitor);
 			}
-
-			astNode.visit(gradleBuildFileVisitor);
+		}
+		catch (CompilationFailedException compilationFailedException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(compilationFailedException);
+			}
 		}
 
 		return gradleBuildFileVisitor;
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		GradleBuildFile.class);
 
 	private String _source;
 
