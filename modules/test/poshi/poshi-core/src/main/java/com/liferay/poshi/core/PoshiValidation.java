@@ -239,7 +239,7 @@ public class PoshiValidation {
 
 		List<String> possibleAttributeNames = Arrays.asList(
 			"line-number", "name", "prose", "return", "summary",
-			"summary-ignore", "retryable");
+			"summary-ignore", "retries");
 
 		validatePossibleAttributeNames(poshiElement, possibleAttributeNames);
 
