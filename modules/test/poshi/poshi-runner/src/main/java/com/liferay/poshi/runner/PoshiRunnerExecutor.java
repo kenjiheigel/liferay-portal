@@ -761,14 +761,6 @@ public class PoshiRunnerExecutor {
 					_macroReturnValue = null;
 				}
 
-				if (retryCount > 1) {
-					SummaryLogger.warnSummary(executeElement, "Retried macro");
-				}
-				else {
-					SummaryLogger.passSummary(executeElement);
-					_poshiLogger.updateStatus(executeElement, "pass");
-				}
-
 				break;
 			}
 			catch (Exception exception) {
@@ -786,6 +778,14 @@ public class PoshiRunnerExecutor {
 
 				System.out.println(PoshiStackTraceUtil.getStackTrace());
 			}
+		}
+
+		if (retryCount > 1) {
+			SummaryLogger.warnSummary(executeElement, "Retried macro");
+		}
+		else {
+			SummaryLogger.passSummary(executeElement);
+			_poshiLogger.updateStatus(executeElement, "pass");
 		}
 
 		PoshiStackTraceUtil.popStackTrace();

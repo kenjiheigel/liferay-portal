@@ -1000,7 +1000,25 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 
 	@Override
 	public void echo(String message) {
+		fake();
+
 		LiferaySeleniumUtil.echo(message);
+	}
+
+	public static long startTime = System.currentTimeMillis();
+
+	public void fake() {
+		long current = System.currentTimeMillis();
+
+		if ((current - startTime) < 4000) {
+			try {
+				Thread.sleep(3000);
+			}
+			catch (InterruptedException interruptedException) {
+			}
+
+			throw new RuntimeException("fake exception");
+		}
 	}
 
 	@Override
