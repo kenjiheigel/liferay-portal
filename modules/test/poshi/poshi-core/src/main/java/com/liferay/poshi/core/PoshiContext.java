@@ -639,10 +639,6 @@ public class PoshiContext {
 			Collections.addAll(testDirNames, PropsValues.TEST_DIRS);
 		}
 
-		if (Validator.isNotNull(PropsValues.TEST_SUBREPO_DIRS)) {
-			Collections.addAll(testDirNames, PropsValues.TEST_SUBREPO_DIRS);
-		}
-
 		for (String testDirName : testDirNames) {
 			poshiURLs.addAll(
 				_getPoshiURLs(
@@ -650,11 +646,6 @@ public class PoshiContext {
 		}
 
 		Set<String> testSupportDirNames = new HashSet<>();
-
-		if (Validator.isNotNull(PropsValues.TEST_INCLUDE_DIR_NAMES)) {
-			Collections.addAll(
-				testSupportDirNames, PropsValues.TEST_INCLUDE_DIR_NAMES);
-		}
 
 		if (Validator.isNotNull(PropsValues.TEST_SUPPORT_DIRS)) {
 			Collections.addAll(
