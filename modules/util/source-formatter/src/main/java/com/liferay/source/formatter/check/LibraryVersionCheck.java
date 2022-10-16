@@ -141,22 +141,9 @@ public class LibraryVersionCheck extends BaseFileCheck {
 						securityVulnerabilityNode.getSummary(), ", ",
 						securityVulnerabilityNode.getPermalink(), ")"));
 
-				System.out.println(
-					String.join(
-						StringPool.COMMA,
-						securityAdvisoryEcosystemEnum.toString(), packageName,
-						version.toString(),
-						securityVulnerabilityNode.getSummary(),
-						securityVulnerabilityNode.getPermalink()));
-
 				return;
 			}
 		}
-
-		System.out.println(
-			String.join(
-				StringPool.COMMA, securityAdvisoryEcosystemEnum.toString(),
-				packageName, version.toString()));
 	}
 
 	private void _checkVulnerabilities(
