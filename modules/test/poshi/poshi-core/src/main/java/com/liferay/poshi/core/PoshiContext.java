@@ -593,23 +593,46 @@ public class PoshiContext {
 	}
 
 	public static void readFiles() throws Exception {
-		readFiles(null);
+		readFiles(true, null);
 	}
 
-	public static void readFiles(String[] includes, String... baseDirNames)
+	public static void readFiles(boolean readAll) throws Exception {
+		readFiles(readAll, null);
+	}
+
+	public static void readFiles(
+			boolean readAll, String[] includes, String... baseDirNames)
 		throws Exception {
 
 		System.out.println("Start reading Poshi files.");
 
 		long start = System.currentTimeMillis();
 
-		if (includes == null) {
-			includes = POSHI_TEST_FILE_INCLUDES;
-		}
-
 		Set<String> poshiFileIncludes = new HashSet<>();
 
-		Collections.addAll(poshiFileIncludes, includes);
+		if (readAll) {
+			if (includes == null) {
+				includes = POSHI_TEST_FILE_INCLUDES;
+			}
+
+			Collections.addAll(poshiFileIncludes, includes);
+		}
+		else {
+			List<String> testNames = Arrays.asList(
+				PropsValues.TEST_NAME.split("\\s*,\\s*"));
+
+			for (String testName : testNames) {
+				String className =
+					PoshiGetterUtil.getClassNameFromNamespacedClassCommandName(
+						testName);
+
+				System.out.println(className);
+
+				Collections.addAll(
+					poshiFileIncludes, "**/" + className + ".testcase");
+			}
+		}
+
 		Collections.addAll(poshiFileIncludes, POSHI_SUPPORT_FILE_INCLUDES);
 
 		_readPoshiFilesFromClassPath(
@@ -1610,6 +1633,8 @@ public class PoshiContext {
 		List<PoshiFileCallable> macroPoshiFileCallables = new ArrayList<>();
 		List<PoshiFileCallable> testPoshiFileCallables = new ArrayList<>();
 
+		long startTime = System.currentTimeMillis();
+
 		for (URL url : urls) {
 			File file = new File(url.getFile());
 
@@ -1651,17 +1676,29 @@ public class PoshiContext {
 				new PoshiFileCallable(url, namespace));
 		}
 
+		System.out.println(
+			"Checkpoint 1: " + (System.currentTimeMillis() - startTime));
+
 		_executePoshiFileCallables(
 			"dependency", dependencyPoshiFileCallables,
 			PropsValues.POSHI_FILE_READ_THREAD_POOL);
+
+		System.out.println(
+			"Checkpoint 2: " + (System.currentTimeMillis() - startTime));
 
 		_executePoshiFileCallables(
 			"macro", macroPoshiFileCallables,
 			PropsValues.POSHI_FILE_READ_THREAD_POOL);
 
+		System.out.println(
+			"Checkpoint 3: " + (System.currentTimeMillis() - startTime));
+
 		_executePoshiFileCallables(
 			"test", testPoshiFileCallables,
 			PropsValues.POSHI_FILE_READ_THREAD_POOL);
+
+		System.out.println(
+			"Checkpoint 4: " + (System.currentTimeMillis() - startTime));
 	}
 
 	private static void _throwExceptions() throws Exception {
