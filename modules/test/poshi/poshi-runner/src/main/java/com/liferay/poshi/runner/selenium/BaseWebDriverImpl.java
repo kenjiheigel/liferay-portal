@@ -4633,6 +4633,11 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 				put("CONTROL", Keys.CONTROL);
 				put("CTRL", Keys.CONTROL);
 				put("SHIFT", Keys.SHIFT);
+				put("F5", Keys.F5);
+				put("F11", Keys.F11);
+				put("F12", Keys.F12);
+				put("END", Keys.END);
+				put("HOME", Keys.HOME);
 			}
 		};
 	private static final Pattern _tabPattern = Pattern.compile(
