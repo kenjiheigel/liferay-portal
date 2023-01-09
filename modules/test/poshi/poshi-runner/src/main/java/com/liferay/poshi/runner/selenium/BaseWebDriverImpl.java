@@ -54,6 +54,8 @@ import java.io.StringReader;
 
 import java.nio.file.Paths;
 
+import java.time.Duration;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1058,7 +1060,8 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 	public String getConfirmation(String value) {
 		switchTo();
 
-		WebDriverWait webDriverWait = new WebDriverWait(this, 1);
+		WebDriverWait webDriverWait = new WebDriverWait(
+			this, Duration.ofSeconds(1));
 
 		try {
 			Alert alert = webDriverWait.until(
@@ -1493,7 +1496,8 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 		switchTo();
 
 		try {
-			WebDriverWait webDriverWait = new WebDriverWait(this, 1);
+			WebDriverWait webDriverWait = new WebDriverWait(
+				this, Duration.ofSeconds(1));
 
 			webDriverWait.until(ExpectedConditions.alertIsPresent());
 
@@ -3517,7 +3521,8 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 		if (_alert == null) {
 			switchTo();
 
-			WebDriverWait webDriverWait = new WebDriverWait(this, 1);
+			WebDriverWait webDriverWait = new WebDriverWait(
+				this, Duration.ofSeconds(1));
 
 			_alert = webDriverWait.until(ExpectedConditions.alertIsPresent());
 		}
@@ -3528,7 +3533,8 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 	protected String getAlertText() {
 		switchTo();
 
-		WebDriverWait webDriverWait = new WebDriverWait(this, 1);
+		WebDriverWait webDriverWait = new WebDriverWait(
+			this, Duration.ofSeconds(1));
 
 		Alert alert = webDriverWait.until(ExpectedConditions.alertIsPresent());
 
@@ -4353,7 +4359,8 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 	}
 
 	protected WebDriver getWrappedWebDriver(String locator) {
-		WebDriverWait webDriverWait = new WebDriverWait(this, 5);
+		WebDriverWait webDriverWait = new WebDriverWait(
+			this, Duration.ofSeconds(5));
 
 		webDriverWait.until(
 			ExpectedConditions.presenceOfElementLocated(getBy(locator)));
