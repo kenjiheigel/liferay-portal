@@ -21,6 +21,7 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import com.liferay.poshi.core.util.PropsValues;
 import net.lightbody.bmp.BrowserMobProxy;
 import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.client.ClientUtil;
@@ -107,7 +108,7 @@ public class ProxyUtil {
 	private void _startBrowserMobProxy() {
 		_browserMobProxy = new BrowserMobProxyServer();
 
-		_browserMobProxy.start(0);
+		_browserMobProxy.start(PropsValues.PROXY_SERVER_PORT);
 
 		System.out.println("Started BrowserMob Proxy.");
 
