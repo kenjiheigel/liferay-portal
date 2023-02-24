@@ -144,6 +144,10 @@ public class PoshiValidation {
 
 	public static void validate(String testName) throws Exception {
 		validateTestName(testName);
+
+		if (!_exceptions.isEmpty()) {
+			_throwExceptions();
+		}
 	}
 
 	protected static String getPrimaryAttributeName(
@@ -659,8 +663,19 @@ public class PoshiValidation {
 				"argument1", "argument2", "argument3", "line-number",
 				"selenium");
 
-			validateDeprecatedFunction(
-				poshiElement, poshiElement.attributeValue("selenium"));
+			String seleniumAttributeValue = poshiElement.attributeValue(
+				"selenium");
+
+			LiferaySeleniumMethod liferaySelenium =
+				PoshiContext.getLiferaySeleniumMethod(seleniumAttributeValue);
+
+			if (liferaySelenium == null) {
+				_exceptions.add(
+					new PoshiElementException(
+						poshiElement, "Nonexistent selenium method"));
+			}
+
+			validateDeprecatedFunction(poshiElement, seleniumAttributeValue);
 
 			validatePossibleAttributeNames(
 				poshiElement, possibleAttributeNames);
