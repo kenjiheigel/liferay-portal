@@ -100,10 +100,31 @@ public class PoshiScriptParserException extends PoshiElementException {
 		String msg, String poshiScript, PoshiNode<?, ?> parentPoshiNode) {
 
 		super(
-			msg, _getErrorLineNumber(poshiScript, parentPoshiNode),
+			_evaluateExceptionMessage(msg, poshiScript),
+			_getErrorLineNumber(poshiScript, parentPoshiNode),
 			getFilePath(parentPoshiNode), parentPoshiNode);
 
 		_poshiScriptParserExceptions.add(this);
+	}
+
+	private static String _evaluateExceptionMessage(
+		String message, String poshiScript) {
+
+		boolean expectedSemiColon = false;
+
+		for (int i = 0; i < poshiScript.length(); i++) {
+			Character c = poshiScript.charAt(i);
+
+			if (c.equals(')')) {
+				expectedSemiColon = true;
+			}
+
+			if (!c.equals(';') && expectedSemiColon) {
+				return "Missing semicolon";
+			}
+		}
+
+		return message;
 	}
 
 	private static int _getErrorLineNumber(
