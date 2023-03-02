@@ -362,6 +362,14 @@ public class LibraryVulnerabilitiesCheck extends BaseFileCheck {
 						securityVulnerabilityNode.getSummary(), ", ",
 						securityVulnerabilityNode.getPermalink(), ")"));
 
+				System.out.println(
+					String.join(
+						StringPool.COMMA,
+						securityAdvisoryEcosystemEnum.toString(), packageName,
+						version.toString(),
+						securityVulnerabilityNode.getSummary(),
+						securityVulnerabilityNode.getPermalink()));
+
 				return;
 			}
 		}
