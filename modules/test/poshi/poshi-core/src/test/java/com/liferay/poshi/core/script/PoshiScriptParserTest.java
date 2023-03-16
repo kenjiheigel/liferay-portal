@@ -1,0 +1,220 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+package com.liferay.poshi.core.script;
+
+import com.liferay.poshi.core.PoshiContext;
+import com.liferay.poshi.core.util.FileUtil;
+import com.liferay.poshi.core.util.PropsUtil;
+import com.liferay.poshi.core.util.TestUtil;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import junit.framework.TestCase;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Test;
+
+/**
+ * @author Kenji Heigel
+ */
+public class PoshiScriptParserTest extends TestCase {
+
+	@After
+	@Override
+	public void tearDown() {
+		PoshiContext.clear();
+		PoshiScriptParserException.clear();
+		PropsUtil.clear();
+	}
+
+	@Test
+	public void testInvalidSyntax() {
+		String fileName = "InvalidSyntax.macro";
+
+		_preparePoshiContext(fileName);
+
+		List<PoshiScriptParserException> actualExceptions = new ArrayList<>(
+			PoshiScriptParserException.getExceptions());
+
+		PoshiScriptParserException.clear();
+
+		_throwPoshiScriptParserException(
+			"Invalid variable assignment syntax, please use triple quotes " +
+				"(''') to wrap a multiline string instead of double quotes",
+			4, _getFilePath(fileName));
+
+		_throwPoshiScriptParserException(
+			"Unescaped quotes in list value: \"item 1, item2\"", 7,
+			_getFilePath(fileName));
+
+		_assertExceptions(
+			PoshiScriptParserException.getExceptions(), actualExceptions);
+	}
+
+	@Test
+	public void testMissingSemicolonMacro() {
+		String fileName = "MissingSemicolon.macro";
+
+		_preparePoshiContext(fileName);
+
+		List<PoshiScriptParserException> actualExceptions = new ArrayList<>(
+			PoshiScriptParserException.getExceptions());
+
+		PoshiScriptParserException.clear();
+
+		_throwPoshiScriptParserException(
+			"Missing semicolon", 6, _getFilePath(fileName));
+
+		_throwPoshiScriptParserException(
+			"Missing semicolon", 14, _getFilePath(fileName));
+
+		_throwPoshiScriptParserException(
+			"Missing semicolon", 22, _getFilePath(fileName));
+
+		_throwPoshiScriptParserException(
+			"Missing semicolon", 30, _getFilePath(fileName));
+
+		_throwPoshiScriptParserException(
+			"Missing semicolon", 38, _getFilePath(fileName));
+
+		_throwPoshiScriptParserException(
+			"Missing semicolon", 46, _getFilePath(fileName));
+
+		_throwPoshiScriptParserException(
+			"Missing semicolon", 55, _getFilePath(fileName));
+
+		_throwPoshiScriptParserException(
+			"Missing semicolon", 63, _getFilePath(fileName));
+
+		_throwPoshiScriptParserException(
+			"Missing semicolon", 71, _getFilePath(fileName));
+
+		_throwPoshiScriptParserException(
+			"Missing semicolon", 79, _getFilePath(fileName));
+
+		_throwPoshiScriptParserException(
+			"Missing semicolon", 89, _getFilePath(fileName));
+
+		_throwPoshiScriptParserException(
+			"Missing semicolon", 97, _getFilePath(fileName));
+
+		_throwPoshiScriptParserException(
+			"Missing semicolon", 105, _getFilePath(fileName));
+
+		_assertExceptions(
+			PoshiScriptParserException.getExceptions(), actualExceptions);
+	}
+
+	@Test
+	public void testMissingSemicolonTestcase() {
+		String fileName = "MissingSemicolon.testcase";
+
+		_preparePoshiContext(fileName);
+
+		List<PoshiScriptParserException> actualExceptions = new ArrayList<>(
+			PoshiScriptParserException.getExceptions());
+
+		PoshiScriptParserException.clear();
+
+		_throwPoshiScriptParserException(
+			"Missing semicolon", 2, _getFilePath(fileName));
+
+		_assertExceptions(
+			PoshiScriptParserException.getExceptions(), actualExceptions);
+	}
+
+	private void _assertContains(String s, String text) {
+		if (!s.contains(text)) {
+			TestUtil.printDiffs(null, s, null, text);
+		}
+
+		Assert.assertTrue(s.contains(text));
+	}
+
+	private void _assertExceptions(
+		List<PoshiScriptParserException> expectedExceptions,
+		List<PoshiScriptParserException> actualExceptions) {
+
+		if (expectedExceptions == actualExceptions) {
+			throw new RuntimeException(
+				"Exception lists should not reference the same object");
+		}
+
+		for (int i = 0; i < expectedExceptions.size(); i++) {
+			PoshiScriptParserException expectedPoshiScriptParserException =
+				expectedExceptions.get(i);
+
+			PoshiScriptParserException actualPoshiScriptParserException =
+				actualExceptions.get(i);
+
+			_assertContains(
+				actualPoshiScriptParserException.getMessage(),
+				expectedPoshiScriptParserException.getMessage());
+
+			assertEquals(
+				expectedPoshiScriptParserException.getErrorLineNumber(),
+				actualPoshiScriptParserException.getErrorLineNumber());
+
+			assertEquals(
+				expectedPoshiScriptParserException.getFilePath(),
+				actualPoshiScriptParserException.getFilePath());
+		}
+	}
+
+	private URL _getFilePath(String fileName) {
+		String filePath = FileUtil.getCanonicalPath(
+			_BASE_POSHI_FILE_DIR + "/" + fileName);
+
+		try {
+			return new URL("file://" + filePath);
+		}
+		catch (MalformedURLException malformedURLException) {
+			throw new RuntimeException(malformedURLException);
+		}
+	}
+
+	private void _preparePoshiContext(String dirName) {
+		String poshiFileDir = _BASE_POSHI_FILE_DIR + "/" + dirName;
+
+		PropsUtil.set("test.base.dir.name", poshiFileDir);
+
+		try {
+			PoshiContext.readFiles();
+		}
+		catch (Exception exception) {
+			System.out.println(exception);
+		}
+	}
+
+	private void _throwPoshiScriptParserException(
+		String message, int lineNumber, URL filePath) {
+
+		try {
+			throw new PoshiScriptParserException(
+				message, lineNumber, null, filePath);
+		}
+		catch (PoshiScriptParserException poshiScriptParserException) {
+		}
+	}
+
+	private static final String _BASE_POSHI_FILE_DIR =
+		"src/test/resources/com/liferay/poshi/core/dependencies/script";
+
+}

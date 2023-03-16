@@ -728,6 +728,10 @@ public abstract class PoshiElement
 		return RegexUtil.getGroup(poshiScript, ".*?\'(.*)\'", 1);
 	}
 
+	protected Pattern getStatementPattern() {
+		return null;
+	}
+
 	protected String getValueFromAssignment(String assignment) {
 		assignment = assignment.trim();
 
@@ -921,7 +925,7 @@ public abstract class PoshiElement
 		String value = getValueFromAssignment(poshiScript);
 
 		if (isValidPoshiScriptStatement(
-				_varInvocationAssignmentStatementPattern, poshiScript) &&
+				varInvocationAssignmentStatementPattern, poshiScript) &&
 			isValidMacroFileName(value)) {
 
 			return true;
@@ -1025,6 +1029,65 @@ public abstract class PoshiElement
 		return poshiNodes;
 	}
 
+	protected void validateSemicolon(String poshiScript)
+		throws PoshiScriptParserException {
+
+		int index = 0;
+
+		Pattern statementPattern = getStatementPattern();
+
+		poshiScript = poshiScript.trim();
+
+		Matcher matcher = statementPattern.matcher(poshiScript);
+
+		if (matcher.find()) {
+			if (matcher.end() == poshiScript.length()) {
+				index = matcher.end();
+			}
+			else {
+				StringBuilder sb = new StringBuilder();
+
+				sb.append(matcher.group());
+
+				for (int i = matcher.end(); i < poshiScript.length(); i++) {
+					sb.append(poshiScript.charAt(i));
+
+					String balanced = sb.toString();
+
+					matcher = statementPattern.matcher(balanced);
+
+					if (PoshiScriptParserUtil.isBalancedPoshiScript(balanced) &&
+						matcher.find()) {
+
+						index = i + 1;
+
+						break;
+					}
+				}
+			}
+		}
+
+		String errorMessage = "Missing semicolon";
+
+		for (int i = index; i < poshiScript.length(); i++) {
+			char c = poshiScript.charAt(i);
+
+			if (Character.isWhitespace(c)) {
+				continue;
+			}
+
+			if (c != ';') {
+				throw new PoshiScriptParserException(
+					errorMessage, poshiScript, (PoshiElement)getParent());
+			}
+		}
+
+		if (!poshiScript.endsWith(";")) {
+			throw new PoshiScriptParserException(
+				errorMessage, poshiScript, (PoshiElement)getParent());
+		}
+	}
+
 	protected static final String ASSIGNMENT_REGEX = "[\\s]*=[\\s]*";
 
 	protected static final String BLOCK_NAME_ANNOTATION_REGEX = "(@.*=.*|)";
@@ -1034,9 +1097,11 @@ public abstract class PoshiElement
 
 	protected static final String INVOCATION_REGEX;
 
+	protected static final String INVOCATION_START_REGEX = "[\\s]*[\\w\\.]*";
+
 	protected static final String NONQUOTED_REGEX = "(\\$\\{.*\\}|\\d+)";
 
-	protected static final String PARAMETER_REGEX = "\\(.*\\)";
+	protected static final String PARAMETER_REGEX = "\\((.*?|.*)\\)";
 
 	protected static final String QUOTED_REGEX = "\".*\"";
 
@@ -1053,6 +1118,16 @@ public abstract class PoshiElement
 			Pattern.DOTALL);
 	protected static final Pattern poshiScriptBlockPattern = Pattern.compile(
 		"^[^{]*\\{[\\s\\S]*\\}$");
+	protected static final Pattern varInvocationAssignmentStatementPattern;
+
+	static {
+		INVOCATION_REGEX = INVOCATION_START_REGEX + PARAMETER_REGEX;
+
+		varInvocationAssignmentStatementPattern = Pattern.compile(
+			"^" + VAR_NAME_REGEX + ASSIGNMENT_REGEX + INVOCATION_REGEX +
+				VAR_STATEMENT_END_REGEX,
+			Pattern.DOTALL | Pattern.MULTILINE);
+	}
 
 	private void _addAttributes(Element element) {
 		for (Attribute attribute :
@@ -1126,18 +1201,8 @@ public abstract class PoshiElement
 		"(\\|{2}|\\&{2})");
 	private static final Pattern _poshiScriptCommentPattern = Pattern.compile(
 		"^[\\s]*(\\/\\/.*?(\\n|$)|\\/\\*.*?\\*\\/)", Pattern.DOTALL);
-	private static final Pattern _varInvocationAssignmentStatementPattern;
 	private static final Pattern _varNamePattern = Pattern.compile(
 		VAR_NAME_REGEX);
-
-	static {
-		INVOCATION_REGEX = "[\\s]*[\\w\\.]*" + PARAMETER_REGEX;
-
-		_varInvocationAssignmentStatementPattern = Pattern.compile(
-			"^" + VAR_NAME_REGEX + ASSIGNMENT_REGEX + INVOCATION_REGEX +
-				VAR_STATEMENT_END_REGEX,
-			Pattern.DOTALL);
-	}
 
 	private String _poshiScript;
 

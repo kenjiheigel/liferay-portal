@@ -49,6 +49,10 @@ public class ConditionPoshiElement extends ExecutePoshiElement {
 		return null;
 	}
 
+	@Override
+	public void validateSemicolon(String poshiScript) {
+	}
+
 	protected ConditionPoshiElement() {
 		super(_ELEMENT_NAME);
 	}
