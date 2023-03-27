@@ -1,38 +1,38 @@
 task runGradleTest
 
 runGradleTest {
-	dependsOn ":sample-custom-element-1:createClientExtensionConfig"
-	dependsOn ":sample-iframe-1:buildClientExtensionZip"
-	dependsOn ":sample-theme-css:buildClientExtensionZip"
-	dependsOn ":sample-theme-favicon:buildClientExtensionZip"
+	dependsOn ":liferay-sample-custom-element-1:createClientExtensionConfig"
+	dependsOn ":liferay-sample-iframe-1:buildClientExtensionZip"
+	dependsOn ":liferay-sample-theme-css:buildClientExtensionZip"
+	dependsOn ":liferay-sample-theme-favicon:buildClientExtensionZip"
 
 	doLast {
-		Project sampleCustomElement1Project = project(":sample-custom-element-1")
+		Project sampleCustomElement1Project = project(":liferay-sample-custom-element-1")
 
-		File clientExtensionConfigFile = new File(sampleCustomElement1Project.buildDir, "sample-custom-element-1.client-extension-config.json")
+		File clientExtensionConfigFile = new File(sampleCustomElement1Project.buildDir, "liferay-sample-custom-element-1.client-extension-config.json")
 
 		assert clientExtensionConfigFile.exists()
 
-		Project sampleIFrame1Project = project(":sample-iframe-1")
+		Project sampleIFrame1Project = project(":liferay-sample-iframe-1")
 
-		FileTree sampleIFrame1DistZipFileTree = zipTree(sampleIFrame1Project.file("dist/sample-iframe-1.zip"))
+		FileTree sampleIFrame1DistZipFileTree = zipTree(sampleIFrame1Project.file("dist/liferay-sample-iframe-1.zip"))
 
 		File lcpJsonFile = sampleIFrame1DistZipFileTree.files.find {
 			it.name == "LCP.json"
 		}
 
-		assert !lcpJsonFile.text.contains("sample-iframe")
-		assert lcpJsonFile.text.contains("sampleiframe")
+		assert !lcpJsonFile.text.contains("liferay-sample-iframe")
+		assert lcpJsonFile.text.contains("liferay-sampleiframe")
 
-		Project sampleThemeCSSProject = project(":sample-theme-css")
+		Project sampleThemeCSSProject = project(":liferay-sample-theme-css")
 
-		FileTree sampleThemeCSSZipFileTree = zipTree(sampleThemeCSSProject.file("dist/sample-theme-css.zip"))
+		FileTree sampleThemeCSSZipFileTree = zipTree(sampleThemeCSSProject.file("dist/liferay-sample-theme-css.zip"))
 
 		assert !sampleThemeCSSZipFileTree.isEmpty()
 
-		Project sampleThemeFaviconProject = project(":sample-theme-favicon")
+		Project sampleThemeFaviconProject = project(":liferay-sample-theme-favicon")
 
-		File sampleConfigFile = new File(sampleThemeFaviconProject.buildDir, "sample-theme-favicon.client-extension-config.json")
+		File sampleConfigFile = new File(sampleThemeFaviconProject.buildDir, "liferay-sample-theme-favicon.client-extension-config.json")
 
 		assert sampleConfigFile.exists()
 
