@@ -1737,6 +1737,9 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 
 	@Override
 	public boolean isTestName(String testName) {
+		System.out.println(testName);
+		System.out.println(getTestName());
+
 		if (testName.equals(getTestName())) {
 			return true;
 		}
