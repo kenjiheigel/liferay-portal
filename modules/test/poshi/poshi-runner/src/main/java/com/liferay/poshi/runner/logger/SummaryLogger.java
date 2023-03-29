@@ -100,8 +100,7 @@ public final class SummaryLogger {
 		sb.append(FileUtil.getCanonicalPath("."));
 		sb.append("/test-results/");
 		sb.append(
-			StringUtil.replace(
-				PoshiContext.getTestCaseNamespacedClassCommandName(), "#",
+			StringUtil.replace(getTestNamespacedClassCommandName(), "#",
 				"_"));
 		sb.append("/summary.html");
 
@@ -703,7 +702,7 @@ public final class SummaryLogger {
 			"summaryTestDescription");
 
 		String testCaseDescription = PoshiContext.getTestCaseDescription(
-			PoshiContext.getTestCaseNamespacedClassCommandName());
+			getTestNamespacedClassCommandName());
 
 		if (Validator.isNull(testCaseDescription)) {
 			testCaseDescription = "";
@@ -719,8 +718,7 @@ public final class SummaryLogger {
 		LoggerElement loggerElement = new LoggerElement("summaryTestName");
 
 		loggerElement.setName("h3");
-		loggerElement.setText(
-			PoshiContext.getTestCaseNamespacedClassCommandName());
+		loggerElement.setText(getTestNamespacedClassCommandName());
 
 		return loggerElement;
 	}
