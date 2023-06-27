@@ -173,21 +173,23 @@ definition {
 			HeadlessPortalInstanceAPI.deletePortalInstance(portalInstanceId = ${portalInstanceId});
 
 			SignIn.signInPortalInstanceSetUp();
+
+			var testRunType = PropsUtil.get("test.run.type");
+
+			if (${testRunType} == "parallel") {
+				var portalURL = JSONCompany.getDefaultPortalURL();
+
+				var companyId = JSONCompany.getCompanyId(portalURL = ${portalURL});
+
+				var liferayHome = PropsUtil.get("liferay.home.dir.name");
+
+				PropsUtil.set("test.liferay.console.log.file.name", "${liferayHome}/logs/companies/${companyId}/liferay-*.xml");
+			}
 		}
 	}
 
 	macro setUpPortalInstance {
-		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
-
-		if (${testLiferayVirtualInstance} == "true") {
-			HeadlessPortalInstanceAPI.cleanAllPortalInstances(authenticationMethod = ${authenticationMethod});
-
-			SignIn.signInPortalInstanceSetUp();
-		}
-	}
-
-	macro setUpPortalInstance {
-		Testcase.setUpCustomPortalInstance();
+		TestCase.setUpCustomPortalInstance();
 	}
 
 	macro setUpPortalInstanceNoSelenium {
