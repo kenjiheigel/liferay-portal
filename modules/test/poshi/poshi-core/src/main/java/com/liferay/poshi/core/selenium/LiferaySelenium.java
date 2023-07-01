@@ -174,6 +174,8 @@ public interface LiferaySelenium {
 	public void connectToEmailAccount(String emailAddress, String emailPassword)
 		throws Exception;
 
+	public void continueRequest(String postData);
+
 	public void copyText(String locator) throws Exception;
 
 	public void copyValue(String locator) throws Exception;

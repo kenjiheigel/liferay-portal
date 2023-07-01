@@ -951,6 +951,10 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 	}
 
 	@Override
+	public void continueRequest(String postData) {
+	}
+
+	@Override
 	public void copyText(String locator) throws Exception {
 		_clipBoard = getText(locator);
 	}
