@@ -78,6 +78,34 @@ public class ChromeWebDriverImpl extends BaseWebDriverImpl {
 	}
 
 	@Override
+	public void continueRequest(String postData) {
+		ChromeDriver chromeDriver = (ChromeDriver)getWebDriver();
+
+		DevTools devTools = chromeDriver.getDevTools();
+
+		devTools.createSession();
+
+		devTools.send(Fetch.enable(Optional.empty(), Optional.empty()));
+
+		devTools.addListener(
+			Fetch.requestPaused(),
+			(RequestPaused requestPaused) -> {
+				devTools.send(
+					Fetch.continueRequest(
+						requestPaused.getRequestId(), Optional.empty(),
+						Optional.empty(),
+						Optional.of(
+							Base64.getEncoder(
+							).encodeToString(
+								postData.getBytes()
+							)),
+						Optional.empty(), Optional.empty()));
+
+				devTools.send(Fetch.disable());
+			});
+	}
+
+	@Override
 	public void fulfillRequest(String responseCode, String body) {
 		ChromeDriver chromeDriver = (ChromeDriver)getWebDriver();
 
