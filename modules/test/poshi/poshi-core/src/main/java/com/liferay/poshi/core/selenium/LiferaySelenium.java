@@ -205,6 +205,8 @@ public interface LiferaySelenium {
 
 	public void fail(String message);
 
+	public void fulfillRequest(String responseCode, String body);
+
 	public String getAttribute(String attributeLocator);
 
 	public String getBodyText();
