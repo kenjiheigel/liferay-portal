@@ -1115,6 +1115,10 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 	}
 
 	@Override
+	public void fulfillRequest(String responseCode, String body) {
+	}
+
+	@Override
 	public void get(String url) {
 		try {
 			_webDriver.get(url);
