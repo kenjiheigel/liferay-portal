@@ -48,12 +48,14 @@ import java.time.Duration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.Callable;
@@ -100,6 +102,12 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WrapsDriver;
 import org.openqa.selenium.chromium.HasCdp;
+import org.openqa.selenium.devtools.DevTools;
+import org.openqa.selenium.devtools.HasDevTools;
+import org.openqa.selenium.devtools.v100.fetch.Fetch;
+import org.openqa.selenium.devtools.v100.fetch.model.RequestPattern;
+import org.openqa.selenium.devtools.v100.fetch.model.RequestPaused;
+import org.openqa.selenium.devtools.v100.fetch.model.RequestStage;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.Augmenter;
@@ -952,6 +960,32 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 
 	@Override
 	public void continueRequest(String postData) {
+		Augmenter augmenter = new Augmenter();
+
+		WebDriver webDriver = augmenter.augment(getWebDriver());
+
+		DevTools devTools = ((HasDevTools)webDriver).getDevTools();
+
+		devTools.createSession();
+
+		devTools.send(Fetch.enable(Optional.empty(), Optional.empty()));
+
+		devTools.addListener(
+			Fetch.requestPaused(),
+			(RequestPaused requestPaused) -> {
+				devTools.send(
+					Fetch.continueRequest(
+						requestPaused.getRequestId(), Optional.empty(),
+						Optional.empty(),
+						Optional.of(
+							Base64.getEncoder(
+							).encodeToString(
+								postData.getBytes()
+							)),
+						Optional.empty(), Optional.empty()));
+
+				devTools.send(Fetch.disable());
+			});
 	}
 
 	@Override
@@ -1120,6 +1154,41 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 
 	@Override
 	public void fulfillRequest(String responseCode, String body) {
+		Augmenter augmenter = new Augmenter();
+
+		WebDriver webDriver = augmenter.augment(getWebDriver());
+
+		DevTools devTools = ((HasDevTools)webDriver).getDevTools();
+
+		devTools.createSession();
+
+		List<RequestPattern> patterns = new ArrayList<>();
+
+		RequestPattern pattern = new RequestPattern(
+			Optional.empty(), Optional.empty(),
+			Optional.of(RequestStage.RESPONSE));
+
+		patterns.add(pattern);
+
+		devTools.send(Fetch.enable(Optional.of(patterns), Optional.empty()));
+
+		devTools.addListener(
+			Fetch.requestPaused(),
+			(RequestPaused requestPaused) -> {
+				devTools.send(
+					Fetch.fulfillRequest(
+						requestPaused.getRequestId(),
+						Integer.valueOf(responseCode), Optional.empty(),
+						Optional.empty(),
+						Optional.of(
+							Base64.getEncoder(
+							).encodeToString(
+								body.getBytes()
+							)),
+						Optional.empty()));
+
+				devTools.send(Fetch.disable());
+			});
 	}
 
 	@Override
