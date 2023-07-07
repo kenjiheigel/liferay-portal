@@ -7,10 +7,7 @@ package com.liferay.poshi.runner.selenium;
 
 import com.liferay.poshi.runner.exception.ElementNotFoundPoshiRunnerException;
 
-import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,12 +16,6 @@ import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.devtools.DevTools;
-import org.openqa.selenium.devtools.v100.fetch.Fetch;
-import org.openqa.selenium.devtools.v100.fetch.model.RequestPattern;
-import org.openqa.selenium.devtools.v100.fetch.model.RequestPaused;
-import org.openqa.selenium.devtools.v100.fetch.model.RequestStage;
 
 /**
  * @author Brian Wing Shun Chan
@@ -75,71 +66,6 @@ public class ChromeWebDriverImpl extends BaseWebDriverImpl {
 			throw new ElementNotInteractableException(
 				message, webDriverException);
 		}
-	}
-
-	@Override
-	public void continueRequest(String postData) {
-		ChromeDriver chromeDriver = (ChromeDriver)getWebDriver();
-
-		DevTools devTools = chromeDriver.getDevTools();
-
-		devTools.createSession();
-
-		devTools.send(Fetch.enable(Optional.empty(), Optional.empty()));
-
-		devTools.addListener(
-			Fetch.requestPaused(),
-			(RequestPaused requestPaused) -> {
-				devTools.send(
-					Fetch.continueRequest(
-						requestPaused.getRequestId(), Optional.empty(),
-						Optional.empty(),
-						Optional.of(
-							Base64.getEncoder(
-							).encodeToString(
-								postData.getBytes()
-							)),
-						Optional.empty(), Optional.empty()));
-
-				devTools.send(Fetch.disable());
-			});
-	}
-
-	@Override
-	public void fulfillRequest(String responseCode, String body) {
-		ChromeDriver chromeDriver = (ChromeDriver)getWebDriver();
-
-		DevTools devTools = chromeDriver.getDevTools();
-
-		devTools.createSession();
-
-		List<RequestPattern> patterns = new ArrayList<>();
-
-		RequestPattern pattern = new RequestPattern(
-			Optional.empty(), Optional.empty(),
-			Optional.of(RequestStage.RESPONSE));
-
-		patterns.add(pattern);
-
-		devTools.send(Fetch.enable(Optional.of(patterns), Optional.empty()));
-
-		devTools.addListener(
-			Fetch.requestPaused(),
-			(RequestPaused requestPaused) -> {
-				devTools.send(
-					Fetch.fulfillRequest(
-						requestPaused.getRequestId(),
-						Integer.valueOf(responseCode), Optional.empty(),
-						Optional.empty(),
-						Optional.of(
-							Base64.getEncoder(
-							).encodeToString(
-								body.getBytes()
-							)),
-						Optional.empty()));
-
-				devTools.send(Fetch.disable());
-			});
 	}
 
 	@Override
