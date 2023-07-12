@@ -9,6 +9,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
+import com.liferay.poshi.core.elements.ExecutePoshiElement;
 import com.liferay.poshi.core.elements.PoshiElementAttribute;
 import com.liferay.poshi.core.elements.PoshiElementException;
 import com.liferay.poshi.core.elements.PropertyPoshiElement;
@@ -174,6 +175,10 @@ public class PoshiContext {
 		return _DEFAULT_NAMESPACE;
 	}
 
+	public static Map<String, Set<Element>> getExecuteElementsMap() {
+		return _executeElements;
+	}
+
 	public static String getFilePathFromFileName(
 		String fileName, String namespace) {
 
@@ -242,6 +247,10 @@ public class PoshiContext {
 
 		return _commandSummaries.get(
 			"macro#" + namespace + "." + classCommandName);
+	}
+
+	public static Map<String, Set<Element>> getMacroElementsMap() {
+		return _macroElements;
 	}
 
 	public static Set<String> getMacroFileNames() {
@@ -1368,6 +1377,50 @@ public class PoshiContext {
 		}
 	}
 
+	private static void _storeExecuteElements(Element element) {
+		if (element instanceof ExecutePoshiElement) {
+			String executeName;
+
+			Set<Element> elements = new HashSet<>();
+
+			if (Validator.isNotNull(element.attributeValue("selenium"))) {
+				executeName = element.attributeValue("selenium");
+			}
+			else if (Validator.isNotNull(element.attributeValue("function"))) {
+				executeName = element.attributeValue("function");
+			}
+			else {
+				executeName = element.attributeValue("macro");
+
+				if (_macroElements.containsKey(executeName)) {
+					elements = _macroElements.get(executeName);
+
+					elements.add(element);
+				}
+				else {
+					elements.add(element);
+
+					_macroElements.put(executeName, elements);
+				}
+			}
+
+			if (_executeElements.containsKey(executeName)) {
+				elements = _executeElements.get(executeName);
+
+				elements.add(element);
+			}
+			else {
+				elements.add(element);
+
+				_executeElements.put(executeName, elements);
+			}
+		}
+
+		for (Element childElement : element.elements()) {
+			_storeExecuteElements(childElement);
+		}
+	}
+
 	private static void _storePathElement(
 			Element rootElement, String className, String filePath,
 			String namespace)
@@ -1445,6 +1498,10 @@ public class PoshiContext {
 			_overrideRootElement(rootElement, filePath, namespace);
 
 			return;
+		}
+
+		for (Element childElement : rootElement.elements()) {
+			_storeExecuteElements(childElement);
 		}
 
 		String className = PoshiGetterUtil.getClassNameFromFilePath(filePath);
@@ -1986,6 +2043,8 @@ public class PoshiContext {
 		Collections.synchronizedSet(new HashSet<>());
 	private static final Set<Exception> _exceptions =
 		Collections.synchronizedSet(new HashSet<>());
+	private static final Map<String, Set<Element>> _executeElements =
+		Collections.synchronizedMap(new HashMap<>());
 	private static final Map<String, String> _filePaths =
 		Collections.synchronizedMap(new HashMap<>());
 	private static final Set<String> _functionFileNames =
@@ -1994,6 +2053,8 @@ public class PoshiContext {
 		Collections.synchronizedMap(new HashMap<>());
 	private static final Map<String, LiferaySeleniumMethod>
 		_liferaySeleniumMethods = Collections.synchronizedMap(new HashMap<>());
+	private static final Map<String, Set<Element>> _macroElements =
+		Collections.synchronizedMap(new HashMap<>());
 	private static final Set<String> _macroFileNames =
 		Collections.synchronizedSet(new HashSet<>());
 	private static final Pattern _namespaceClassCommandNamePattern =
