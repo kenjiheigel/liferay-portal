@@ -32,6 +32,8 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.rules.Timeout;
 import org.junit.runner.RunWith;
 
 /**
@@ -166,6 +168,13 @@ public class ParallelPoshiRunner extends PoshiRunner {
 		}
 	}
 
+	public void test() throws Exception {
+		super.test();
+	}
+
+	@Rule
+	public Timeout timeout = Timeout.seconds(_TEST_TIMEOUT);
+
 	public static class CustomConsoleHandler extends ConsoleHandler {
 
 		@Override
@@ -177,7 +186,15 @@ public class ParallelPoshiRunner extends PoshiRunner {
 
 	}
 
+	private static final long _TEST_TIMEOUT;
+
 	private static final Map<String, List<String>> _testResults =
 		new HashMap<>();
+
+	static {
+		PoshiProperties poshiProperties = PoshiProperties.getPoshiProperties();
+
+		_TEST_TIMEOUT = poshiProperties.testRunTimeout;
+	}
 
 }
