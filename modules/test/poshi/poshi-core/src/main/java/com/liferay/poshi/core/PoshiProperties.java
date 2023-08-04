@@ -185,6 +185,8 @@ public class PoshiProperties extends Properties {
 	public static final String TEST_RUN_THREAD_POOL_SIZE =
 		"test.run.thread.pool.size";
 
+	public static final String TEST_RUN_TIMEOUT = "test.run.timeout";
+
 	public static final String TEST_RUN_TYPE = "test.run.type";
 
 	public static final String TEST_SKIP_TEAR_DOWN = "test.skip.tear.down";
@@ -386,6 +388,8 @@ public class PoshiProperties extends Properties {
 		getProperty(TEST_RUN_LOCALLY));
 	public int testRunThreadPoolSize = GetterUtil.getInteger(
 		getProperty(TEST_RUN_THREAD_POOL_SIZE));
+	public int testRunTimeout = GetterUtil.getInteger(
+		getProperty(TEST_RUN_TIMEOUT));
 	public String testRunType = getProperty(TEST_RUN_TYPE);
 	public boolean testSkipTearDown = GetterUtil.getBoolean(
 		getProperty(TEST_SKIP_TEAR_DOWN));
