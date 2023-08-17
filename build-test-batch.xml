@@ -1996,6 +1996,17 @@ ${poshi.runner.testsuite.testcase.name}</echo>
 								</if>
 							</then>
 						</if>
+
+						<zip destfile="${project.dir}/test-results.zip">
+							<zipfileset dir="${project.dir}/portal-web/test-results" prefix="poshi/test-results"/>
+							<zipfileset dir="${project.dir}/portal-web/tests" prefix="gradle/test-results"/>
+						</zip>
+
+						<rsync
+							master.hostname="${env.MASTER_HOSTNAME}"
+							rsync.dest="/opt/java/jenkins/userContent/jobs/${env.TOP_LEVEL_JOB_NAME}/builds/${env.TOP_LEVEL_BUILD_NUMBER}/${env.JOB_VARIANT}/${env.AXIS_VARIABLE}"
+							rsync.src="${project.dir}/test-results.zip"
+						/>
 					</test-tear-down>
 				</run-batch-test>
 			</retry>

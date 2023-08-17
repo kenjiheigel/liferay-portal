@@ -6012,6 +6012,7 @@ tell application "Safari" to quit
 	</macrodef>
 
 	<macrodef name="rsync">
+		<attribute name="master.hostname" />
 		<attribute name="rsync.dest" />
 		<attribute name="rsync.src" />
 
@@ -6033,7 +6034,8 @@ tell application "Safari" to quit
 			</antelope:stringutil>
 
 			<execute>
-				rsync -avz ${rsync.src} ${master.hostname}::${rsync.dest}
+				ssh @{master.hostname} "mkdir -p ${rsync.dest}"
+				rsync -avz ${rsync.src} @{master.hostname}:${rsync.dest}
 			</execute>
 		</sequential>
 	</macrodef>
