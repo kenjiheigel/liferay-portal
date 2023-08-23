@@ -12,6 +12,7 @@ import com.liferay.jenkins.results.parser.PortalGitWorkingDirectory;
 import com.liferay.jenkins.results.parser.PortalHotfixReleaseJob;
 import com.liferay.jenkins.results.parser.PortalTestClassJob;
 import com.liferay.jenkins.results.parser.job.property.JobProperty;
+import com.liferay.jenkins.results.parser.test.clazz.FunctionalTestClass;
 import com.liferay.jenkins.results.parser.test.clazz.TestClass;
 import com.liferay.jenkins.results.parser.test.clazz.TestClassBalancedListSplitter;
 import com.liferay.jenkins.results.parser.test.clazz.TestClassFactory;
@@ -346,14 +347,36 @@ public class FunctionalBatchTestClassGroup extends BatchTestClassGroup {
 			List<List<TestClass>> poshiTestClassGroups =
 				getPoshiTestClassGroups(testBaseDir);
 
-			long targetAxisDuration = getTargetAxisDuration();
+			long defaultTargetAxisDuration = getTargetAxisDuration();
 
 			for (List<TestClass> poshiTestClassGroup : poshiTestClassGroups) {
 				if (poshiTestClassGroup.isEmpty()) {
 					continue;
 				}
 
-				if (targetAxisDuration > 0) {
+				if (defaultTargetAxisDuration > 0) {
+					long targetAxisDuration = defaultTargetAxisDuration;
+
+					TestClass testClass = poshiTestClassGroup.get(0);
+
+					if (testClass instanceof FunctionalTestClass) {
+						FunctionalTestClass functionalTestClass =
+							(FunctionalTestClass)testClass;
+
+						Properties properties =
+							functionalTestClass.getPoshiProperties();
+
+						String testRunType = properties.getProperty(
+							"test.run.type");
+
+						if ((testRunType == null) ||
+							(!testRunType.equals("sequential") &&
+							 !testRunType.equals("single"))) {
+
+							targetAxisDuration = defaultTargetAxisDuration * 3;
+						}
+					}
+
 					TestClassBalancedListSplitter
 						testClassBalancedListSplitter =
 							new TestClassBalancedListSplitter(
