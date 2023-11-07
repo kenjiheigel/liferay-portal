@@ -74,6 +74,8 @@ public class PoshiProperties extends Properties {
 
 	public static final String LOGGER_RESOURCES_URL = "logger.resources.url";
 
+	public static final String MOBILE_DEVICE_UDID = "mobile.device.udid";
+	
 	public static final String OUTPUT_DIR_NAME = "output.dir.name";
 
 	public static final String PORTAL_URL = "portal.url";
@@ -359,6 +361,7 @@ public class PoshiProperties extends Properties {
 	public String liferayPortalBranch = getProperty(LIFERAY_PORTAL_BRANCH);
 	public String liferayPortalBundle = getProperty(LIFERAY_PORTAL_BUNDLE);
 	public String loggerResourcesURL = getProperty(LOGGER_RESOURCES_URL);
+	public String mobileDeviceUDID = getProperty(MOBILE_DEVICE_UDID);
 	public String outputDirName = getProperty(OUTPUT_DIR_NAME);
 	public String portalURL = getProperty(PORTAL_URL);
 	public int poshiFileReadThreadPool = GetterUtil.getInteger(

@@ -14,6 +14,9 @@ import com.liferay.poshi.core.util.Validator;
 import com.liferay.poshi.runner.logger.ParallelPrintStream;
 import com.liferay.poshi.runner.util.ProxyUtil;
 
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.options.UiAutomator2Options;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -76,7 +79,12 @@ public class WebDriverUtil {
 			portalURL = "http://localhost:8180/console";
 		}
 
-		if (poshiProperties.browserType.equals("chrome")) {
+		if (poshiProperties.browserType.equals("android")) {
+			_webDrivers.put(
+				testName,
+				new ChromeWebDriverImpl(portalURL, _getAndroidAppiumDriver()));
+		}
+		else if (poshiProperties.browserType.equals("chrome")) {
 			_webDrivers.put(
 				testName,
 				new ChromeWebDriverImpl(portalURL, _getChromeDriver()));
@@ -135,6 +143,16 @@ public class WebDriverUtil {
 		}
 
 		_webDrivers.remove(testName);
+	}
+
+	private static WebDriver _getAndroidAppiumDriver() {
+		PoshiProperties poshiProperties = PoshiProperties.getPoshiProperties();
+
+		UiAutomator2Options uiAutomator2Options = new UiAutomator2Options();
+
+		uiAutomator2Options.setUdid(poshiProperties.mobileDeviceUDID);
+
+		return new AndroidDriver(uiAutomator2Options);
 	}
 
 	private static WebDriver _getChromeDriver() {
