@@ -51,6 +51,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -2464,18 +2465,16 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 	@Override
 	public void selectPopUp(String windowID) {
 		if (windowID.equals("") || windowID.equals("null")) {
-			String title = getTitle();
-
 			Set<String> windowHandles = getWindowHandles();
 
-			for (String windowHandle : windowHandles) {
+			Iterator<String> iterator = windowHandles.iterator();
+
+			while (iterator.hasNext()) {
+				String windowHandle = iterator.next();
+
 				WebDriver.TargetLocator targetLocator = switchTo();
 
 				targetLocator.window(windowHandle);
-
-				if (!title.equals(getTitle())) {
-					return;
-				}
 			}
 		}
 		else {
