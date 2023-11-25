@@ -1691,9 +1691,17 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 	}
 
 	@Override
-	public boolean isElementPresentAfterWait(String locator) throws Exception {
+	public boolean isElementPresentAfterWait(String locator, String timeout)
+		throws Exception {
+
+		int timeoutExplicitWait = poshiProperties.timeoutExplicitWait;
+
+		if (Validator.isNotNull(timeout)) {
+			timeoutExplicitWait = GetterUtil.getInteger(timeout);
+		}
+
 		for (int second = 0;; second++) {
-			if (second >= poshiProperties.timeoutExplicitWait) {
+			if (second >= timeoutExplicitWait) {
 				return isElementPresent(locator);
 			}
 

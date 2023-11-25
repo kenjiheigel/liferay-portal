@@ -288,7 +288,8 @@ public interface LiferaySelenium {
 
 	public boolean isElementPresent(String locator) throws Exception;
 
-	public boolean isElementPresentAfterWait(String locator) throws Exception;
+	public boolean isElementPresentAfterWait(String locator, String timeout)
+		throws Exception;
 
 	public boolean isHTMLSourceTextPresent(String value) throws Exception;
 
