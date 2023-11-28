@@ -8,6 +8,8 @@ package com.liferay.poshi.core.selenium;
 import java.util.List;
 import java.util.Map;
 
+import org.openqa.selenium.devtools.NetworkInterceptor;
+
 /**
  * @author Brian Wing Shun Chan
  */
@@ -171,10 +173,12 @@ public interface LiferaySelenium {
 
 	public void close();
 
+	public void closeNetworkInterceptor(NetworkInterceptor networkInterceptor);
+
 	public void connectToEmailAccount(String emailAddress, String emailPassword)
 		throws Exception;
 
-	public void continueRequest(String postData);
+	public NetworkInterceptor continueRequest(String postData);
 
 	public void copyText(String locator) throws Exception;
 
@@ -207,7 +211,7 @@ public interface LiferaySelenium {
 
 	public void fail(String message);
 
-	public void fulfillRequest(String responseCode, String body);
+	public NetworkInterceptor fulfillRequest(String responseCode, String body);
 
 	public String getAttribute(String attributeLocator);
 
