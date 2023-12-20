@@ -5,11 +5,21 @@
 
 package com.liferay.jenkins.results.parser.test.clazz.group;
 
+import com.google.common.collect.Lists;
+
+import com.liferay.jenkins.results.parser.JenkinsResultsParserUtil;
 import com.liferay.jenkins.results.parser.PortalTestClassJob;
 import com.liferay.jenkins.results.parser.job.property.JobProperty;
 import com.liferay.jenkins.results.parser.test.clazz.TestClassFactory;
 
 import java.io.File;
+import java.io.IOException;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.json.JSONObject;
 
@@ -17,6 +27,20 @@ import org.json.JSONObject;
  * @author Kenji Heigel
  */
 public class PlaywrightBatchTestClassGroup extends BatchTestClassGroup {
+
+	public List<JobProperty> getPlaywrightJobProperties() {
+		List<JobProperty> includesJobProperties = new ArrayList<>();
+
+		if (testRelevantChanges) {
+			includesJobProperties.addAll(getRelevantPlaywrightJobProperties());
+		}
+
+		includesJobProperties.removeAll(Collections.singleton(null));
+
+		recordJobProperties(includesJobProperties);
+
+		return includesJobProperties;
+	}
 
 	protected PlaywrightBatchTestClassGroup(
 		JSONObject jsonObject, PortalTestClassJob portalTestClassJob) {
@@ -55,6 +79,42 @@ public class PlaywrightBatchTestClassGroup extends BatchTestClassGroup {
 		setAxisTestClassGroups();
 
 		setSegmentTestClassGroups();
+	}
+
+	protected List<JobProperty> getRelevantPlaywrightJobProperties() {
+		Set<File> modifiedModuleDirsSet = new HashSet<>();
+
+		try {
+			modifiedModuleDirsSet.addAll(
+				portalGitWorkingDirectory.getModifiedModuleDirsList());
+		}
+		catch (IOException ioException) {
+			File workingDirectory =
+				portalGitWorkingDirectory.getWorkingDirectory();
+
+			throw new RuntimeException(
+				JenkinsResultsParserUtil.combine(
+					"Unable to get relevant module group directories in ",
+					workingDirectory.getPath()),
+				ioException);
+		}
+
+		if (testRelevantChanges) {
+			modifiedModuleDirsSet.addAll(
+				getRequiredModuleDirs(
+					Lists.newArrayList(modifiedModuleDirsSet)));
+		}
+
+		Set<JobProperty> playwrightJobProperties = new HashSet<>();
+
+		for (File modifiedModuleDir : modifiedModuleDirsSet) {
+			playwrightJobProperties.add(
+				getJobProperty(
+					"playwright.test.project", modifiedModuleDir,
+					JobProperty.Type.DEFAULT));
+		}
+
+		return new ArrayList<>(playwrightJobProperties);
 	}
 
 }
