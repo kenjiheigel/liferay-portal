@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+// fake change
+
 import {defineConfig} from '@playwright/test';
 
 import {config as setup} from './tests/global.setup.config';
