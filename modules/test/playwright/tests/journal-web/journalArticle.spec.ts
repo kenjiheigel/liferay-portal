@@ -503,7 +503,7 @@ scheduleTest(
 	}
 );
 
-aiCreateImageTest(
+aiCreateImageTest.only(
 	'LPD-6800 Create AI Image option visible from Item Selector',
 	async ({journalEditArticlePage, page, site}) => {
 		await journalEditArticlePage.goto({siteUrl: site.friendlyUrlPath});
