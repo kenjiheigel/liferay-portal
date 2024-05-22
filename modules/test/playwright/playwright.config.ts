@@ -111,6 +111,7 @@ export default defineConfig({
 	testDir: './tests',
 	timeout: 90 * 1000,
 	use: {
+		...devices['Desktop Chrome'],
 		baseURL: process.env.PORTAL_URL
 			? process.env.PORTAL_URL
 			: 'http://localhost:8080',
