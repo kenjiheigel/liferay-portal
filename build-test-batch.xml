@@ -8517,6 +8517,130 @@ information. Make sure to commit in all build services results.
 		<setup-testable-tomcat-gc test.portal.bundle.version="${test.portal.bundle.version}" />
 	</target>
 
+	<target name="sonar-scan-jdk11_zulu">
+		<run-batch-test>
+			<test-action>
+				<if>
+					<not>
+						<isset property="modules.test.class.group" />
+					</not>
+					<then>
+						<gradle-execute dir="modules" outputproperty="modules.project.paths" task="printProjectPath">
+							<arg value="--quiet" />
+							<arg value="-Dbuild.exclude.dirs=third-party" />
+						</gradle-execute>
+
+						<loadresource property="modules.test.class.group">
+							<filterchain>
+								<linecontainsregexp>
+									<regexp pattern="^:" />
+								</linecontainsregexp>
+
+								<suffixlines suffix=":assemble " />
+
+								<striplinebreaks />
+							</filterchain>
+							<propertyresource name="modules.project.paths" />
+						</loadresource>
+					</then>
+				</if>
+
+				<loadresource property="modules.compile.task.groups">
+					<filterchain>
+						<replacestring from="-test:assemble" to="-test:compileTestIntegrationJava" />
+
+						<tokenfilter>
+							<replaceregex flags="g" pattern="(\S+ ){${test.module.groups.size}}" replace="\0," />
+						</tokenfilter>
+					</filterchain>
+					<propertyresource name="modules.test.class.group" />
+				</loadresource>
+
+				<for list="${modules.compile.task.groups}" param="modules.compile.task.group" trim="true">
+					<sequential>
+						<echo>Executing Gradle tasks: @{modules.compile.task.group}.</echo>
+
+						<gradle-execute dir="modules" task="@{modules.compile.task.group}">
+							<arg value="--continue" />
+							<arg value="--parallel" />
+						</gradle-execute>
+					</sequential>
+				</for>
+
+				<replace
+					file="modules/build.gradle"
+				>
+					<replacetoken><![CDATA[apply from: rootProject.file("build-buildscript.gradle"), to: buildscript]]></replacetoken>
+					<replacevalue><![CDATA[apply from: rootProject.file("build-buildscript.gradle"), to: buildscript
+
+	dependencies {
+		classpath group: "org.sonarsource.scanner.gradle", name: "sonarqube-gradle-plugin", version: "5.0.0.4638"
+	}
+
+	repositories {
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+	}]]></replacevalue>
+				</replace>
+
+				<replace
+					file="modules/build.gradle"
+				>
+					<replacetoken><![CDATA[configure(project) {
+		apply plugin: "com.liferay.defaults.plugin"]]></replacetoken>
+					<replacevalue><![CDATA[configure(project) {
+		apply plugin: "com.liferay.defaults.plugin"
+		apply plugin: "org.sonarqube"]]></replacevalue>
+				</replace>
+
+				<loadresource property="modules.sonar.task.groups">
+					<filterchain>
+						<replacestring from=":assemble" to=":sonar" />
+
+						<tokenfilter>
+							<replaceregex flags="g" pattern="(\S+ ){${test.module.groups.size}}" replace="\0," />
+						</tokenfilter>
+					</filterchain>
+					<propertyresource name="modules.test.class.group" />
+				</loadresource>
+
+				<get-java-jdk-home type="zulu" version="11" />
+
+				<for list="${modules.sonar.task.groups}" param="modules.sonar.task.group" trim="true">
+					<sequential>
+						<echo>Executing Gradle tasks: @{modules.sonar.task.group}.</echo>
+
+						<gradle-execute dir="modules" task="@{modules.compile.task.group}">
+							<arg value="--continue" />
+							<arg value="--parallel" />
+							<env key="JAVA_HOME" path="${java.jdk.home}" />
+						</gradle-execute>
+					</sequential>
+				</for>
+			</test-action>
+
+			<test-set-up>
+				<setup-test-environment />
+
+				<if>
+					<available file="liferay-portal-source.tar.gz" />
+					<then>
+						<echo>tar --extract --file=liferay-portal-source.tar.gz modules/core/portal-bootstrap/build/system.packages.extra.mf --gzip --to-stdout--verbose > modules/core/portal-bootstrap/system.packages.extra.mf</echo>
+
+						<execute>
+							<![CDATA[
+								mkdir -p modules/core/portal-bootstrap
+
+								tar --extract --file=liferay-portal-source.tar.gz modules/core/portal-bootstrap/build/system.packages.extra.mf --gzip --to-stdout --verbose > modules/core/portal-bootstrap/system.packages.extra.mf
+							]]>
+						</execute>
+					</then>
+				</if>
+			</test-set-up>
+		</run-batch-test>
+	</target>
+
 	<target name="source-format-current-branch-jdk8">
 		<run-batch-test>
 			<test-action>
