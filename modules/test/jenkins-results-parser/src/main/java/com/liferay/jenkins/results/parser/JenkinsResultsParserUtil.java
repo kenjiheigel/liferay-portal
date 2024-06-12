@@ -5150,6 +5150,16 @@ public class JenkinsResultsParserUtil {
 			_MILLIS_TIMEOUT_DEFAULT, null);
 	}
 
+	public static JSONObject toJSONObjectFake(
+	String url, int maxRetries, int retryPeriod, String postContent,
+	HTTPAuthorization httpAuthorization)
+	throws IOException {
+
+		return toJSONObject(
+		url, true, maxRetries, null, postContent, retryPeriod,
+		_MILLIS_TIMEOUT_DEFAULT, httpAuthorization);
+	}
+
 	public static JSONObject toJSONObject(
 			String url, int maxRetries, int retryPeriod, String postContent,
 			HTTPAuthorization httpAuthorization)
