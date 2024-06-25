@@ -63,6 +63,7 @@ import org.gradle.api.reporting.DirectoryReport;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.Copy;
 import org.gradle.api.tasks.JavaExec;
+import org.gradle.api.tasks.TaskInputs;
 import org.gradle.api.tasks.TaskOutputs;
 import org.gradle.api.tasks.testing.JUnitXmlReport;
 import org.gradle.api.tasks.testing.Test;
@@ -150,7 +151,8 @@ public class PoshiRunnerPlugin implements Plugin<Project> {
 						poshiRunnerExtension);
 
 					_configureTaskDownloadWebDriverBrowserBinary(
-						downloadWebDriverBrowserBinaryTask, poshiProperties);
+						downloadWebDriverBrowserBinaryTask, poshiProperties,
+						project);
 					_configureTaskExecutePQLQuery(
 						executePQLQueryTask, poshiProperties,
 						poshiRunnerExtension);
@@ -578,7 +580,18 @@ public class PoshiRunnerPlugin implements Plugin<Project> {
 	}
 
 	private void _configureTaskDownloadWebDriverBrowserBinary(
-		Task task, Properties poshiProperties) {
+		Task task, Properties poshiProperties, Project project) {
+
+		String webDriverBrowserURL = _getWebDriverBrowserURL(
+			project, poshiProperties);
+
+		TaskInputs taskInputs = task.getInputs();
+
+		taskInputs.property("webDriverBrowserURL", webDriverBrowserURL);
+
+		TaskOutputs taskOutputs = task.getOutputs();
+
+		taskOutputs.dir(_getWebDriverDir(project));
 
 		task.onlyIf(
 			new Spec<Task>() {
@@ -1133,6 +1146,31 @@ public class PoshiRunnerPlugin implements Plugin<Project> {
 	private File _getWebDriverBrowserBinaryFile(
 		Project project, Properties poshiProperties) {
 
+		try {
+			return FileUtil.get(
+				project, _getWebDriverBrowserURL(project, poshiProperties),
+				null);
+		}
+		catch (IOException ioException) {
+			throw new UncheckedIOException(ioException);
+		}
+	}
+
+	private String _getWebDriverBrowserBinaryName(Properties poshiProperties) {
+		return _webDriverBrowserBinaryNames.get(
+			_getBrowserType(poshiProperties));
+	}
+
+	private String _getWebDriverBrowserBinaryPropertyName(
+		Properties poshiProperties) {
+
+		return _webDriverBrowserBinaryPropertyNames.get(
+			_getBrowserType(poshiProperties));
+	}
+
+	private String _getWebDriverBrowserURL(
+		Project project, Properties poshiProperties) {
+
 		String url = null;
 
 		String browserType = _getBrowserType(poshiProperties);
@@ -1156,24 +1194,7 @@ public class PoshiRunnerPlugin implements Plugin<Project> {
 			throw new RuntimeException("Unable to get browser driver URL");
 		}
 
-		try {
-			return FileUtil.get(project, url, null);
-		}
-		catch (IOException ioException) {
-			throw new UncheckedIOException(ioException);
-		}
-	}
-
-	private String _getWebDriverBrowserBinaryName(Properties poshiProperties) {
-		return _webDriverBrowserBinaryNames.get(
-			_getBrowserType(poshiProperties));
-	}
-
-	private String _getWebDriverBrowserBinaryPropertyName(
-		Properties poshiProperties) {
-
-		return _webDriverBrowserBinaryPropertyNames.get(
-			_getBrowserType(poshiProperties));
+		return url;
 	}
 
 	private File _getWebDriverDir(Project project) {
