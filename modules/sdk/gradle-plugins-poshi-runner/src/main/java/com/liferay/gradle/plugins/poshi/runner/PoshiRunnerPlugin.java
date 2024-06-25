@@ -151,8 +151,7 @@ public class PoshiRunnerPlugin implements Plugin<Project> {
 						poshiRunnerExtension);
 
 					_configureTaskDownloadWebDriverBrowserBinary(
-						downloadWebDriverBrowserBinaryTask, poshiProperties,
-						project);
+						downloadWebDriverBrowserBinaryTask, poshiProperties);
 					_configureTaskExecutePQLQuery(
 						executePQLQueryTask, poshiProperties,
 						poshiRunnerExtension);
@@ -580,18 +579,7 @@ public class PoshiRunnerPlugin implements Plugin<Project> {
 	}
 
 	private void _configureTaskDownloadWebDriverBrowserBinary(
-		Task task, Properties poshiProperties, Project project) {
-
-		String webDriverBrowserURL = _getWebDriverBrowserURL(
-			project, poshiProperties);
-
-		TaskInputs taskInputs = task.getInputs();
-
-		taskInputs.property("webDriverBrowserURL", webDriverBrowserURL);
-
-		TaskOutputs taskOutputs = task.getOutputs();
-
-		taskOutputs.dir(_getWebDriverDir(project));
+		Task task, Properties poshiProperties) {
 
 		task.onlyIf(
 			new Spec<Task>() {
@@ -602,6 +590,16 @@ public class PoshiRunnerPlugin implements Plugin<Project> {
 				}
 
 			});
+
+		TaskInputs taskInputs = task.getInputs();
+
+		taskInputs.property(
+			"webDriverBrowserURL",
+			_getWebDriverBrowserURL(task.getProject(), poshiProperties));
+
+		TaskOutputs taskOutputs = task.getOutputs();
+
+		taskOutputs.dir(_getWebDriverDir(task.getProject()));
 	}
 
 	private void _configureTaskEvaluatePoshiConsole(
