@@ -420,6 +420,15 @@ public class BatchBuildTestrayCaseResult extends BuildTestrayCaseResult {
 
 		Build build = getBuild();
 
+		if (build == null) {
+			System.out.println("Build is null");
+		}
+		else {
+			if (build.getTestrayAttachmentURLs() == null) {
+				System.out.println("build.getTestrayAttachmentURLs() is null");
+			}
+		}
+
 		for (URL testrayAttachmentURL : build.getTestrayAttachmentURLs()) {
 			Matcher matcher = _dockerLogsURLPattern.matcher(
 				String.valueOf(testrayAttachmentURL));
