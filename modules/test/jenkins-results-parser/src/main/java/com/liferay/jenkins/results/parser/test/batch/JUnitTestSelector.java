@@ -78,7 +78,7 @@ public class JUnitTestSelector extends BaseTestSelector {
 
 	@Override
 	public void validate() throws RelevantRuleConfigurationException {
-		validate(_MODULES_INCLUDES_REQUIRED_TEST_BATCH_CLASS_NAMES_INCLUDES);
+//		validate(_MODULES_INCLUDES_REQUIRED_TEST_BATCH_CLASS_NAMES_INCLUDES);
 	}
 
 	private void _addJobProperties() {

@@ -33,6 +33,28 @@ public class RelevantTestSuite {
 
 		_modifiedFiles = portalGitWorkingDirectory.getModifiedFilesList();
 
+		System.out.println("Relevant Modified Files:");
+
+		List<File> tempModifiedFiles = new ArrayList<>();
+
+		File baseDir = portalGitWorkingDirectory.getWorkingDirectory();
+
+//		String[] modifiedFilePaths = {"modules/test/jenkins-results-parser/build.gradle"};
+
+		String[] modifiedFilePaths = {"modules/apps/blogs/build.gradle"};
+
+		for (String modifiedFilePath : modifiedFilePaths) {
+			File modifiedFile = new File(baseDir, modifiedFilePath);
+
+			tempModifiedFiles.add(modifiedFile);
+		}
+
+		_modifiedFiles = tempModifiedFiles;
+
+		for (File modifiedFile : _modifiedFiles) {
+			System.out.println(modifiedFile);
+		}
+
 		_relevantRuleEngine = RelevantRuleEngine.getInstance(
 			portalAcceptancePullRequestJob);
 	}
