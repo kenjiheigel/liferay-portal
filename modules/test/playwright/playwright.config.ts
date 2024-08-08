@@ -168,7 +168,7 @@ export default defineConfig({
 				'--headless=new',
 				'--unsafely-treat-insecure-origin-as-secure=' + process.env.PORTAL_URL
 			]
-		}
+		},
 		screenshot: 'only-on-failure',
 		trace: 'retain-on-failure',
 	},
