@@ -163,6 +163,12 @@ export default defineConfig({
 		baseURL: process.env.PORTAL_URL
 			? process.env.PORTAL_URL
 			: 'http://localhost:8080',
+		launchOptions: {
+			args: [
+				'--headless=new',
+				'--unsafely-treat-insecure-origin-as-secure=' + process.env.PORTAL_URL
+			]
+		}
 		screenshot: 'only-on-failure',
 		trace: 'retain-on-failure',
 	},
