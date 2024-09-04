@@ -184,6 +184,8 @@ public class PullRequestPortalTopLevelBuild
 			return _stableJobResult;
 		}
 
+		setCompareToUpstream(false);
+
 		List<Build> stableJobDownstreamBuilds = getStableJobDownstreamBuilds();
 
 		int stableJobDownstreamBuildsSize = stableJobDownstreamBuilds.size();
