@@ -27,6 +27,6 @@ test('Setup: Create site with required data for Page Management tests', async ({
 
 	expect(site).toHaveProperty(
 		'externalReferenceCode',
-		PAGE_MANAGEMENT_SITE_ERC
+		'forced error'
 	);
 });
