@@ -1723,11 +1723,29 @@ artifact.url=${remote.repository.cdn.url}/com/liferay/portal/com.liferay.${proce
 						<os family="windows" />
 					</condition>
 
-					<sync-dir
-						dir="${project.dir}/${build.binaries.cache.dir}/.gradle/caches/modules-2/files-2.1"
-						symbolic="${sync.dir.symbolic}"
-						toDir="${project.dir}/.gradle/caches/modules-2/files-2.1"
-					/>
+					<if>
+						<and>
+							<available file="${project.dir}/.gradle/caches/modules-2/files-2.1/.sync-dir-executed" />
+							<isset property="env.JENKINS_HOME" />
+						</and>
+						<then>
+							<echo>'sync-dir' task has already executed</echo>
+						</then>
+						<else>
+							<sync-dir
+								dir="${project.dir}/${build.binaries.cache.dir}/.gradle/caches/modules-2/files-2.1"
+								symbolic="${sync.dir.symbolic}"
+								toDir="${project.dir}/.gradle/caches/modules-2/files-2.1"
+							/>
+
+							<if>
+								<isset property="env.JENKINS_HOME" />
+								<then>
+									<touch file="${project.dir}/.gradle/caches/modules-2/files-2.1/.sync-dir-executed" />
+								</then>
+							</if>
+						</else>
+					</if>
 				</then>
 			</if>
 
