@@ -133,10 +133,27 @@ public class CloudBucketUtil {
 		_executeCommands(sb.toString());
 	}
 
+	private static String _escapeParentheses(String s) {
+		s = s.replace(")", "\\)");
+		s = s.replace("(", "\\(");
+
+		return s;
+	}
+
+	private static String[] _escapeParentheses(String[] items) {
+		String[] newItems = new String[items.length];
+
+		for (int i = 0; i < items.length; i++) {
+			newItems[i] = _escapeParentheses(items[i]);
+		}
+
+		return newItems;
+	}
+
 	private static void _executeCommands(String... commands) {
 		try {
 			Process process = JenkinsResultsParserUtil.executeBashCommands(
-				1000 * 60 * 10, commands);
+				1000 * 60 * 10, _escapeParentheses(commands));
 
 			System.out.println(
 				JenkinsResultsParserUtil.readInputStream(
