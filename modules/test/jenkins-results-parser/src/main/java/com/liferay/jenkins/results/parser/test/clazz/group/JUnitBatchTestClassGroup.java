@@ -314,17 +314,31 @@ public class JUnitBatchTestClassGroup extends BatchTestClassGroup {
 			_includeUnstagedTestClassFiles = false;
 		}
 
+		long start = System.currentTimeMillis();
+
 		_loadJavaFiles(_getWorkingDirectory());
+
+		System.out.println(getBatchName() + " 1 batch test class group elapsed time: " + (System.currentTimeMillis() - start));
 
 		setTestClasses();
 
+		System.out.println(getBatchName() + " 2 batch test class group elapsed time: " + (System.currentTimeMillis() - start));
+
 		_setAutoBalanceTestFiles();
+
+		System.out.println(getBatchName() + " 3 batch test class group elapsed time: " + (System.currentTimeMillis() - start));
 
 		_setIncludeAutoBalanceTests();
 
+		System.out.println(getBatchName() + " 4 batch test class group elapsed time: " + (System.currentTimeMillis() - start));
+
 		setAxisTestClassGroups();
 
+		System.out.println(getBatchName() + " 5 batch test class group elapsed time: " + (System.currentTimeMillis() - start));
+
 		setSegmentTestClassGroups();
+
+		System.out.println(getBatchName() + " 6 batch test class group elapsed time: " + (System.currentTimeMillis() - start));
 	}
 
 	protected JUnitBatchTestClassGroup(
@@ -607,8 +621,14 @@ public class JUnitBatchTestClassGroup extends BatchTestClassGroup {
 	protected void setAxisTestClassGroups() {
 		long targetAxisDuration = getTargetAxisDuration();
 
+		long start = System.currentTimeMillis();
+
+		System.out.println("5.1: " + (System.currentTimeMillis() - start));
+
 		if (targetAxisDuration > 0) {
 			List<TestClass> testClasses = getTestClasses();
+
+			System.out.println("5.1.0: " + (System.currentTimeMillis() - start));
 
 			if (testClasses.isEmpty()) {
 				if (!_includeAutoBalanceTests) {
@@ -617,6 +637,8 @@ public class JUnitBatchTestClassGroup extends BatchTestClassGroup {
 
 				axisTestClassGroups.add(
 					0, TestClassGroupFactory.newAxisTestClassGroup(this));
+
+				System.out.println("5.1.0.1: " + (System.currentTimeMillis() - start));
 			}
 			else {
 				List<TestClass> batchTestClasses = new ArrayList<>(testClasses);
@@ -626,18 +648,30 @@ public class JUnitBatchTestClassGroup extends BatchTestClassGroup {
 						new JUnitTestClassBalancedListSplitter(
 							targetAxisDuration);
 
+				System.out.println("5.1.0.2.1: " + (System.currentTimeMillis() - start));
+
 				List<List<TestClass>> testClassLists =
 					jUnitTestClassBalancedListSplitter.split(batchTestClasses);
 
+				System.out.println("5.1.0.2.2: " + (System.currentTimeMillis() - start));
+
 				for (List<TestClass> testClassList : testClassLists) {
+					System.out.println("5.1.0.3.1: " + (System.currentTimeMillis() - start));
+
 					AxisTestClassGroup axisTestClassGroup =
 						TestClassGroupFactory.newAxisTestClassGroup(this);
+
+					System.out.println("5.1.0.3.2: " + (System.currentTimeMillis() - start));
 
 					axisTestClassGroup.addTestClasses(testClassList);
 
 					axisTestClassGroups.add(axisTestClassGroup);
+
+					System.out.println("5.1.0.3.3: " + (System.currentTimeMillis() - start));
 				}
 			}
+
+			System.out.println("5.1.1: " + (System.currentTimeMillis() - start));
 		}
 		else {
 			int axisCount = getAxisCount();
@@ -673,7 +707,11 @@ public class JUnitBatchTestClassGroup extends BatchTestClassGroup {
 					axisTestClassGroups.add(axisTestClassGroup);
 				}
 			}
+
+			System.out.println("5.1.2: " + (System.currentTimeMillis() - start));
 		}
+
+		System.out.println("5.2: " + (System.currentTimeMillis() - start));
 
 		if (!_includeAutoBalanceTests) {
 			return;
@@ -693,8 +731,12 @@ public class JUnitBatchTestClassGroup extends BatchTestClassGroup {
 				}
 
 				axisTestClassGroup.addTestClass(testClass);
+
+				System.out.println("5.2.1: " + (System.currentTimeMillis() - start));
 			}
 		}
+
+		System.out.println("5.3: " + (System.currentTimeMillis() - start));
 	}
 
 	protected void setTestClasses() {

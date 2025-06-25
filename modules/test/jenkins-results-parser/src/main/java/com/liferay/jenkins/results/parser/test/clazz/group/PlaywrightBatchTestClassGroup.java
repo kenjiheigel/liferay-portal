@@ -338,12 +338,8 @@ public class PlaywrightBatchTestClassGroup extends BatchTestClassGroup {
 						playwrightSegmentTestClassGroup.addAxisTestClassGroup(
 							axisTestClassGroup);
 
-						synchronized (_loadedProjectNames) {
-							if (!_loadedProjectNames.contains(projectName) ||
-								(axisCount > 1)) {
-
-								_loadedProjectNames.add(projectName);
-
+						synchronized (_playwrightJSONObjectsLoaded) {
+							if ((axisCount > 1)) {
 								StringBuilder sb = new StringBuilder();
 
 								sb.append("npx playwright test --project=");
