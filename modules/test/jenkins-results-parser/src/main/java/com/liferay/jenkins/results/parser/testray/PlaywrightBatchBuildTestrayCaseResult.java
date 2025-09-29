@@ -47,6 +47,12 @@ public class PlaywrightBatchBuildTestrayCaseResult
 
 	@Override
 	public BuildReport getBuildReport() {
+		BuildReport buildReport = super.getBuildReport();
+
+		if (buildReport != null) {
+			return buildReport;
+		}
+
 		if (_playwrightTestClassMethod.isBuildCachingEnabled()) {
 			DownstreamBuildReport cachedDownstreamBuildReport =
 				_playwrightTestClassMethod.getCachedDownstreamBuildReport();
@@ -56,7 +62,7 @@ public class PlaywrightBatchBuildTestrayCaseResult
 			}
 		}
 
-		return super.getBuildReport();
+		return null;
 	}
 
 	@Override

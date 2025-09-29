@@ -25,6 +25,12 @@ public class ModulesBatchBuildTestrayCaseResult
 
 	@Override
 	public BuildReport getBuildReport() {
+		BuildReport buildReport = super.getBuildReport();
+
+		if (buildReport != null) {
+			return buildReport;
+		}
+
 		if (_modulesTestClass.isBuildCachingEnabled()) {
 			DownstreamBuildReport cachedDownstreamBuildReport =
 				_modulesTestClass.getCachedDownstreamBuildReport();
@@ -34,7 +40,7 @@ public class ModulesBatchBuildTestrayCaseResult
 			}
 		}
 
-		return super.getBuildReport();
+		return null;
 	}
 
 	@Override

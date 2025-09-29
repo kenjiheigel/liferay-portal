@@ -41,6 +41,12 @@ public class FunctionalBatchBuildTestrayCaseResult
 
 	@Override
 	public BuildReport getBuildReport() {
+		BuildReport buildReport = super.getBuildReport();
+
+		if (buildReport != null) {
+			return buildReport;
+		}
+
 		if (_functionalTestClass.isBuildCachingEnabled()) {
 			DownstreamBuildReport cachedDownstreamBuildReport =
 				_functionalTestClass.getCachedDownstreamBuildReport();
@@ -50,7 +56,7 @@ public class FunctionalBatchBuildTestrayCaseResult
 			}
 		}
 
-		return super.getBuildReport();
+		return null;
 	}
 
 	@Override
