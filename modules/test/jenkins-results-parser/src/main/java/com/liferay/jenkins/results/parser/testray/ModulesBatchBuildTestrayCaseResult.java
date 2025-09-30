@@ -172,33 +172,31 @@ public class ModulesBatchBuildTestrayCaseResult
 			return _testClassReport;
 		}
 
+		DownstreamBuildReport downstreamBuildReport =
+			getDownstreamBuildReport();
+
+		if (downstreamBuildReport != null) {
+			String testClassName = _getTestClassName();
+
+			for (TestClassReport testClassReport :
+					downstreamBuildReport.getTestClassReports()) {
+
+				if (Objects.equals(
+						testClassName, testClassReport.getTestClassName())) {
+
+					_testClassReport = testClassReport;
+
+					return _testClassReport;
+				}
+			}
+		}
+
 		if (_modulesTestClass.isBuildCachingEnabled()) {
 			TestClassReport cachedTestClassReport =
 				_modulesTestClass.getCachedTestClassReport();
 
 			if (cachedTestClassReport != null) {
 				_testClassReport = cachedTestClassReport;
-
-				return _testClassReport;
-			}
-		}
-
-		DownstreamBuildReport downstreamBuildReport =
-			getDownstreamBuildReport();
-
-		if (downstreamBuildReport == null) {
-			return _testClassReport;
-		}
-
-		String testClassName = _getTestClassName();
-
-		for (TestClassReport testClassReport :
-				downstreamBuildReport.getTestClassReports()) {
-
-			if (Objects.equals(
-					testClassName, testClassReport.getTestClassName())) {
-
-				_testClassReport = testClassReport;
 			}
 		}
 
