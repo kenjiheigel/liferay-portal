@@ -39,12 +39,6 @@ public class JUnitBatchBuildTestrayCaseResult
 
 	@Override
 	public BuildReport getBuildReport() {
-		BuildReport buildReport = super.getBuildReport();
-
-		if (buildReport != null) {
-			return buildReport;
-		}
-
 		if (_jUnitTestClass.isBuildCachingEnabled()) {
 			DownstreamBuildReport cachedDownstreamBuildReport =
 				_jUnitTestClass.getCachedDownstreamBuildReport();
@@ -54,7 +48,7 @@ public class JUnitBatchBuildTestrayCaseResult
 			}
 		}
 
-		return null;
+		return super.getBuildReport();
 	}
 
 	@Override

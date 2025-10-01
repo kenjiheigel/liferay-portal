@@ -38,12 +38,6 @@ public class JSUnitBatchBuildTestrayCaseResult
 
 	@Override
 	public BuildReport getBuildReport() {
-		BuildReport buildReport = super.getBuildReport();
-
-		if (buildReport != null) {
-			return buildReport;
-		}
-
 		if (_jsUnitModulesTestClass.isBuildCachingEnabled()) {
 			DownstreamBuildReport cachedDownstreamBuildReport =
 				_jsUnitModulesTestClass.getCachedDownstreamBuildReport();
@@ -53,7 +47,7 @@ public class JSUnitBatchBuildTestrayCaseResult
 			}
 		}
 
-		return null;
+		return super.getBuildReport();
 	}
 
 	@Override

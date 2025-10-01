@@ -25,12 +25,6 @@ public class AntTargetBatchBuildTestrayCaseResult
 
 	@Override
 	public BuildReport getBuildReport() {
-		BuildReport buildReport = super.getBuildReport();
-
-		if (buildReport != null) {
-			return buildReport;
-		}
-
 		if (_serviceBuilderAntTargetTestClass.isBuildCachingEnabled()) {
 			DownstreamBuildReport cachedDownstreamBuildReport =
 				_serviceBuilderAntTargetTestClass.
@@ -41,7 +35,7 @@ public class AntTargetBatchBuildTestrayCaseResult
 			}
 		}
 
-		return null;
+		return super.getBuildReport();
 	}
 
 	@Override
