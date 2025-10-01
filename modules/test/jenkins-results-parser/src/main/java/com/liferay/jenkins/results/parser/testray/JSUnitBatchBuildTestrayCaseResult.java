@@ -201,29 +201,31 @@ public class JSUnitBatchBuildTestrayCaseResult
 			return _testClassReport;
 		}
 
-		DownstreamBuildReport downstreamBuildReport =
-			getDownstreamBuildReport();
-
-		if (downstreamBuildReport != null) {
-			for (TestClassReport testClassResult :
-					downstreamBuildReport.getTestClassReports()) {
-
-				if (Objects.equals(
-						testClassResult.getTestClassName(), getName())) {
-
-					_testClassReport = testClassResult;
-
-					return _testClassReport;
-				}
-			}
-		}
-
 		if (_jsUnitModulesTestClass.isBuildCachingEnabled()) {
 			TestClassReport cachedTestClassReport =
 				_jsUnitModulesTestClass.getCachedTestClassReport();
 
 			if (cachedTestClassReport != null) {
 				_testClassReport = cachedTestClassReport;
+
+				return _testClassReport;
+			}
+		}
+
+		DownstreamBuildReport downstreamBuildReport =
+			getDownstreamBuildReport();
+
+		if (downstreamBuildReport == null) {
+			return _testClassReport;
+		}
+
+		for (TestClassReport testClassResult :
+				downstreamBuildReport.getTestClassReports()) {
+
+			if (Objects.equals(testClassResult.getTestClassName(), getName())) {
+				_testClassReport = testClassResult;
+
+				return _testClassReport;
 			}
 		}
 

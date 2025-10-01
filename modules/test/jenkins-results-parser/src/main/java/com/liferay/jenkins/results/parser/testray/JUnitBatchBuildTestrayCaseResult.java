@@ -361,45 +361,6 @@ public class JUnitBatchBuildTestrayCaseResult
 			return _testClassReports;
 		}
 
-		DownstreamBuildReport downstreamBuildReport =
-			getDownstreamBuildReport();
-
-		_testClassReports = new ArrayList<>();
-
-		if (downstreamBuildReport != null) {
-			for (TestClassReport testClassReport :
-					downstreamBuildReport.getTestClassReports()) {
-
-				String testClassName = testClassReport.getTestClassName();
-
-				if (testClassName.equals(getName()) ||
-					testClassName.startsWith(getName() + "$")) {
-
-					_testClassReports.add(testClassReport);
-
-					continue;
-				}
-
-				if (testClassName.equals("junit.framework.TestSuite")) {
-					for (TestReport testReport :
-							testClassReport.getTestReports()) {
-
-						String testName = testReport.getTestName();
-
-						if (testName.equals(getName())) {
-							_testClassReports.add(testClassReport);
-
-							break;
-						}
-					}
-				}
-			}
-		}
-
-		if (!_testClassReports.isEmpty()) {
-			return _testClassReports;
-		}
-
 		if (_jUnitTestClass.isBuildCachingEnabled()) {
 			List<TestClassReport> cachedTestClassReports =
 				_jUnitTestClass.getCachedTestClassReports();
@@ -408,6 +369,43 @@ public class JUnitBatchBuildTestrayCaseResult
 				!cachedTestClassReports.isEmpty()) {
 
 				_testClassReports = cachedTestClassReports;
+
+				return _testClassReports;
+			}
+		}
+
+		DownstreamBuildReport downstreamBuildReport =
+			getDownstreamBuildReport();
+
+		if (downstreamBuildReport == null) {
+			return null;
+		}
+
+		_testClassReports = new ArrayList<>();
+
+		for (TestClassReport testClassReport :
+				downstreamBuildReport.getTestClassReports()) {
+
+			String testClassName = testClassReport.getTestClassName();
+
+			if (testClassName.equals(getName()) ||
+				testClassName.startsWith(getName() + "$")) {
+
+				_testClassReports.add(testClassReport);
+
+				continue;
+			}
+
+			if (testClassName.equals("junit.framework.TestSuite")) {
+				for (TestReport testReport : testClassReport.getTestReports()) {
+					String testName = testReport.getTestName();
+
+					if (testName.equals(getName())) {
+						_testClassReports.add(testClassReport);
+
+						break;
+					}
+				}
 			}
 		}
 

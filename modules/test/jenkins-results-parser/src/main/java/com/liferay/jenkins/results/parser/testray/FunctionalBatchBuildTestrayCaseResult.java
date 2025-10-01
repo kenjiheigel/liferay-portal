@@ -136,25 +136,25 @@ public class FunctionalBatchBuildTestrayCaseResult
 
 	@Override
 	public TestReport getTestReport() {
-		DownstreamBuildReport downstreamBuildReport =
-			getDownstreamBuildReport();
-
-		if (downstreamBuildReport != null) {
-			for (TestReport testReport :
-					downstreamBuildReport.getTestReports()) {
-
-				if (Objects.equals(testReport.getTestName(), getName())) {
-					return testReport;
-				}
-			}
-		}
-
 		if (_functionalTestClass.isBuildCachingEnabled()) {
 			TestReport cachedTestReport =
 				_functionalTestClass.getCachedTestReport();
 
 			if (cachedTestReport != null) {
 				return cachedTestReport;
+			}
+		}
+
+		DownstreamBuildReport downstreamBuildReport =
+			getDownstreamBuildReport();
+
+		if (downstreamBuildReport == null) {
+			return null;
+		}
+
+		for (TestReport testReport : downstreamBuildReport.getTestReports()) {
+			if (Objects.equals(testReport.getTestName(), getName())) {
+				return testReport;
 			}
 		}
 

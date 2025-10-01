@@ -176,10 +176,21 @@ public class AntTargetBatchBuildTestrayCaseResult
 			return _testClassReport;
 		}
 
+		if (_serviceBuilderAntTargetTestClass.isBuildCachingEnabled()) {
+			TestClassReport cachedTestClassReport =
+				_serviceBuilderAntTargetTestClass.getCachedTestClassReport();
+
+			if (cachedTestClassReport != null) {
+				_testClassReport = cachedTestClassReport;
+
+				return _testClassReport;
+			}
+		}
+
 		DownstreamBuildReport downstreamBuildReport =
 			getDownstreamBuildReport();
 
-		if (downstreamBuildReport != null) {
+		if (downstreamBuildReport == null) {
 			return _testClassReport;
 		}
 
@@ -192,17 +203,6 @@ public class AntTargetBatchBuildTestrayCaseResult
 					testClassName, testClassReport.getTestClassName())) {
 
 				_testClassReport = testClassReport;
-
-				return _testClassReport;
-			}
-		}
-
-		if (_serviceBuilderAntTargetTestClass.isBuildCachingEnabled()) {
-			TestClassReport cachedTestClassReport =
-				_serviceBuilderAntTargetTestClass.getCachedTestClassReport();
-
-			if (cachedTestClassReport != null) {
-				_testClassReport = cachedTestClassReport;
 			}
 		}
 

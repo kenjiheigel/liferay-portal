@@ -54,7 +54,12 @@ public class PlaywrightBatchBuildTestrayCaseResult
 		}
 
 		if (_playwrightTestClassMethod.isBuildCachingEnabled()) {
-			return _playwrightTestClassMethod.getCachedDownstreamBuildReport();
+			DownstreamBuildReport cachedDownstreamBuildReport =
+				_playwrightTestClassMethod.getCachedDownstreamBuildReport();
+
+			if (cachedDownstreamBuildReport != null) {
+				return cachedDownstreamBuildReport;
+			}
 		}
 
 		return null;
@@ -194,46 +199,47 @@ public class PlaywrightBatchBuildTestrayCaseResult
 
 	@Override
 	public TestReport getTestReport() {
-		DownstreamBuildReport downstreamBuildReport =
-			getDownstreamBuildReport();
-
-		TestClassReport playwrightTestClassReport = null;
-
-		if (downstreamBuildReport != null) {
-			for (TestClassReport testClassReport :
-					downstreamBuildReport.getTestClassReports()) {
-
-				if (Objects.equals(
-						_playwrightJUnitTestClass.getSpecFilePath(),
-						testClassReport.getTestClassName())) {
-
-					playwrightTestClassReport = testClassReport;
-
-					break;
-				}
-			}
-		}
-
-		if (playwrightTestClassReport != null) {
-			for (TestReport testReport :
-					playwrightTestClassReport.getTestReports()) {
-
-				String fullTestName = JenkinsResultsParserUtil.combine(
-					testReport.getTestClassName(), " > ",
-					testReport.getTestName());
-
-				if (fullTestName.equals(getName())) {
-					return testReport;
-				}
-			}
-		}
-
 		if (_playwrightTestClassMethod.isBuildCachingEnabled()) {
 			TestReport cachedTestReport =
 				_playwrightTestClassMethod.getCachedTestReport();
 
 			if (cachedTestReport != null) {
 				return cachedTestReport;
+			}
+		}
+
+		DownstreamBuildReport downstreamBuildReport =
+			getDownstreamBuildReport();
+
+		if (downstreamBuildReport == null) {
+			return null;
+		}
+
+		TestClassReport playwrightTestClassReport = null;
+
+		for (TestClassReport testClassReport :
+				downstreamBuildReport.getTestClassReports()) {
+
+			if (Objects.equals(
+					_playwrightJUnitTestClass.getSpecFilePath(),
+					testClassReport.getTestClassName())) {
+
+				playwrightTestClassReport = testClassReport;
+			}
+		}
+
+		if (playwrightTestClassReport == null) {
+			return null;
+		}
+
+		for (TestReport testReport :
+				playwrightTestClassReport.getTestReports()) {
+
+			String fullTestName = JenkinsResultsParserUtil.combine(
+				testReport.getTestClassName(), " > ", testReport.getTestName());
+
+			if (fullTestName.equals(getName())) {
+				return testReport;
 			}
 		}
 
