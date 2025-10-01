@@ -7,6 +7,7 @@ package com.liferay.jenkins.results.parser.test.clazz;
 
 import com.liferay.jenkins.results.parser.DownstreamBuildReport;
 import com.liferay.jenkins.results.parser.JenkinsResultsParserUtil;
+import com.liferay.jenkins.results.parser.TestClassReport;
 import com.liferay.jenkins.results.parser.TestReport;
 import com.liferay.jenkins.results.parser.test.clazz.group.BatchTestClassGroup;
 
@@ -33,16 +34,29 @@ public class PlaywrightTestClassMethod extends TestClassMethod {
 		BatchTestClassGroup batchTestClassGroup =
 			_playwrightJUnitTestClass.getBatchTestClassGroup();
 
-		_cachedTestReport = batchTestClassGroup.getCachedTestReport(getName());
+		TestClassReport testClassReport =
+			batchTestClassGroup.getCachedTestClassReport(
+				_playwrightJUnitTestClass.getSpecFilePath());
 
-		if (_cachedTestReport != null) {
-			_cachedDownstreamBuildReport =
-				_cachedTestReport.getDownstreamBuildReport();
+		if (testClassReport == null) {
+			return null;
 		}
 
-		_cachedTestReportSearched = true;
+		for (TestReport testReport : testClassReport.getTestReports()) {
+			String fullTestName = JenkinsResultsParserUtil.combine(
+				testReport.getTestClassName(), " > ", testReport.getTestName());
 
-		return _cachedTestReport;
+			if (fullTestName.equals(getName())) {
+				_cachedDownstreamBuildReport =
+					testClassReport.getDownstreamBuildReport();
+				_cachedTestReport = testReport;
+				_cachedTestReportSearched = true;
+
+				return _cachedTestReport;
+			}
+		}
+
+		return null;
 	}
 
 	@Override

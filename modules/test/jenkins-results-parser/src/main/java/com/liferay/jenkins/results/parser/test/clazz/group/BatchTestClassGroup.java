@@ -1521,18 +1521,6 @@ public abstract class BatchTestClassGroup extends BaseTestClassGroup {
 				for (TestReport testReport :
 						downstreamBuildReport.getTestReports()) {
 
-					String batchName = downstreamBuildReport.getBatchName();
-
-					if (batchName.startsWith("playwright")) {
-						_cachedTestReportsMap.put(
-							JenkinsResultsParserUtil.combine(
-								testReport.getTestClassName(), " > ",
-								testReport.getTestName()),
-							testReport);
-
-						continue;
-					}
-
 					_cachedTestReportsMap.put(
 						testReport.getTestName(), testReport);
 				}
