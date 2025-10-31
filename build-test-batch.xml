@@ -1417,9 +1417,9 @@ app.server.type=@{app.server.type}]]></echo>
 			</chmod>
 
 			<execute>
-				tar --create --format=${app.server.tar.gz.format} --file=liferay-portal-bundle-@{app.server.type}.tar.gz --gzip bundles/
+				tar --create --format=${app.server.tar.gz.format} --file=liferay-portal-bundle-@{app.server.type}.tar.zst --zstd bundles/
 
-				tar --file=liferay-portal-bundle-@{app.server.type}.tar.gz --gzip --list --verbose
+				tar --file=liferay-portal-bundle-@{app.server.type}.tar.zst --list --verbose --zstd
 			</execute>
 
 			<lstopwatch action="total" name="prepare-test-build-dist.bundles.@{app.server.type}.compress" />
@@ -1446,16 +1446,26 @@ app.server.type=@{app.server.type}]]></echo>
 
 			<local name="bundle.src.file.name" />
 
-			<condition else="liferay-portal-bundle-@{app.server.type}.tar.gz" property="bundle.src.file.name" value="liferay-portal-bundle-@{app.server.type}-@{app.server.version}.tar.gz">
-				<available file="liferay-portal-bundle-@{app.server.type}-@{app.server.version}.tar.gz" />
+			<condition else="liferay-portal-bundle-@{app.server.type}.tar.zst" property="bundle.src.file.name" value="liferay-portal-bundle-@{app.server.type}-@{app.server.version}.tar.gz">
+				<available file="liferay-portal-bundle-@{app.server.type}-@{app.server.version}.tar.zst" />
 			</condition>
 
 			<if>
 				<available file="${bundle.src.file.name}" />
 				<then>
-					<execute>
-						tar --extract --gzip --file=${bundle.src.file.name}
-					</execute>
+					<if>
+						<contains string="${bundle.src.file.name}" substring=".tar.zst" />
+						<then>
+							<execute>
+								tar --extract --file=${bundle.src.file.name} --zstd
+							</execute>
+						</then>
+						<else>
+							<execute>
+								tar --extract --file=${bundle.src.file.name} --gzip
+							</execute>
+						</else>
+					</if>
 
 					<chmod
 						perm="a+x"
@@ -2254,7 +2264,7 @@ app.server.type=@{app.server.type}]]></echo>
 								<and>
 									<or>
 										<or>
-											<available file="liferay-portal-bundle-${app.server.type}.tar.gz" />
+											<available file="liferay-portal-bundle-${app.server.type}.tar.zst" />
 											<available file="liferay-portal-bundle-${app.server.type}-${app.server.version}.tar.gz" />
 										</or>
 										<and>
@@ -3043,7 +3053,7 @@ ${poshi.runner.testsuite.testcase.name}</echo>
 						<elseif>
 							<and>
 								<or>
-									<available file="liferay-portal-bundle-${app.server.type}.tar.gz" />
+									<available file="liferay-portal-bundle-${app.server.type}.tar.zst" />
 									<available file="liferay-portal-bundle-${app.server.type}-${app.server.version}.tar.gz" />
 								</or>
 								<available file="liferay-portal-source.tar.gz" />
@@ -3794,7 +3804,7 @@ ${poshi.runner.testsuite.testcase.name}</echo>
 				<and>
 					<or>
 						<or>
-							<available file="liferay-portal-bundle-${app.server.type}.tar.gz" />
+							<available file="liferay-portal-bundle-${app.server.type}.tar.zst" />
 							<available file="liferay-portal-bundle-${app.server.type}-${app.server.version}.tar.gz" />
 						</or>
 						<and>
@@ -4137,7 +4147,7 @@ ${poshi.runner.testsuite.testcase.name}</echo>
 					<elseif>
 						<and>
 							<or>
-								<available file="liferay-portal-bundle-${app.server.type}.tar.gz" />
+								<available file="liferay-portal-bundle-${app.server.type}.tar.zst" />
 								<available file="liferay-portal-bundle-${app.server.type}-${app.server.version}.tar.gz" />
 							</or>
 							<available file="liferay-portal-source.tar.gz" />
@@ -8346,7 +8356,7 @@ information. Make sure to commit in all format-javadoc results.
 				<if>
 					<and>
 						<or>
-							<available file="liferay-portal-bundle-${app.server.type}.tar.gz" />
+							<available file="liferay-portal-bundle-${app.server.type}.tar.zst" />
 							<available file="liferay-portal-bundle-${app.server.type}-${app.server.version}.tar.gz" />
 						</or>
 						<available file="liferay-portal-source.tar.gz" />
@@ -8354,13 +8364,23 @@ information. Make sure to commit in all format-javadoc results.
 					<then>
 						<local name="bundle.src.file.name" />
 
-						<condition else="liferay-portal-bundle-${app.server.type}.tar.gz" property="bundle.src.file.name" value="liferay-portal-bundle-${app.server.type}-${app.server.version}.tar.gz">
-							<available file="liferay-portal-bundle-${app.server.type}-${app.server.version}.tar.gz" />
+						<condition else="liferay-portal-bundle-${app.server.type}.tar.zst" property="bundle.src.file.name" value="liferay-portal-bundle-${app.server.type}-${app.server.version}.tar.gz">
+							<available file="liferay-portal-bundle-${app.server.type}-${app.server.version}.tar.zst" />
 						</condition>
 
-						<execute>
-							tar --extract --gzip --file=${bundle.src.file.name}
-						</execute>
+						<if>
+							<contains string="${bundle.src.file.name}" substring=".tar.zst" />
+							<then>
+								<execute>
+									tar --extract --file=${bundle.src.file.name} --zstd
+								</execute>
+							</then>
+							<else>
+								<execute>
+									tar --extract --file=${bundle.src.file.name} --gzip
+								</execute>
+							</else>
+						</if>
 
 						<antcall inheritAll="false" target="compile" />
 
@@ -9576,7 +9596,7 @@ ${output.content}</echo>
 						<elseif>
 							<and>
 								<or>
-									<available file="liferay-portal-bundle-${app.server.type}.tar.gz" />
+									<available file="liferay-portal-bundle-${app.server.type}.tar.zst" />
 									<available file="liferay-portal-bundle-${app.server.type}-${app.server.version}.tar.gz" />
 								</or>
 								<available file="liferay-portal-source.tar.gz" />
@@ -9698,7 +9718,7 @@ ${output.content}</echo>
 						<elseif>
 							<and>
 								<or>
-									<available file="liferay-portal-bundle-${app.server.type}.tar.gz" />
+									<available file="liferay-portal-bundle-${app.server.type}.tar.zst" />
 									<available file="liferay-portal-bundle-${app.server.type}-${app.server.version}.tar.gz" />
 								</or>
 								<available file="liferay-portal-source.tar.gz" />
@@ -9820,7 +9840,7 @@ ${output.content}</echo>
 						<elseif>
 							<and>
 								<or>
-									<available file="liferay-portal-bundle-${app.server.type}.tar.gz" />
+									<available file="liferay-portal-bundle-${app.server.type}.tar.zst" />
 									<available file="liferay-portal-bundle-${app.server.type}-${app.server.version}.tar.gz" />
 								</or>
 								<available file="liferay-portal-source.tar.gz" />
@@ -9942,7 +9962,7 @@ ${output.content}</echo>
 						<elseif>
 							<and>
 								<or>
-									<available file="liferay-portal-bundle-${app.server.type}.tar.gz" />
+									<available file="liferay-portal-bundle-${app.server.type}.tar.zst" />
 									<available file="liferay-portal-bundle-${app.server.type}-${app.server.version}.tar.gz" />
 								</or>
 								<available file="liferay-portal-source.tar.gz" />
