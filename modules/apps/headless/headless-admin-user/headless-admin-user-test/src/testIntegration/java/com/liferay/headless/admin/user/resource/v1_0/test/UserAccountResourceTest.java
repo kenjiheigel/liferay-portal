@@ -1866,12 +1866,12 @@ public class UserAccountResourceTest extends BaseUserAccountResourceTestCase {
 	}
 
 	private ExpandoColumn _addExpandoColumn(
-			ExpandoTable expandoTable, int expandoType)
+			int expandoColumnType, ExpandoTable expandoTable)
 		throws Exception {
 
 		ExpandoColumn expandoColumn = _expandoColumnLocalService.addColumn(
 			expandoTable.getTableId(), "A" + RandomTestUtil.randomString(),
-			expandoType);
+			expandoColumnType);
 
 		UnicodeProperties unicodeProperties =
 			expandoColumn.getTypeSettingsProperties();
@@ -2194,25 +2194,25 @@ public class UserAccountResourceTest extends BaseUserAccountResourceTestCase {
 			number + "00");
 
 		_testGetUserAccountsPageWithCustomFields(
-			expandoTable, ExpandoColumnConstants.DOUBLE,
+			ExpandoColumnConstants.DOUBLE, expandoTable,
 			RandomTestUtil::randomDouble, function);
 		_testGetUserAccountsPageWithCustomFields(
-			expandoTable, ExpandoColumnConstants.FLOAT,
+			ExpandoColumnConstants.FLOAT, expandoTable,
 			RandomTestUtil::randomFloat, function);
 
 		_testGetUserAccountsPageWithCustomFields(
-			expandoTable, ExpandoColumnConstants.STRING,
+			ExpandoColumnConstants.STRING, expandoTable,
 			RandomTestUtil::randomString,
 			value -> List.of(StringUtil.quote(value)));
 	}
 
 	private <T> void _testGetUserAccountsPageWithCustomFields(
-			ExpandoTable expandoTable, int expandotype, Supplier<T> supplier,
-			Function<T, List<String>> function)
+			int expandoColumnType, ExpandoTable expandoTable,
+			Supplier<T> supplier, Function<T, List<String>> function)
 		throws Exception {
 
 		ExpandoColumn expandoColumn = _addExpandoColumn(
-			expandoTable, expandotype);
+			expandoColumnType, expandoTable);
 
 		T value = supplier.get();
 
@@ -2244,7 +2244,7 @@ public class UserAccountResourceTest extends BaseUserAccountResourceTestCase {
 
 		Object otherValue = supplier.get();
 
-		String filter = (expandotype == ExpandoColumnConstants.STRING) ?
+		String filter = (expandoColumnType == ExpandoColumnConstants.STRING) ?
 			StringUtil.quote(otherValue.toString()) : otherValue.toString();
 
 		_testGetUserAccountsPage(
@@ -2275,11 +2275,12 @@ public class UserAccountResourceTest extends BaseUserAccountResourceTestCase {
 	}
 
 	private void _testGetUserAccountsPageWithSortCustomField(
-			ExpandoTable expandoTable, int expandoType, List<Object> values)
+			ExpandoTable expandoTable, int expandoColumnType,
+			List<Object> values)
 		throws Exception {
 
 		ExpandoColumn expandoColumn = _addExpandoColumn(
-			expandoTable, expandoType);
+			expandoColumnType, expandoTable);
 
 		List<UserAccount> userAccounts = new ArrayList<>();
 		String domain = StringUtil.randomString() + ".com";
