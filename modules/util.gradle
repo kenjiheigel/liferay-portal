@@ -21,12 +21,14 @@ task appendHotfixQualifier
 task formatSourceCurrentBranch(type: FormatSourceTask)
 task formatSourceLatestAuthor(type: FormatSourceTask)
 task formatSourceLocalChanges(type: FormatSourceTask)
+task generateBranchValidationScript(type: JavaExec)
 task printDependencyPath
 task removeHotfixQualifier
 task setUpLibs
 task setUpPortalTools
 task setUpYarnOfflineCache
 task updateYarnBinariesCache
+task validateBranch(type: Exec)
 task wrapperPortal(type: Wrapper)
 task wrapperProjectTemplates(type: Wrapper)
 task wrapperSubrepo(type: Wrapper)
@@ -38,6 +40,8 @@ Map<File, Properties> libDependenciesMap = libDependenciesFileTree.collectEntrie
 
 	[it.parentFile, properties]
 }
+
+File repoRootDir = project.rootDir.parentFile
 
 appendHotfixQualifier {
 	doLast {
@@ -67,6 +71,14 @@ appendHotfixQualifier {
 	}
 }
 
+configurations {
+	generateBranchValidationScriptConfiguration
+}
+
+dependencies {
+	generateBranchValidationScriptConfiguration group: "com.liferay", name: "com.liferay.jenkins.results.parser", version: "1.0.1772"
+}
+
 formatSourceCurrentBranch {
 	description = "Runs Liferay Source Formatter to format the project files that are added or modified in the current Git branch."
 	formatCurrentBranch = true
@@ -80,6 +92,30 @@ formatSourceLatestAuthor {
 formatSourceLocalChanges {
 	description = "Runs Liferay Source Formatter to format the unstaged project files."
 	formatLocalChanges = true
+}
+
+generateBranchValidationScript {
+	Task task ->
+
+	File outputDir = file "${buildDir}/${task.name}"
+
+	args repoRootDir, outputDir
+
+	classpath = configurations.generateBranchValidationScriptConfiguration
+	mainClass = "com.liferay.jenkins.results.parser.test.suite.TestScriptGenerator"
+
+	outputs.file provider {
+		file "${outputDir}/validate_branch.sh"
+	}
+
+	outputs.upToDateWhen {
+		false
+	}
+
+	doLast {
+		println ""
+		println "Script generated at: file://${outputs.files.singleFile}"
+	}
 }
 
 printDependencyPath {
@@ -157,6 +193,14 @@ updateYarnBinariesCache {
 	doFirst {
 		logger.lifecycle "Updating Yarn binaries cache directories"
 	}
+}
+
+validateBranch {
+	dependsOn generateBranchValidationScript
+
+	executable generateBranchValidationScript.outputs.files.singleFile
+	standardInput = System.in
+	workingDir repoRootDir
 }
 
 wrapperPortal {
