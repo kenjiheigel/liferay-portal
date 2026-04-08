@@ -884,6 +884,8 @@ OSB_FARO_FRONTEND_URL=${analytics.cloud.faro.frontend.url}</echo>
 											<equals arg1="${analytics.cloud.start.result}" arg2="0" />
 										</not>
 										<then>
+											<echo message="Failed to start Analytics Cloud with error code ${analytics.cloud.start.result}." />
+
 											<fail message="Failed to start Analytics Cloud with error code ${analytics.cloud.start.result}." />
 										</then>
 									</if>
@@ -893,11 +895,15 @@ OSB_FARO_FRONTEND_URL=${analytics.cloud.faro.frontend.url}</echo>
 
 									<stop-analytics-cloud />
 
+									<echo message="First try catch." />
+
 									<fail message="${analytics.cloud.error}" />
 								</catch>
 							</trycatch>
 						</try>
 						<catch>
+							<echo message="Second try catch." />
+
 							<fail message="${analytics.cloud.error}" />
 						</catch>
 					</trycatch>
