@@ -825,17 +825,6 @@ public abstract class BaseWorkspaceGitRepository
 
 			GitWorkingDirectory gitWorkingDirectory = getGitWorkingDirectory();
 
-			gitWorkingDirectory.checkoutLocalGitBranch(
-				gitWorkingDirectory.createLocalGitBranch(
-					getBranchName(), true, "HEAD"));
-
-			String upstreamBranchName = getUpstreamBranchName();
-
-			if (!gitWorkingDirectory.localGitBranchExists(upstreamBranchName)) {
-				gitWorkingDirectory.createLocalGitBranch(
-					upstreamBranchName, true, getBaseBranchSHA());
-			}
-
 			gitWorkingDirectory.displayLog();
 		}
 	}
