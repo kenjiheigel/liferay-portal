@@ -823,18 +823,6 @@ public abstract class BaseWorkspaceGitRepository
 
 			JenkinsResultsParserUtil.delete(dotGitArchiveFile);
 
-			GitUtil.ExecutionResult executionResult =
-				GitUtil.executeBashCommands(
-					GitUtil.RETRIES_SIZE_MAX, GitUtil.MILLIS_RETRY_DELAY,
-					GitUtil.MILLIS_TIMEOUT, directory, "git reset");
-
-			if (executionResult.getExitValue() != 0) {
-				throw new RuntimeException(
-					JenkinsResultsParserUtil.combine(
-						"Unable to reset Git directory: " + directory,
-						executionResult.getStandardError()));
-			}
-
 			GitWorkingDirectory gitWorkingDirectory = getGitWorkingDirectory();
 
 			gitWorkingDirectory.checkoutLocalGitBranch(
