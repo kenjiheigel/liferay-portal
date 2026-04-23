@@ -23,7 +23,7 @@ Closure isCompileTask = {
 }
 
 Closure writeReport = {
-	String projectPath, Double duration, String failureMessage, String failureStacktrace ->
+	Double duration, String failureMessage, String failureStacktrace, String projectPath ->
 
 	writtenProjectPaths.add projectPath
 
@@ -64,10 +64,10 @@ gradle.buildFinished {
 		}
 
 		writeReport(
-			projectPath,
 			0.0d,
 			"${projectPath}:${targetTaskName} was not executed. Please check the logs for details.",
-			"")
+			"",
+			projectPath)
 	}
 }
 
@@ -97,7 +97,7 @@ gradle.taskGraph.addTaskExecutionListener(
 			}
 
 			if (failure == null) {
-				writeReport(projectPath, duration, null, null)
+				writeReport(duration, null, null, projectPath)
 			}
 			else {
 				StringWriter stringWriter = new StringWriter()
@@ -105,10 +105,10 @@ gradle.taskGraph.addTaskExecutionListener(
 				failure.printStackTrace(new PrintWriter(stringWriter))
 
 				writeReport(
-					projectPath,
 					duration,
 					"${task.path} failed. Please check the logs for details.",
-					stringWriter.toString())
+					stringWriter.toString(),
+					projectPath)
 			}
 		}
 
