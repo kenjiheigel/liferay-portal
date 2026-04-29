@@ -13,8 +13,10 @@ import com.liferay.jenkins.results.parser.PortalAcceptancePullRequestJob;
 import com.liferay.jenkins.results.parser.PortalGitWorkingDirectory;
 
 import java.io.File;
+import java.io.IOException;
 
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 import org.json.JSONObject;
 
@@ -72,7 +74,7 @@ public abstract class BaseRelevantRuleTestCase {
 				),
 				(PortalGitWorkingDirectory)
 					GitWorkingDirectoryFactory.newGitWorkingDirectory(
-						upstreamBranchName, getPortalDir(null), repositoryName),
+						upstreamBranchName, getPortalDir(), repositoryName),
 				upstreamBranchName, null, repositoryName, "relevant",
 				upstreamBranchName);
 
@@ -86,27 +88,29 @@ public abstract class BaseRelevantRuleTestCase {
 		return _portalAcceptancePullRequestJob;
 	}
 
-	protected File getPortalDir(File file) {
-		if (file == null) {
-			file = new File(".");
+	protected File getPortalDir() {
+		File workingDir = JenkinsResultsParserUtil.getCanonicalFile(
+			new File("."));
 
-			file = JenkinsResultsParserUtil.getCanonicalFile(file);
+		try {
+			Process process = JenkinsResultsParserUtil.executeBashCommands(
+				workingDir, true, false, 5000, "git rev-parse --show-toplevel");
+
+			if (process.exitValue() != 0) {
+				throw new RuntimeException(
+					"Unable to find portal directory from: " + workingDir);
+			}
+
+			String output = JenkinsResultsParserUtil.readInputStream(
+				process.getInputStream());
+
+			return new File(output.split("\\R", 2)[0].trim());
 		}
-
-		String fileName = file.getName();
-
-		if (fileName.equals("liferay-portal")) {
-			return file;
-		}
-
-		file = file.getParentFile();
-
-		if (file == null) {
+		catch (IOException | TimeoutException exception) {
 			throw new RuntimeException(
-				"Unable to find portal directory from: " + file);
+				"Unable to find portal directory from: " + workingDir,
+				exception);
 		}
-
-		return getPortalDir(file);
 	}
 
 	protected RelevantRuleEngine getRelevantRuleEngine() {
