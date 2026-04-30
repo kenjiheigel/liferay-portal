@@ -94,7 +94,7 @@ public class GroovyStyleChecker {
 					}
 
 					if ((c == '$') && ((i + 1) < line.length()) &&
-						_isInterpolationStart(line.charAt(i + 1))) {
+						(line.charAt(i + 1) == '{')) {
 
 						violations.add(new Violation(line, lineIndex + 1));
 
@@ -186,14 +186,6 @@ public class GroovyStyleChecker {
 		if (nextLine.equals("{") || nextLine.startsWith(".") ||
 			nextLine.startsWith("throws ") || nextLine.startsWith("{ ")) {
 
-			return true;
-		}
-
-		return false;
-	}
-
-	private static boolean _isInterpolationStart(char c) {
-		if ((c == '{') || Character.isJavaIdentifierStart(c)) {
 			return true;
 		}
 
