@@ -215,20 +215,40 @@ public class PortalWorkspaceGitRepository extends BaseWorkspaceGitRepository {
 	}
 
 	protected boolean isBinariesCacheEnabled() {
+		String ciTestSuite = System.getenv("CI_TEST_SUITE");
+		String jobName = System.getenv("JOB_NAME");
+
 		try {
-			return Boolean.parseBoolean(
-				JenkinsResultsParserUtil.getBuildProperty(
-					"binaries.cache.enabled", System.getenv("CI_TEST_SUITE"),
-					System.getenv("JOB_NAME")));
+			String rawValue = JenkinsResultsParserUtil.getBuildProperty(
+				"binaries.cache.enabled", ciTestSuite, jobName);
+
+			boolean parsed = Boolean.parseBoolean(rawValue);
+
+			System.out.println(
+				"DEBUG-LRCI-7366 isBinariesCacheEnabled: CI_TEST_SUITE=" +
+					ciTestSuite + " JOB_NAME=" + jobName + " rawValue=" +
+						rawValue + " parsed=" + parsed);
+
+			return parsed;
 		}
 		catch (IOException ioException) {
+			System.out.println(
+				"DEBUG-LRCI-7366 isBinariesCacheEnabled IOException, " +
+					"returning true: " + ioException);
+
 			return true;
 		}
 	}
 
 	@Override
 	protected void setUpAdditionalCaches() throws IOException {
-		if (isBinariesCacheEnabled()) {
+		boolean enabled = isBinariesCacheEnabled();
+
+		System.out.println(
+			"DEBUG-LRCI-7366 setUpAdditionalCaches entered, enabled=" +
+				enabled);
+
+		if (enabled) {
 			_setUpBinariesCache();
 		}
 	}
@@ -319,15 +339,33 @@ public class PortalWorkspaceGitRepository extends BaseWorkspaceGitRepository {
 	}
 
 	private void _setUpBinariesCache() {
-		if (!JenkinsResultsParserUtil.isCloudCINode() || _setUpBinariesCache) {
+		boolean cloudCINode = JenkinsResultsParserUtil.isCloudCINode();
+
+		System.out.println(
+			"DEBUG-LRCI-7366 _setUpBinariesCache entered, isCloudCINode=" +
+				cloudCINode + " _setUpBinariesCache field=" +
+					_setUpBinariesCache + " MASTER_NETWORK_NAME=" +
+						System.getenv("MASTER_NETWORK_NAME"));
+
+		if (!cloudCINode || _setUpBinariesCache) {
+			System.out.println(
+				"DEBUG-LRCI-7366 _setUpBinariesCache early return at " +
+					"cloud/field guard");
+
 			return;
 		}
 
 		String binariesCacheS3Path;
+		String upstreamBranchName = getUpstreamBranchName();
 
 		try {
 			binariesCacheS3Path = JenkinsResultsParserUtil.getBuildProperty(
-				"binaries.cache.s3.path", getUpstreamBranchName());
+				"binaries.cache.s3.path", upstreamBranchName);
+
+			System.out.println(
+				"DEBUG-LRCI-7366 binariesCacheS3Path lookup: " +
+					"upstreamBranchName=" + upstreamBranchName +
+						" binariesCacheS3Path=" + binariesCacheS3Path);
 		}
 		catch (IOException ioException) {
 			System.out.println(
@@ -339,6 +377,10 @@ public class PortalWorkspaceGitRepository extends BaseWorkspaceGitRepository {
 		}
 
 		if (JenkinsResultsParserUtil.isNullOrEmpty(binariesCacheS3Path)) {
+			System.out.println(
+				"DEBUG-LRCI-7366 _setUpBinariesCache early return: " +
+					"binariesCacheS3Path is null/empty");
+
 			return;
 		}
 

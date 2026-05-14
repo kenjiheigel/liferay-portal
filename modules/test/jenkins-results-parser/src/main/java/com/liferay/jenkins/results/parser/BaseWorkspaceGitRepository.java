@@ -394,14 +394,23 @@ public abstract class BaseWorkspaceGitRepository
 
 	@Override
 	public synchronized void setUp() {
+		System.out.println(
+			"DEBUG-LRCI-7366 setUp entered class=" + getClass().getName() +
+				" isSetUp=" + isSetUp());
+
 		if (isSetUp()) {
 			return;
 		}
+
+		System.out.println("DEBUG-LRCI-7366 setUp past isSetUp guard");
 
 		System.out.println(toString());
 
 		try {
 			prepareGitWorkingDirectory();
+
+			System.out.println(
+				"DEBUG-LRCI-7366 setUp calling setUpAdditionalCaches");
 
 			setUpAdditionalCaches();
 		}
@@ -654,23 +663,48 @@ public abstract class BaseWorkspaceGitRepository
 	}
 
 	protected void prepareGitWorkingDirectory() throws IOException {
+		System.out.println(
+			"DEBUG-LRCI-7366 prepareGitWorkingDirectory entered " +
+				"_isGitArchiveEnabled=" + _isGitArchiveEnabled() +
+					" _snapshot=" + _snapshot);
+
 		if (!_isGitArchiveEnabled()) {
 			_initializeGitWorkingDirectory();
+
+			System.out.println(
+				"DEBUG-LRCI-7366 prepareGitWorkingDirectory returning " +
+					"(archive disabled path)");
 
 			return;
 		}
 
 		_promoteGitArchive();
 
+		System.out.println(
+			"DEBUG-LRCI-7366 prepareGitWorkingDirectory after " +
+				"promoteGitArchive _snapshot=" + _snapshot);
+
 		if (_snapshot) {
 			_downloadGitArchive();
+
+			System.out.println(
+				"DEBUG-LRCI-7366 prepareGitWorkingDirectory returning " +
+					"(snapshot path)");
 
 			return;
 		}
 
 		_initializeGitWorkingDirectory();
 
+		System.out.println(
+			"DEBUG-LRCI-7366 prepareGitWorkingDirectory before " +
+				"uploadGitArchive");
+
 		_uploadGitArchive();
+
+		System.out.println(
+			"DEBUG-LRCI-7366 prepareGitWorkingDirectory returning " +
+				"(upload path)");
 	}
 
 	protected void setSetUp(boolean setUp) {
@@ -1447,11 +1481,18 @@ public abstract class BaseWorkspaceGitRepository
 	}
 
 	private void _uploadGitArchive() throws IOException {
+		System.out.println(
+			"DEBUG-LRCI-7366 _uploadGitArchive entered isCloudCINode=" +
+				JenkinsResultsParserUtil.isCloudCINode());
+
 		if (!JenkinsResultsParserUtil.isCloudCINode()) {
 			return;
 		}
 
 		String jobName = _getJobName();
+
+		System.out.println(
+			"DEBUG-LRCI-7366 _uploadGitArchive jobName=" + jobName);
 
 		if (!jobName.contains("-batch") && !jobName.contains("-downstream")) {
 			GitWorkingDirectory gitWorkingDirectory = getGitWorkingDirectory();
@@ -1459,16 +1500,30 @@ public abstract class BaseWorkspaceGitRepository
 			File archiveFile = gitWorkingDirectory.archive(
 				_getGitArchiveName());
 
+			System.out.println(
+				"DEBUG-LRCI-7366 _uploadGitArchive archiveFile=" + archiveFile);
+
 			CloudBucketUtil.uploadS3File(
 				_getGitArchiveS3BucketPath(), archiveFile);
+
+			System.out.println(
+				"DEBUG-LRCI-7366 _uploadGitArchive uploaded main archive");
 
 			JenkinsResultsParserUtil.delete(archiveFile);
 
 			File dotGitDirArchiveFile = _archiveDotGitDir();
 
+			System.out.println(
+				"DEBUG-LRCI-7366 _uploadGitArchive dotGitDirArchiveFile=" +
+					dotGitDirArchiveFile);
+
 			CloudBucketUtil.uploadS3File(
 				_getGitArchiveS3BucketPath(dotGitDirArchiveFile.getName()),
 				dotGitDirArchiveFile);
+
+			System.out.println(
+				"DEBUG-LRCI-7366 _uploadGitArchive uploaded dot git " +
+					"archive");
 
 			JenkinsResultsParserUtil.delete(dotGitDirArchiveFile);
 		}
@@ -1477,7 +1532,13 @@ public abstract class BaseWorkspaceGitRepository
 			_setSnapshot(true);
 		}
 
+		System.out.println(
+			"DEBUG-LRCI-7366 _uploadGitArchive before _updateBuildDatabase");
+
 		_updateBuildDatabase();
+
+		System.out.println(
+			"DEBUG-LRCI-7366 _uploadGitArchive returning");
 	}
 
 	private void _validateSHAInRemoteGitRef(
