@@ -557,6 +557,38 @@ passwords.encryption.algorithm=NONE</echo>
 		</sequential>
 	</macrodef>
 
+	<macrodef name="enable-ckeditor4">
+		<sequential>
+			<local name="company.id" />
+			<local name="portal.instances.json" />
+
+			<exec executable="curl" failonerror="true" outputproperty="portal.instances.json">
+				<arg value="-f" />
+				<arg value="-s" />
+				<arg value="-u" />
+				<arg value="test@liferay.com:${test.portal.default.admin.password}" />
+				<arg value="${default.portal.url}/o/headless-portal-instances/v1.0/portal-instances" />
+			</exec>
+
+			<propertyregex
+				input="${portal.instances.json}"
+				property="company.id"
+				regexp="&quot;companyId&quot;\s*:\s*&quot;?(\d+)"
+				select="\1"
+			/>
+
+			<exec executable="curl" failonerror="true">
+				<arg value="-d" />
+				<arg value="companyId=${company.id}&amp;enabled=true&amp;key=LPD-11235" />
+				<arg value="-f" />
+				<arg value="-s" />
+				<arg value="-u" />
+				<arg value="test@liferay.com:${test.portal.default.admin.password}" />
+				<arg value="${default.portal.url}/o/com-liferay-feature-flag-web/set-enabled" />
+			</exec>
+		</sequential>
+	</macrodef>
+
 	<macrodef name="export-database-mysql">
 		<attribute default="mysql" name="database.file.prefix" />
 		<attribute default="lportal" name="database.schema.name" />
@@ -813,38 +845,6 @@ passwords.encryption.algorithm=NONE</echo>
 			/>
 
 			<delete failonerror="false" file="${project.dir}/export_database_postgresql_export.sh" />
-		</sequential>
-	</macrodef>
-
-	<macrodef name="force-feature-flag-LPD-11235">
-		<sequential>
-			<local name="company.id" />
-			<local name="portal.instances.json" />
-
-			<exec executable="curl" failonerror="true" outputproperty="portal.instances.json">
-				<arg value="-f" />
-				<arg value="-s" />
-				<arg value="-u" />
-				<arg value="test@liferay.com:${test.portal.default.admin.password}" />
-				<arg value="${default.portal.url}/o/headless-portal-instances/v1.0/portal-instances" />
-			</exec>
-
-			<propertyregex
-				input="${portal.instances.json}"
-				property="company.id"
-				regexp="&quot;companyId&quot;\s*:\s*&quot;?(\d+)"
-				select="\1"
-			/>
-
-			<exec executable="curl" failonerror="true">
-				<arg value="-d" />
-				<arg value="companyId=${company.id}&amp;enabled=true&amp;key=LPD-11235" />
-				<arg value="-f" />
-				<arg value="-s" />
-				<arg value="-u" />
-				<arg value="test@liferay.com:${test.portal.default.admin.password}" />
-				<arg value="${default.portal.url}/o/com-liferay-feature-flag-web/set-enabled" />
-			</exec>
 		</sequential>
 	</macrodef>
 
@@ -16833,7 +16833,7 @@ if (ppstate.equals("normal")) {
 	</target>
 
 	<target depends="prepare-selenium" name="run-selenium-test">
-		<force-feature-flag-LPD-11235 />
+		<enable-ckeditor4 />
 
 		<if>
 			<and>
