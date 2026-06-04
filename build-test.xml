@@ -816,6 +816,38 @@ passwords.encryption.algorithm=NONE</echo>
 		</sequential>
 	</macrodef>
 
+	<macrodef name="force-feature-flag-LPD-11235">
+		<sequential>
+			<local name="company.id" />
+			<local name="portal.instances.json" />
+
+			<exec executable="curl" failonerror="true" outputproperty="portal.instances.json">
+				<arg value="-f" />
+				<arg value="-s" />
+				<arg value="-u" />
+				<arg value="test@liferay.com:${test.portal.default.admin.password}" />
+				<arg value="${default.portal.url}/o/headless-portal-instances/v1.0/portal-instances" />
+			</exec>
+
+			<propertyregex
+				input="${portal.instances.json}"
+				property="company.id"
+				regexp="&quot;companyId&quot;\s*:\s*&quot;?(\d+)"
+				select="\1"
+			/>
+
+			<exec executable="curl" failonerror="true">
+				<arg value="-d" />
+				<arg value="companyId=${company.id}&amp;enabled=true&amp;key=LPD-11235" />
+				<arg value="-f" />
+				<arg value="-s" />
+				<arg value="-u" />
+				<arg value="test@liferay.com:${test.portal.default.admin.password}" />
+				<arg value="${default.portal.url}/o/com-liferay-feature-flag-web/set-enabled" />
+			</exec>
+		</sequential>
+	</macrodef>
+
 	<macrodef name="generate-gulp-user-config-json">
 		<attribute name="portlet.name" />
 
@@ -16800,7 +16832,9 @@ if (ppstate.equals("normal")) {
 		<poshi-execute failonerror="true" task="validatePoshi" />
 	</target>
 
-	<target depends="prepare-selenium,force-feature-flag-LPD-11235" name="run-selenium-test">
+	<target depends="prepare-selenium" name="run-selenium-test">
+		<force-feature-flag-LPD-11235 />
+
 		<if>
 			<and>
 				<equals arg1="${test.class}" arg2="PortalWebTestSuite" />
@@ -16889,36 +16923,6 @@ jdbc.default.password=${database.mysql.password}</echo>
 		</if>
 
 		<antcall target="clean-up-selenium-driver" />
-	</target>
-
-	<target name="force-feature-flag-LPD-11235">
-		<local name="company.id" />
-		<local name="portal.instances.json" />
-
-		<exec executable="curl" failonerror="true" outputproperty="portal.instances.json">
-			<arg value="-f" />
-			<arg value="-s" />
-			<arg value="-u" />
-			<arg value="test@liferay.com:${test.portal.default.admin.password}" />
-			<arg value="${default.portal.url}/o/headless-portal-instances/v1.0/portal-instances" />
-		</exec>
-
-		<propertyregex
-			input="${portal.instances.json}"
-			property="company.id"
-			regexp="&quot;companyId&quot;\s*:\s*&quot;?(\d+)"
-			select="\1"
-		/>
-
-		<exec executable="curl" failonerror="true">
-			<arg value="-d" />
-			<arg value="companyId=${company.id}&amp;enabled=true&amp;key=LPD-11235" />
-			<arg value="-f" />
-			<arg value="-s" />
-			<arg value="-u" />
-			<arg value="test@liferay.com:${test.portal.default.admin.password}" />
-			<arg value="${default.portal.url}/o/com-liferay-feature-flag-web/set-enabled" />
-		</exec>
 	</target>
 
 	<target name="run-simple-server">
