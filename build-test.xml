@@ -16896,10 +16896,10 @@ jdbc.default.password=${database.mysql.password}</echo>
 	-->
 
 	<target name="force-feature-flag-LPD-11235">
-		<local name="json" />
-		<local name="companyId" />
+		<local name="company.id" />
+		<local name="portal.instances.json" />
 
-		<exec executable="curl" failonerror="true" outputproperty="json">
+		<exec executable="curl" failonerror="true" outputproperty="portal.instances.json">
 			<arg value="-f" />
 			<arg value="-s" />
 			<arg value="-u" />
@@ -16907,20 +16907,12 @@ jdbc.default.password=${database.mysql.password}</echo>
 			<arg value="${default.portal.url}/o/headless-portal-instances/v1.0/portal-instances" />
 		</exec>
 
-		<beanshell>
-			<![CDATA[
-				String json = project.getProperty("json");
-
-				if (json != null) {
-					java.util.regex.Matcher matcher =
-						java.util.regex.Pattern.compile("\"companyId\"\\s*:\\s*\"?(\\d+)").matcher(json);
-
-					if (matcher.find()) {
-						project.setProperty("companyId", matcher.group(1));
-					}
-				}
-			]]>
-		</beanshell>
+		<propertyregex
+			input="${portal.instances.json}"
+			property="company.id"
+			regexp="&quot;companyId&quot;\s*:\s*&quot;?(\d+)"
+			select="\1"
+		/>
 
 		<exec executable="curl" failonerror="true">
 			<arg value="-f" />
@@ -16930,7 +16922,7 @@ jdbc.default.password=${database.mysql.password}</echo>
 			<arg value="-u" />
 			<arg value="test@liferay.com:${test.portal.default.admin.password}" />
 			<arg value="-d" />
-			<arg value="companyId=${companyId}&amp;key=LPD-11235&amp;enabled=true" />
+			<arg value="companyId=${company.id}&amp;key=LPD-11235&amp;enabled=true" />
 			<arg value="${default.portal.url}/o/com-liferay-feature-flag-web/set-enabled" />
 		</exec>
 	</target>
