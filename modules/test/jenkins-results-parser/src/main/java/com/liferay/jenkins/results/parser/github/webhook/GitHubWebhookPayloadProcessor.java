@@ -1814,8 +1814,6 @@ public class GitHubWebhookPayloadProcessor {
 				}
 			}
 
-			pullRequest.addComment(sb.toString());
-
 			List<String> skippedTestSuites = new ArrayList<>(
 				ciForwardRequiredTestSuites.length);
 
@@ -1824,19 +1822,11 @@ public class GitHubWebhookPayloadProcessor {
 
 				if (passingTestSuites.contains(ciForwardRequiredTestSuite)) {
 					skippedTestSuites.add(ciForwardRequiredTestSuite);
-
-					continue;
 				}
-
-				pullRequestTesterParameters.setCiTestSuiteName(
-					ciForwardRequiredTestSuite);
-
-				testPullRequest(pullRequestTesterParameters);
 			}
 
 			if (!skippedTestSuites.isEmpty()) {
-				sb = new StringBuilder();
-
+				sb.append("\n");
 				sb.append("Skipping previously passed test suites:\n");
 
 				for (String skippedTestSuite : skippedTestSuites) {
@@ -1844,12 +1834,21 @@ public class GitHubWebhookPayloadProcessor {
 					sb.append(skippedTestSuite);
 					sb.append("`\n");
 				}
+			}
 
-				if (_log.isInfoEnabled()) {
-					_log.info(sb.toString());
+			pullRequest.addComment(sb.toString());
+
+			for (String ciForwardRequiredTestSuite :
+					ciForwardRequiredTestSuites) {
+
+				if (skippedTestSuites.contains(ciForwardRequiredTestSuite)) {
+					continue;
 				}
 
-				pullRequest.addComment(sb.toString());
+				pullRequestTesterParameters.setCiTestSuiteName(
+					ciForwardRequiredTestSuite);
+
+				testPullRequest(pullRequestTesterParameters);
 			}
 
 			if (_ciForwardEligible) {
