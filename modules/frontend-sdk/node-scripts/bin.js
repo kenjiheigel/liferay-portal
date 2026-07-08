@@ -171,6 +171,17 @@ const COMMANDS = {
 		parameters: '[--sync]',
 		script: './test/index.mjs',
 	},
+	'test:batch': {
+		description: `
+		Runs the js-unit modules of one test batch axis through a single
+		shared-pool Jest process instead of one Jest per module.
+
+		Arguments starting with ':' are Gradle task paths (as listed in
+		'modules.test.class.group'); the rest are forwarded to Jest.
+`,
+		parameters: '<:module:task> [<:module:task> ...]',
+		script: './test/batch.mjs',
+	},
 };
 
 const command = process.argv[2];
