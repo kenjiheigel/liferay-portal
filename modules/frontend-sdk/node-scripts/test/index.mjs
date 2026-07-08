@@ -9,9 +9,12 @@ import path from 'path';
 import getNamedArguments from '../util/getNamedArguments.mjs';
 import getYarnWorkspaceProjects from '../util/getYarnWorkspaceProjects.mjs';
 import runJest from '../util/jest/runJest.mjs';
+import runJsUnitBatch from '../util/jest/runJsUnitBatch.mjs';
 import {PORTAL_DIR} from '../util/locations.mjs';
 import print from '../util/print.mjs';
 import runConcurrentTasks from '../util/runConcurrentTasks.mjs';
+
+const BATCH_TASKS_FILE_NAME = 'TEMP_js_unit_batch_tasks.txt';
 
 export default async function () {
 	const {sync} = getNamedArguments({
@@ -23,6 +26,43 @@ export default async function () {
 	process.env.NODE_ENV = 'test';
 
 	const args = process.argv.slice(3);
+
+	/**
+	 * When a batch tasks file is present, one Jest run covers every module of
+	 * the test batch axis through a shared worker pool (see `runJsUnitBatch`),
+	 * rather than one Jest per module. The CI js-unit target writes the file so
+	 * a single Gradle-driven invocation, which already has Node set up, runs
+	 * the whole axis.
+	 */
+	const batchTasksFile = path.join(
+		PORTAL_DIR,
+		'modules',
+		BATCH_TASKS_FILE_NAME
+	);
+
+	let batchTasks = null;
+
+	try {
+		batchTasks = await fs.readFile(batchTasksFile, 'utf8');
+	}
+	catch (error) {
+		batchTasks = null;
+	}
+
+	if (batchTasks) {
+		const failed = await runJsUnitBatch({
+			cliFlags: args.filter((arg) => !arg.startsWith(':')),
+			moduleTasks: batchTasks.trim().split(/\s+/),
+		});
+
+		process.env.NODE_ENV = originalNodeEnv;
+
+		if (failed) {
+			throw new Error('One or more js-unit projects failed.');
+		}
+
+		return;
+	}
 
 	/**
 	 * When using 'yarn run ...' it sets the cwd to the nearest package.json

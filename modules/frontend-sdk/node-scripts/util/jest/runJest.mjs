@@ -3,16 +3,13 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import merge from 'deepmerge';
 import {$} from 'execa';
 import fs from 'fs/promises';
 import path from 'path';
 
 import fileExists from '../fileExists.mjs';
 import onExit from '../onExit.mjs';
-import getJestConfig from './getJestConfig.js';
-import getJestModuleNameMapper from './getJestModuleNameMapper.mjs';
-import getUserConfig from './getUserConfig.mjs';
+import getMergedJestConfig from './getMergedJestConfig.mjs';
 
 const CONFIG_NAME = 'TEMP_jest.config.json';
 const FORCE_DEBUG_FLAG = '--force-debug';
@@ -47,27 +44,9 @@ export default async function runJest({
 			...execaConfig,
 		};
 
-		let userConfig = await getUserConfig('jest', {cwd: projectPath});
-
-		userConfig = JSON.parse(
-			JSON.stringify(userConfig).replace('<rootDir>', projectPath)
-		);
-
 		await fs.writeFile(
 			CONFIG_PATH,
-			JSON.stringify(
-				merge.all([
-					getJestConfig({rootDir: projectPath}),
-					{
-						moduleNameMapper: await getJestModuleNameMapper({
-							cwd: projectPath,
-						}),
-					},
-					userConfig,
-				]),
-				null,
-				4
-			)
+			JSON.stringify(await getMergedJestConfig(projectPath), null, 4)
 		);
 
 		onExit(() => fs.unlink(CONFIG_PATH));
