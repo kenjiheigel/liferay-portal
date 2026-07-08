@@ -360,6 +360,42 @@ public class BuildDatabaseUtil {
 		String buildDatabaseFilePath =
 			JenkinsResultsParserUtil.getCanonicalPath(buildDatabaseFile);
 
+		synchronized (_s3BuildDatabaseFiles) {
+			File downloadedBuildDatabaseFile = _s3BuildDatabaseFiles.get(path);
+
+			if ((downloadedBuildDatabaseFile != null) &&
+				downloadedBuildDatabaseFile.exists()) {
+
+				try {
+					Files.copy(
+						downloadedBuildDatabaseFile.toPath(),
+						buildDatabaseFile.toPath(),
+						StandardCopyOption.REPLACE_EXISTING);
+
+					System.out.println(
+						JenkinsResultsParserUtil.combine(
+							"Copied ",
+							JenkinsResultsParserUtil.getCanonicalPath(
+								downloadedBuildDatabaseFile),
+							" to ", buildDatabaseFilePath));
+
+					return;
+				}
+				catch (IOException ioException) {
+					throw new RuntimeException(ioException);
+				}
+			}
+
+			_downloadBuildDatabaseFileFromS3Bucket(
+				buildDatabaseFile, buildDatabaseFilePath, path);
+
+			_s3BuildDatabaseFiles.put(path, buildDatabaseFile);
+		}
+	}
+
+	private static void _downloadBuildDatabaseFileFromS3Bucket(
+		File buildDatabaseFile, String buildDatabaseFilePath, String path) {
+
 		Retryable<Object> retryable = new Retryable<Object>(true, 3, 5, true) {
 
 			@Override
@@ -602,6 +638,8 @@ public class BuildDatabaseUtil {
 	}
 
 	private static final Map<File, BuildDatabase> _buildDatabases =
+		new HashMap<>();
+	private static final Map<String, File> _s3BuildDatabaseFiles =
 		new HashMap<>();
 
 }
