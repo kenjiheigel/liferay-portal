@@ -28,6 +28,16 @@ Run premerge checks against the current branch. The skill iterates through the v
 
 - **Diff is nonempty.** When the three-dot diff produces no files, exit with a one-line message — no validation produces useful signal on a clean branch.
 
+- **No uncommitted sources under a changed module.** Every validation builds the working tree, so a file that exists only on this machine compiles here and is missing from CI's clean checkout — LPD-95940 shipped a Sass file importing one. The clean tree precondition misses it, because `git status --porcelain` reports nothing when the developer sets `status.showUntrackedFiles=no`, and nothing when the file is ignored. Stop the run when this prints anything.
+
+	Resolve the modules the diff touches, then list what is present under them but not committed:
+
+	```bash
+	git status --porcelain -uall --ignored=matching -- <changed module paths>
+	```
+
+	Keep the `??` and `!!` entries that are source files (`java`, `js`, `jsx`, `mjs`, `cjs`, `ts`, `tsx`, `css`, `scss`, `sass`, `ftl`, `jsp`, `jspf`, `properties`), and drop anything under `build`, `node_modules`, `classes`, `dist`, `tmp`, `.gradle`, or `node_modules_cache`. Stop the run when anything remains.
+
 ## Input
 
 ### Diff
