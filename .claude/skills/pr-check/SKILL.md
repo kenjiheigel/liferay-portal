@@ -109,17 +109,21 @@ Read every validation file under `.claude/skills/pr-check/validations` in a sing
 In your next turn, compose a single bash script that:
 
 - computes the diff: `git diff --name-only "$(git merge-base HEAD master)...HEAD"`
-- for each validation, tests its regex against the diff and prints the validation name when it fires (a leading `!` in the regex inverts: fire when any diff path does *not* match the rest)
+- for each validation, tests its regex against the diff and prints `FIRED <name>` or `NOT FIRED <name>` (a leading `!` in the regex inverts: fire when any diff path does *not* match the rest)
 - ` &! ` in the regex splits it into an include side and an exclude side. The validation fires when a diff path matches the include side but not the exclude side.
 - runs as a single Bash tool invocation
 
-From the script's output, sum the matched validations' `## Time Estimate` values for the cumulative total. The matching is mechanical; consult each file's prose `## Trigger` only when a result needs human-judgment context (e.g., Service Builder output-only catch-up).
+Print a line for **every** validation, not only the ones that fire. That output is the run's ledger, and its `FIRED` lines are the set Pass 2 must account for.
+
+From the script's output, sum the fired validations' `## Time Estimate` values for the cumulative total. The matching is mechanical; consult each file's prose `## Trigger` only when a result needs human-judgment context (e.g., Service Builder output-only catch-up).
 
 When the total exceeds 20 minutes, surface the breakdown and ask the developer whether to trim a validation or proceed.
 
 ### Pass 2: Execute
 
-For each matched validation, spawn one subagent. **Pass it only the `## Command` and `## Autocommit` sections of the validation file, not the full file.** Record PASS or FAIL. Do not halt on FAIL — continue so the developer sees the full picture. When a command directs the subagent to return a failure note on FAIL, capture that note alongside the FAIL result.
+Before spawning anything, write the results table from the ledger: one row per `FIRED` validation, in the execution order above, each reading `NOT RUN`. A validation that is never dispatched, or whose result is lost, then keeps that row instead of vanishing from the report — vanishing is how the Service Builder check went missing from a passing run in LPD-100427.
+
+For each fired validation, spawn one subagent. **Pass it only the `## Command` and `## Autocommit` sections of the validation file, not the full file.** Overwrite that validation's row with PASS or FAIL. Do not halt on FAIL — continue so the developer sees the full picture. When a command directs the subagent to return a failure note on FAIL, capture that note alongside the FAIL result.
 
 When the validation's **Command** is a build (gradle, ant, npm, jest), bound the output:
 
@@ -129,7 +133,7 @@ When the validation's **Command** is a build (gradle, ant, npm, jest), bound the
 
 Decide PASS/FAIL from the build tool's success markers in the captured output (`BUILD SUCCESSFUL` / `BUILD FAILED`, `Tests: N passed, M failed`, etc.). Apply only to build commands. Leave inert commands like `git status --porcelain` and `git diff --quiet` untouched.
 
-When all validations pass, report `PASS`. When any fail, report `FAIL` and surface the failed validations.
+When every row reads PASS, report `PASS`. When any row reads FAIL, report `FAIL` and surface the failed validations. A row still reading `NOT RUN` is also a `FAIL`: the validation fired and produced no evidence.
 
 ## Results Summary
 
@@ -137,7 +141,7 @@ After the two passes complete, emit a Results Summary block. It is the canonical
 
 Capture the tested commit with `git rev-parse HEAD` **after** Pass 2 completes, so the SHA reflects the tree that was actually exercised — including any autocommits the validations made, such as the `<TICKET> SF` source-format commit. This is the commit the `pr` skill pushes as the PR head and the commit the webhook binds the `pr-check` status to, so a reviewer can tell whether the current head is the one that was tested.
 
-The block is the overall state and tested SHA, followed by a table with one row per **matched** validation — the validations that actually ran, in the execution order above. Validations whose `## Match` regex did not fire are omitted rather than listed as skipped, so the table reflects only what the diff exercised.
+The block is the overall state and tested SHA, followed by the table Pass 2 built from the ledger — one row per **fired** validation. Emit that table rather than rebuilding one from the results that came back, which is what let a fired validation go missing. Validations that did not fire stay out of it.
 
 ```markdown
 **pr-check: PASS** — tested on `<head-SHA>`
@@ -149,6 +153,6 @@ The block is the overall state and tested SHA, followed by a table with one row 
 | Java Unit Tests | PASS |
 ```
 
-The overall state is `PASS` only when every row is `PASS`; any `FAIL` row makes it `FAIL`.
+The overall state is `PASS` only when every row is `PASS`; any `FAIL` or `NOT RUN` row makes it `FAIL`.
 
 When a failed validation returned a failure note, append it below the table, separated by a blank line. The note is part of the Results Summary, so it travels verbatim into the PR description through the `pr` skill and into any comment the `pr-check-publish` skill posts.
