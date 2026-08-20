@@ -128,8 +128,10 @@ For each fired validation, spawn one subagent. **Pass it only the `## Command` a
 When the validation's **Command** is a build (gradle, ant, npm, jest), bound the output:
 
 ```bash
-<command> 2>&1 | tail --lines=100
+<command> 2>&1 | tee "${LOG}" | tail --lines=100
 ```
+
+Keep the full log at `${LOG}`, a scratch path outside the repository. The tail bounds what you read, not what the run produced: a validation whose own instructions take their findings from the run output, as **Baseline** takes its warning rows, needs the whole log, and those rows sit far above the last hundred lines.
 
 Decide PASS/FAIL from the build tool's success markers in the captured output (`BUILD SUCCESSFUL` / `BUILD FAILED`, `Tests: N passed, M failed`, etc.). Apply only to build commands. Leave inert commands like `git status --porcelain` and `git diff --quiet` untouched.
 
