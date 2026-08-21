@@ -6,6 +6,7 @@
 package com.liferay.jenkins.results.parser.test.clazz.group;
 
 import com.liferay.jenkins.results.parser.RandomTestUtil;
+import com.liferay.jenkins.results.parser.Shell;
 import com.liferay.jenkins.results.parser.test.clazz.TestClass;
 import com.liferay.jenkins.results.parser.test.clazz.TestClassFactory;
 
@@ -16,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -23,6 +25,16 @@ import org.junit.Test;
  */
 public class BatchTestClassGroupTest
 	extends com.liferay.jenkins.results.parser.Test {
+
+	@Before
+	public void setUpGitRemotes() throws Exception {
+		Shell shell = mockShell();
+
+		setShellCommandOutput("git branch | grep", shell, "* master\n");
+		setShellCommandOutput(
+			"git remote -v", shell,
+			BatchTestClassGroupTestUtil.getGitRemotesShellCommandOutput());
+	}
 
 	@Test
 	public void testGetAxisTestClassGroups() {
