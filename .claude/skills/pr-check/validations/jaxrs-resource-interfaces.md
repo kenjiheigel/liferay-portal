@@ -16,7 +16,7 @@ Static, no build. For each changed `*ResourceImpl.java` under a `resource/v<majo
 
 1. Skip it when the class name starts with `Base`, or when the file carries `@generated`.
 
-1. Read its `implements` clause and that of `Base<ClassName>.java`. Take the whole class declaration, from `public class` through the opening brace, since the generated clause wraps over several lines.
+1. Read its `implements` clause and that of `Base<ClassName>.java` in the same directory, since that base name repeats across modules. Skip the file when no such base is there. Take the whole class declaration, from `public class` or `public abstract class` through the opening brace, since the generated clause wraps over several lines.
 
 1. Compare raw type names, stripping type arguments.
 
