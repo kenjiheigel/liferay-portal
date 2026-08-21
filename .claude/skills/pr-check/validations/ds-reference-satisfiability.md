@@ -20,11 +20,13 @@ Collect the risky class names from the diff, in both directions the defect arriv
 
 - A field the diff adds, declared `<visibility> <Type> _<name>;`, whose `*/<Type>.java` declares `@Component` with `service = {}`.
 
-Then list every `@Reference` field in the repository and keep those typed with a collected class:
+Then list every `@Reference` in the repository and keep those whose declared field type is exactly a collected class, since matching as a substring makes a collected `Foo` match `FooImpl`:
 
 ```bash
-git grep --after-context=4 --fixed-strings -e '@Reference' -- '*.java'
+git grep --after-context=30 --fixed-strings -e '@Reference' -- '*.java'
 ```
+
+Take the field declaration that follows each annotation rather than a fixed offset from it. An annotation carrying `policy`, `policyOption`, or `target` pushes its declaration well down the window.
 
 Report each as the unsatisfiable class with the file and field referencing it. Printing nothing passes.
 
