@@ -127,50 +127,12 @@ public abstract class ModulesBatchTestClassGroup extends BatchTestClassGroup {
 	protected List<JobProperty> getExcludesJobProperties() {
 		List<JobProperty> excludesJobProperties = new ArrayList<>();
 
-		File modulesDir = new File(
-			portalGitWorkingDirectory.getWorkingDirectory(), "modules");
+		for (File moduleBaseDir :
+				portalGitWorkingDirectory.getModuleBaseDirs()) {
 
-		String upstreamBranchName =
-			portalGitWorkingDirectory.getUpstreamBranchName();
-
-		if (upstreamBranchName.startsWith("ee-") ||
-			upstreamBranchName.endsWith("-private")) {
-
-			excludesJobProperties.add(
-				getJobProperty(
-					"modules.excludes.private", testSuiteName, modulesDir,
-					JobProperty.Type.EXCLUDE_GLOB));
-
-			if (includeStableTestSuite && isStableTestSuiteBatch()) {
-				excludesJobProperties.add(
-					getJobProperty(
-						"modules.excludes.private", NAME_STABLE_TEST_SUITE,
-						modulesDir, JobProperty.Type.EXCLUDE_GLOB));
-			}
+			excludesJobProperties.addAll(
+				_getExcludesJobProperties(moduleBaseDir));
 		}
-		else {
-			excludesJobProperties.add(
-				getJobProperty(
-					"modules.excludes.public", testSuiteName, modulesDir,
-					JobProperty.Type.EXCLUDE_GLOB));
-
-			if (includeStableTestSuite && isStableTestSuiteBatch()) {
-				excludesJobProperties.add(
-					getJobProperty(
-						"modules.excludes.public", NAME_STABLE_TEST_SUITE,
-						modulesDir, JobProperty.Type.EXCLUDE_GLOB));
-			}
-		}
-
-		excludesJobProperties.add(
-			getJobProperty(
-				"modules.excludes", testSuiteName, modulesDir,
-				JobProperty.Type.EXCLUDE_GLOB));
-
-		excludesJobProperties.add(
-			getJobProperty(
-				"modules.excludes." + portalTestClassJob.getBuildProfile(),
-				modulesDir, JobProperty.Type.EXCLUDE_GLOB));
 
 		recordJobProperties(excludesJobProperties);
 
@@ -180,50 +142,12 @@ public abstract class ModulesBatchTestClassGroup extends BatchTestClassGroup {
 	protected List<JobProperty> getIncludesJobProperties() {
 		List<JobProperty> includesJobProperties = new ArrayList<>();
 
-		File modulesDir = new File(
-			portalGitWorkingDirectory.getWorkingDirectory(), "modules");
+		for (File moduleBaseDir :
+				portalGitWorkingDirectory.getModuleBaseDirs()) {
 
-		String upstreamBranchName =
-			portalGitWorkingDirectory.getUpstreamBranchName();
-
-		if (upstreamBranchName.startsWith("ee-") ||
-			upstreamBranchName.endsWith("-private")) {
-
-			includesJobProperties.add(
-				getJobProperty(
-					"modules.includes.private", testSuiteName, modulesDir,
-					JobProperty.Type.INCLUDE_GLOB));
-
-			if (includeStableTestSuite && isStableTestSuiteBatch()) {
-				includesJobProperties.add(
-					getJobProperty(
-						"modules.includes.private", NAME_STABLE_TEST_SUITE,
-						modulesDir, JobProperty.Type.INCLUDE_GLOB));
-			}
+			includesJobProperties.addAll(
+				_getIncludesJobProperties(moduleBaseDir));
 		}
-		else {
-			includesJobProperties.add(
-				getJobProperty(
-					"modules.includes.public", testSuiteName, modulesDir,
-					JobProperty.Type.INCLUDE_GLOB));
-
-			if (includeStableTestSuite && isStableTestSuiteBatch()) {
-				includesJobProperties.add(
-					getJobProperty(
-						"modules.includes.public", NAME_STABLE_TEST_SUITE,
-						modulesDir, JobProperty.Type.INCLUDE_GLOB));
-			}
-		}
-
-		includesJobProperties.add(
-			getJobProperty(
-				"modules.includes", testSuiteName, modulesDir,
-				JobProperty.Type.INCLUDE_GLOB));
-
-		includesJobProperties.add(
-			getJobProperty(
-				"modules.includes." + portalTestClassJob.getBuildProfile(),
-				testSuiteName, modulesDir, JobProperty.Type.INCLUDE_GLOB));
 
 		recordJobProperties(includesJobProperties);
 
@@ -265,6 +189,102 @@ public abstract class ModulesBatchTestClassGroup extends BatchTestClassGroup {
 	protected abstract void setTestClasses() throws IOException;
 
 	protected Set<File> moduleDirsList = new HashSet<>();
+
+	private List<JobProperty> _getExcludesJobProperties(File moduleBaseDir) {
+		List<JobProperty> excludesJobProperties = new ArrayList<>();
+
+		String upstreamBranchName =
+			portalGitWorkingDirectory.getUpstreamBranchName();
+
+		if (upstreamBranchName.startsWith("ee-") ||
+			upstreamBranchName.endsWith("-private")) {
+
+			excludesJobProperties.add(
+				getJobProperty(
+					"modules.excludes.private", testSuiteName, moduleBaseDir,
+					JobProperty.Type.EXCLUDE_GLOB));
+
+			if (includeStableTestSuite && isStableTestSuiteBatch()) {
+				excludesJobProperties.add(
+					getJobProperty(
+						"modules.excludes.private", NAME_STABLE_TEST_SUITE,
+						moduleBaseDir, JobProperty.Type.EXCLUDE_GLOB));
+			}
+		}
+		else {
+			excludesJobProperties.add(
+				getJobProperty(
+					"modules.excludes.public", testSuiteName, moduleBaseDir,
+					JobProperty.Type.EXCLUDE_GLOB));
+
+			if (includeStableTestSuite && isStableTestSuiteBatch()) {
+				excludesJobProperties.add(
+					getJobProperty(
+						"modules.excludes.public", NAME_STABLE_TEST_SUITE,
+						moduleBaseDir, JobProperty.Type.EXCLUDE_GLOB));
+			}
+		}
+
+		excludesJobProperties.add(
+			getJobProperty(
+				"modules.excludes", testSuiteName, moduleBaseDir,
+				JobProperty.Type.EXCLUDE_GLOB));
+
+		excludesJobProperties.add(
+			getJobProperty(
+				"modules.excludes." + portalTestClassJob.getBuildProfile(),
+				moduleBaseDir, JobProperty.Type.EXCLUDE_GLOB));
+
+		return excludesJobProperties;
+	}
+
+	private List<JobProperty> _getIncludesJobProperties(File moduleBaseDir) {
+		List<JobProperty> includesJobProperties = new ArrayList<>();
+
+		String upstreamBranchName =
+			portalGitWorkingDirectory.getUpstreamBranchName();
+
+		if (upstreamBranchName.startsWith("ee-") ||
+			upstreamBranchName.endsWith("-private")) {
+
+			includesJobProperties.add(
+				getJobProperty(
+					"modules.includes.private", testSuiteName, moduleBaseDir,
+					JobProperty.Type.INCLUDE_GLOB));
+
+			if (includeStableTestSuite && isStableTestSuiteBatch()) {
+				includesJobProperties.add(
+					getJobProperty(
+						"modules.includes.private", NAME_STABLE_TEST_SUITE,
+						moduleBaseDir, JobProperty.Type.INCLUDE_GLOB));
+			}
+		}
+		else {
+			includesJobProperties.add(
+				getJobProperty(
+					"modules.includes.public", testSuiteName, moduleBaseDir,
+					JobProperty.Type.INCLUDE_GLOB));
+
+			if (includeStableTestSuite && isStableTestSuiteBatch()) {
+				includesJobProperties.add(
+					getJobProperty(
+						"modules.includes.public", NAME_STABLE_TEST_SUITE,
+						moduleBaseDir, JobProperty.Type.INCLUDE_GLOB));
+			}
+		}
+
+		includesJobProperties.add(
+			getJobProperty(
+				"modules.includes", testSuiteName, moduleBaseDir,
+				JobProperty.Type.INCLUDE_GLOB));
+
+		includesJobProperties.add(
+			getJobProperty(
+				"modules.includes." + portalTestClassJob.getBuildProfile(),
+				testSuiteName, moduleBaseDir, JobProperty.Type.INCLUDE_GLOB));
+
+		return includesJobProperties;
+	}
 
 	private File _getTestModuleDir(File moduleDir) {
 		List<File> testModuleDirs = new ArrayList<>();

@@ -199,6 +199,20 @@ public class PortalGitWorkingDirectory extends GitWorkingDirectory {
 		return moduleAppDirs;
 	}
 
+	public List<File> getModuleBaseDirs() {
+		List<File> moduleBaseDirs = new ArrayList<>();
+
+		for (String string : new String[] {"modules", "workspaces"}) {
+			File moduleBaseDir = new File(getWorkingDirectory(), string);
+
+			if (moduleBaseDir.exists()) {
+				moduleBaseDirs.add(moduleBaseDir);
+			}
+		}
+
+		return moduleBaseDirs;
+	}
+
 	public List<File> getModuleDirs() {
 		List<File> moduleAppDirs = new ArrayList<>();
 
@@ -227,83 +241,13 @@ public class PortalGitWorkingDirectory extends GitWorkingDirectory {
 			List<PathMatcher> includesPathMatchers)
 		throws IOException {
 
-		File modulesDir = new File(getWorkingDirectory(), "modules");
+		List<File> moduleDirsList = new ArrayList<>();
 
-		if (!modulesDir.exists()) {
-			return new ArrayList<>();
+		for (File moduleBaseDir : getModuleBaseDirs()) {
+			moduleDirsList.addAll(
+				_getModuleDirsList(
+					moduleBaseDir, excludesPathMatchers, includesPathMatchers));
 		}
-
-		final List<PathMatcher> excludedModulesPathMatchers =
-			excludesPathMatchers;
-		final List<PathMatcher> includedModulesPathMatchers =
-			includesPathMatchers;
-
-		final List<File> moduleDirsList = new ArrayList<>();
-
-		Files.walkFileTree(
-			modulesDir.toPath(),
-			new SimpleFileVisitor<Path>() {
-
-				@Override
-				public FileVisitResult postVisitDirectory(
-					Path filePath, IOException ioException) {
-
-					if (_module == null) {
-						return FileVisitResult.CONTINUE;
-					}
-
-					Module currentModule = Module.getModule(filePath);
-
-					if (currentModule == null) {
-						return FileVisitResult.CONTINUE;
-					}
-
-					File currentFile = currentModule.getFile();
-
-					if (currentFile.equals(_module.getFile())) {
-						moduleDirsList.add(currentFile);
-
-						_module = null;
-					}
-
-					return FileVisitResult.CONTINUE;
-				}
-
-				@Override
-				public FileVisitResult preVisitDirectory(
-					Path filePath, BasicFileAttributes basicFileAttributes) {
-
-					if (!JenkinsResultsParserUtil.isFileIncluded(
-							excludedModulesPathMatchers,
-							includedModulesPathMatchers, filePath)) {
-
-						return FileVisitResult.CONTINUE;
-					}
-
-					Module currentModule = Module.getModule(filePath);
-
-					if (currentModule == null) {
-						return FileVisitResult.CONTINUE;
-					}
-
-					if (_module == null) {
-						_module = currentModule;
-
-						return FileVisitResult.CONTINUE;
-					}
-
-					int currentPriority = currentModule.getPriority();
-
-					if (currentPriority < _module.getPriority()) {
-						_module = currentModule;
-					}
-
-					return FileVisitResult.CONTINUE;
-				}
-
-				private Module _module;
-
-			});
 
 		Collections.sort(moduleDirsList);
 
@@ -597,6 +541,81 @@ public class PortalGitWorkingDirectory extends GitWorkingDirectory {
 		}
 
 		return filteredEnv;
+	}
+
+	private List<File> _getModuleDirsList(
+			File moduleBaseDir, List<PathMatcher> excludesPathMatchers,
+			List<PathMatcher> includesPathMatchers)
+		throws IOException {
+
+		List<File> moduleDirs = new ArrayList<>();
+
+		Files.walkFileTree(
+			moduleBaseDir.toPath(),
+			new SimpleFileVisitor<Path>() {
+
+				@Override
+				public FileVisitResult postVisitDirectory(
+					Path filePath, IOException ioException) {
+
+					if (_module == null) {
+						return FileVisitResult.CONTINUE;
+					}
+
+					Module currentModule = Module.getModule(filePath);
+
+					if (currentModule == null) {
+						return FileVisitResult.CONTINUE;
+					}
+
+					File currentFile = currentModule.getFile();
+
+					if (currentFile.equals(_module.getFile())) {
+						moduleDirs.add(currentFile);
+
+						_module = null;
+					}
+
+					return FileVisitResult.CONTINUE;
+				}
+
+				@Override
+				public FileVisitResult preVisitDirectory(
+					Path filePath, BasicFileAttributes basicFileAttributes) {
+
+					if (!JenkinsResultsParserUtil.isFileIncluded(
+							excludesPathMatchers, includesPathMatchers,
+							filePath)) {
+
+						return FileVisitResult.CONTINUE;
+					}
+
+					Module currentModule = Module.getModule(filePath);
+
+					if (currentModule == null) {
+						return FileVisitResult.CONTINUE;
+					}
+
+					if (_module == null) {
+						_module = currentModule;
+
+						return FileVisitResult.CONTINUE;
+					}
+
+					int currentPriority = currentModule.getPriority();
+
+					if (currentPriority < _module.getPriority()) {
+						_module = currentModule;
+					}
+
+					return FileVisitResult.CONTINUE;
+				}
+
+				private Module _module;
+
+			});
+
+		return moduleDirs;
 	}
 
 	private boolean _isGitArchiveYarnCacheEnabled() {

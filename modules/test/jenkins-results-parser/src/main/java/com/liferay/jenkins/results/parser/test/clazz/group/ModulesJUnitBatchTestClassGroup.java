@@ -93,17 +93,18 @@ public class ModulesJUnitBatchTestClassGroup extends JUnitBatchTestClassGroup {
 		String testClassFilePath = JenkinsResultsParserUtil.getCanonicalPath(
 			testClass.getTestClassFile());
 
-		File modulesDir = new File(
-			portalGitWorkingDirectory.getWorkingDirectory(), "modules");
+		for (File moduleBaseDir :
+				portalGitWorkingDirectory.getModuleBaseDirs()) {
 
-		String modulesDirPath = JenkinsResultsParserUtil.getCanonicalPath(
-			modulesDir);
+			String moduleBaseDirPath =
+				JenkinsResultsParserUtil.getCanonicalPath(moduleBaseDir);
 
-		if (!testClassFilePath.startsWith(modulesDirPath + "/")) {
-			return;
+			if (testClassFilePath.startsWith(moduleBaseDirPath + "/")) {
+				super.addTestClass(testClass);
+
+				return;
+			}
 		}
-
-		super.addTestClass(testClass);
 	}
 
 	@Override
