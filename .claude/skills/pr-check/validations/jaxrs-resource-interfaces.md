@@ -2,7 +2,7 @@
 
 ## Trigger
 
-The diff changes a hand-written `*ResourceImpl` under a REST Builder `resource/v<major>_<minor>` package. Keep that path scope: a `*ResourceImpl` outside such a package is usually a Service Builder model, where sharing an interface with the generated base is normal.
+The diff changes a hand written `*ResourceImpl` under a REST Builder `resource/v<major>_<minor>` package. Keep that path scope: a `*ResourceImpl` outside such a package is usually a Service Builder model, where sharing an interface with the generated base is normal.
 
 REST Builder generates `Base<Tag>ResourceImpl` with the interfaces the resource needs and scaffolds `<Tag>ResourceImpl` to extend it. Redeclaring one of them on the subclass changes how the service is registered. `JAXRSResourceTest.testInterfaces` rejects it, but only in CI's integration batch against a deployed portal, which is why LPD-100589 reached master.
 

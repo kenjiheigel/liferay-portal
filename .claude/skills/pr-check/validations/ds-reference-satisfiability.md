@@ -12,7 +12,7 @@ The diff either declares a component that registers no service, or adds a refere
 
 ## Command
 
-Static, no build. Use `command grep` for working-tree scans, since the shell's `grep` wrapper can redirect them.
+Static, no build. Use `command grep` for working tree scans, since the shell's `grep` wrapper can redirect them.
 
 Collect the risky class names from the diff, in both directions the defect arrives from:
 
@@ -36,4 +36,4 @@ None. Registering the class (`service = <Class>.class`) or dropping the referenc
 
 ## Time Estimate
 
-~10-20 sec, mostly the repository-wide `@Reference` scan.
+~10-20 sec, mostly the repository wide `@Reference` scan.

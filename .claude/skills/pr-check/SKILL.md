@@ -33,7 +33,7 @@ Run premerge checks against the current branch. The skill iterates through the v
 	Resolve the modules the diff touches, then list what is present under them but not committed:
 
 	```bash
-	git status --porcelain -uall --ignored=matching -- <changed module paths>
+	git status --ignored=matching --porcelain --untracked-files=all -- <changed module paths>
 	```
 
 	Keep the `??` and `!!` entries that are source files (`java`, `js`, `jsx`, `mjs`, `cjs`, `ts`, `tsx`, `css`, `scss`, `sass`, `ftl`, `jsp`, `jspf`, `properties`), and drop anything under `build`, `node_modules`, `classes`, `dist`, `tmp`, `.gradle`, or `node_modules_cache`. Stop the run when anything remains.
@@ -115,7 +115,7 @@ In your next turn, compose a single bash script that:
 
 Print a line for **every** validation, not only the ones that fire. That output is the run's ledger, and its `FIRED` lines are the set Pass 2 must account for.
 
-From the script's output, sum the fired validations' `## Time Estimate` values for the cumulative total. The matching is mechanical; consult each file's prose `## Trigger` only when a result needs human-judgment context (e.g., Service Builder output-only catch-up).
+From the script's output, sum the fired validations' `## Time Estimate` values for the cumulative total. The matching is mechanical; consult each file's prose `## Trigger` only when a result needs human judgment context (e.g., Service Builder output only catch up).
 
 When the total exceeds 20 minutes, surface the breakdown and ask the developer whether to trim a validation or proceed.
 
