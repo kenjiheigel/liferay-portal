@@ -5,10 +5,16 @@
 
 package com.liferay.jenkins.results.parser;
 
+import java.io.File;
+
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import org.mockito.Mockito;
@@ -57,6 +63,88 @@ public class PortalGitWorkingDirectoryTest
 		testEquals(
 			"/opt/java/jdk-zulu8-ee74",
 			releaseFilteredEnvironment.get("JAVA_HOME"));
+	}
+
+	@Test
+	public void testGetModuleBaseDirs() throws Exception {
+		File workingDirectory = JenkinsResultsParserUtil.getGitWorkingDir(
+			new File("."));
+
+		PortalGitWorkingDirectory portalGitWorkingDirectory = Mockito.mock(
+			PortalGitWorkingDirectory.class);
+
+		Mockito.doReturn(
+			workingDirectory
+		).when(
+			portalGitWorkingDirectory
+		).getWorkingDirectory();
+
+		Mockito.doCallRealMethod(
+		).when(
+			portalGitWorkingDirectory
+		).getModuleBaseDirs();
+
+		Set<String> moduleBaseDirNames = new HashSet<>();
+
+		for (File moduleBaseDir :
+				portalGitWorkingDirectory.getModuleBaseDirs()) {
+
+			moduleBaseDirNames.add(moduleBaseDir.getName());
+		}
+
+		Assert.assertTrue(
+			"Missing modules base directory: " + moduleBaseDirNames,
+			moduleBaseDirNames.contains("modules"));
+		Assert.assertTrue(
+			"Missing workspaces base directory: " + moduleBaseDirNames,
+			moduleBaseDirNames.contains("workspaces"));
+	}
+
+	@Test
+	public void testGetModuleDirsListDiscoversWorkspaceModules()
+		throws Exception {
+
+		File workingDirectory = JenkinsResultsParserUtil.getGitWorkingDir(
+			new File("."));
+
+		File osbFaroWorkspaceDir = new File(
+			workingDirectory, "workspaces/liferay-osbfaro-workspace");
+
+		PortalGitWorkingDirectory portalGitWorkingDirectory = Mockito.mock(
+			PortalGitWorkingDirectory.class);
+
+		Mockito.doReturn(
+			Collections.singletonList(osbFaroWorkspaceDir)
+		).when(
+			portalGitWorkingDirectory
+		).getModuleBaseDirs();
+
+		Mockito.doCallRealMethod(
+		).when(
+			portalGitWorkingDirectory
+		).getModuleDirsList(
+			Mockito.anyList(), Mockito.anyList()
+		);
+
+		List<File> moduleDirsList = portalGitWorkingDirectory.getModuleDirsList(
+			Collections.emptyList(), Collections.emptyList());
+
+		boolean discoveredWorkspaceModule = false;
+
+		for (File moduleDir : moduleDirsList) {
+			String moduleDirPath = JenkinsResultsParserUtil.getCanonicalPath(
+				moduleDir);
+
+			if (moduleDirPath.contains("liferay-osbfaro-workspace")) {
+				discoveredWorkspaceModule = true;
+
+				break;
+			}
+		}
+
+		Assert.assertTrue(
+			"No osb-faro workspace module discovered: " + moduleDirsList,
+			discoveredWorkspaceModule);
 	}
 
 	private Map<String, String> _getFilteredEnvironment(
