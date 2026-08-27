@@ -5,7 +5,6 @@
 
 package com.liferay.jenkins.results.parser.test.clazz.group;
 
-import com.liferay.jenkins.results.parser.JenkinsResultsParserUtil;
 import com.liferay.jenkins.results.parser.RandomTestUtil;
 import com.liferay.jenkins.results.parser.job.property.JobPropertyFactory;
 import com.liferay.jenkins.results.parser.test.clazz.TestClass;
@@ -21,9 +20,7 @@ import java.util.Properties;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import org.mockito.Mockito;
 
@@ -63,47 +60,6 @@ public class BatchTestClassGroupTest
 				"'test.batch.axis.max.size' cannot be 0 or less",
 				runtimeException.getMessage());
 		}
-	}
-
-	@Test
-	public void testGetAxisCountAutoBalanceTests() throws Exception {
-		String className = "SampleAutoBalanceTest";
-
-		File workingDirectory = _newAutoBalanceWorkingDirectory(className);
-
-		Properties jobProperties = new Properties();
-
-		jobProperties.setProperty(
-			"test.class.names.auto.balance",
-			"com/liferay/" + className + ".java");
-
-		JUnitBatchTestClassGroup jUnitBatchTestClassGroup =
-			new JUnitBatchTestClassGroup(
-				"unit",
-				BatchTestClassGroupTestUtil.getPortalTestClassJob(
-					jobProperties,
-					Collections.singletonList(
-						new File(workingDirectory, "Modified.java")),
-					workingDirectory)) {
-
-				@Override
-				protected void setTestClasses() {
-				}
-
-			};
-
-		testEquals(1, jUnitBatchTestClassGroup.getAxisCount());
-
-		List<AxisTestClassGroup> axisTestClassGroups =
-			jUnitBatchTestClassGroup.getAxisTestClassGroups();
-
-		testEquals(1, axisTestClassGroups.size());
-
-		AxisTestClassGroup axisTestClassGroup = axisTestClassGroups.get(0);
-
-		List<TestClass> testClasses = axisTestClassGroup.getTestClasses();
-
-		testEquals(1, testClasses.size());
 	}
 
 	@Test
@@ -175,37 +131,6 @@ public class BatchTestClassGroupTest
 	}
 
 	@Test
-	public void testSetAxisTestClassGroupsBalancesByWeight() throws Exception {
-		Properties jobProperties = new Properties();
-
-		jobProperties.setProperty("test.batch.axis.count", "2");
-
-		CompileModulesBatchTestClassGroup compileModulesBatchTestClassGroup =
-			BatchTestClassGroupTestUtil.newCompileModulesBatchTestClassGroup(
-				jobProperties, _newModuleDir("aaa-module", 2),
-				_newModuleDir("aab-module", 2), _newModuleDir("zzy-module", 3),
-				_newModuleDir("zzz-module", 3));
-
-		List<AxisTestClassGroup> axisTestClassGroups =
-			compileModulesBatchTestClassGroup.getAxisTestClassGroups();
-
-		testEquals(2, axisTestClassGroups.size());
-
-		for (AxisTestClassGroup axisTestClassGroup : axisTestClassGroups) {
-			testEquals(5L, _getWeight(axisTestClassGroup));
-		}
-	}
-
-	@Test
-	public void testSetAxisTestClassGroupsTargetAxisDuration()
-		throws Exception {
-
-		_testSetAxisTestClassGroupsTargetAxisDuration(
-			Arrays.asList(3, 3, 1), "3000");
-		_testSetAxisTestClassGroupsTargetAxisDuration(Arrays.asList(4, 3), "");
-	}
-
-	@Test
 	public void testSetSegmentTestClassGroups() {
 		String baseSlaveLabel = RandomTestUtil.randomString();
 		Integer minimumSlaveRAM = RandomTestUtil.randomInt();
@@ -272,23 +197,6 @@ public class BatchTestClassGroupTest
 		}
 	}
 
-	@Rule
-	public TemporaryFolder temporaryFolder = new TemporaryFolder();
-
-	private List<Integer> _getAxisSizes(
-		List<AxisTestClassGroup> axisTestClassGroups) {
-
-		List<Integer> axisSizes = new ArrayList<>();
-
-		for (AxisTestClassGroup axisTestClassGroup : axisTestClassGroups) {
-			List<TestClass> testClasses = axisTestClassGroup.getTestClasses();
-
-			axisSizes.add(testClasses.size());
-		}
-
-		return axisSizes;
-	}
-
 	private List<TestClass> _getTestClasses(
 		List<AxisTestClassGroup> axisTestClassGroups) {
 
@@ -299,16 +207,6 @@ public class BatchTestClassGroupTest
 		}
 
 		return testClasses;
-	}
-
-	private long _getWeight(AxisTestClassGroup axisTestClassGroup) {
-		long weight = 0;
-
-		for (TestClass testClass : axisTestClassGroup.getTestClasses()) {
-			weight += testClass.getWeight();
-		}
-
-		return weight;
 	}
 
 	private AxisTestClassGroup _mockAxisTestClassGroup(
@@ -353,22 +251,6 @@ public class BatchTestClassGroupTest
 		return axisTestClassGroups;
 	}
 
-	private File _newAutoBalanceWorkingDirectory(String className)
-		throws Exception {
-
-		File workingDirectory = new File(
-			JenkinsResultsParserUtil.getCanonicalPath(
-				temporaryFolder.newFolder()));
-
-		File packageDir = new File(workingDirectory, "com/liferay");
-
-		packageDir.mkdirs();
-
-		BatchTestClassGroupTestUtil.newTestClassFile(className, packageDir);
-
-		return workingDirectory;
-	}
-
 	private BatchTestClassGroup _newBatchTestClassGroup(
 		String axisCount, String axisMaxSize, String segmentMaxChildren,
 		int testClassCount) {
@@ -403,32 +285,6 @@ public class BatchTestClassGroupTest
 		}
 
 		return batchTestClassGroup;
-	}
-
-	private File _newModuleDir(String moduleDirName, int modulesProjectDirCount)
-		throws Exception {
-
-		File moduleDir = temporaryFolder.newFolder(moduleDirName);
-
-		File lfrBuildPortalFile = new File(moduleDir, ".lfrbuild-portal");
-
-		lfrBuildPortalFile.createNewFile();
-
-		for (int i = 0; i < modulesProjectDirCount; i++) {
-			File modulesProjectDir = new File(moduleDir, "project-" + i);
-
-			modulesProjectDir.mkdirs();
-
-			File bndBndFile = new File(modulesProjectDir, "bnd.bnd");
-
-			bndBndFile.createNewFile();
-
-			File buildGradleFile = new File(modulesProjectDir, "build.gradle");
-
-			buildGradleFile.createNewFile();
-		}
-
-		return moduleDir;
 	}
 
 	private void _testGetAxisCount(
@@ -471,63 +327,15 @@ public class BatchTestClassGroupTest
 		List<AxisTestClassGroup> axisTestClassGroups =
 			batchTestClassGroup.getAxisTestClassGroups();
 
-		testEquals(expectedAxisSizes, _getAxisSizes(axisTestClassGroups));
+		testEquals(
+			expectedAxisSizes,
+			BatchTestClassGroupTestUtil.getAxisSizes(axisTestClassGroups));
 
 		List<TestClass> axisTestClasses = _getTestClasses(axisTestClassGroups);
 
 		Collections.sort(axisTestClasses);
 
 		testEquals(batchTestClassGroup.getTestClasses(), axisTestClasses);
-	}
-
-	private void _testSetAxisTestClassGroupsTargetAxisDuration(
-			List<Integer> expectedAxisSizes, String targetAxisDuration)
-		throws Exception {
-
-		JUnitBatchTestClassGroup.clearJavaFiles();
-
-		JobPropertyFactory.clear();
-
-		Properties jobProperties = new Properties();
-
-		jobProperties.setProperty("test.batch.default.test.duration", "1000");
-		jobProperties.setProperty(
-			"test.batch.default.test.overhead.duration", "0");
-		jobProperties.setProperty(
-			"test.batch.target.axis.duration", targetAxisDuration);
-
-		List<File> testClassFiles = new ArrayList<>();
-
-		File workingDirectory = temporaryFolder.newFolder();
-
-		for (int i = 0; i < 7; i++) {
-			testClassFiles.add(
-				BatchTestClassGroupTestUtil.newTestClassFile(
-					"Sample" + i + "Test", workingDirectory));
-		}
-
-		JUnitBatchTestClassGroup jUnitBatchTestClassGroup =
-			new JUnitBatchTestClassGroup(
-				"unit",
-				BatchTestClassGroupTestUtil.getPortalTestClassJob(
-					jobProperties, new ArrayList<>(), workingDirectory)) {
-
-				@Override
-				protected void setTestClasses() {
-					for (File testClassFile : testClassFiles) {
-						addTestClass(
-							TestClassFactory.newTestClass(this, testClassFile));
-					}
-				}
-
-			};
-
-		List<Integer> axisSizes = _getAxisSizes(
-			jUnitBatchTestClassGroup.getAxisTestClassGroups());
-
-		Collections.sort(axisSizes, Collections.reverseOrder());
-
-		testEquals(expectedAxisSizes, axisSizes);
 	}
 
 	private void _testSetSegmentTestClassGroups(
