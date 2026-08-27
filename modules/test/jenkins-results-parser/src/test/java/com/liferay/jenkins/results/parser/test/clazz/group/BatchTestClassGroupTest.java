@@ -275,6 +275,20 @@ public class BatchTestClassGroupTest
 	@Rule
 	public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+	private List<Integer> _getAxisSizes(
+		List<AxisTestClassGroup> axisTestClassGroups) {
+
+		List<Integer> axisSizes = new ArrayList<>();
+
+		for (AxisTestClassGroup axisTestClassGroup : axisTestClassGroups) {
+			List<TestClass> testClasses = axisTestClassGroup.getTestClasses();
+
+			axisSizes.add(testClasses.size());
+		}
+
+		return axisSizes;
+	}
+
 	private List<TestClass> _getTestClasses(
 		List<AxisTestClassGroup> axisTestClassGroups) {
 
@@ -454,18 +468,10 @@ public class BatchTestClassGroupTest
 
 		batchTestClassGroup.setAxisTestClassGroups();
 
-		List<Integer> axisSizes = new ArrayList<>();
-
 		List<AxisTestClassGroup> axisTestClassGroups =
 			batchTestClassGroup.getAxisTestClassGroups();
 
-		for (AxisTestClassGroup axisTestClassGroup : axisTestClassGroups) {
-			List<TestClass> testClasses = axisTestClassGroup.getTestClasses();
-
-			axisSizes.add(testClasses.size());
-		}
-
-		testEquals(expectedAxisSizes, axisSizes);
+		testEquals(expectedAxisSizes, _getAxisSizes(axisTestClassGroups));
 
 		List<TestClass> axisTestClasses = _getTestClasses(axisTestClassGroups);
 
@@ -516,16 +522,8 @@ public class BatchTestClassGroupTest
 
 			};
 
-		List<Integer> axisSizes = new ArrayList<>();
-
-		List<AxisTestClassGroup> axisTestClassGroups =
-			jUnitBatchTestClassGroup.getAxisTestClassGroups();
-
-		for (AxisTestClassGroup axisTestClassGroup : axisTestClassGroups) {
-			List<TestClass> testClasses = axisTestClassGroup.getTestClasses();
-
-			axisSizes.add(testClasses.size());
-		}
+		List<Integer> axisSizes = _getAxisSizes(
+			jUnitBatchTestClassGroup.getAxisTestClassGroups());
 
 		Collections.sort(axisSizes, Collections.reverseOrder());
 
