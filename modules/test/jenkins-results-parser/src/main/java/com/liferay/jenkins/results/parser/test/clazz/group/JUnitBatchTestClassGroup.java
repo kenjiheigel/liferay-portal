@@ -55,6 +55,12 @@ import org.json.JSONObject;
  */
 public class JUnitBatchTestClassGroup extends BatchTestClassGroup {
 
+	public static void clearJavaFiles() {
+		_javaDirPathStrings.clear();
+		_javaFilesLoaded.set(false);
+		_javaTestClassFiles.clear();
+	}
+
 	@Override
 	public int getAxisCount() {
 		if (ignore()) {

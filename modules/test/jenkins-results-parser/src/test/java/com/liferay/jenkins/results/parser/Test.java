@@ -6,6 +6,8 @@
 package com.liferay.jenkins.results.parser;
 
 import com.liferay.jenkins.results.parser.job.property.JobPropertyFactory;
+import com.liferay.jenkins.results.parser.test.clazz.TestClassFactory;
+import com.liferay.jenkins.results.parser.test.clazz.group.JUnitBatchTestClassGroup;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -47,6 +49,8 @@ public class Test {
 
 		Environment.setInstance(new Environment());
 
+		JUnitBatchTestClassGroup.clearJavaFiles();
+
 		JenkinsMasterTestUtil.resetCaches();
 
 		JenkinsResultsParserUtil.setBuildProperties(new Properties());
@@ -61,6 +65,8 @@ public class Test {
 		JobPropertyFactory.clear();
 
 		Shell.setInstance(new Shell());
+
+		TestClassFactory.clear();
 
 		UrlReader.setInstance(new UrlReader());
 	}

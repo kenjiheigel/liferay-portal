@@ -11,7 +11,6 @@ import com.liferay.jenkins.results.parser.Job;
 import com.liferay.jenkins.results.parser.JobFactory;
 import com.liferay.jenkins.results.parser.PortalGitWorkingDirectory;
 import com.liferay.jenkins.results.parser.PortalTestClassJob;
-import com.liferay.jenkins.results.parser.ReflectionTestUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,8 +24,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.mockito.Mockito;
 
@@ -34,23 +31,6 @@ import org.mockito.Mockito;
  * @author Kenji Heigel
  */
 public class BatchTestClassGroupTestUtil {
-
-	public static void clearJavaFileCaches() {
-		Set<String> javaDirPathStrings = ReflectionTestUtil.getFieldValue(
-			JUnitBatchTestClassGroup.class, "_javaDirPathStrings");
-
-		javaDirPathStrings.clear();
-
-		AtomicBoolean javaFilesLoaded = ReflectionTestUtil.getFieldValue(
-			JUnitBatchTestClassGroup.class, "_javaFilesLoaded");
-
-		javaFilesLoaded.set(false);
-
-		Set<File> javaTestClassFiles = ReflectionTestUtil.getFieldValue(
-			JUnitBatchTestClassGroup.class, "_javaTestClassFiles");
-
-		javaTestClassFiles.clear();
-	}
 
 	public static PortalTestClassJob getPortalTestClassJob() {
 		return getPortalTestClassJob(null);

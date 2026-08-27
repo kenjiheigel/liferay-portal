@@ -67,10 +67,6 @@ public class BatchTestClassGroupTest
 
 	@Test
 	public void testGetAxisCountAutoBalanceTests() throws Exception {
-		BatchTestClassGroupTestUtil.clearJavaFileCaches();
-
-		JobPropertyFactory.clear();
-
 		String className = "SampleAutoBalanceTest";
 
 		File workingDirectory = _newAutoBalanceWorkingDirectory(className);
@@ -180,10 +176,6 @@ public class BatchTestClassGroupTest
 
 	@Test
 	public void testSetAxisTestClassGroupsBalancesByWeight() throws Exception {
-		BatchTestClassGroupTestUtil.clearJavaFileCaches();
-
-		JobPropertyFactory.clear();
-
 		Properties jobProperties = new Properties();
 
 		jobProperties.setProperty("test.batch.axis.count", "2");
@@ -486,7 +478,7 @@ public class BatchTestClassGroupTest
 			List<Integer> expectedAxisSizes, String targetAxisDuration)
 		throws Exception {
 
-		BatchTestClassGroupTestUtil.clearJavaFileCaches();
+		JUnitBatchTestClassGroup.clearJavaFiles();
 
 		JobPropertyFactory.clear();
 
