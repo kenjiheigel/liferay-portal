@@ -48,14 +48,14 @@ public class TestClassFactoryTest
 
 		BatchTestClassGroup batchTestClassGroup = Mockito.mock(clazz);
 
-		PortalTestClassJob portalTestClassJob =
-			BatchTestClassGroupTestUtil.getPortalTestClassJob();
-
 		Mockito.doReturn(
 			batchName
 		).when(
 			batchTestClassGroup
 		).getBatchName();
+
+		PortalTestClassJob portalTestClassJob =
+			BatchTestClassGroupTestUtil.getPortalTestClassJob();
 
 		Mockito.doReturn(
 			portalTestClassJob.getPortalGitWorkingDirectory()
@@ -78,6 +78,9 @@ public class TestClassFactoryTest
 	private void _testNewTestClass(boolean modulesFirst) throws Exception {
 		TestClassFactory.clear();
 
+		TestClass jUnitTestClass;
+		TestClass modulesJUnitTestClass;
+
 		BatchTestClassGroup jUnitBatchTestClassGroup = _mockBatchTestClassGroup(
 			"integration-license", JUnitBatchTestClassGroup.class);
 
@@ -86,9 +89,6 @@ public class TestClassFactoryTest
 				"modules-integration", ModulesJUnitBatchTestClassGroup.class);
 
 		File testClassFile = _newTestClassFile();
-
-		TestClass jUnitTestClass = null;
-		TestClass modulesJUnitTestClass = null;
 
 		if (modulesFirst) {
 			modulesJUnitTestClass = TestClassFactory.newTestClass(

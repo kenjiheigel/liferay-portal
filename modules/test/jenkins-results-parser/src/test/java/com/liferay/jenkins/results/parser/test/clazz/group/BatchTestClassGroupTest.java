@@ -200,9 +200,9 @@ public class BatchTestClassGroupTest
 	public void testSetAxisTestClassGroupsTargetAxisDuration()
 		throws Exception {
 
-		_testSetAxisTestClassGroupsTargetAxisDuration(Arrays.asList(4, 3), "");
 		_testSetAxisTestClassGroupsTargetAxisDuration(
 			Arrays.asList(3, 3, 1), "3000");
+		_testSetAxisTestClassGroupsTargetAxisDuration(Arrays.asList(4, 3), "");
 	}
 
 	@Test
@@ -496,9 +496,9 @@ public class BatchTestClassGroupTest
 		jobProperties.setProperty(
 			"test.batch.target.axis.duration", targetAxisDuration);
 
-		File workingDirectory = temporaryFolder.newFolder();
+		List<File> testClassFiles = new ArrayList<>();
 
-		final List<File> testClassFiles = new ArrayList<>();
+		File workingDirectory = temporaryFolder.newFolder();
 
 		for (int i = 0; i < 7; i++) {
 			testClassFiles.add(
