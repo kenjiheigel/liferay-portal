@@ -7,6 +7,7 @@ package com.liferay.jenkins.results.parser;
 
 import java.io.File;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -15,7 +16,9 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import org.mockito.Mockito;
 
@@ -67,17 +70,11 @@ public class PortalGitWorkingDirectoryTest
 
 	@Test
 	public void testGetModuleBaseDirs() throws Exception {
-		File workingDirectory = JenkinsResultsParserUtil.getGitWorkingDir(
-			new File("."));
+		temporaryFolder.newFolder("modules");
+		temporaryFolder.newFolder("workspaces");
 
-		PortalGitWorkingDirectory portalGitWorkingDirectory = Mockito.mock(
-			PortalGitWorkingDirectory.class);
-
-		Mockito.doReturn(
-			workingDirectory
-		).when(
-			portalGitWorkingDirectory
-		).getWorkingDirectory();
+		PortalGitWorkingDirectory portalGitWorkingDirectory =
+			_mockPortalGitWorkingDirectory(temporaryFolder.getRoot());
 
 		Mockito.doCallRealMethod(
 		).when(
@@ -92,29 +89,50 @@ public class PortalGitWorkingDirectoryTest
 			moduleBaseDirNames.add(moduleBaseDir.getName());
 		}
 
-		Assert.assertTrue(
-			"Missing modules base directory: " + moduleBaseDirNames,
-			moduleBaseDirNames.contains("modules"));
-		Assert.assertTrue(
-			"Missing workspaces base directory: " + moduleBaseDirNames,
-			moduleBaseDirNames.contains("workspaces"));
+		Assert.assertEquals(
+			new HashSet<>(Arrays.asList("modules", "workspaces")),
+			moduleBaseDirNames);
+	}
+
+	@Test
+	public void testGetModuleBaseDirsSkipsMissingWorkspaces() throws Exception {
+		temporaryFolder.newFolder("modules");
+
+		PortalGitWorkingDirectory portalGitWorkingDirectory =
+			_mockPortalGitWorkingDirectory(temporaryFolder.getRoot());
+
+		Mockito.doCallRealMethod(
+		).when(
+			portalGitWorkingDirectory
+		).getModuleBaseDirs();
+
+		Set<String> moduleBaseDirNames = new HashSet<>();
+
+		for (File moduleBaseDir :
+				portalGitWorkingDirectory.getModuleBaseDirs()) {
+
+			moduleBaseDirNames.add(moduleBaseDir.getName());
+		}
+
+		Assert.assertEquals(
+			Collections.singleton("modules"), moduleBaseDirNames);
 	}
 
 	@Test
 	public void testGetModuleDirsListDiscoversWorkspaceModules()
 		throws Exception {
 
-		File workingDirectory = JenkinsResultsParserUtil.getGitWorkingDir(
-			new File("."));
+		File workspaceModuleDir = temporaryFolder.newFolder(
+			"workspaces", "liferay-test-workspace", "modules", "test-module");
 
-		File osbFaroWorkspaceDir = new File(
-			workingDirectory, "workspaces/liferay-osbfaro-workspace");
+		File bndBndFile = new File(workspaceModuleDir, "bnd.bnd");
 
-		PortalGitWorkingDirectory portalGitWorkingDirectory = Mockito.mock(
-			PortalGitWorkingDirectory.class);
+		bndBndFile.createNewFile();
 
-		Mockito.doReturn(
-			Collections.singletonList(osbFaroWorkspaceDir)
+		PortalGitWorkingDirectory portalGitWorkingDirectory =
+			_mockPortalGitWorkingDirectory(temporaryFolder.getRoot());
+
+		Mockito.doCallRealMethod(
 		).when(
 			portalGitWorkingDirectory
 		).getModuleBaseDirs();
@@ -129,23 +147,15 @@ public class PortalGitWorkingDirectoryTest
 		List<File> moduleDirsList = portalGitWorkingDirectory.getModuleDirsList(
 			Collections.emptyList(), Collections.emptyList());
 
-		boolean discoveredWorkspaceModule = false;
-
-		for (File moduleDir : moduleDirsList) {
-			String moduleDirPath = JenkinsResultsParserUtil.getCanonicalPath(
-				moduleDir);
-
-			if (moduleDirPath.contains("liferay-osbfaro-workspace")) {
-				discoveredWorkspaceModule = true;
-
-				break;
-			}
-		}
-
-		Assert.assertTrue(
-			"No osb-faro workspace module discovered: " + moduleDirsList,
-			discoveredWorkspaceModule);
+		Assert.assertEquals(
+			moduleDirsList.toString(), 1, moduleDirsList.size());
+		Assert.assertEquals(
+			JenkinsResultsParserUtil.getCanonicalPath(workspaceModuleDir),
+			JenkinsResultsParserUtil.getCanonicalPath(moduleDirsList.get(0)));
 	}
+
+	@Rule
+	public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private Map<String, String> _getFilteredEnvironment(
 			String upstreamBranchName)
@@ -166,6 +176,21 @@ public class PortalGitWorkingDirectoryTest
 		);
 
 		return portalGitWorkingDirectory.getFilteredEnvironment();
+	}
+
+	private PortalGitWorkingDirectory _mockPortalGitWorkingDirectory(
+		File workingDirectory) {
+
+		PortalGitWorkingDirectory portalGitWorkingDirectory = Mockito.mock(
+			PortalGitWorkingDirectory.class);
+
+		Mockito.doReturn(
+			workingDirectory
+		).when(
+			portalGitWorkingDirectory
+		).getWorkingDirectory();
+
+		return portalGitWorkingDirectory;
 	}
 
 }

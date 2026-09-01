@@ -202,8 +202,11 @@ public class PortalGitWorkingDirectory extends GitWorkingDirectory {
 	public List<File> getModuleBaseDirs() {
 		List<File> moduleBaseDirs = new ArrayList<>();
 
-		for (String string : new String[] {"modules", "workspaces"}) {
-			File moduleBaseDir = new File(getWorkingDirectory(), string);
+		for (String moduleBaseDirName :
+				new String[] {"modules", "workspaces"}) {
+
+			File moduleBaseDir = new File(
+				getWorkingDirectory(), moduleBaseDirName);
 
 			if (moduleBaseDir.exists()) {
 				moduleBaseDirs.add(moduleBaseDir);
