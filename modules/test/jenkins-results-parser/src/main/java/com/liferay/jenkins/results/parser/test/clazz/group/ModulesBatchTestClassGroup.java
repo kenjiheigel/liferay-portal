@@ -176,14 +176,21 @@ public abstract class ModulesBatchTestClassGroup extends BatchTestClassGroup {
 					portalBatchTestSelector));
 		}
 
-		File portalModulesBaseDir = new File(
-			portalGitWorkingDirectory.getWorkingDirectory(), "modules");
+		List<PathMatcher> includesPathMatchers = new ArrayList<>();
 
-		return JenkinsResultsParserUtil.toPathMatchers(
-			JenkinsResultsParserUtil.combine(
-				JenkinsResultsParserUtil.getCanonicalPath(portalModulesBaseDir),
-				File.separator),
-			includeGlobs.toArray(new String[0]));
+		for (File moduleBaseDir :
+				portalGitWorkingDirectory.getModuleBaseDirs()) {
+
+			includesPathMatchers.addAll(
+				JenkinsResultsParserUtil.toPathMatchers(
+					JenkinsResultsParserUtil.combine(
+						JenkinsResultsParserUtil.getCanonicalPath(
+							moduleBaseDir),
+						File.separator),
+					includeGlobs.toArray(new String[0])));
+		}
+
+		return includesPathMatchers;
 	}
 
 	protected abstract void setTestClasses() throws IOException;
@@ -291,11 +298,11 @@ public abstract class ModulesBatchTestClassGroup extends BatchTestClassGroup {
 
 		File currentDir = moduleDir;
 
-		File modulesDir = new File(
-			portalGitWorkingDirectory.getWorkingDirectory(), "modules");
+		List<File> moduleBaseDirs =
+			portalGitWorkingDirectory.getModuleBaseDirs();
 
 		while ((currentDir != null) &&
-			   !modulesDir.equals(currentDir.getParentFile())) {
+			   !moduleBaseDirs.contains(currentDir.getParentFile())) {
 
 			testModuleDirs.add(currentDir);
 
