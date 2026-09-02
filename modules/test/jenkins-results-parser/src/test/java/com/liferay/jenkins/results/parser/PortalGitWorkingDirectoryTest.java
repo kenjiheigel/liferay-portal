@@ -73,61 +73,25 @@ public class PortalGitWorkingDirectoryTest
 		temporaryFolder.newFolder("modules");
 		temporaryFolder.newFolder("workspaces");
 
-		PortalGitWorkingDirectory portalGitWorkingDirectory =
-			_mockPortalGitWorkingDirectory(temporaryFolder.getRoot());
-
-		Mockito.doCallRealMethod(
-		).when(
-			portalGitWorkingDirectory
-		).getModuleBaseDirs();
-
-		Set<String> moduleBaseDirNames = new HashSet<>();
-
-		for (File moduleBaseDir :
-				portalGitWorkingDirectory.getModuleBaseDirs()) {
-
-			moduleBaseDirNames.add(moduleBaseDir.getName());
-		}
-
 		Assert.assertEquals(
 			new HashSet<>(Arrays.asList("modules", "workspaces")),
-			moduleBaseDirNames);
+			_getModuleBaseDirNames());
 	}
 
 	@Test
-	public void testGetModuleBaseDirsSkipsMissingWorkspaces() throws Exception {
+	public void testGetModuleBaseDirsWithoutWorkspaces() throws Exception {
 		temporaryFolder.newFolder("modules");
 
-		PortalGitWorkingDirectory portalGitWorkingDirectory =
-			_mockPortalGitWorkingDirectory(temporaryFolder.getRoot());
-
-		Mockito.doCallRealMethod(
-		).when(
-			portalGitWorkingDirectory
-		).getModuleBaseDirs();
-
-		Set<String> moduleBaseDirNames = new HashSet<>();
-
-		for (File moduleBaseDir :
-				portalGitWorkingDirectory.getModuleBaseDirs()) {
-
-			moduleBaseDirNames.add(moduleBaseDir.getName());
-		}
-
 		Assert.assertEquals(
-			Collections.singleton("modules"), moduleBaseDirNames);
+			Collections.singleton("modules"), _getModuleBaseDirNames());
 	}
 
 	@Test
 	public void testGetModuleDirsListDiscoversWorkspaceModules()
 		throws Exception {
 
-		File workspaceModuleDir = temporaryFolder.newFolder(
+		File workspaceModuleDir = _newModuleDir(
 			"workspaces", "liferay-test-workspace", "modules", "test-module");
-
-		File bndBndFile = new File(workspaceModuleDir, "bnd.bnd");
-
-		bndBndFile.createNewFile();
 
 		PortalGitWorkingDirectory portalGitWorkingDirectory =
 			_mockPortalGitWorkingDirectory(temporaryFolder.getRoot());
@@ -135,7 +99,31 @@ public class PortalGitWorkingDirectoryTest
 		Mockito.doCallRealMethod(
 		).when(
 			portalGitWorkingDirectory
-		).getModuleBaseDirs();
+		).getModuleDirsList(
+			Mockito.anyList(), Mockito.anyList(), Mockito.anyList()
+		);
+
+		List<File> moduleDirs = portalGitWorkingDirectory.getModuleDirsList(
+			Collections.emptyList(), Collections.emptyList(),
+			portalGitWorkingDirectory.getModuleBaseDirs());
+
+		Assert.assertEquals(moduleDirs.toString(), 1, moduleDirs.size());
+		Assert.assertEquals(
+			JenkinsResultsParserUtil.getCanonicalPath(workspaceModuleDir),
+			JenkinsResultsParserUtil.getCanonicalPath(moduleDirs.get(0)));
+	}
+
+	@Test
+	public void testGetModuleDirsListExcludesWorkspaceModules()
+		throws Exception {
+
+		File moduleDir = _newModuleDir("modules", "test-module");
+
+		_newModuleDir(
+			"workspaces", "liferay-test-workspace", "modules", "test-module");
+
+		PortalGitWorkingDirectory portalGitWorkingDirectory =
+			_mockPortalGitWorkingDirectory(temporaryFolder.getRoot());
 
 		Mockito.doCallRealMethod(
 		).when(
@@ -144,14 +132,20 @@ public class PortalGitWorkingDirectoryTest
 			Mockito.anyList(), Mockito.anyList()
 		);
 
-		List<File> moduleDirsList = portalGitWorkingDirectory.getModuleDirsList(
+		Mockito.doCallRealMethod(
+		).when(
+			portalGitWorkingDirectory
+		).getModuleDirsList(
+			Mockito.anyList(), Mockito.anyList(), Mockito.anyList()
+		);
+
+		List<File> moduleDirs = portalGitWorkingDirectory.getModuleDirsList(
 			Collections.emptyList(), Collections.emptyList());
 
+		Assert.assertEquals(moduleDirs.toString(), 1, moduleDirs.size());
 		Assert.assertEquals(
-			moduleDirsList.toString(), 1, moduleDirsList.size());
-		Assert.assertEquals(
-			JenkinsResultsParserUtil.getCanonicalPath(workspaceModuleDir),
-			JenkinsResultsParserUtil.getCanonicalPath(moduleDirsList.get(0)));
+			JenkinsResultsParserUtil.getCanonicalPath(moduleDir),
+			JenkinsResultsParserUtil.getCanonicalPath(moduleDirs.get(0)));
 	}
 
 	@Rule
@@ -178,11 +172,31 @@ public class PortalGitWorkingDirectoryTest
 		return portalGitWorkingDirectory.getFilteredEnvironment();
 	}
 
+	private Set<String> _getModuleBaseDirNames() {
+		Set<String> moduleBaseDirNames = new HashSet<>();
+
+		PortalGitWorkingDirectory portalGitWorkingDirectory =
+			_mockPortalGitWorkingDirectory(temporaryFolder.getRoot());
+
+		for (File moduleBaseDir :
+				portalGitWorkingDirectory.getModuleBaseDirs()) {
+
+			moduleBaseDirNames.add(moduleBaseDir.getName());
+		}
+
+		return moduleBaseDirNames;
+	}
+
 	private PortalGitWorkingDirectory _mockPortalGitWorkingDirectory(
 		File workingDirectory) {
 
 		PortalGitWorkingDirectory portalGitWorkingDirectory = Mockito.mock(
 			PortalGitWorkingDirectory.class);
+
+		Mockito.doCallRealMethod(
+		).when(
+			portalGitWorkingDirectory
+		).getModuleBaseDirs();
 
 		Mockito.doReturn(
 			workingDirectory
@@ -191,6 +205,16 @@ public class PortalGitWorkingDirectoryTest
 		).getWorkingDirectory();
 
 		return portalGitWorkingDirectory;
+	}
+
+	private File _newModuleDir(String... pathNames) throws Exception {
+		File moduleDir = temporaryFolder.newFolder(pathNames);
+
+		File bndBndFile = new File(moduleDir, "bnd.bnd");
+
+		bndBndFile.createNewFile();
+
+		return moduleDir;
 	}
 
 }

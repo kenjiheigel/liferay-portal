@@ -208,7 +208,7 @@ public class PortalGitWorkingDirectory extends GitWorkingDirectory {
 			File moduleBaseDir = new File(
 				getWorkingDirectory(), moduleBaseDirName);
 
-			if (moduleBaseDir.exists()) {
+			if (moduleBaseDir.isDirectory()) {
 				moduleBaseDirs.add(moduleBaseDir);
 			}
 		}
@@ -244,17 +244,32 @@ public class PortalGitWorkingDirectory extends GitWorkingDirectory {
 			List<PathMatcher> includesPathMatchers)
 		throws IOException {
 
-		List<File> moduleDirsList = new ArrayList<>();
+		return getModuleDirsList(
+			excludesPathMatchers, includesPathMatchers,
+			Collections.singletonList(
+				new File(getWorkingDirectory(), "modules")));
+	}
 
-		for (File moduleBaseDir : getModuleBaseDirs()) {
-			moduleDirsList.addAll(
+	public List<File> getModuleDirsList(
+			List<PathMatcher> excludesPathMatchers,
+			List<PathMatcher> includesPathMatchers, List<File> moduleBaseDirs)
+		throws IOException {
+
+		List<File> moduleDirs = new ArrayList<>();
+
+		for (File moduleBaseDir : moduleBaseDirs) {
+			if (!moduleBaseDir.isDirectory()) {
+				continue;
+			}
+
+			moduleDirs.addAll(
 				_getModuleDirsList(
-					moduleBaseDir, excludesPathMatchers, includesPathMatchers));
+					excludesPathMatchers, includesPathMatchers, moduleBaseDir));
 		}
 
-		Collections.sort(moduleDirsList);
+		Collections.sort(moduleDirs);
 
-		return moduleDirsList;
+		return moduleDirs;
 	}
 
 	public List<File> getModulePullSubrepoDirs() {
@@ -547,8 +562,8 @@ public class PortalGitWorkingDirectory extends GitWorkingDirectory {
 	}
 
 	private List<File> _getModuleDirsList(
-			File moduleBaseDir, List<PathMatcher> excludesPathMatchers,
-			List<PathMatcher> includesPathMatchers)
+			List<PathMatcher> excludesPathMatchers,
+			List<PathMatcher> includesPathMatchers, File moduleBaseDir)
 		throws IOException {
 
 		List<File> moduleDirs = new ArrayList<>();
