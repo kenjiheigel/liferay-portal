@@ -141,3 +141,4 @@ Before you open your pull request, make sure you have these:
 - Beautifully formatted code: `./gradlew formatSource`.
 
 After submitting your PR, GitHub will automatically add reviewers. They will either approve your pull request, or leave a review and request some changes. Feel free to ask questions and clarify, as this is a collaborative process.
+<!-- LRCI-8106 workspace binaries cache test. Remove before merging. -->
