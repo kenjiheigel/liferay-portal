@@ -8,6 +8,7 @@ package com.liferay.jenkins.results.parser;
 import java.util.Arrays;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import org.junit.Assert;
@@ -116,6 +117,31 @@ public class BaseTopLevelBuildReportTest
 	}
 
 	@Test
+	public void testGetControllerBuildReport() {
+		JSONObject buildReportJSONObject = new JSONObject();
+
+		buildReportJSONObject.put("controller", new JSONObject());
+
+		BaseTopLevelBuildReport baseTopLevelBuildReport =
+			_newBaseTopLevelBuildReport(buildReportJSONObject);
+
+		Assert.assertNull(baseTopLevelBuildReport.getControllerBuildReport());
+
+		buildReportJSONObject.put("controller", _newControllerJSONObject());
+
+		baseTopLevelBuildReport = _newBaseTopLevelBuildReport(
+			buildReportJSONObject);
+
+		ControllerBuildReport controllerBuildReport =
+			baseTopLevelBuildReport.getControllerBuildReport();
+
+		Assert.assertNotNull(controllerBuildReport);
+		Assert.assertSame(
+			controllerBuildReport,
+			baseTopLevelBuildReport.getControllerBuildReport());
+	}
+
+	@Test
 	public void testGetDownstreamBuildReport() {
 		String axisName = RandomTestUtil.randomString();
 
@@ -151,6 +177,51 @@ public class BaseTopLevelBuildReportTest
 			baseTopLevelBuildReport.getDownstreamBuildReport(axisName));
 	}
 
+	@Test
+	public void testInitialize() {
+		JSONObject buildReportJSONObject = new JSONObject(
+		).put(
+			"batches",
+			new JSONArray(
+			).put(
+				new JSONObject(
+				).put(
+					"batchName", "functional-tomcat90-mysql80-jdk8"
+				).put(
+					"builds",
+					new JSONArray(
+					).put(
+						new JSONObject(
+						).put(
+							"buildURL",
+							"https://test-1-1/job/test-job/AXIS_VARIABLE=0/1"
+						).put(
+							"duration", 1000L
+						).put(
+							"result", "SUCCESS"
+						)
+					).put(
+						new JSONObject()
+					)
+				)
+			).put(
+				new JSONObject()
+			)
+		).put(
+			"controller", _newControllerJSONObject()
+		);
+
+		BaseTopLevelBuildReport baseTopLevelBuildReport =
+			_newBaseTopLevelBuildReport(buildReportJSONObject);
+
+		baseTopLevelBuildReport.initialize(buildReportJSONObject);
+
+		_assertDownstreamBuildReports(baseTopLevelBuildReport, 1);
+
+		Assert.assertNotNull(
+			baseTopLevelBuildReport.getControllerBuildReport());
+	}
+
 	private List<DownstreamBuildReport> _assertDownstreamBuildReports(
 		BaseTopLevelBuildReport baseTopLevelBuildReport, int expectedCount) {
 
@@ -180,6 +251,17 @@ public class BaseTopLevelBuildReportTest
 			}
 
 		};
+	}
+
+	private JSONObject _newControllerJSONObject() {
+		return new JSONObject(
+		).put(
+			"buildURL", "https://test-1-1/job/controller-job/7"
+		).put(
+			"duration", 1000L
+		).put(
+			"result", "SUCCESS"
+		);
 	}
 
 	private DownstreamBuildReport _newDownstreamBuildReport(
