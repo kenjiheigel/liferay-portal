@@ -10,6 +10,8 @@ Fires when one of these changed:
 
 - A lockfile (`package-lock.json`, `yarn.lock`) fires regardless of intent, because a transitive dependency pin can affect any code path.
 
+A Playwright change does not require a Jest run. `modules/test/playwright` declares `"test": "playwright test"`, so `npm test` there launches the whole Playwright suite against a running portal rather than a Jest suite, and writes no `Test Suites:` line for the verdict to read. Skip the run and report **NOT VERIFIED** naming the module and its script, since that coverage belongs to the `test-plan` skill.
+
 ## Match
 
 `^modules/.+\.(js|jsx|mjs|cjs|ts|tsx)$|^modules/.+/(package\.json|package-lock\.json|yarn\.lock)$`

@@ -14,6 +14,8 @@ Two consumer surfaces are [cross-module-compile.md](cross-module-compile.md)'s i
 
 Both behavior-change and surface-only edits fire this validation — the build verifies compile and resource bundling regardless of intent.
 
+A Playwright change does not require a deploy. `modules/test/playwright` holds no `bnd.bnd`, so a diff confined to it resolves to no module and the deploy set comes out empty with nothing to build. Skip the run and report **NOT VERIFIED** naming the paths as owning no bundle, rather than the FAIL the empty deploy set rule below would otherwise give it.
+
 ## Match
 
 `^modules/.+\.(java|js|jsx|mjs|cjs|ts|tsx|css|scss|sass|ftl|jsp|jspf|properties)$|^modules/.+/(bnd\.bnd|gradle\.properties|package-lock\.json|yarn\.lock|package\.json)$`

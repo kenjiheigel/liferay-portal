@@ -6,6 +6,8 @@ Always. The bnd baseline task diffs each exported API against the last release a
 
 Do not narrow the run to the branch diff. The comparison target is resolved from Nexus on every run, so a module the branch never touched can start failing between one run and the next. Narrow the verdict instead, as **Command** sets out: only a module the branch changed can fail it. Otherwise one stale version on master fails every pull request at once, stopping the developer least able to judge whether the bump is right.
 
+A Playwright change does not require a baseline. `modules/test/playwright` holds no `bnd.bnd`, so a diff confined to it changes no exported package and can owe no bump. Skip the run and report **NOT VERIFIED** naming the diff as owning no bundle.
+
 ## Match
 
 `.`
