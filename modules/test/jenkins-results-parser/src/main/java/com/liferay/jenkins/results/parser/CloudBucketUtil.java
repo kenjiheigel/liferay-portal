@@ -520,6 +520,8 @@ public class CloudBucketUtil {
 			destination);
 
 		if (destinationS3ObjectPathMatcher.find()) {
+			boolean checksumValidationEnabled = _isChecksumValidationEnabled();
+
 			Matcher listS3FilesMatcher = _listS3FilesPattern.matcher(
 				listS3Files(destination));
 
@@ -527,7 +529,7 @@ public class CloudBucketUtil {
 				String fileName = listS3FilesMatcher.group("fileName");
 
 				if (!fileName.endsWith(_CHECKSUM_FILE_EXTENSION) &&
-					_isChecksumValidationEnabled()) {
+					checksumValidationEnabled) {
 
 					_createChecksumFile(
 						destination + "/" + fileName,
