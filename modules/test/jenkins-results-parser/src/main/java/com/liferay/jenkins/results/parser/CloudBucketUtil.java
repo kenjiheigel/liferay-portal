@@ -23,7 +23,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
@@ -528,7 +527,7 @@ public class CloudBucketUtil {
 				String fileName = listS3FilesMatcher.group("fileName");
 
 				if (!fileName.endsWith(_CHECKSUM_FILE_EXTENSION) &&
-					_VALIDATE_CHECKSUM) {
+					_isChecksumValidationEnabled()) {
 
 					_createChecksumFile(
 						destination + "/" + fileName,
@@ -628,7 +627,7 @@ public class CloudBucketUtil {
 
 		if (!sourceFileName.endsWith(_CHECKSUM_FILE_EXTENSION) &&
 			!sourceFileName.equals("build-database.json") &&
-			_VALIDATE_CHECKSUM) {
+			_isChecksumValidationEnabled()) {
 
 			_createChecksumFile(replacedS3DestinationPath, sourceFile);
 		}
@@ -863,20 +862,23 @@ public class CloudBucketUtil {
 			source.startsWith(GCP_BUCKET_PATH_JENKINS_CI_DATA) ||
 			source.startsWith(GCP_BUCKET_PATH_LIFERAY_RELEASE_CANDIDATES)) {
 
-			gcpApplicationCredentialFilePath = _buildProperties.getProperty(
-				"google.application.crendential.file[jenkins]");
+			gcpApplicationCredentialFilePath =
+				JenkinsResultsParserUtil.getBuildProperty(
+					"google.application.crendential.file[jenkins]");
 		}
 		else if (destination.startsWith(GCP_BUCKET_PATH_PATCHER_SHARED) ||
 				 source.startsWith(GCP_BUCKET_PATH_PATCHER_SHARED)) {
 
-			gcpApplicationCredentialFilePath = _buildProperties.getProperty(
-				"google.application.crendential.file[patcher]");
+			gcpApplicationCredentialFilePath =
+				JenkinsResultsParserUtil.getBuildProperty(
+					"google.application.crendential.file[patcher]");
 		}
 		else if (destination.startsWith(GCP_BUCKET_PATH_TESTRAY_RESULTS) ||
 				 source.startsWith(GCP_BUCKET_PATH_TESTRAY_RESULTS)) {
 
-			gcpApplicationCredentialFilePath = _buildProperties.getProperty(
-				"google.application.crendential.file[testray]");
+			gcpApplicationCredentialFilePath =
+				JenkinsResultsParserUtil.getBuildProperty(
+					"google.application.crendential.file[testray]");
 		}
 
 		if (gcpApplicationCredentialFilePath != null) {
@@ -933,6 +935,21 @@ public class CloudBucketUtil {
 		sb.append(".s3.ref");
 
 		return new File(sb.toString());
+	}
+
+	private static boolean _isChecksumValidationEnabled() {
+		try {
+			return Boolean.parseBoolean(
+				JenkinsResultsParserUtil.getBuildProperty(
+					"cloud.ci.s3.bucket.validate.checksum.enabled"));
+		}
+		catch (IOException ioException) {
+			System.out.println(
+				"Unable to get build property " +
+					"cloud.ci.s3.bucket.validate.checksum.enabled");
+
+			return false;
+		}
 	}
 
 	private static boolean _isOlderThan(
@@ -1064,7 +1081,7 @@ public class CloudBucketUtil {
 			File destinationFile, String s3SourcePath)
 		throws IOException {
 
-		if (!_VALIDATE_CHECKSUM) {
+		if (!_isChecksumValidationEnabled()) {
 			return;
 		}
 
@@ -1133,11 +1150,8 @@ public class CloudBucketUtil {
 
 	private static final String _CHECKSUM_FILE_EXTENSION = ".sha512";
 
-	private static final boolean _VALIDATE_CHECKSUM;
-
 	private static final Pattern _awsCommandPattern = Pattern.compile(
 		"aws s3 (?<command>[^\\s]+)\\s+(?<options>.+)");
-	private static final Properties _buildProperties;
 	private static final Pattern _listS3FilesPattern = Pattern.compile(
 		"\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} +\\d+ (?<fileName>.+)");
 	private static final Pattern _s3ObjectPathPattern = Pattern.compile(
@@ -1147,22 +1161,5 @@ public class CloudBucketUtil {
 	private static final Pattern _signedURLPattern = Pattern.compile(
 		"https:\\/\\/([a-zA-Z\\d-]+\\.)?storage\\." +
 			"(cloud\\.google\\.com|googleapis\\.com)\\/.*");
-
-	static {
-		_buildProperties = new Properties() {
-			{
-				try {
-					putAll(JenkinsResultsParserUtil.getBuildProperties());
-				}
-				catch (IOException ioException) {
-					throw new RuntimeException(ioException);
-				}
-			}
-		};
-
-		_VALIDATE_CHECKSUM = Boolean.parseBoolean(
-			_buildProperties.getProperty(
-				"cloud.ci.s3.bucket.validate.checksum.enabled"));
-	}
 
 }
