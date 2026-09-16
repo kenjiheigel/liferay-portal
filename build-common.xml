@@ -1236,6 +1236,24 @@ information.
 		</sequential>
 	</macrodef>
 
+	<macrodef name="gradle-execute-workspace">
+		<attribute name="task" />
+		<attribute default="" name="test.name" />
+
+		<sequential>
+			<exec dir="${workspace.dir}" executable="./gradlew" failonerror="true">
+				<arg if:set="env.JENKINS_HOME" value="--max-workers=4" />
+				<arg if:set="env.JENKINS_HOME" value="--no-daemon" />
+				<arg value="--stacktrace" />
+				<arg value="-Dorg.gradle.jvmargs=-Xmx6g -XX:MaxMetaspaceSize=1g" />
+				<arg line="${gradle.jvm.args}" />
+				<arg value="@{task}" />
+				<arg line="@{test.name}" />
+				<env key="GIT_DISCOVERY_ACROSS_FILESYSTEM" value="1" />
+			</exec>
+		</sequential>
+	</macrodef>
+
 	<macrodef name="gradle-stop-daemon">
 		<sequential>
 			<if>
@@ -2511,6 +2529,7 @@ rerun your task.
 	<target name="gradle-execute-workspaces">
 		<local name="test.task.name" />
 		<local name="test.task.project.dir" />
+		<local name="test.task.results.dir.name" />
 		<local name="workspace.dir" />
 
 		<antelope:stringutil property="test.task.name" string="${test.task}">
@@ -2521,6 +2540,10 @@ rerun your task.
 			<antelope:replace regex="\:[^\:]+$" replacement="" />
 			<antelope:replace regex="^\:" replacement="" />
 			<antelope:replace regex="\:" replacement="/" />
+		</antelope:stringutil>
+
+		<antelope:stringutil property="test.task.results.dir.name" string="${test.task}">
+			<antelope:replace regex="^.*\:" replacement="" />
 		</antelope:stringutil>
 
 		<property location="${dir}" name="workspace.dir" />
@@ -2534,15 +2557,7 @@ rerun your task.
 			<try>
 				<lstopwatch action="start" name="test.execution.duration${test.task.name}" />
 
-				<exec dir="${workspace.dir}" executable="./gradlew" failonerror="true">
-					<arg if:set="env.JENKINS_HOME" value="--max-workers=4" />
-					<arg if:set="env.JENKINS_HOME" value="--no-daemon" />
-					<arg value="--stacktrace" />
-					<arg line="${gradle.jvm.args}" />
-					<arg value="${test.task}" />
-					<arg line="${test.name}" />
-					<env key="GIT_DISCOVERY_ACROSS_FILESYSTEM" value="1" />
-				</exec>
+				<gradle-execute-workspace task="${test.task}" test.name="${test.name}" />
 			</try>
 			<catch>
 				<fail>${exception.message}</fail>
@@ -2554,7 +2569,66 @@ rerun your task.
 					todir="${project.dir}/workspaces/test-results"
 				>
 					<fileset
-						dir="${workspace.dir}/${test.task.project.dir}/build/test-results/test"
+						dir="${workspace.dir}/${test.task.project.dir}/build/test-results/${test.task.results.dir.name}"
+						erroronmissingdir="false"
+						includes="TEST-*.xml"
+					/>
+					<flattenmapper />
+				</copy>
+
+				<lstopwatch action="total" name="test.execution.duration${test.task.name}" />
+			</finally>
+		</trycatch>
+	</target>
+
+	<target name="gradle-execute-workspaces-integration">
+		<local name="test.task.name" />
+		<local name="test.task.project.dir" />
+		<local name="test.task.results.dir.name" />
+		<local name="workspace.dir" />
+
+		<antelope:stringutil property="test.task.name" string="${test.task}">
+			<antelope:replace regex="\:" replacement="." />
+		</antelope:stringutil>
+
+		<antelope:stringutil property="test.task.project.dir" string="${test.task}">
+			<antelope:replace regex="\:[^\:]+$" replacement="" />
+			<antelope:replace regex="^\:" replacement="" />
+			<antelope:replace regex="\:" replacement="/" />
+		</antelope:stringutil>
+
+		<antelope:stringutil property="test.task.results.dir.name" string="${test.task}">
+			<antelope:replace regex="^.*\:" replacement="" />
+		</antelope:stringutil>
+
+		<property location="${dir}" name="workspace.dir" />
+
+		<chmod
+			file="${workspace.dir}/gradlew"
+			perm="a+x"
+		/>
+
+		<trycatch property="exception.message">
+			<try>
+				<lstopwatch action="start" name="test.execution.duration${test.task.name}" />
+
+				<gradle-execute-workspace task="initBundle" />
+
+				<gradle-execute-workspace task="deploy" />
+
+				<gradle-execute-workspace task="${test.task}" test.name="${test.name}" />
+			</try>
+			<catch>
+				<fail>${exception.message}</fail>
+			</catch>
+			<finally>
+				<copy
+					failonerror="false"
+					overwrite="true"
+					todir="${project.dir}/workspaces/test-results"
+				>
+					<fileset
+						dir="${workspace.dir}/${test.task.project.dir}/build/test-results/${test.task.results.dir.name}"
 						erroronmissingdir="false"
 						includes="TEST-*.xml"
 					/>
