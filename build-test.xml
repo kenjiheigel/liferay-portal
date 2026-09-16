@@ -557,6 +557,27 @@ passwords.encryption.algorithm=NONE</echo>
 		</sequential>
 	</macrodef>
 
+	<macrodef name="download-workspace-license">
+		<attribute name="url" />
+		<attribute name="workspace.dir" />
+
+		<sequential>
+			<if>
+				<matches pattern="https?://" string="@{url}" />
+				<then>
+					<mkdir dir="@{workspace.dir}/build" />
+
+					<mirrors-get
+						dest="@{workspace.dir}/build/license.xml"
+						src="@{url}"
+					/>
+
+					<property name="workspace.license.file" value="@{workspace.dir}/build/license.xml" />
+				</then>
+			</if>
+		</sequential>
+	</macrodef>
+
 	<macrodef name="export-database-mysql">
 		<attribute default="mysql" name="database.file.prefix" />
 		<attribute default="lportal" name="database.schema.name" />
@@ -2299,6 +2320,53 @@ jdbc.default.connectionProperties=oracle.jdbc.ReadTimeout=0;oracle.net.CONNECT_T
 					</beanshell>
 				</then>
 			</if>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="get-workspace-bundle-url">
+		<attribute name="mirror.dir" />
+		<attribute name="workspace.dir" />
+
+		<sequential>
+			<beanshell>
+				<![CDATA[
+					import com.liferay.jenkins.results.parser.JenkinsResultsParserUtil;
+
+					import java.io.File;
+
+					import java.util.Properties;
+
+					String mirrorDirName = "@{mirror.dir}";
+
+					if (JenkinsResultsParserUtil.isNullOrEmpty(mirrorDirName)) {
+						return;
+					}
+
+					Properties gradleProperties = JenkinsResultsParserUtil.getProperties(new File("@{workspace.dir}", "gradle.properties"));
+
+					String product = gradleProperties.getProperty("liferay.workspace.product");
+
+					if (JenkinsResultsParserUtil.isNullOrEmpty(product)) {
+						return;
+					}
+
+					String bundleURL = JenkinsResultsParserUtil.getBuildProperty("portal.bundle.tomcat", product.substring(product.indexOf("-") + 1));
+
+					if (JenkinsResultsParserUtil.isNullOrEmpty(bundleURL)) {
+						return;
+					}
+
+					File bundleFile = new File(new File(mirrorDirName, product.replaceFirst("-", "/")), bundleURL.substring(bundleURL.lastIndexOf("/") + 1));
+
+					if (!bundleFile.exists()) {
+						return;
+					}
+
+					project.setProperty("workspace.bundle.url", "file:" + bundleFile.getAbsolutePath());
+
+					System.out.println("Using the mirrored bundle at " + bundleFile);
+				]]>
+			</beanshell>
 		</sequential>
 	</macrodef>
 
