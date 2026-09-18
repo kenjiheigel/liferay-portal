@@ -816,7 +816,8 @@ public class PullRequest {
 
 		String requiredCompletedTestSuiteNames =
 			JenkinsResultsParserUtil.getProperty(
-				buildProperties, propertyName, getGitRepositoryName());
+				buildProperties, propertyName, getGitRepositoryName(),
+				_getOptionalRefName());
 
 		if (JenkinsResultsParserUtil.isNullOrEmpty(
 				requiredCompletedTestSuiteNames)) {
@@ -856,7 +857,8 @@ public class PullRequest {
 
 		String requiredPassingTestSuiteNames =
 			JenkinsResultsParserUtil.getProperty(
-				buildProperties, propertyName, getGitRepositoryName());
+				buildProperties, propertyName, getGitRepositoryName(),
+				_getOptionalRefName());
 
 		if (JenkinsResultsParserUtil.isNullOrEmpty(
 				requiredPassingTestSuiteNames)) {
@@ -1347,6 +1349,16 @@ public class PullRequest {
 		catch (IOException ioException) {
 			throw new RuntimeException(ioException);
 		}
+	}
+
+	private String _getOptionalRefName() {
+		JSONObject baseJSONObject = _jsonObject.optJSONObject("base");
+
+		if (baseJSONObject == null) {
+			return null;
+		}
+
+		return baseJSONObject.optString("ref");
 	}
 
 	private void _initCommits() {
