@@ -12,6 +12,7 @@ import com.liferay.poshi.core.util.StringUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import java.util.concurrent.Callable;
@@ -79,37 +80,60 @@ public class AntCommands implements Callable<Void> {
 			sb.append(poshiProperties.testName);
 		}
 
-		Process process = runtime.exec(
-			sb.toString(), null, new File(projectDirName));
+		Process process = new BufferedProcess(
+			_BUFFER_SIZE,
+			runtime.exec(sb.toString(), null, new File(projectDirName)));
 
-		InputStreamReader inputStreamReader = new InputStreamReader(
-			process.getInputStream());
+		process.waitFor();
 
-		BufferedReader inputBufferedReader = new BufferedReader(
-			inputStreamReader);
+		// Read the exit value only after the process ends, so that the
+		// buffering threads are given time to drain the last of the output
 
-		String line = null;
+		int exitValue = process.exitValue();
 
-		while ((line = inputBufferedReader.readLine()) != null) {
-			System.out.println(line);
-		}
+		StringBuilder outputSB = new StringBuilder();
 
-		InputStreamReader errorStreamReader = new InputStreamReader(
-			process.getErrorStream());
+		_readInputStream(process.getInputStream(), outputSB);
+		_readInputStream(process.getErrorStream(), outputSB);
 
-		BufferedReader errorBufferedReader = new BufferedReader(
-			errorStreamReader);
+		if (exitValue != 0) {
+			String outputString = outputSB.toString();
 
-		if (errorBufferedReader.ready()) {
-			while ((line = errorBufferedReader.readLine()) != null) {
-				System.out.println(line);
+			if (outputString.length() > _MAX_OUTPUT_LENGTH) {
+				outputString = outputString.substring(
+					outputString.length() - _MAX_OUTPUT_LENGTH);
 			}
 
-			throw new Exception();
+			throw new Exception(
+				StringUtil.combine(
+					"Ant command \"", sb.toString(),
+					"\" failed with exit value ", String.valueOf(exitValue),
+					"\n", outputString));
 		}
 
 		return null;
 	}
+
+	private void _readInputStream(InputStream inputStream, StringBuilder sb)
+		throws Exception {
+
+		try (BufferedReader bufferedReader = new BufferedReader(
+				new InputStreamReader(inputStream))) {
+
+			String line = null;
+
+			while ((line = bufferedReader.readLine()) != null) {
+				System.out.println(line);
+
+				sb.append(line);
+				sb.append("\n");
+			}
+		}
+	}
+
+	private static final int _BUFFER_SIZE = 2000000;
+
+	private static final int _MAX_OUTPUT_LENGTH = 5000;
 
 	private final String _fileName;
 	private final String _target;
