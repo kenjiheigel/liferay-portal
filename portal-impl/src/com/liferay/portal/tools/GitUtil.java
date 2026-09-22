@@ -491,7 +491,13 @@ public class GitUtil {
 	protected static int getGitLevel(String baseDirName) throws GitException {
 		File dir = new File(baseDirName);
 
-		dir = dir.getAbsoluteFile();
+		Path path = dir.toPath();
+
+		path = path.toAbsolutePath();
+
+		path = path.normalize();
+
+		dir = path.toFile();
 
 		for (int i = 0; i <= ToolsUtil.PORTAL_MAX_DIR_LEVEL; i++) {
 			if ((dir == null) || !dir.exists()) {
