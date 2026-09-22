@@ -21,26 +21,16 @@ public class SubrepositoryMergePropertyTest
 
 	@Test
 	public void testBuildCachingEnabled() {
-		_assertProperty(
+		_testGetProperty(
 			_getBuildAwsProperties(), "false", "merge-central-subrepository",
 			"build.caching.enabled");
 	}
 
 	@Test
 	public void testGitArchiveEnabled() {
-		_assertProperty(
+		_testGetProperty(
 			_getBuildAwsProperties(), "false", "merge-portal-subrepository",
 			"git.archive.enabled");
-	}
-
-	private void _assertProperty(
-		Properties buildProperties, String expectedValue, String jobName,
-		String propertyName) {
-
-		Assert.assertEquals(
-			expectedValue,
-			JenkinsResultsParserUtil.getProperty(
-				buildProperties, propertyName, jobName));
 	}
 
 	private Properties _getBuildAwsProperties() {
@@ -56,6 +46,16 @@ public class SubrepositoryMergePropertyTest
 			buildAwsPropertiesFile.exists());
 
 		return JenkinsResultsParserUtil.getProperties(buildAwsPropertiesFile);
+	}
+
+	private void _testGetProperty(
+		Properties buildProperties, String expectedValue, String jobName,
+		String propertyName) {
+
+		Assert.assertEquals(
+			expectedValue,
+			JenkinsResultsParserUtil.getProperty(
+				buildProperties, propertyName, jobName));
 	}
 
 }
