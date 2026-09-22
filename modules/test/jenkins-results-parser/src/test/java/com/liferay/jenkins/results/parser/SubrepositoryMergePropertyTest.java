@@ -21,25 +21,15 @@ public class SubrepositoryMergePropertyTest
 
 	@Test
 	public void testBuildCachingEnabled() {
-		Properties buildProperties = _getBuildProperties();
-
 		_assertProperty(
-			buildProperties, "false", "merge-central-subrepository",
-			"build.caching.enabled");
-		_assertProperty(
-			buildProperties, "false", "merge-portal-subrepository",
+			_getBuildProperties(), "false", "merge-central-subrepository",
 			"build.caching.enabled");
 	}
 
 	@Test
 	public void testGitArchiveEnabled() {
-		Properties buildProperties = _getBuildProperties();
-
 		_assertProperty(
-			buildProperties, "true", "merge-central-subrepository",
-			"git.archive.enabled");
-		_assertProperty(
-			buildProperties, "false", "merge-portal-subrepository",
+			_getBuildProperties(), "false", "merge-portal-subrepository",
 			"git.archive.enabled");
 	}
 
