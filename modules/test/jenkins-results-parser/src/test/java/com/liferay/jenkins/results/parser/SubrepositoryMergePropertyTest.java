@@ -22,14 +22,14 @@ public class SubrepositoryMergePropertyTest
 	@Test
 	public void testBuildCachingEnabled() {
 		_assertProperty(
-			_getBuildProperties(), "false", "merge-central-subrepository",
+			_getBuildAwsProperties(), "false", "merge-central-subrepository",
 			"build.caching.enabled");
 	}
 
 	@Test
 	public void testGitArchiveEnabled() {
 		_assertProperty(
-			_getBuildProperties(), "false", "merge-portal-subrepository",
+			_getBuildAwsProperties(), "false", "merge-portal-subrepository",
 			"git.archive.enabled");
 	}
 
@@ -43,23 +43,19 @@ public class SubrepositoryMergePropertyTest
 				buildProperties, propertyName, jobName));
 	}
 
-	private Properties _getBuildProperties() {
+	private Properties _getBuildAwsProperties() {
 		File jenkinsRepositoryDir =
 			JenkinsResultsParserUtil.getJenkinsRepositoryDir();
 
-		File commandsDir = new File(jenkinsRepositoryDir, "commands");
+		File buildAwsPropertiesFile = new File(
+			jenkinsRepositoryDir, "commands/build-aws.properties");
 
 		Assume.assumeTrue(
-			JenkinsResultsParserUtil.getCanonicalPath(commandsDir) +
+			JenkinsResultsParserUtil.getCanonicalPath(buildAwsPropertiesFile) +
 				" does not exist",
-			commandsDir.isDirectory());
+			buildAwsPropertiesFile.exists());
 
-		return JenkinsResultsParserUtil.getProperties(
-			new File(jenkinsRepositoryDir, "build.properties"),
-			new File(jenkinsRepositoryDir, "commands/build-aws.properties"),
-			new File(jenkinsRepositoryDir, "commands/build-db.properties"),
-			new File(jenkinsRepositoryDir, "commands/build-local.properties"),
-			new File(jenkinsRepositoryDir, "commands/build-shared.properties"));
+		return JenkinsResultsParserUtil.getProperties(buildAwsPropertiesFile);
 	}
 
 }
