@@ -19,8 +19,6 @@ Both depend on the kernel as a binary, not a `project(...)` edge, so Per-Module 
 Take the changed files from the diff:
 
 ```bash
-MERGE_BASE=$(git merge-base HEAD master)
-
 git diff --name-only "${MERGE_BASE}...HEAD" -- '*.java'
 ```
 

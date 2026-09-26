@@ -16,12 +16,12 @@ Take the markers from the diff rather than from a `find`, which turns up marker 
 
 ```bash
 HEAD_SHA=$(git rev-parse HEAD)
-MERGE_BASE=$(git merge-base "${HEAD_SHA}" master) || exit 1
+[[ -n ${MERGE_BASE} ]] || exit 1
 
 git diff --name-status "${MERGE_BASE}...${HEAD_SHA}" -- '*.lfrbuild-*'
 ```
 
-Stop when `git merge-base` fails rather than carrying on, since an unresolvable `master` leaves `${MERGE_BASE}` empty, the diff becomes `...${HEAD_SHA}`, and it exits zero with no output, which reads as a diff carrying no markers.
+Stop when `${MERGE_BASE}` is empty rather than carrying on, since the diff then becomes `...${HEAD_SHA}` and exits zero with no output, which reads as a diff carrying no markers.
 
 Pin `${HEAD_SHA}` once here and read every later query at it, since a concurrent validation moves the working tree when it writes and the index when it stages.
 

@@ -17,8 +17,6 @@ A generated file carries the `@generated` Javadoc marker that Service Builder an
 Anchor that match to a Javadoc tag or an annotation rather than searching the whole file for the bare word, or a class that only mentions `@generated` in prose drops out of the scan entirely.
 
 ```bash
-MERGE_BASE=$(git merge-base HEAD master)
-
 FINDINGS=$(
 	git diff --name-only "${MERGE_BASE}...HEAD" -- ':/*.java' \
 		| while IFS= read -r FILE

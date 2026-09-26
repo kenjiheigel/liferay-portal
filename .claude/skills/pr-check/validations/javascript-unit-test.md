@@ -23,8 +23,6 @@ Take the changed modules from the diff. A module qualifies when one of its chang
 `modules/node-scripts.config.js` is the exception worth naming. Its `imports` map decides which package files every module's build exposes, so a change there can break the suites of modules the diff never touched while no rule above selects anything. When the diff changes it, run the suites of the modules whose entry in that map the diff altered.
 
 ```bash
-MERGE_BASE=$(git merge-base HEAD master)
-
 git diff --name-only "${MERGE_BASE}...HEAD" -- ':/modules'
 ```
 

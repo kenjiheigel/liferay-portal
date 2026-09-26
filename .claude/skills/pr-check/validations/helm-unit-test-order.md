@@ -17,7 +17,7 @@ The suites themselves are not run here. `ci-test-cloud-helm-chart.yaml` already 
 Check every changed suite:
 
 ```bash
-(cd "${REPO_ROOT}" && for file in $(git diff --name-only "$(git merge-base HEAD master)...HEAD" -- 'cloud/helm/*/tests/*_test.yaml')
+(cd "${REPO_ROOT}" && for file in $(git diff --name-only "${MERGE_BASE}...HEAD" -- 'cloud/helm/*/tests/*_test.yaml')
 do
 	descriptions=$(command grep '^        it: ' "${file}" | sed 's/^        it: //')
 

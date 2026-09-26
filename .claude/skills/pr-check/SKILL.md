@@ -24,7 +24,15 @@ Run premerge checks against the current branch. The skill iterates through the v
 
 	1. `git rebase <remote>/master`. On a clean rebase, continue against the rebased branch. On conflict, list the unmerged files (`git diff --diff-filter=U --name-only`) and ask the developer who should resolve the conflicts. When the developer asks you to resolve them, fix the conflicts, `git add` the files, and run `git rebase --continue`. In every other case (the developer resolves them, the conflicts cannot be resolved, or the rebase fails otherwise) run `git rebase --abort` and stop the run.
 
-- **Diff baseline is local `master`.** After the rebase, the three-dot diff against local `master` is the baseline.
+	1. Probe the branch against `brianchandotcom` master, which is where `ci:forward` merges it and which carries commits `upstream` has not taken yet. Fetch it from the remote whose URL points at `brianchandotcom/liferay-portal`, or from `https://github.com/brianchandotcom/liferay-portal.git` when no remote does, with `git fetch --no-tags <remote> master`. Record its tip as `BRIAN_MASTER=$(git rev-parse FETCH_HEAD)` and run `git merge-tree --write-tree "${BRIAN_MASTER}" HEAD`, which merges in memory, touches neither the working tree nor the index, and exits `1` on a conflict. Pass it the two tips, never a merge base, which merges into `HEAD` without ever conflicting. Any other nonzero exit is an error rather than a conflict. On a conflict, do not move the branch yet: the validations run on `upstream`, since `brianchandotcom` master regularly carries breakage of its own, and **Conflict With Brian Master** below moves it afterwards. When the fetch fails, warn the developer that the branch was not probed and continue without `${BRIAN_MASTER}`.
+
+- **Diff baseline is the merge base with `brianchandotcom` master.** Resolve it once after the rebase, and again whenever the branch moves:
+
+	```bash
+	MERGE_BASE=$(git merge-base HEAD "${BRIAN_MASTER:-master}")
+	```
+
+	`upstream` master is always an ancestor of `brianchandotcom` master, so on a branch rebased onto `upstream` this is the `upstream` tip, the same baseline local `master` gives. On a branch that already sits on `brianchandotcom` master it leaves out the commits `upstream` has not taken yet, which a diff against local `master` counts as the branch's own and every validation then checks. The three-dot diff against `${MERGE_BASE}` is the baseline.
 
 - **Diff is nonempty.** When the three-dot diff produces no files, exit with a one-line message — no validation produces useful signal on a clean branch.
 
@@ -33,7 +41,7 @@ Run premerge checks against the current branch. The skill iterates through the v
 ### Diff
 
 ```bash
-git diff --name-status "$(git merge-base HEAD master)...HEAD"
+git diff --name-status "${MERGE_BASE}...HEAD"
 ```
 
 ## Expected Output
@@ -100,7 +108,7 @@ Read every validation file under `.claude/skills/pr-check/validations` in a sing
 
 In your next turn, compose a single bash script that:
 
-- computes the diff: `git diff --name-only --no-renames "$(git merge-base HEAD master)...HEAD"`, since a detected rename collapses to its new path alone and hides the old one from every regex
+- computes the diff: `git diff --name-only --no-renames "${MERGE_BASE}...HEAD"`, since a detected rename collapses to its new path alone and hides the old one from every regex
 - for each validation, tests its regex against the diff and prints the validation name when it fires (a leading `!` in the regex inverts: fire when any diff path does *not* match the rest)
 - ` &! ` in the regex splits it into an include side and an exclude side. The validation fires when a diff path matches the include side but not the exclude side.
 - runs as a single Bash tool invocation
@@ -127,7 +135,7 @@ A validation may hand off to another, as **Per-Module Compile** does when its de
 
 An autocommit can change the diff, so recompute the ledger after a validation whose commit may add a path Pass 1 never saw, as Baseline's `packageinfo` and `bnd.bnd` repairs do, and dispatch whatever newly fires. Skip it after a validation that can only touch paths the branch already changed, such as a formatter running in current branch mode, since its commit cannot widen the diff.
 
-Give the subagent everything the validations use and none of them define. That is `${REPO_ROOT}`, the ticket their **Autocommit** sections write into a commit title as `<TICKET>`, and the result its own verdict implies for committing, since the rule above lives here and the subagent never reads this document:
+Give the subagent everything the validations use and none of them define. That is `${REPO_ROOT}`, the `${MERGE_BASE}` resolved in the preconditions, the ticket their **Autocommit** sections write into a commit title as `<TICKET>`, and the result its own verdict implies for committing, since the rule above lives here and the subagent never reads this document:
 
 ```bash
 REPO_ROOT=$(git rev-parse --show-toplevel)
@@ -165,13 +173,25 @@ When a command ran and exited nonzero, that status alone does not separate a val
 
 That governs a nonzero exit and nothing else. A validation that names its own `NOT VERIFIED` case reports it whatever any command exited.
 
+### Conflict With Brian Master
+
+Run this step only when the probe in the preconditions found a conflict, and only when Pass 2 reported no `FAIL`, since a failing branch has a defect to fix before it is worth moving.
+
+Rebase onto `${BRIAN_MASTER}` and handle each conflict the way the `upstream` rebase step does. Resolve a hand written file by hand, and regenerate a generated one with the builder that owns it (`buildLang` for the `Language_*.properties` files, `buildService`, or `buildREST`) rather than merging its lines, since the regenerated output is the source of truth. Record the files each stop lists under `git diff --diff-filter=U --name-only` before resolving them, then recompute `${MERGE_BASE}`.
+
+A conflict confined to `Language*.properties` files and builder output reruns nothing, because `ci:test:sf` checks those files on the pull. Any other conflicted file reruns, under the rules of Pass 2, every validation whose **Match** regex fires on it, so a hand resolved code conflict is never sent unchecked. Everything else stands as Pass 2 validated it.
+
+Tell the developer the branch now sits on `brianchandotcom` master and needs a force push, and that `ci:test:sf` has to pass on the pushed head.
+
 ## Results Summary
 
 After the two passes complete, emit a Results Summary block. It is the canonical record of what was tested, embedded verbatim by the `pr` skill into the PR description and reused by the `pr-check-publish` skill when recording a run on an existing PR.
 
-Capture the tested commit with `git rev-parse HEAD` **after** Pass 2 completes, so the SHA reflects the tree that was actually exercised — including any autocommits the validations made, such as the `<TICKET> SF` source-format commit. This is the commit the `pr` skill pushes as the PR head and the commit the webhook binds the `pr-check` status to, so a reviewer can tell whether the current head is the one that was tested.
+Capture the tested commit with `git rev-parse HEAD` **after** Pass 2 and any **Conflict With Brian Master** step complete, so the SHA reflects the tree that was actually exercised, including any autocommits the validations made, such as the `<TICKET> SF` source-format commit. This is the commit the `pr` skill pushes as the PR head and the commit the webhook binds the `pr-check` status to, so a reviewer can tell whether the current head is the one that was tested.
 
 The block is the overall state and tested SHA, followed by a table with one row per **matched** validation — the validations that actually ran, in the execution order above. Validations whose `## Match` regex did not fire are omitted rather than listed as skipped, so the table reflects only what the diff exercised.
+
+When **Conflict With Brian Master** moved the branch, follow the header with one line naming the commit Pass 2 validated, the files the rebase resolved, and the validations it reran, so a reviewer can tell which rows describe the tested commit and which the one before it.
 
 ```markdown
 **pr-check: PASS** — tested on `<head-SHA>`

@@ -47,8 +47,6 @@ Keep `--rerun`. Without it the task reports `UP-TO-DATE` and exits 0 in half a s
 Confirm the branch's own modules the same way, keeping `--rerun`, and passing each changed module whose `bnd.bnd` carries `Export-Package:` as the project directory. Take those modules from the diff, walking each changed file up to its nearest ancestor holding a `bnd.bnd`:
 
 ```bash
-MERGE_BASE=$(git merge-base HEAD master)
-
 git diff --name-only "${MERGE_BASE}...HEAD"
 ```
 
