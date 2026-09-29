@@ -17,12 +17,15 @@ These settings describe this repository. The `pr-check` skill of another reposit
 | Setting | Value |
 | --- | --- |
 | **Base Branch** | `master` |
+| **Forward Target** | `brianchandotcom/liferay-portal` |
 | **Repository** | `liferay/liferay-portal` |
 | **Scopes** | branch, portal, workspaces |
 | **Skipped Validations** | Workspace Source Format |
 | **Rules Commit** | `HEAD` |
 
 Workspace Source Format is skipped here because Source Format already formats every changed file in this repository, workspace files included.
+
+The forward target is the repository `ci:forward` merges a pull request into, on its own `${BASE_BRANCH}`. A repository that forwards nowhere leaves it empty.
 
 `${BASE_BRANCH}` below stands for the base branch, and `${SOURCE_SHA}` stands for the rules commit, which is the commit this document and its validations were read from. A repository that fetches them from another repository supplies that commit.
 
@@ -38,7 +41,21 @@ Workspace Source Format is skipped here because Source Format already formats ev
 
 	1. Fast forward local `${BASE_BRANCH}` to the fetched tip. When `${BASE_BRANCH}` is checked out in another worktree, fast forward it there with `git -C <worktree> merge --ff-only <remote>/${BASE_BRANCH}`. Otherwise update it in place with `git fetch <remote> ${BASE_BRANCH}:${BASE_BRANCH}`, which also creates `${BASE_BRANCH}` when it does not exist. Both are fast forward only. When the command fails (because `${BASE_BRANCH}` has diverged or its worktree is not clean), warn the developer and stop the run.
 
+	1. When the settings name a forward target, fetch its `${BASE_BRANCH}` from the remote whose URL points at it, or from its GitHub URL when no remote does, and record the tip. Record it only after a successful fetch, since `FETCH_HEAD` otherwise still holds the `${BASE_BRANCH}` fetched above. When the fetch fails, warn the developer that the branch was not checked against the forward target and continue without `${FORWARD_TIP}`.
+
+	```bash
+	git fetch --no-tags <forward remote> ${BASE_BRANCH} && FORWARD_TIP=$(git rev-parse FETCH_HEAD)
+	```
+
 	1. `git rebase <remote>/${BASE_BRANCH}`. On a clean rebase, continue against the rebased branch. On conflict, list the unmerged files (`git diff --diff-filter=U --name-only`) and ask the developer who should resolve the conflicts. When the developer asks you to resolve them, fix the conflicts, `git add` the files, and run `git rebase --continue`. In every other case (the developer resolves them, the conflicts cannot be resolved, or the rebase fails otherwise) run `git rebase --abort` and stop the run.
+
+	1. When `${FORWARD_TIP}` is set, test in memory whether `ci:forward` can merge the branch into it. `git merge-tree` leaves the working tree and the index alone, and `--write-tree` needs Git 2.38 or later.
+
+	```bash
+	git merge-tree --name-only --write-tree "${FORWARD_TIP}" HEAD
+	```
+
+	Exit `0` means the forward merges cleanly, so continue. Exit `1` means `ci:forward` will refuse the pull request. The lines after the first, up to the first blank line, name the conflicted files, and `git log --format='%h %s' "HEAD..${FORWARD_TIP}" -- <files>` names the commits of the forward target that touched them. Stop the run, give the developer both lists, and say what fixes it: rebase onto `${FORWARD_TIP}`, resolve the conflicts, run pr-check again, and send the pull request to the forward target directly. Sent to the repository in the settings instead, the pull request carries every commit of the forward target that repository lacks, and CI checks them all as its own. Offer to run the rebase, handle its conflicts the way the step above does, and start pr-check over once it completes. Any other exit, such as an older Git that does not know `--write-tree`, means the forward was not checked, so warn the developer and continue.
 
 - **Diff baseline is local `${BASE_BRANCH}`.** After the rebase, the three dot diff against local `${BASE_BRANCH}` is the baseline.
 
