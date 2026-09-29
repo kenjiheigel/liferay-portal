@@ -17,7 +17,7 @@ Only JSPs under `modules` are in scope. `LiferayOSGiPlugin` wires the task into 
 Take the changed JSPs from the diff:
 
 ```bash
-MERGE_BASE=$(git merge-base HEAD master)
+MERGE_BASE=$(git merge-base HEAD "${BASE_REF}")
 
 git diff --name-only "${MERGE_BASE}...HEAD" -- ':/modules/*.jsp' ':/modules/*.jspf'
 ```

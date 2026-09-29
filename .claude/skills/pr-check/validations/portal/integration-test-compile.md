@@ -16,7 +16,7 @@ Take the changed Java files from the diff:
 
 ```bash
 REPO_ROOT=$(git rev-parse --show-toplevel)
-MERGE_BASE=$(git merge-base HEAD master)
+MERGE_BASE=$(git merge-base HEAD "${BASE_REF}")
 
 git diff --name-only "${MERGE_BASE}...HEAD" -- ':/modules/**/*.java'
 ```

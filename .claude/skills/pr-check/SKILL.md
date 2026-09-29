@@ -47,7 +47,13 @@ The forward target is the repository `ci:forward` merges a pull request into, on
 	git fetch --no-tags <forward remote> ${BASE_BRANCH} && FORWARD_TIP=$(git rev-parse FETCH_HEAD)
 	```
 
-	1. `git rebase <remote>/${BASE_BRANCH}`. On a clean rebase, continue against the rebased branch. On conflict, list the unmerged files (`git diff --diff-filter=U --name-only`) and ask the developer who should resolve the conflicts. When the developer asks you to resolve them, fix the conflicts, `git add` the files, and run `git rebase --continue`. In every other case (the developer resolves them, the conflicts cannot be resolved, or the rebase fails otherwise) run `git rebase --abort` and stop the run.
+	With `${FORWARD_TIP}` set, the branch sits on the forward target when it holds commits of the target that `<remote>/${BASE_BRANCH}` lacks, which this reports by exiting `1`:
+
+	```bash
+	git merge-base --is-ancestor "$(git merge-base HEAD "${FORWARD_TIP}")" "<remote>/${BASE_BRANCH}"
+	```
+
+	1. `git rebase <remote>/${BASE_BRANCH}`, or `git rebase "${FORWARD_TIP}"` for a branch that sits on the forward target, since rebasing it onto `<remote>/${BASE_BRANCH}` can copy the target's commits into it. On a clean rebase, continue against the rebased branch. On conflict, list the unmerged files (`git diff --diff-filter=U --name-only`) and ask the developer who should resolve the conflicts. When the developer asks you to resolve them, fix the conflicts, `git add` the files, and run `git rebase --continue`. In every other case (the developer resolves them, the conflicts cannot be resolved, or the rebase fails otherwise) run `git rebase --abort` and stop the run.
 
 	1. When `${FORWARD_TIP}` is set, test in memory whether `ci:forward` can merge the branch into it. `git merge-tree` leaves the working tree and the index alone, and `--write-tree` needs Git 2.38 or later.
 
@@ -57,7 +63,7 @@ The forward target is the repository `ci:forward` merges a pull request into, on
 
 	Exit `0` means the forward merges cleanly, so continue. Exit `1` means `ci:forward` will refuse the pull request. The lines after the first, up to the first blank line, name the conflicted files, and `git log --format='%h %s' "HEAD..${FORWARD_TIP}" -- <files>` names the commits of the forward target that touched them. Stop the run, give the developer both lists, and say what fixes it: rebase onto `${FORWARD_TIP}`, resolve the conflicts, run pr-check again, and send the pull request to the forward target directly. Sent to the repository in the settings instead, the pull request carries every commit of the forward target that repository lacks, and CI checks them all as its own. Offer to run the rebase, handle its conflicts the way the step above does, and start pr-check over once it completes. Any other exit, such as an older Git that does not know `--write-tree`, means the forward was not checked, so warn the developer and continue.
 
-- **Diff baseline is local `${BASE_BRANCH}`.** After the rebase, the three dot diff against local `${BASE_BRANCH}` is the baseline.
+- **Diff baseline is `${BASE_REF}`.** That is `${FORWARD_TIP}` for a branch that sits on the forward target, since the target's commits beneath it are not the branch's own, and local `${BASE_BRANCH}` otherwise. After the rebase, the three dot diff against `${BASE_REF}` is the baseline.
 
 - **Diff is nonempty.** When the three dot diff produces no files, exit with a one line message — no validation produces useful signal on a clean branch.
 
@@ -66,7 +72,7 @@ The forward target is the repository `ci:forward` merges a pull request into, on
 ### Diff
 
 ```bash
-git diff --name-status "$(git merge-base HEAD "${BASE_BRANCH}")...HEAD"
+git diff --name-status "$(git merge-base HEAD "${BASE_REF}")...HEAD"
 ```
 
 ### Routing
@@ -157,7 +163,7 @@ Read every validation file the list above links, and no other file under `valida
 
 In your next turn, compose a single bash script that:
 
-- computes the diff: `git diff --name-only --no-renames "$(git merge-base HEAD "${BASE_BRANCH}")...HEAD"`, since a detected rename collapses to its new path alone and hides the old one from every regex
+- computes the diff: `git diff --name-only --no-renames "$(git merge-base HEAD "${BASE_REF}")...HEAD"`, since a detected rename collapses to its new path alone and hides the old one from every regex
 - for each validation, tests its regex against the paths its scope sees and prints the validation name when it fires (a leading `!` in the regex inverts: fire when any diff path does *not* match the rest)
 - tests a workspace validation once for each workspace and prints the workspace name with it
 - ` &! ` in the regex splits it into an include side and an exclude side. The validation fires when a diff path matches the include side but not the exclude side.
@@ -187,7 +193,7 @@ A validation may hand off to another, as **Per-Module Compile** does when its de
 
 An autocommit can change the diff, so recompute the ledger after a validation whose commit may add a path Pass 1 never saw, as Baseline's `packageinfo` and `bnd.bnd` repairs do, and dispatch whatever newly fires. Skip it after a validation that can only touch paths the branch already changed, such as a formatter running in current branch mode, since its commit cannot widen the diff.
 
-Give the subagent everything the validations use and none of them define. That is `${REPO_ROOT}`, `${BASE_BRANCH}`, `${SOURCE_SHA}`, `${BUILD_ROOT}` for a workspace validation, the ticket their **Autocommit** sections write into a commit title as `<TICKET>`, and the result its own verdict implies for committing, since the rule above lives here and the subagent never reads this document:
+Give the subagent everything the validations use and none of them define. That is `${REPO_ROOT}`, `${BASE_BRANCH}`, `${BASE_REF}` as the commit or branch it names, since a subagent cannot fetch the forward target again, `${SOURCE_SHA}`, `${BUILD_ROOT}` for a workspace validation, the ticket their **Autocommit** sections write into a commit title as `<TICKET>`, and the result its own verdict implies for committing, since the rule above lives here and the subagent never reads this document:
 
 ```bash
 REPO_ROOT=$(git rev-parse --show-toplevel)
@@ -232,6 +238,8 @@ After the two passes complete, emit a Results Summary block. It is the canonical
 Capture the tested commit with `git rev-parse HEAD` **after** Pass 2 completes, so the SHA reflects the tree that was actually exercised — including any autocommits the validations made, such as the `<TICKET> SF` source-format commit. This is the commit the `pr` skill pushes as the PR head and the commit the webhook binds the `pr-check` status to, so a reviewer can tell whether the current head is the one that was tested.
 
 The block is the overall state and tested SHA, followed by a table with one row per **matched** validation — the validations that actually ran, in the execution order above. A workspace validation has one row for each workspace it ran for, named with the workspace in parentheses, such as `Workspace Compile (liferay-aihub-workspace)`. Validations whose `## Match` regex did not fire are omitted rather than listed as skipped, so the table reflects only what the diff exercised.
+
+When the branch sits on the forward target, follow the header with one line saying the diff was taken from the forward target at `${FORWARD_TIP}` and that the pull request goes to the forward target.
 
 ```markdown
 **pr-check: PASS** — tested on `<head-SHA>`

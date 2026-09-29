@@ -15,7 +15,7 @@ Test code (`**/src/test/**`) is in scope: when a test class itself changed, run 
 Take the changed Java files from the diff:
 
 ```bash
-MERGE_BASE=$(git merge-base HEAD master)
+MERGE_BASE=$(git merge-base HEAD "${BASE_REF}")
 
 git diff --name-only "${MERGE_BASE}...HEAD" -- ':/*.java'
 ```

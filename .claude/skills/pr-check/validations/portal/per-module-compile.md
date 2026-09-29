@@ -23,7 +23,7 @@ Both behavior-change and surface-only edits fire this validation — the build v
 Build the deploy set from the diff:
 
 ```bash
-MERGE_BASE=$(git merge-base HEAD master)
+MERGE_BASE=$(git merge-base HEAD "${BASE_REF}")
 
 git diff --name-only "${MERGE_BASE}...HEAD" -- modules
 ```

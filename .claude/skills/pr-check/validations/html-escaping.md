@@ -15,13 +15,13 @@ The scope is the whole branch diff, so a line added in one commit and escaped in
 List the changed files:
 
 ```bash
-git diff --diff-filter=d --name-only "$(git merge-base HEAD "${BASE_BRANCH}")...HEAD" -- '*.js' '*.jsx' '*.ts' '*.tsx'
+git diff --diff-filter=d --name-only "$(git merge-base HEAD "${BASE_REF}")...HEAD" -- '*.js' '*.jsx' '*.ts' '*.tsx'
 ```
 
 Skip any file containing `@generated`, matched case insensitively. For each file that remains, list the added lines that render a value as HTML:
 
 ```bash
-git diff "$(git merge-base HEAD "${BASE_BRANCH}")...HEAD" -- <file> \
+git diff "$(git merge-base HEAD "${BASE_REF}")...HEAD" -- <file> \
 	| command grep '^+[^+]' \
 	| command grep \
 		--extended-regexp \
