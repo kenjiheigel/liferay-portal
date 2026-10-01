@@ -10,10 +10,10 @@ Catches registration defects that compile clean and surface only on a deployed p
 
 Use `command grep` for any working tree scan, so it is filtered by the system grep rather than the shell's `grep` wrapper, which some environments route to another tool with its own defaults.
 
-Take the changed Java files from the work list:
+Take the changed Java files:
 
 ```bash
-cut -d " " -f2- "${WORK_LIST}"
+cat "${CHANGED_PATHS}"
 ```
 
 ### Selection

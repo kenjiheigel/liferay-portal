@@ -16,8 +16,7 @@ Anchor that match to a Javadoc tag or an annotation rather than searching the wh
 
 ```bash
 FINDINGS=$(
-	cut -d " " -f2- "${WORK_LIST}" \
-		| while IFS= read -r FILE
+	while IFS= read -r FILE
 	do
 		[[ -f ${FILE} ]] || continue
 
@@ -42,7 +41,7 @@ FINDINGS=$(
 				--regexp='TransactionCallbackUtil' \
 				--regexp='TransactionCommitCallbackUtil' \
 				--regexp='TransactionInvokerUtil'
-	done
+	done < "${CHANGED_PATHS}"
 )
 
 printf '%s' "${FINDINGS}"
@@ -50,7 +49,7 @@ printf '%s' "${FINDINGS}"
 
 **Judge this from `${FINDINGS}` and never from the exit status**, which carries no verdict in either direction. The loop's status is whatever its last iteration happened to leave behind, so it reports on the diff's last Java file rather than on the diff. A clean branch ends on a `command grep` that matched nothing and exits 1. A branch that adds transaction usage in an early file and ends on a clean one also exits 1. `continue` returns 0, so a diff whose last Java file is generated exits 0 whatever preceded it. Both statuses occur on both verdicts.
 
-The `':/*.java'` pathspec is anchored to the repository root on purpose. Git resolves a bare `'*.java'` against the current directory, so running this from anywhere below the root selects no files at all and the check passes having scanned nothing.
+Run the loop from `${REPO_ROOT}`. The changed paths are relative to the repository root, so from anywhere below it every file test fails and the check passes having scanned nothing.
 
 Use `while read` rather than a `for` over an unquoted substitution, so a path holding whitespace stays one file rather than splitting into several.
 

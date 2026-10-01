@@ -8,10 +8,10 @@ Compiles the integration tests that consume a changed module, without running th
 
 ## Command
 
-Take the changed modules from the work list:
+Take the changed modules:
 
 ```bash
-cut -d " " -f1 "${WORK_LIST}" | sort --unique
+cat "${CHANGED_MODULES}"
 ```
 
 Leave out `modules/dxp/apps/saml/saml-admin-rest-test` and every module under `modules/sdk`. When the runner says Full Portal Build is in the run, compile nothing and report **NOT VERIFIED**, naming Full Portal Build as the validation this one defers to.
