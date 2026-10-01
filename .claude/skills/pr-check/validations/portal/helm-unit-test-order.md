@@ -11,8 +11,10 @@ Checks that the cases in a `helm unittest` suite sort alphabetically by their `i
 Check every changed suite:
 
 ```bash
-(cd "${REPO_ROOT}" && for file in $(git diff --name-only "$(git merge-base HEAD master)...HEAD" -- 'cloud/helm/*/tests/*_test.yaml')
+(cd "${REPO_ROOT}" && cut -d " " -f2- "${WORK_LIST}" | while IFS= read -r file
 do
+	[[ -f ${file} ]] || continue
+
 	descriptions=$(command grep '^        it: ' "${file}" | sed 's/^        it: //')
 
 	if [[ ${descriptions} != "$(echo "${descriptions}" | LC_ALL=C sort)" ]]

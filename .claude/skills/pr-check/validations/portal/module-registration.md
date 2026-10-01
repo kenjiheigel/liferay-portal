@@ -8,22 +8,19 @@ Checks an added or removed `.lfrbuild-portal` or `.lfrbuild-ci` marker, which ch
 
 ## Command
 
-Take the markers from the diff rather than from a `find`, which turns up marker copies under `node_modules` that are not modules:
+Take the markers from the work list rather than from a `find`, which turns up marker copies under `node_modules` that are not modules, and read their statuses from the diff:
 
 ```bash
 HEAD_SHA=$(git rev-parse HEAD)
-MERGE_BASE=$(git merge-base "${HEAD_SHA}" master) || exit 1
 
-git diff --name-status "${MERGE_BASE}...${HEAD_SHA}" -- '*.lfrbuild-*'
+cut -d " " -f2- "${WORK_LIST}" | xargs git diff --name-status --no-renames "${MERGE_BASE}" "${HEAD_SHA}" --
 ```
-
-Stop when `git merge-base` fails rather than carrying on, since an unresolvable `master` leaves `${MERGE_BASE}` empty, the diff becomes `...${HEAD_SHA}`, and it exits zero with no output, which reads as a diff carrying no markers.
 
 Pin `${HEAD_SHA}` once here and read every later query at it, since a concurrent validation moves the working tree when it writes and the index when it stages.
 
-A marker's module directory is the marker path with its file name stripped, so `modules/apps/blogs/blogs-api/.lfrbuild-portal` gives `modules/apps/blogs/blogs-api`. Its Gradle project path, written `<path>` below, is that directory with `modules/` stripped and every `/` replaced by `:`, so the same marker gives `apps:blogs:blogs-api`. Both branches below need it.
+A marker's module directory is the first field of its work list line, and its Gradle project path, written `<path>` below, is that directory without `modules/` and with `:` for `/`, so `modules/apps/blogs/blogs-api/.lfrbuild-portal` gives `modules/apps/blogs/blogs-api` and `apps:blogs:blogs-api`. Both branches below need them.
 
-Split the markers by status before running anything, since the directions take different branches. Take `A` into the run below and `D` into the report further down. A rename (`R`) is both, so treat it as a removal at the old path and an addition at the new, and read its two tab separated paths rather than taking the second field, which is the old one. The pairing is an artifact rather than a move, since every marker is an empty file and git pairs any deleted marker with any added one, even across unrelated modules, so never simplify the split away by following the rename. A content change (`M`) to a marker changes no registration, so report it and run nothing.
+Split the markers by status before running anything, since the directions take different branches. Take `A` into the run below and `D` into the report further down. A content change (`M`) to a marker changes no registration, so report it and run nothing.
 
 This validation has tasks for four families. `.lfrbuild-portal`, `.lfrbuild-portal-private`, and `.lfrbuild-portal-public` are the portal family the profile reads, and `.lfrbuild-ci` is consumed without it. The filter above takes every family, so report a marker outside the four as unhandled rather than running anything for it.
 

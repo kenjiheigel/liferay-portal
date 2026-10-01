@@ -8,23 +8,13 @@ Deploys each module the branch changed, which checks that it compiles and bundle
 
 ## Command
 
-Build the deploy set from the diff:
+The deploy set is the Gradle project paths of the work list, such as `apps:blogs:blogs-api`. The expansions below match on that form, not on the directory:
 
 ```bash
-MERGE_BASE=$(git merge-base HEAD master)
-
-git diff --name-only "${MERGE_BASE}...HEAD" -- modules
+command grep '^modules/' "${WORK_LIST}" | cut -d " " -f1 | sed "s#^modules/##; s#/#:#g" | sort --unique
 ```
 
-A module is in the deploy set when it has changed sources or resources: `*.java`, `*.{js,jsx,mjs,cjs,ts,tsx}`, frontend resources (`*.{css,scss,sass}`, `*.ftl`, `*.jsp`, `*.jspf`), lockfiles (`package-lock.json`, `yarn.lock`), `*.properties` files under `src/main`, or OSGi configuration (`bnd.bnd`, `gradle.properties`, `package.json` keys other than `test`).
-
-That list is the **Match** regex above restated, and the two have to stay in step. A `test.properties` is never in the set, even under `src/main`, since it configures CI test selection rather than the build. A module whose only change is a `.lfrbuild-*` marker is not in the deploy set, since the marker changes what the build configures rather than what the module contains, and [module-registration.md](module-registration.md) handles it.
-
-A changed file's module is its **nearest ancestor directory holding a `bnd.bnd`**. Do not use `build.gradle`, which app group directories also carry, so `modules/apps/questions/questions-web/package.json` would resolve to `modules/apps/questions`. Module depth is not fixed either, running three to five segments below `modules`, so never strip a set number of them.
-
 Exclude modules whose **only** Java change is under `src/testIntegration`. Integration Test Compile already runs `compileTestIntegrationJava` for those, and `-test` modules do not deploy a runtime bundle — `gradlew :path:deploy` would be redundant. A diff that touches `src/testIntegration` *and* anything else in the same module still puts the module in the deploy set.
-
-Convert each deploy set module directory to a Gradle project path by stripping `modules/` and replacing `/` with `:`, so `modules/apps/blogs/blogs-api` becomes `apps:blogs:blogs-api`. The expansions below match on that form, not on the directory.
 
 Expand by consumers only when the change can break one. An added `public` or `protected` member is source and binary compatible, so it expands nothing. A removed member, or one whose signature changed, does break consumers. Collect the removed and added member lines separately and expand only on a removal with no matching addition, since a member that was moved or reformatted appears as both and breaks nobody:
 
@@ -37,12 +27,16 @@ Take the consumers that name the changed **type**, not every module that declare
 
 ```bash
 git grep --cached --files-with-matches --word-regexp '<TypeName>' -- '*.java' \
-	| sed 's|/src/.*||' | sort --unique
+	| bash "${SKILL_DIR}/resolve.sh" "${MERGE_BASE}" \
+	| command grep '^modules/' \
+	| cut -d " " -f1 \
+	| sed "s#^modules/##; s#/#:#g" \
+	| sort --unique
 ```
 
 The difference is not marginal. Removing a member from a mid sized API class put 188 modules on the project edge and 6 on the type reference, and only 2 of those were production consumers that could break. Match the type name rather than the member name, which collides across unrelated classes.
 
-Drop any match that is a `-test` or `-test-util` module or carries `.lfrbuild-portal-deprecated`, and resolve each remaining path to its module the same way a changed file is resolved, by its nearest ancestor holding a `bnd.bnd`.
+Drop any module that is a `-test` or `-test-util` module or carries `.lfrbuild-portal-deprecated`.
 
 Apply the handoff below to the set you now have, **before** capping it. When the handoff does not fire, cap the consumers at 12 in sorted path order so two runs on the same diff build the same set, and name the full consumer count in the result.
 
@@ -97,7 +91,7 @@ Do not hand this to [javascript-unit-test.md](javascript-unit-test.md). Jest res
 
 Treat `UP-TO-DATE` on a changed module's own `compileJava` with the same suspicion. Gradle's cache has served a stale output in this repository before, so confirm the change reached the jar rather than reading the task line as proof.
 
-When a changed path has no `bnd.bnd` ancestor, there is no module to build, so report **NOT VERIFIED** naming every such path. When a changed path does sit inside a module and the set is still empty, the derivation is broken, so report that as a FAIL. PASS when every module the diff changed reports `BUILD SUCCESSFUL`.
+A changed path that sits in no module, other than the shared tooling above, has nothing to build, and its work list line starts with `-`. Report **NOT VERIFIED** naming every such path, and also when that tooling expanded to no module. When a changed path does sit inside a module and the set is still empty, the derivation is broken, so report that as a FAIL. PASS when every module in the deploy set reports `BUILD SUCCESSFUL`.
 
 ## Checklist
 

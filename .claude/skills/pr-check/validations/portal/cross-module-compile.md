@@ -8,12 +8,10 @@ Compiles the consumers of a changed API that no other validation compiles. The f
 
 ## Command
 
-Take the changed files from the diff:
+Take the changed files from the work list:
 
 ```bash
-MERGE_BASE=$(git merge-base HEAD master)
-
-git diff --name-only "${MERGE_BASE}...HEAD" -- '*.java'
+cut -d " " -f2- "${WORK_LIST}"
 ```
 
 For each changed `.java` file, take its simple type name and search the two surfaces no other validation compiles, modules carrying `.lfrbuild-portal-deprecated` and `testIntegration` sources in `-test` modules:

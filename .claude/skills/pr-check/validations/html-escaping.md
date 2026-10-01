@@ -13,13 +13,13 @@ The scope is the whole branch diff, so a line added in one commit and escaped in
 List the changed files:
 
 ```bash
-git diff --diff-filter=d --name-only "$(git merge-base HEAD "${BASE_BRANCH}")...HEAD" -- '*.js' '*.jsx' '*.ts' '*.tsx'
+cut -d " " -f2- "${WORK_LIST}"
 ```
 
-Skip any file containing `@generated`, matched case insensitively. For each file that remains, list the added lines that render a value as HTML:
+Skip any file the branch deleted, which no longer exists, and any file containing `@generated`, matched case insensitively. For each file that remains, list the added lines that render a value as HTML:
 
 ```bash
-git diff "$(git merge-base HEAD "${BASE_BRANCH}")...HEAD" -- <file> \
+git diff "${MERGE_BASE}...HEAD" -- <file> \
 	| command grep '^+[^+]' \
 	| command grep \
 		--extended-regexp \
@@ -34,7 +34,7 @@ git diff "$(git merge-base HEAD "${BASE_BRANCH}")...HEAD" -- <file> \
 		--regexp='srcdoc'
 ```
 
-When no file remains to scan, because the Match fired on a path this diff only deletes or on a generated file, nothing was examined. Report **NOT VERIFIED** naming what was left out, since a pass over an empty set reads as a branch that was checked. When files remain and none produces output, the validation passes.
+When no file remains to scan, because the scope covered a path this diff only deletes or on a generated file, nothing was examined. Report **NOT VERIFIED** naming what was left out, since a pass over an empty set reads as a branch that was checked. When files remain and none produces output, the validation passes.
 
 Otherwise, each printed line is a candidate, not a finding. Read the file to classify it and find the line number.
 
