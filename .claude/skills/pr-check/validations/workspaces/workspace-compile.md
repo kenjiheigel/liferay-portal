@@ -1,9 +1,5 @@
 # Workspace Compile
 
-## Match
-
-`.`
-
 ## Command
 
 ```bash

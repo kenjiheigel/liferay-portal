@@ -4,7 +4,7 @@ Validates the PQL in `test.batch.run.property.query` properties, which would oth
 
 ## Match
 
-`(^|/)test\.properties$`
+`[ /]test\.properties$`
 
 ## Command
 

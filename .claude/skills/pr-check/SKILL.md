@@ -8,7 +8,7 @@ name: pr-check
 
 # PR Check
 
-Run premerge checks against the current branch. The skill iterates through the validations listed below, runs each one whose trigger matches the diff, and reports PASS or FAIL. Integration tests, Playwright tests, and Poshi tests are out of scope. Use the `test-plan` skill when their coverage is needed.
+Run premerge checks against the current branch. The skill iterates through the validations listed below, runs each one whose scope covers a changed path, and reports PASS or FAIL. Integration tests, Playwright tests, and Poshi tests are out of scope. Use the `test-plan` skill when their coverage is needed.
 
 ## Repository Settings
 
@@ -52,8 +52,12 @@ In `liferay-portal-ee`, this skill and its validations are copied from local `ma
 ### Diff
 
 ```bash
-git diff --name-status "$(git merge-base HEAD "${BASE_BRANCH}")...HEAD"
+MERGE_BASE=$(git merge-base HEAD "${BASE_BRANCH}")
+
+git diff --name-only --no-renames "${MERGE_BASE}...HEAD"
 ```
+
+Keep `--no-renames`. A detected rename collapses to its new path alone and hides the old one from every validation.
 
 ### Routing
 
@@ -63,13 +67,23 @@ The folder a validation file sits in decides its scope. A validation sees only t
 
 - **Portal.** A file in `validations/portal` sees every changed path that belongs to no workspace.
 
-- **Workspaces.** A file in `validations/workspaces` runs once for each workspace the branch changed. A workspace is a directory named `workspaces/<name>-workspace`, and every path beneath it belongs to that workspace. The validation sees those paths relative to the workspace directory, so its `## Match` never names the `workspaces` segment.
+- **Workspaces.** A file in `validations/workspaces` runs once for each workspace the branch changed. A workspace is a directory named `workspaces/<name>-workspace`, and every path beneath it belongs to that workspace. The validation sees those paths relative to the workspace directory.
 
 Paths directly under `workspaces` that sit in no workspace, such as the refresh scripts, belong to the portal scope.
 
 In every workspace other than `liferay-sample-workspace`, a changed path that `workspaces/refresh_other_workspaces.sh` regenerates is seen only by [Generated Workspace File](validations/workspaces/generated-file.md). Such a path may change only through a refresh, and building it would only repeat what the sample workspace already checks. A path is regenerated when it does not match the regex that validation builds from the script's `--exclude` patterns. A workspace whose changed paths are all regenerated therefore runs no other workspace validation. Generated Workspace File in turn sees only regenerated paths, so it runs only for a workspace where the branch changed a regenerated path.
 
 Run only the validations in the scopes the settings enable, and skip every validation the settings name. When the portal scope is disabled, list every changed path that belongs to no workspace in the Results Summary as unchecked, so that a change nothing examined never reads as a pass.
+
+### Match
+
+The script [resolve.sh](resolve.sh) beside this document finds the module of every changed path and writes one line for it, `<module> <path>`, such as `modules/apps/blogs/blogs-api modules/apps/blogs/blogs-api/src/main/java/Foo.java`. Each validation in the branch and portal scopes fires on the paths whose line matches the regex under its `## Match`. ` &! ` splits a regex into an include side and an exclude side, and a line has to match the first and not the second.
+
+- **Module** is the outermost directory above the path that the path's build root builds as a project. In a workspace, that is a directory holding `bnd.bnd` or `client-extension.yaml`, the rule the workspace Gradle plugin uses. The plugin also builds themes, wars, and JavaScript portlets, which no validation selects yet. Everywhere else, it is a directory holding `bnd.bnd`, `build.xml`, `gulpfile.js`, or `src/main/resources/application.properties`, not counting `modules` itself, the rule the Gradle settings plugin uses. It is `-` when there is none. A module under `modules` also has a Gradle project path, the directory without `modules/` and with `:` for `/`, such as `apps:blogs:blogs-api`.
+
+The path starts after the first space, so a regex anchors to the start of a path with a space, as in ` modules/`, where it would anchor to the start of the module with `^`.
+
+### Build Root
 
 The build root of a changed path is its workspace directory when it belongs to a workspace, and `${REPO_ROOT}` otherwise. A validation that needs a place to search, such as a sweep for references, searches the build root of the path it is examining. Every workspace validation runs its commands from `${BUILD_ROOT}`, which is the absolute path of its workspace directory.
 
@@ -139,17 +153,29 @@ Process each validation in a subagent.
 
 ### Pass 1: Estimate
 
-Read every validation file the list above links, and no other file under `validations`, in a single parallel batch — one Read tool call per file, all in the same tool use turn. From each file, take the regex inside its `## Match` section.
+Resolve the diff once, from `${REPO_ROOT}`, into a file of your own outside the repository:
 
-In your next turn, compose a single bash script that:
+```bash
+git diff --name-only --no-renames "${MERGE_BASE}...HEAD" | bash <skill directory>/resolve.sh "${MERGE_BASE}" > <resolved file>
+```
 
-- computes the diff: `git diff --name-only --no-renames "$(git merge-base HEAD "${BASE_BRANCH}")...HEAD"`, since a detected rename collapses to its new path alone and hides the old one from every regex
-- for each validation, tests its regex against the paths its scope sees and prints the validation name when it fires (a leading `!` in the regex inverts: fire when any diff path does *not* match the rest)
-- tests a workspace validation once for each workspace and prints the workspace name with it
-- ` &! ` in the regex splits it into an include side and an exclude side. The validation fires when a diff path matches the include side but not the exclude side.
-- runs as a single Bash tool invocation
+Read the `## Match` regexes of the branch and portal validations the settings enable, and nothing else from those files yet:
 
-From the script's output, sum the matched validations' `## Time Estimate` values for the cumulative total, counting a workspace validation once for each workspace it fired for.
+```bash
+command grep --after-context=2 '^## Match' <validation file>...
+```
+
+For each validation, write the lines its regex matches to a **work list** file of its own. Leave out the second `grep` when the regex has no ` &! `, and for a portal validation drop the lines of paths in a workspace with `command grep --invert-match ' workspaces/[^/]*-workspace/'` as well:
+
+```bash
+command grep --extended-regexp '<include side>' <resolved file> | command grep --extended-regexp --invert-match '<exclude side>' > <work list>
+```
+
+A validation fires when its work list is not empty. Read the files of the validations that fired, and only those.
+
+A workspace validation fires once for each workspace the branch changed, as **Routing** describes. Read the files under `validations/workspaces` only when the branch changed a workspace.
+
+Sum the time estimates of the validations that fired for the cumulative total, counting a workspace validation once for each workspace it fired for.
 
 When the total exceeds 20 minutes, surface the breakdown and ask the developer whether to trim a validation or proceed.
 
@@ -157,7 +183,7 @@ When the total exceeds 20 minutes, surface the breakdown and ask the developer w
 
 The rules below divide in two. Dispatch, ordering, the shared setup, handoffs, the ledger, and the overall state belong to this runner. Reading a log, judging a result, and reporting a note belong to the subagent, which never sees this document and is told only what it needs.
 
-For each matched validation, spawn one subagent. **Pass it only the `## Command` and `## Autocommit` sections of the validation file, not the full file.** Pass each section whole, from its heading to the next `## ` heading, taken from the file you read in Pass 1 and never through a line cap on that file such as `head`, `tail`, or a fixed line range: a truncated section reads as complete, the subagent cannot know what it lost, and nothing downstream recovers it. A validation with no `## Autocommit` section makes no commit, so say so rather than leaving the subagent to infer it from an absence. That says nothing about the working tree, since a validation without one can still build and leave output behind. Record `PASS`, `FAIL`, or `NOT VERIFIED`, and capture any note the command directs it to return. Tell the subagent to run every command in the foreground and to return only once it has a verdict. A subagent that starts a build in the background and returns while it runs hands back no verdict, and nothing reports the build's result afterward. Do not halt on a failure, so the developer sees the full picture.
+For each matched validation, spawn one subagent. **Give it only the `## Command` and `## Autocommit` sections of its validation.** Pass each section whole, from its heading to the next `## ` heading, and never through a line cap such as `head`, `tail`, or a fixed line range: a truncated section reads as complete, the subagent cannot know what it lost, and nothing downstream recovers it. A validation with no `## Autocommit` section makes no commit, so say so rather than leaving the subagent to infer it from an absence. That says nothing about the working tree, since a validation without one can still build and leave output behind. Record `PASS`, `FAIL`, or `NOT VERIFIED`, and capture any note the command directs it to return. Tell the subagent to run every command in the foreground and to return only once it has a verdict. A subagent that starts a build in the background and returns while it runs hands back no verdict, and nothing reports the build's result afterward. Do not halt on a failure, so the developer sees the full picture.
 
 A validation reports **`NOT VERIFIED`** when it ran and established nothing about the branch, such as an empty work set, a compile with no source, or a change with no counterpart to exercise. It does not block, and it carries a reason naming what went unexamined, one line in the table with whatever detail the validation asks for beneath it. Reserve `FAIL` for a validation that found a real defect.
 
@@ -169,7 +195,7 @@ Run a validation that autocommits with **nothing else that writes to the working
 
 Run `ant compile install-portal-snapshots` once before the first validation that declares it, rather than letting each launch the same build into the same `${REPO_ROOT}/.m2`. Tell every later subagent that it is satisfied, since a subagent sees only its own **Command** and would otherwise run it again.
 
-A validation may hand off to another, as **Per-Module Compile** does when its deploy set grows past the point where one full build is cheaper. Run the validation it names, give the table that validation's row and result, and mark the one that handed off `NOT VERIFIED`. Pass 1 selects on regexes alone and cannot see a set Pass 2 derives, so a handoff is the only way those branches run.
+A validation may hand off to another, as **Per-Module Compile** does when its deploy set grows past the point where one full build is cheaper. Run the validation it names, give the table that validation's row and result, and mark the one that handed off `NOT VERIFIED`. Pass 1 selects on the changed paths alone and cannot see a set Pass 2 derives, so a handoff is the only way those branches run.
 
 An autocommit can change the diff, so recompute the ledger after a validation whose commit may add a path Pass 1 never saw, as Baseline's `packageinfo` and `bnd.bnd` repairs do, and dispatch whatever newly fires. Skip it after a validation that can only touch paths the branch already changed, such as a formatter running in current branch mode, since its commit cannot widen the diff.
 
@@ -219,7 +245,7 @@ After the two passes complete, emit a Results Summary block. It is the canonical
 
 Capture the tested commit with `git rev-parse HEAD` **after** Pass 2 completes, so the SHA reflects the tree that was actually exercised — including any autocommits the validations made, such as the `<TICKET> SF` source-format commit. This is the commit the `pr` skill pushes as the PR head and the commit the webhook binds the `pr-check` status to, so a reviewer can tell whether the current head is the one that was tested.
 
-The block is the overall state and tested SHA, followed by a table with one row per **matched** validation — the validations that actually ran, in the execution order above. A workspace validation has one row for each workspace it ran for, named with the workspace in parentheses, such as `Workspace Compile (liferay-aihub-workspace)`. Validations whose `## Match` regex did not fire are omitted rather than listed as skipped, so the table reflects only what the diff exercised. When no validation fired, omit the table as well and say so in one line, since a header with no rows reads as a table that failed to render.
+The block is the overall state and tested SHA, followed by a table with one row per **matched** validation — the validations that actually ran, in the execution order above. A workspace validation has one row for each workspace it ran for, named with the workspace in parentheses, such as `Workspace Compile (liferay-aihub-workspace)`. Validations that did not fire are omitted rather than listed as skipped, so the table reflects only what the diff exercised. When no validation fired, omit the table as well and say so in one line, since a header with no rows reads as a table that failed to render.
 
 ```markdown
 **pr-check: PASS** — tested on `<head-SHA>`
