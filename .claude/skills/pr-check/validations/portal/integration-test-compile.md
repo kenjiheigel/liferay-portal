@@ -18,15 +18,23 @@ Leave out `modules/dxp/apps/saml/saml-admin-rest-test` and every module under `m
 
 An affected module is one that holds `testIntegration` sources compiled against the change, which is almost never the module the diff changed. Liferay keeps integration tests in a sibling `-test` module, so `apps:blogs:blogs-api` is covered by `apps:blogs:blogs-test` rather than by itself. Scoping this to changed directories compiles `NO-SOURCE` and establishes nothing.
 
-For each changed module, take every module under the same parent directory whose name ends in `-test` and which has a `src/testIntegration` tree. Add any `-test` module whose `build.gradle` declares the changed module with `project(":<path>")`, found by reading the index:
+For each changed module, take every module under the same parent directory whose name ends in `-test` and which has a `src/testIntegration` tree. Add any `-test` module whose `build.gradle` declares the changed module with `project(":<path>")`, where `<path>` is the changed module's Gradle project path, found by reading the index:
 
 ```bash
-git grep --cached --files-with-matches --fixed-strings 'project(":<path>")' -- '*.gradle'
+(cd "${REPO_ROOT}" && git grep --cached --files-with-matches --fixed-strings 'project(":<path>")' -- '*.gradle') \
+	| bash "${SKILL_DIR}/resolve.sh" "${MERGE_BASE}" \
+	| cut -d " " -f1
 ```
 
 Cap the set at 8 and name the full count when the cap binds.
 
-Convert each module directory to a Gradle project path by stripping `modules/` and replacing `/` with `:`, then compile it:
+Take the Gradle project path of each module in the set:
+
+```bash
+printf '%s\n' <module directory>... | sed "s#^modules/##; s#/#:#g"
+```
+
+Then compile it:
 
 ```bash
 ("${REPO_ROOT}/gradlew" \

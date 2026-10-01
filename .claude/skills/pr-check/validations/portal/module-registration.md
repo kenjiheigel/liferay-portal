@@ -18,7 +18,11 @@ cut -d " " -f2- "${WORK_LIST}" | xargs git diff --name-status --no-renames "${ME
 
 Pin `${HEAD_SHA}` once here and read every later query at it, since a concurrent validation moves the working tree when it writes and the index when it stages.
 
-A marker's module directory is the first field of its work list line, and its Gradle project path, written `<path>` below, is that directory without `modules/` and with `:` for `/`, so `modules/apps/blogs/blogs-api/.lfrbuild-portal` gives `modules/apps/blogs/blogs-api` and `apps:blogs:blogs-api`. Both branches below need them.
+A marker's module directory is the first field of its work list line, and its Gradle project path is written `<path>` below, so `modules/apps/blogs/blogs-api/.lfrbuild-portal` gives `modules/apps/blogs/blogs-api` and `apps:blogs:blogs-api`. Both branches below need them:
+
+```bash
+cut -d " " -f1 "${WORK_LIST}" | sed "s#^modules/##; s#/#:#g"
+```
 
 Split the markers by status before running anything, since the directions take different branches. Take `A` into the run below and `D` into the report further down. A content change (`M`) to a marker changes no registration, so report it and run nothing.
 

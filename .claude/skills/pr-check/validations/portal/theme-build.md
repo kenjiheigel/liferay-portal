@@ -8,15 +8,15 @@ Rebuilds every theme when a shared stylesheet changes, since a change to `clay-c
 
 ## Command
 
-A shared CSS change fans out to every theme. Select each module under `modules/apps` whose `package.json` declares a `liferayTheme` block, and convert each to a Gradle project path. Scan `modules/apps` rather than `modules/apps/frontend-theme`, or the commerce themes are missed, which take the same `styled` parent and are affected by the same change:
+A shared CSS change fans out to every theme. Select each module under `modules/apps` whose `package.json` declares a `liferayTheme` block, and take its Gradle project path. Scan `modules/apps` rather than `modules/apps/frontend-theme`, or the commerce themes are missed, which take the same `styled` parent and are affected by the same change:
 
 ```bash
-command grep --files-with-matches --include='package.json' --recursive '"liferayTheme"' \
-	"${REPO_ROOT}/modules/apps" \
+(cd "${REPO_ROOT}" && command grep --files-with-matches --include='package.json' --recursive '"liferayTheme"' modules/apps) \
 	| command grep --invert-match --regexp='/node_modules/' --regexp='/gradleTest/' \
-	| sed "s#/package.json##" \
-	| sed "s#${REPO_ROOT}/modules/##" \
-	| tr '/' ':'
+	| bash "${SKILL_DIR}/resolve.sh" "${MERGE_BASE}" \
+	| cut -d " " -f1 \
+	| sed "s#^modules/##; s#/#:#g" \
+	| sort --unique
 ```
 
 Run `packageRunBuild` (not `deploy`) per theme:

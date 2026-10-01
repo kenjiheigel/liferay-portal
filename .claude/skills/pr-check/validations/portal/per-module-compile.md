@@ -28,7 +28,7 @@ git diff "${MERGE_BASE}...HEAD" -- '<changed file>' | command grep --extended-re
 Take the consumers that name the changed **type**, not every module that declares a dependency on its project. A project edge means a module could see the type; only a source reference means it does. Search the index, since a recursive `command grep` over `modules` descends into `build` and `node_modules` and does not finish:
 
 ```bash
-git grep --cached --files-with-matches --word-regexp '<TypeName>' -- '*.java' \
+(cd "${REPO_ROOT}" && git grep --cached --files-with-matches --word-regexp '<TypeName>' -- '*.java') \
 	| bash "${SKILL_DIR}/resolve.sh" "${MERGE_BASE}" \
 	| command grep '^modules/' \
 	| cut -d " " -f1 \
