@@ -1,10 +1,6 @@
 # Integration Test Compile
 
-## Trigger
-
-A Java file changed in an OSGi module (excluding `modules/dxp/apps/saml/saml-admin-rest-test/**` and `modules/sdk/**`) AND **Full Portal Build** did not fire.
-
-This catches IT compile breaks without running ITs — IT execution is out of scope; use `test-plan` for that.
+Compiles the integration tests that consume a changed module, without running them. Liferay keeps those tests in a sibling `-test` module, so the module compiled is rarely the one the branch changed.
 
 ## Match
 

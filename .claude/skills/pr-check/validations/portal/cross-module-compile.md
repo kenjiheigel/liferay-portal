@@ -1,14 +1,6 @@
 # Cross-Module Compile
 
-## Trigger
-
-A `*-api`, `portal-impl`, or `portal-kernel` signature changed (or a `*Constants`, `*Service`, or `*Util` class). Two kinds of consumer are not compiled by any other validation:
-
-- Modules carrying `.lfrbuild-portal-deprecated`, which the default `portal`/`dxp` profile excludes.
-
-- `testIntegration` sources in `-test` modules a producer did not change. Per-Module Compile skips `-test` modules; Integration Test Compile runs only for a module whose own `testIntegration` changed.
-
-Both depend on the kernel as a binary, not a `project(...)` edge, so Per-Module Compile's expansion cannot reach them. Find them by source symbol.
+Compiles the consumers of a changed API that no other validation compiles. The first kind is a module carrying `.lfrbuild-portal-deprecated`, which the default profile leaves out. The second is the `testIntegration` source of a `-test` module the branch did not change. Both depend on the kernel as a binary rather than through `project(...)`, so they are found by searching for the changed type.
 
 ## Match
 

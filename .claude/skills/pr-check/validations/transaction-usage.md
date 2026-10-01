@@ -1,8 +1,6 @@
 # Transaction Usage
 
-## Trigger
-
-The diff adds new transaction usage in a hand-written Java file (generated files are excluded), such as the `@Transactional` annotation, `Propagation.REQUIRES_NEW`, a `REQUIRES_NEW_TRANSACTION` config, `TransactionCallbackUtil`, `TransactionCommitCallbackUtil`, or `TransactionInvokerUtil`. Improper transaction usage has heavy performance implications, so any new case must be reviewed and approved by Shuyang Zhou and the Core Infrastructure team first.
+Flags new transaction usage in hand written Java, such as `@Transactional`, `Propagation.REQUIRES_NEW`, or `TransactionInvokerUtil`. Improper transaction usage has heavy performance costs, so Shuyang Zhou and the Core Infrastructure team must approve every new case.
 
 ## Match
 

@@ -146,7 +146,7 @@ In your next turn, compose a single bash script that:
 - ` &! ` in the regex splits it into an include side and an exclude side. The validation fires when a diff path matches the include side but not the exclude side.
 - runs as a single Bash tool invocation
 
-From the script's output, sum the matched validations' `## Time Estimate` values for the cumulative total, counting a workspace validation once for each workspace it fired for. The matching is mechanical; consult each file's prose `## Trigger` only when a result needs human judgment, such as a Service Builder run for a diff that changed only its output.
+From the script's output, sum the matched validations' `## Time Estimate` values for the cumulative total, counting a workspace validation once for each workspace it fired for.
 
 When the total exceeds 20 minutes, surface the breakdown and ask the developer whether to trim a validation or proceed.
 

@@ -1,9 +1,5 @@
 # Workspace Compile
 
-## Trigger
-
-Always.
-
 ## Match
 
 `.`

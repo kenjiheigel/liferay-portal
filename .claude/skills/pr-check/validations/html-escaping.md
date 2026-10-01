@@ -1,8 +1,6 @@
 # HTML Escaping
 
-## Trigger
-
-The diff adds a line that renders a value as HTML in a hand written `.js`, `.jsx`, `.ts`, or `.tsx` file. When nothing escapes that value first, the result is a cross site scripting defect.
+Catches an added line in hand written JavaScript or TypeScript that renders a value as HTML without escaping it first, which is a cross site scripting defect.
 
 ## Match
 

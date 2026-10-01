@@ -1,14 +1,6 @@
 # JavaScript Unit Tests
 
-## Trigger
-
-Fires when one of these changed:
-
-- JS or TS source with behavior intent (logic added, removed, or modified). Surface only edits (renames, formatting, comments, JSDoc) do not fire this validation. The build's bundling step is enough.
-
-- A JS relevant `package.json` key (`dependencies`, `devDependencies`, `scripts.build`, `scripts.test`).
-
-- A lockfile (`package-lock.json`, `yarn.lock`) fires regardless of intent, because a transitive dependency pin can affect any code path.
+Runs the Jest suites of the modules a change touches. A lockfile or a `package.json` dependency change counts too, since a dependency pin can affect any code path.
 
 ## Match
 

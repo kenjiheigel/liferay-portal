@@ -1,9 +1,5 @@
 # Source Format
 
-## Trigger
-
-Always.
-
 ## Match
 
 `.`

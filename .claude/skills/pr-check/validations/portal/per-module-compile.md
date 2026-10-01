@@ -1,18 +1,6 @@
 # Per-Module Compile
 
-## Trigger
-
-A module is in the deploy set AND **Full Portal Build** did not deploy it. The latter holds when:
-
-- **Full Portal Build** did not fire.
-
-- OR **Full Portal Build** fired but the module lacks `.lfrbuild-portal` (so `ant all` did not deploy it).
-
-**Command** builds the deploy set. Its size N is used by [full-portal-build.md](full-portal-build.md)'s cost comparison.
-
-Two consumer surfaces are [cross-module-compile.md](cross-module-compile.md)'s instead, and this validation excludes both: modules carrying `.lfrbuild-portal-deprecated`, which only the `portal-deprecated` profile configures, and `testIntegration` sources in `-test` modules, which `deploy` never compiles. Archived modules are not among them, since the project graph reaches those normally.
-
-Both behavior-change and surface-only edits fire this validation — the build verifies compile and resource bundling regardless of intent.
+Deploys each module the branch changed, which checks that it compiles and bundles its resources whatever the change was. When the deploy set grows past the point where one full build is cheaper, it hands off to **Full Portal Build**. Modules carrying `.lfrbuild-portal-deprecated` and the `testIntegration` source of `-test` modules belong to **Cross-Module Compile** instead.
 
 ## Match
 
@@ -54,7 +42,7 @@ git grep --cached --files-with-matches --word-regexp '<TypeName>' -- '*.java' \
 
 The difference is not marginal. Removing a member from a mid sized API class put 188 modules on the project edge and 6 on the type reference, and only 2 of those were production consumers that could break. Match the type name rather than the member name, which collides across unrelated classes.
 
-Drop any match that is a `-test` or `-test-util` module or carries `.lfrbuild-portal-deprecated`, per the Trigger, and resolve each remaining path to its module the same way a changed file is resolved, by its nearest ancestor holding a `bnd.bnd`.
+Drop any match that is a `-test` or `-test-util` module or carries `.lfrbuild-portal-deprecated`, and resolve each remaining path to its module the same way a changed file is resolved, by its nearest ancestor holding a `bnd.bnd`.
 
 Apply the handoff below to the set you now have, **before** capping it. When the handoff does not fire, cap the consumers at 12 in sorted path order so two runs on the same diff build the same set, and name the full consumer count in the result.
 

@@ -1,10 +1,6 @@
 # Java Unit Tests
 
-## Trigger
-
-A Java source file changed with behavior intent — logic added, removed, or modified. Surface only edits (renames, formatting, comments, javadoc) do not fire this validation — the build's compile step plus **Structural Smoke** are enough.
-
-Test code (`**/src/test/**`) is in scope: when a test class itself changed, run it. Integration test sources (`**/src/testIntegration/**`) are not in scope here — IT execution is out of scope; signature breaks in IT are caught by **Integration Test Compile**.
+Runs the unit tests that exercise a changed class.
 
 ## Match
 
