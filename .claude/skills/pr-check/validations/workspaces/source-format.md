@@ -1,9 +1,5 @@
 # Workspace Source Format
 
-## Match
-
-`.`
-
 ## Command
 
 Run the workspace's own source formatter in current branch mode against `${BASE_BRANCH}`:

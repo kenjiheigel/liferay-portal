@@ -4,7 +4,7 @@ Checks an added or removed `.lfrbuild-portal` or `.lfrbuild-ci` marker, which ch
 
 ## Match
 
-`(^|/)\.lfrbuild-(ci|portal(-private|-public)?)$`
+`[ /]\.lfrbuild-(ci|portal(-private|-public)?)$`
 
 ## Command
 

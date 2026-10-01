@@ -4,7 +4,7 @@ A new portlet needs a matching `jakarta.portlet.title.<portlet name>` language k
 
 ## Match
 
-`(^|/)[^/]+Portlet\.java$`
+`[ /][^/]+Portlet\.java$`
 
 ## Command
 

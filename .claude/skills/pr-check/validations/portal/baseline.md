@@ -6,7 +6,7 @@ The comparison covers the whole repository, because the release it compares agai
 
 ## Match
 
-`. &! ^\.claude/|^modules/test/jenkins-results-parser/|^modules/test/playwright/|^modules/test/poshi/|^portal-web/test/`
+`. &!  \.claude/| modules/test/jenkins-results-parser/| modules/test/playwright/| modules/test/poshi/| portal-web/test/`
 
 ## Command
 

@@ -4,7 +4,7 @@ Compiles changed JSPs, so a scriptlet typo fails here rather than when Tomcat re
 
 ## Match
 
-`^modules/.+\.(jsp|jspf)$`
+` modules/.+\.(jsp|jspf)$`
 
 ## Command
 
