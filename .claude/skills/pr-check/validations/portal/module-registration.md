@@ -1,10 +1,6 @@
 # Module Registration
 
-## Trigger
-
-A `.lfrbuild-portal` or `.lfrbuild-ci` marker is added or removed. Either direction changes which modules a build deploys, and a marker only diff touches no source, so [per-module-compile.md](per-module-compile.md) does not fire.
-
-A plain `gradlew` invocation includes every module by its directory and ignores markers. `ant all` instead runs Gradle with `-Dbuild.profile=dxp`, and the profile leaves out a module carrying no portal family marker, so a `project(":...")` reference from a module inside the set to one outside it fails the whole invocation at configuration. `.lfrbuild-portal` also puts the module in the `ant all` deploy set, per the note above `build.include.dirs` in [build.properties](../../../../../build.properties). `.lfrbuild-ci` adds a `:<path>:deploy` task to the `marker.files.lfrbuild.ci.enabled` pass in [build.xml](../../../../../build.xml), which CI enables and a default `ant all` does not, and that pass runs Gradle without the profile.
+Checks an added or removed `.lfrbuild-portal` or `.lfrbuild-ci` marker, which changes the modules a build deploys without touching any source. `ant all` builds with the `dxp` profile, which leaves out a module with no portal family marker, so a `project(":...")` reference from a module inside the set to one outside it fails the whole build. A plain `gradlew` run ignores markers, so nothing else catches it.
 
 ## Match
 

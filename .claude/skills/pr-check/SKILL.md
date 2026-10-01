@@ -149,7 +149,7 @@ In your next turn, compose a single bash script that:
 - ` &! ` in the regex splits it into an include side and an exclude side. The validation fires when a diff path matches the include side but not the exclude side.
 - runs as a single Bash tool invocation
 
-From the script's output, sum the matched validations' `## Time Estimate` values for the cumulative total, counting a workspace validation once for each workspace it fired for. The matching is mechanical; consult each file's prose `## Trigger` only when a result needs human judgment, such as a Service Builder run for a diff that changed only its output.
+From the script's output, sum the matched validations' `## Time Estimate` values for the cumulative total, counting a workspace validation once for each workspace it fired for.
 
 When the total exceeds 20 minutes, surface the breakdown and ask the developer whether to trim a validation or proceed.
 
@@ -172,6 +172,8 @@ Run `ant compile install-portal-snapshots` once before the first validation that
 A validation may hand off to another, as **Per-Module Compile** does when its deploy set grows past the point where one full build is cheaper. Run the validation it names, give the table that validation's row and result, and mark the one that handed off `NOT VERIFIED`. Pass 1 selects on regexes alone and cannot see a set Pass 2 derives, so a handoff is the only way those branches run.
 
 An autocommit can change the diff, so recompute the ledger after a validation whose commit may add a path Pass 1 never saw, as Baseline's `packageinfo` and `bnd.bnd` repairs do, and dispatch whatever newly fires. Skip it after a validation that can only touch paths the branch already changed, such as a formatter running in current branch mode, since its commit cannot widen the diff.
+
+Tell Integration Test Compile and Per-Module Compile whether Full Portal Build is in the run, since each narrows its work when it is.
 
 Give the subagent everything the validations use and none of them define. That is `${REPO_ROOT}`, `${BASE_BRANCH}`, `${SOURCE_SHA}`, `${BUILD_ROOT}` for a workspace validation, the ticket their **Autocommit** sections write into a commit title as `<TICKET>`, and the result its own verdict implies for committing, since the rule above lives here and the subagent never reads this document:
 

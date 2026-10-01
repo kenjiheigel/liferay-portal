@@ -1,8 +1,6 @@
 # Portlet Title
 
-## Trigger
-
-A new portlet is registered through an added `jakarta.portlet.name=` property in a `@Component`. Each portlet needs a matching `jakarta.portlet.title.<portlet name>` key, in the global `portal-language-lang` `Language.properties` or in the module's own `content/Language.properties`. A missing key fails `PortletTitleTest`, which lives in a separate test module the PR never touches, so nothing else here catches it.
+A new portlet needs a matching `jakarta.portlet.title.<portlet name>` language key. A missing key fails `PortletTitleTest`, which lives in a test module the pull request never touches, so nothing else here catches it.
 
 ## Match
 

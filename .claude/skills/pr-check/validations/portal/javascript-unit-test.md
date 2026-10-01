@@ -1,14 +1,6 @@
 # JavaScript Unit Tests
 
-## Trigger
-
-Fires when one of these changed:
-
-- JS or TS source with behavior intent (logic added, removed, or modified). Surface only edits (renames, formatting, comments, JSDoc) do not fire this validation. The build's bundling step is enough.
-
-- A JS relevant `package.json` key (`dependencies`, `devDependencies`, `scripts.build`, `scripts.test`).
-
-- A lockfile (`package-lock.json`, `yarn.lock`) fires regardless of intent, because a transitive dependency pin can affect any code path.
+Runs the Jest suites of the modules a change touches. A lockfile or a `package.json` dependency change counts too, since a dependency pin can affect any code path.
 
 ## Match
 
@@ -17,6 +9,8 @@ Fires when one of these changed:
 ## Command
 
 Take the changed modules from the diff. A module qualifies when one of its changed paths is a `.js`, `.jsx`, `.mjs`, `.cjs`, `.ts`, or `.tsx` source, or its `package.json`, `package-lock.json`, or `yarn.lock`. The module is the nearest ancestor directory holding a `package.json`, and never `modules` itself, whose `package.json` is the workspace root rather than a module. Shared tooling that sits there belongs to [per-module-compile.md](per-module-compile.md), which builds it but runs no suite against it.
+
+A source change with no behavior intent, such as a rename, formatting, a comment, or JSDoc, does not qualify a module, and a `package.json` qualifies it only when the change touches `dependencies`, `devDependencies`, `scripts.build`, or `scripts.test`. A lockfile qualifies it whatever changed, since a transitive pin can affect any code path. When no module qualifies, run nothing and report **NOT VERIFIED**, naming the changes as surface only.
 
 `modules/test/playwright` is never a qualifying module either. Its `test` script runs Playwright rather than Jest, so it has no Jest suite to judge.
 

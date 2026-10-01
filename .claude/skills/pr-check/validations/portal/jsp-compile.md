@@ -1,12 +1,6 @@
 # JSP Compile
 
-## Trigger
-
-A `*.jsp` or `*.jspf` changed in an OSGi module.
-
-`compileJSP` is autowired into every OSGi module by `LiferayOSGiPlugin` (via `JspCPlugin` / `JspCDefaultsPlugin`), but it is **not** in the `assemble`/`build`/`deploy` task graph — so `gradlew :path:deploy` bundles JSPs without compiling them, and scriptlet typos (e.g., `Validator.isURL` instead of `Validator.isUrl`) only fail at Tomcat-Jasper render time. Invoke `compileJSP` explicitly.
-
-Only JSPs under `modules` are in scope. `LiferayOSGiPlugin` wires the task into OSGi modules alone, so the roughly 200 JSPs under `portal-impl` and `portal-web` have no `compileJSP` task to invoke. They also sit under `portal-impl/bnd.bnd`, so an unscoped run resolves them to a `portal-impl` project the modules build does not contain and fails on a path that never existed.
+Compiles changed JSPs, so a scriptlet typo fails here rather than when Tomcat renders the page. Only modules have the task, so the JSPs in `portal-impl` and `portal-web` are out of scope.
 
 ## Match
 

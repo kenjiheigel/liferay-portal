@@ -1,10 +1,6 @@
 # Service Registration
 
-## Trigger
-
-A Java file changed. The defects this validation catches compile clean and surface only on a deployed portal, so nothing else at PR time reaches them.
-
-Add a scan here only when a wrong registration is provable from the tree alone, with no build and no false positives to dismiss.
+Catches registration defects that compile clean and surface only on a deployed portal. Add a scan here only when a wrong registration is provable from the tree alone, with no build and no false positives to dismiss.
 
 ## Match
 
