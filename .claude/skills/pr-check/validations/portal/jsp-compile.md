@@ -8,15 +8,11 @@ Compiles changed JSPs, so a scriptlet typo fails here rather than when Tomcat re
 
 ## Command
 
-Take the changed JSPs from the diff:
+Take the Gradle project paths of the changed JSPs' modules from the work list:
 
 ```bash
-MERGE_BASE=$(git merge-base HEAD master)
-
-git diff --name-only "${MERGE_BASE}...HEAD" -- ':/modules/*.jsp' ':/modules/*.jspf'
+cut -d " " -f1 "${WORK_LIST}" | sed "s#^modules/##; s#/#:#g" | sort --unique
 ```
-
-Group them by their owning module (the nearest ancestor with a `bnd.bnd`), and convert each module directory to a Gradle project path by stripping `modules/` and replacing `/` with `:`.
 
 Per affected module:
 

@@ -8,20 +8,17 @@ Compiles the integration tests that consume a changed module, without running th
 
 ## Command
 
-Take the changed Java files from the diff:
+Take the changed modules from the work list:
 
 ```bash
-REPO_ROOT=$(git rev-parse --show-toplevel)
-MERGE_BASE=$(git merge-base HEAD master)
-
-git diff --name-only "${MERGE_BASE}...HEAD" -- ':/modules/**/*.java'
+cut -d " " -f1 "${WORK_LIST}" | sort --unique
 ```
 
 Leave out `modules/dxp/apps/saml/saml-admin-rest-test` and every module under `modules/sdk`. When the runner says Full Portal Build is in the run, compile nothing and report **NOT VERIFIED**, naming Full Portal Build as the validation this one defers to.
 
 An affected module is one that holds `testIntegration` sources compiled against the change, which is almost never the module the diff changed. Liferay keeps integration tests in a sibling `-test` module, so `apps:blogs:blogs-api` is covered by `apps:blogs:blogs-test` rather than by itself. Scoping this to changed directories compiles `NO-SOURCE` and establishes nothing.
 
-For each changed file, take its module (the nearest ancestor directory holding a `bnd.bnd`), then take every module under the same parent directory whose name ends in `-test` and which has a `src/testIntegration` tree. Add any `-test` module whose `build.gradle` declares the changed module with `project(":<path>")`, found by reading the index:
+For each changed module, take every module under the same parent directory whose name ends in `-test` and which has a `src/testIntegration` tree. Add any `-test` module whose `build.gradle` declares the changed module with `project(":<path>")`, found by reading the index:
 
 ```bash
 git grep --cached --files-with-matches --fixed-strings 'project(":<path>")' -- '*.gradle'

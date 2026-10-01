@@ -201,7 +201,7 @@ An autocommit can change the diff, so recompute the ledger after a validation wh
 
 Tell Integration Test Compile and Per-Module Compile whether Full Portal Build is in the run, since each narrows its work when it is.
 
-Give the subagent everything the validations use and none of them define. That is `${REPO_ROOT}`, `${BASE_BRANCH}`, `${SOURCE_SHA}`, `${BUILD_ROOT}` for a workspace validation, the ticket their **Autocommit** sections write into a commit title as `<TICKET>`, and the result its own verdict implies for committing, since the rule above lives here and the subagent never reads this document:
+Give the subagent everything the validations use and none of them define. That is `${REPO_ROOT}`, `${BASE_BRANCH}`, `${SOURCE_SHA}`, `${BUILD_ROOT}` for a workspace validation, `${MERGE_BASE}`, `${WORK_LIST}` as the path of its work list file, and `${SKILL_DIR}` as the directory holding this document for a branch or portal validation, the ticket their **Autocommit** sections write into a commit title as `<TICKET>`, and the result its own verdict implies for committing, since the rule above lives here and the subagent never reads this document:
 
 ```bash
 REPO_ROOT=$(git rev-parse --show-toplevel)

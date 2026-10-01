@@ -8,7 +8,7 @@ Runs the Jest suites of the modules a change touches. A lockfile or a `package.j
 
 ## Command
 
-Take the changed modules from the diff. A module qualifies when one of its changed paths is a `.js`, `.jsx`, `.mjs`, `.cjs`, `.ts`, or `.tsx` source, or its `package.json`, `package-lock.json`, or `yarn.lock`. The module is the nearest ancestor directory holding a `package.json`, and never `modules` itself, whose `package.json` is the workspace root rather than a module. Shared tooling that sits there belongs to [per-module-compile.md](per-module-compile.md), which builds it but runs no suite against it.
+Take the changed modules from the paths in the work list. A module qualifies when one of its changed paths is a `.js`, `.jsx`, `.mjs`, `.cjs`, `.ts`, or `.tsx` source, or its `package.json`, `package-lock.json`, or `yarn.lock`. The module is the nearest ancestor directory holding a `package.json`, and never `modules` itself, whose `package.json` is the workspace root rather than a module. Shared tooling that sits there belongs to [per-module-compile.md](per-module-compile.md), which builds it but runs no suite against it.
 
 A source change with no behavior intent, such as a rename, formatting, a comment, or JSDoc, does not qualify a module, and a `package.json` qualifies it only when the change touches `dependencies`, `devDependencies`, `scripts.build`, or `scripts.test`. A lockfile qualifies it whatever changed, since a transitive pin can affect any code path. When no module qualifies, run nothing and report **NOT VERIFIED**, naming the changes as surface only.
 
@@ -17,9 +17,7 @@ A source change with no behavior intent, such as a rename, formatting, a comment
 `modules/node-scripts.config.js` is the exception worth naming. Its `imports` map decides which package files every module's build exposes, so a change there can break the suites of modules the diff never touched while no rule above selects anything. When the diff changes it, run the suites of the modules whose entry in that map the diff altered.
 
 ```bash
-MERGE_BASE=$(git merge-base HEAD master)
-
-git diff --name-only "${MERGE_BASE}...HEAD" -- ':/modules'
+cut -d " " -f2- "${WORK_LIST}"
 ```
 
 Run each selected module's **full Jest suite**; do not select individual specs by name:
