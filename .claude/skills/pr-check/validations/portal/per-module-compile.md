@@ -1,6 +1,6 @@
 # Per-Module Compile
 
-Deploys each module the branch changed, which checks that it compiles and bundles its resources whatever the change was. When the deploy set grows past the point where one full build is cheaper, it hands off to **Full Portal Build**. Modules carrying `.lfrbuild-portal-deprecated` and the `testIntegration` source of `-test` modules belong to **Cross-Module Compile** instead.
+Deploys each module the branch changed, which checks that it compiles and bundles its resources whatever the change was. The jar task runs `compileJSP`, so a deploy also compiles the module's JSPs, apart from a fragment's, which compile only against their host. When the deploy set grows past the point where one full build is cheaper, it hands off to **Full Portal Build**. Modules carrying `.lfrbuild-portal-deprecated` and the `testIntegration` source of `-test` modules belong to **Cross-Module Compile** instead.
 
 ## Match
 

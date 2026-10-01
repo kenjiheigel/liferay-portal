@@ -129,8 +129,6 @@ The procedure runs in two passes over the validations, in the order below. The o
 
 1. [Baseline](validations/portal/baseline.md)
 
-1. [JSP Compile](validations/portal/jsp-compile.md)
-
 1. [Theme Build](validations/portal/theme-build.md)
 
 1. [Workspace Compile](validations/workspaces/workspace-compile.md)
