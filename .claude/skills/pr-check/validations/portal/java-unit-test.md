@@ -30,7 +30,13 @@ Install the portal snapshot before running any module test, since the module com
 (cd "${REPO_ROOT}" && ant compile install-portal-snapshots)
 ```
 
-For OSGi modules — run only the specific test class, batching counterparts within the same module. The module's Gradle project path is the first field of the changed file's work list line, without `modules/` and with `:` for `/`:
+For OSGi modules — run only the specific test class, batching counterparts within the same module. Take the Gradle project path of each changed module from the work list:
+
+```bash
+command grep '^modules/' "${WORK_LIST}" | cut -d " " -f1 | sed "s#^modules/##; s#/#:#g" | sort --unique
+```
+
+Run each module's counterparts together:
 
 ```bash
 "${REPO_ROOT}/gradlew" \

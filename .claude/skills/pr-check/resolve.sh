@@ -7,6 +7,8 @@ set -o pipefail
 function main {
 	local base="${1}"
 
+	cd "$(git rev-parse --show-toplevel)" || exit 1
+
 	local path
 
 	while IFS= read -r path
