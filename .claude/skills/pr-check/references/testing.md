@@ -8,7 +8,7 @@ When a change touches a `## Match` section, the routing, the list in `SKILL.md`,
 
 ## Commands
 
-When a change touches a `## Command` or `## Autocommit` section, extract exactly that section, as the runner hands it to a subagent, and confirm the extract carries the change and nothing from the rest of the file. Give the new text and the text on `master` to two subagents that know nothing about the change, with the same planted diff, and ask each for its verdict and the sentence that decided it. A change that works splits the verdicts. Identical verdicts mean the change made no difference where it is read.
+When a change touches a `## Command` or `## Autocommit` section, extract exactly that section, as the runner hands it to a subagent, and confirm the extract carries the change and nothing from the rest of the file. Resolve the planted diff and write the validation's three lists the way Pass 1 does, since a **Command** reads its paths, modules, and projects from them and has nothing to work on without them. Give the new text and the text on `master` to two subagents that know nothing about the change, with the same planted diff, and ask each for its verdict and the sentence that decided it. A change that works splits the verdicts. Identical verdicts mean the change made no difference where it is read.
 
 When a command reimplements a rule another tool enforces, run both against the same planted cases and require them to agree, including a case that must fail on both sides. A command that crashes prints nothing, which reads as a pass, so check its exit status as well as its output.
 

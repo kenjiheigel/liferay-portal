@@ -168,6 +168,16 @@ command grep --extended-regexp '<include side>' <resolved file> | command grep -
 
 A validation fires when its work list is not empty. Read the files of the validations that fired, and only those.
 
+For each validation that fired, write the three lists its **Command** reads, so that no **Command** parses a resolved line:
+
+```bash
+cut -d " " -f2- <work list> > <changed paths>
+cut -d " " -f1 <work list> | command grep --invert-match '^-$' | sort --unique > <changed modules>
+command grep '^modules/' <changed modules> | sed "s#^modules/##; s#/#:#g" > <changed projects>
+```
+
+The changed paths are the paths the validation selected, the changed modules are their modules, and the changed projects are the Gradle project paths of the changed modules under `modules`, such as `apps:blogs:blogs-api`.
+
 A workspace validation fires once for each workspace the branch changed, as **Routing** describes. Read the files under `validations/workspaces` only when the branch changed a workspace.
 
 Sum the time estimates of the validations that fired for the cumulative total, counting a workspace validation once for each workspace it fired for.
@@ -194,7 +204,7 @@ A validation may hand off to another, as **Per-Module Compile** does when its de
 
 An autocommit can change the diff, so recompute the ledger after a validation whose commit may add a path Pass 1 never saw, as Baseline's `packageinfo` and `bnd.bnd` repairs do, and dispatch whatever newly fires. Skip it after a validation that can only touch paths the branch already changed, such as a formatter running in current branch mode, since its commit cannot widen the diff.
 
-Give the subagent everything the validations use and none of them define. That is `${REPO_ROOT}`, `${BASE_BRANCH}`, `${SOURCE_SHA}`, `${BUILD_ROOT}` for a workspace validation, `${MERGE_BASE}`, `${WORK_LIST}` as the path of its work list file, and `${SKILL_DIR}` as the directory holding this document for a branch or portal validation, the ticket their **Autocommit** sections write into a commit title as `<TICKET>`, and the result its own verdict implies for committing, since the rule above lives here and the subagent never reads this document:
+Give the subagent everything the validations use and none of them define. That is `${REPO_ROOT}`, `${BASE_BRANCH}`, `${SOURCE_SHA}`, `${BUILD_ROOT}` for a workspace validation, `${MERGE_BASE}`, `${CHANGED_PATHS}`, `${CHANGED_MODULES}`, and `${CHANGED_PROJECTS}` as the paths of its three lists, and `${SKILL_DIR}` as the directory holding this document for a branch or portal validation, the ticket their **Autocommit** sections write into a commit title as `<TICKET>`, and the result its own verdict implies for committing, since the rule above lives here and the subagent never reads this document:
 
 ```bash
 REPO_ROOT=$(git rev-parse --show-toplevel)

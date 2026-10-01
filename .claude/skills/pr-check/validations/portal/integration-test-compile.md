@@ -8,10 +8,10 @@ Compiles the integration tests that consume a changed module, without running th
 
 ## Command
 
-Take the changed modules from the work list:
+Take the changed modules:
 
 ```bash
-cut -d " " -f1 "${WORK_LIST}" | sort --unique
+cat "${CHANGED_MODULES}"
 ```
 
 An affected module is one that holds `testIntegration` sources compiled against the change, which is almost never the module the diff changed. Liferay keeps integration tests in a sibling `-test` module, so `apps:blogs:blogs-api` is covered by `apps:blogs:blogs-test` rather than by itself. Scoping this to changed directories compiles `NO-SOURCE` and establishes nothing.

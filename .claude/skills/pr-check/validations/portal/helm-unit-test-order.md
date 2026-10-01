@@ -11,7 +11,7 @@ Checks that the cases in a `helm unittest` suite sort alphabetically by their `i
 Check every changed suite:
 
 ```bash
-(cd "${REPO_ROOT}" && cut -d " " -f2- "${WORK_LIST}" | while IFS= read -r file
+(cd "${REPO_ROOT}" && while IFS= read -r file
 do
 	[[ -f ${file} ]] || continue
 
@@ -21,7 +21,7 @@ do
 	then
 		echo "UNSORTED ${file}"
 	fi
-done)
+done < "${CHANGED_PATHS}")
 ```
 
 Every `UNSORTED` line is a FAIL. Report the file and the descriptions that sit out of order, and say that sorting the `tests` entries is the fix.

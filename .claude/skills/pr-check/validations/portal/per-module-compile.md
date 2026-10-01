@@ -8,10 +8,10 @@ Deploys each module the branch changed, which checks that it compiles and bundle
 
 ## Command
 
-The deploy set is the Gradle project paths of the work list, such as `apps:blogs:blogs-api`. The expansions below match on that form, not on the directory:
+The deploy set is the Gradle project paths of the changed modules, such as `apps:blogs:blogs-api`. The expansions below match on that form, not on the directory:
 
 ```bash
-command grep '^modules/' "${WORK_LIST}" | cut -d " " -f1 | sed "s#^modules/##; s#/#:#g" | sort --unique
+cat "${CHANGED_PROJECTS}"
 ```
 
 Exclude modules whose **only** Java change is under `src/testIntegration`. Integration Test Compile already runs `compileTestIntegrationJava` for those, and `-test` modules do not deploy a runtime bundle — `gradlew :path:deploy` would be redundant. A diff that touches `src/testIntegration` *and* anything else in the same module still puts the module in the deploy set.
@@ -91,7 +91,13 @@ Do not hand this to [javascript-unit-test.md](javascript-unit-test.md). Jest res
 
 Treat `UP-TO-DATE` on a changed module's own `compileJava` with the same suspicion. Gradle's cache has served a stale output in this repository before, so confirm the change reached the jar rather than reading the task line as proof.
 
-A changed path that sits in no module, other than the shared tooling above, has nothing to build, and its work list line starts with `-`. Report **NOT VERIFIED** naming every such path, and also when that tooling expanded to no module. When a changed path does sit inside a module and the set is still empty, the derivation is broken, so report that as a FAIL. PASS when every module in the deploy set reports `BUILD SUCCESSFUL`.
+A changed path that sits in no module, other than the shared tooling above, has nothing to build. Find those paths by resolving the changed paths:
+
+```bash
+bash "${SKILL_DIR}/resolve.sh" "${MERGE_BASE}" < "${CHANGED_PATHS}" | command grep '^- ' | cut -d " " -f2-
+```
+
+Report **NOT VERIFIED** naming every such path, and also when that tooling expanded to no module. When a changed path does sit inside a module and the set is still empty, the derivation is broken, so report that as a FAIL. PASS when every module in the deploy set reports `BUILD SUCCESSFUL`.
 
 ## Checklist
 

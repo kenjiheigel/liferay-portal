@@ -8,10 +8,10 @@ Runs the unit tests that exercise a changed class.
 
 ## Command
 
-Take the changed Java files from the work list:
+Take the changed Java files:
 
 ```bash
-cut -d " " -f2- "${WORK_LIST}"
+cat "${CHANGED_PATHS}"
 ```
 
 Locate the counterpart test by parallel name: `Foo.java` → `FooTest.java` in the same module's `src/test/java/**` (for OSGi modules) or `portal-impl/test/unit/**` / `portal-kernel/test/unit/**` (for portal-core).
@@ -30,10 +30,10 @@ Install the portal snapshot before running any module test, since the module com
 (cd "${REPO_ROOT}" && ant compile install-portal-snapshots)
 ```
 
-For OSGi modules — run only the specific test class, batching counterparts within the same module. Take the Gradle project path of each changed module from the work list:
+For OSGi modules — run only the specific test class, batching counterparts within the same module. Take the Gradle project path of each changed module:
 
 ```bash
-command grep '^modules/' "${WORK_LIST}" | cut -d " " -f1 | sed "s#^modules/##; s#/#:#g" | sort --unique
+cat "${CHANGED_PROJECTS}"
 ```
 
 Run each module's counterparts together:
