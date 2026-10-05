@@ -4,7 +4,7 @@ A change to this skill is prose, so reading it proves nothing. Test it by runnin
 
 ## Selection
 
-When a change touches a `## Match` section, the routing, the list in `SKILL.md`, or `resolve.sh`, resolve the paths of recent commits on the base branch and select from them twice, once with the rules on the base branch and once with the change, and account for every validation and path that differs. Include a path the change must select and one it must not, so that a broken comparison reads as a disagreement rather than as agreement. Piping a single path into `resolve.sh` is the quickest check of how it resolves.
+When a change touches a `## Match` section, the routing, the list in `SKILL.md`, or `find_modules.sh`, resolve the paths of recent commits on the base branch and select from them twice, once with the rules on the base branch and once with the change, and account for every validation and path that differs. Include a path the change must select and one it must not, so that a broken comparison reads as a disagreement rather than as agreement. Piping a single path into `find_modules.sh` is the quickest check of how it resolves.
 
 ## Commands
 
