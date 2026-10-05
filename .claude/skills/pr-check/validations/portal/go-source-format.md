@@ -4,7 +4,7 @@ Formats hand written Go under `cloud/operator` with `gofmt` and the conventions 
 
 ## Match
 
-` cloud/operator/.*\.go$ &! zz_generated`
+`^cloud/operator/.*\.go$ &! zz_generated`
 
 ## Command
 

@@ -4,7 +4,7 @@ Checks that the cases in a `helm unittest` suite sort alphabetically by their `i
 
 ## Match
 
-` cloud/helm/[^/]+/tests/.*_test\.yaml$`
+`^cloud/helm/[^/]+/tests/.*_test\.yaml$`
 
 ## Command
 

@@ -4,7 +4,7 @@ Compiles the integration tests that consume a changed module, without running th
 
 ## Match
 
-` modules/.+\.java$`
+`^modules/.+\.java$`
 
 ## Command
 

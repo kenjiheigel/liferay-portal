@@ -28,10 +28,8 @@ function main {
 
 	git diff --name-only --no-renames "${1}...HEAD" | \
 		"_get_${folder_name}_paths" "${2}" "${3}" | \
-		bash "$(dirname "${0}")/find_modules.sh" "${1}" | \
 		grep --extended-regexp -- "$(echo "${regex}" | sed -e "s/ &! .*$//")" | \
 		grep --extended-regexp --invert-match -- "${exclude}" | \
-		cut -d " " -f 2- | \
 		sed -e "s#^workspaces/${3}/##"
 }
 

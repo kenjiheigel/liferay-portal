@@ -4,7 +4,7 @@ Rebuilds every theme when a shared stylesheet changes, since a change to `clay-c
 
 ## Match
 
-` modules/apps/frontend-js/frontend-js-clay-web/clay/clay-css/| modules/apps/frontend-theme/frontend-theme-(styled|unstyled)/`
+`^modules/apps/frontend-js/frontend-js-clay-web/clay/clay-css/|^modules/apps/frontend-theme/frontend-theme-(styled|unstyled)/`
 
 ## Command
 

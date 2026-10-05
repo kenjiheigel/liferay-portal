@@ -4,7 +4,7 @@ Regenerates Service Builder output and commits whatever has drifted. It runs whe
 
 ## Match
 
-`[ /]service\.xml$|[ /]service\.properties$|/META-INF/module-hbm\.xml$|/META-INF/portlet-model-hints\.xml$|/META-INF/sql/[^/]+\.sql$|/model/impl/[^/]+Impl\.java$|/service/impl/[^/]+Impl\.java$|(BaseImpl|CacheModel|LocalService|LocalServiceUtil|LocalServiceWrapper|ModelArgumentsResolver|ModelImpl|Persistence|PersistenceConstants|PersistenceImpl|ServiceBaseImpl|ServiceHttp)\.java$|/model/[^/]+Wrapper\.java$|/service/[^/]+Service\.java$|/service/[^/]+ServiceUtil\.java$|/service/[^/]+ServiceWrapper\.java$|/service/persistence/[^/]+Util\.java$| sql/indexes\.sql$| modules/util/portal-tools-service-builder/`
+`(^|/)service\.xml$|(^|/)service\.properties$|/META-INF/module-hbm\.xml$|/META-INF/portlet-model-hints\.xml$|/META-INF/sql/[^/]+\.sql$|/model/impl/[^/]+Impl\.java$|/service/impl/[^/]+Impl\.java$|(BaseImpl|CacheModel|LocalService|LocalServiceUtil|LocalServiceWrapper|ModelArgumentsResolver|ModelImpl|Persistence|PersistenceConstants|PersistenceImpl|ServiceBaseImpl|ServiceHttp)\.java$|/model/[^/]+Wrapper\.java$|/service/[^/]+Service\.java$|/service/[^/]+ServiceUtil\.java$|/service/[^/]+ServiceWrapper\.java$|/service/persistence/[^/]+Util\.java$|^sql/indexes\.sql$|^modules/util/portal-tools-service-builder/`
 
 ## Command
 

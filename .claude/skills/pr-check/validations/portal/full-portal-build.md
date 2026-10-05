@@ -4,7 +4,7 @@ Runs `ant all`, since no Gradle deploy builds portal core. **Per-Module Compile*
 
 ## Match
 
-` (portal-impl|portal-kernel|portal-test|portal-web|support-tomcat|util-bridges|util-java|util-slf4j|util-taglib)/ &!  portal-web/test/|\.properties$`
+`^(portal-impl|portal-kernel|portal-test|portal-web|support-tomcat|util-bridges|util-java|util-slf4j|util-taglib)/ &! ^portal-web/test/|\.properties$`
 
 ## Command
 

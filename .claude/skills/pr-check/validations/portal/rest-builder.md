@@ -4,7 +4,7 @@ Regenerates REST Builder output and commits whatever has drifted. It runs when a
 
 ## Match
 
-`/rest-config\.yaml$|/rest-openapi\.yaml$|/dto/v[0-9_]+/[^/]+\.java$|SerDes\.java$|OpenAPIResource[^/]*\.java$|Base[^/]*ResourceTestCase\.java$| modules/util/portal-tools-rest-builder/`
+`/rest-config\.yaml$|/rest-openapi\.yaml$|/dto/v[0-9_]+/[^/]+\.java$|SerDes\.java$|OpenAPIResource[^/]*\.java$|Base[^/]*ResourceTestCase\.java$|^modules/util/portal-tools-rest-builder/`
 
 ## Command
 
