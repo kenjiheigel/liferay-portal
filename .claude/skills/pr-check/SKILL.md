@@ -63,7 +63,7 @@ Keep `--no-renames`. A detected rename collapses to its new path alone and hides
 
 The folder a validation file sits in decides its scope. A validation sees only the changed paths its scope covers.
 
-- **Branch.** A file directly in `validations` checks the branch as a whole and sees every changed path.
+- **Branch.** A file in `validations/branch` checks the branch as a whole and sees every changed path.
 
 - **Portal.** A file in `validations/portal` sees every changed path that belongs to no workspace.
 
@@ -103,7 +103,7 @@ The procedure runs in two passes over the validations, in the order below. The o
 
 1. [Generated Workspace File](validations/workspaces/generated-file.md)
 
-1. [Source Format](validations/source-format.md)
+1. [Source Format](validations/branch/source-format.md)
 
 1. [Workspace Source Format](validations/workspaces/source-format.md)
 
@@ -113,11 +113,11 @@ The procedure runs in two passes over the validations, in the order below. The o
 
 1. [Portlet Title](validations/portal/portlet-title.md)
 
-1. [Service Registration](validations/service-registration.md)
+1. [Service Registration](validations/branch/service-registration.md)
 
-1. [Transaction Usage](validations/transaction-usage.md)
+1. [Transaction Usage](validations/branch/transaction-usage.md)
 
-1. [HTML Escaping](validations/html-escaping.md)
+1. [HTML Escaping](validations/branch/html-escaping.md)
 
 1. [Full Portal Build](validations/portal/full-portal-build.md)
 
