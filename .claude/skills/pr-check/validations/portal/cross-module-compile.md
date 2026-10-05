@@ -21,7 +21,7 @@ For each changed `.java` file, take its simple type name and search the two surf
 do
 	command grep --files-with-matches --include='*.java' --recursive --word-regexp "<TypeName>" "$(dirname "${marker}")/src/main"
 done) \
-	| bash "${SKILL_DIR}/resolve.sh" "${MERGE_BASE}" \
+	| bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" \
 	| cut -d " " -f1 \
 	| sed "s#^modules/##; s#/#:#g" \
 	| sort --unique
@@ -32,7 +32,7 @@ Pipe `find` into `while read -r` rather than looping over `$(find ...)`, which z
 ```bash
 (cd "${REPO_ROOT}" && command grep --files-with-matches --include='*.java' --recursive --word-regexp "<TypeName>" modules) \
 	| command grep "/src/testIntegration/" \
-	| bash "${SKILL_DIR}/resolve.sh" "${MERGE_BASE}" \
+	| bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" \
 	| cut -d " " -f1 \
 	| command grep --regexp='-test$' \
 	| sed "s#^modules/##; s#/#:#g" \

@@ -29,7 +29,7 @@ Take the consumers that name the changed **type**, not every module that declare
 
 ```bash
 (cd "${REPO_ROOT}" && git grep --cached --files-with-matches --word-regexp '<TypeName>' -- '*.java') \
-	| bash "${SKILL_DIR}/resolve.sh" "${MERGE_BASE}" \
+	| bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" \
 	| command grep '^modules/' \
 	| cut -d " " -f1 \
 	| sort --unique \
@@ -96,7 +96,7 @@ Treat `UP-TO-DATE` on a changed module's own `compileJava` with the same suspici
 A changed path that sits in no module, other than the shared tooling above, has nothing to build. Find those paths by resolving the changed paths:
 
 ```bash
-bash "${SKILL_DIR}/resolve.sh" "${MERGE_BASE}" < "${CHANGED_PATHS}" | command grep '^- ' | cut -d " " -f2-
+bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" < "${CHANGED_PATHS}" | command grep '^- ' | cut -d " " -f2-
 ```
 
 Report **NOT VERIFIED** naming every such path, and also when that tooling expanded to no module. When a changed path does sit inside a module and the set is still empty, the derivation is broken, so report that as a FAIL. PASS when every module in the deploy set reports `BUILD SUCCESSFUL`.

@@ -22,7 +22,7 @@ For each changed module, take every module under the same parent directory whose
 
 ```bash
 (cd "${REPO_ROOT}" && git grep --cached --files-with-matches --fixed-strings 'project(":<path>")' -- '*.gradle') \
-	| bash "${SKILL_DIR}/resolve.sh" "${MERGE_BASE}" \
+	| bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" \
 	| cut -d " " -f1
 ```
 

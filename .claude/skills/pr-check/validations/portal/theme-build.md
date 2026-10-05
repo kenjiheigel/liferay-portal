@@ -13,7 +13,7 @@ A shared CSS change fans out to every theme. Select each module under `modules/a
 ```bash
 (cd "${REPO_ROOT}" && command grep --files-with-matches --include='package.json' --recursive '"liferayTheme"' modules/apps) \
 	| command grep --invert-match --regexp='/node_modules/' --regexp='/gradleTest/' \
-	| bash "${SKILL_DIR}/resolve.sh" "${MERGE_BASE}" \
+	| bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" \
 	| cut -d " " -f1 \
 	| sed "s#^modules/##; s#/#:#g" \
 	| sort --unique
