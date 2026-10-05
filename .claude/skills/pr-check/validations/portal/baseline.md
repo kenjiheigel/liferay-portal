@@ -45,7 +45,12 @@ Keep `--rerun`. Without it the task reports `UP-TO-DATE` and exits 0 in half a s
 Confirm the branch's own modules the same way, keeping `--rerun`, and passing each as the project directory. Take the changed modules under `modules`, and keep those whose `bnd.bnd` carries `Export-Package` on the branch or on the merge base, since a module that exports nothing has no API to compare:
 
 ```bash
-command grep '^modules/' "${CHANGED_MODULES}" | while IFS= read -r module
+bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}" \
+	| bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" \
+	| cut -d " " -f1 \
+	| command grep '^modules/' \
+	| sort --unique \
+	| while IFS= read -r module
 do
 	if command grep --quiet '^Export-Package' "${REPO_ROOT}/${module}/bnd.bnd" 2>/dev/null ||
 	   git show "${MERGE_BASE}:${module}/bnd.bnd" 2>/dev/null | command grep --quiet '^Export-Package'

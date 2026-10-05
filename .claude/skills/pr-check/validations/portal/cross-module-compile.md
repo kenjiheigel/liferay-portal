@@ -11,7 +11,7 @@ Compiles the consumers of a changed API that no other validation compiles. The f
 Take the changed files:
 
 ```bash
-cat "${CHANGED_PATHS}"
+bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}"
 ```
 
 For each changed `.java` file, take its simple type name and search the two surfaces no other validation compiles, modules carrying `.lfrbuild-portal-deprecated` and `testIntegration` sources in `-test` modules:

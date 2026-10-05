@@ -17,7 +17,7 @@ A source change with no behavior intent, such as a rename, formatting, a comment
 `modules/node-scripts.config.js` is the exception worth naming. Its `imports` map decides which package files every module's build exposes, so a change there can break the suites of modules the diff never touched while no rule above selects anything. When the diff changes it, run the suites of the modules whose entry in that map the diff altered.
 
 ```bash
-cat "${CHANGED_PATHS}"
+bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}"
 ```
 
 Run each selected module's **full Jest suite**; do not select individual specs by name:

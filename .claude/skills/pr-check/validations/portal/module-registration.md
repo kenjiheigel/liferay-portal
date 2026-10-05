@@ -13,12 +13,12 @@ Take the changed markers rather than running a `find`, which turns up marker cop
 ```bash
 HEAD_SHA=$(git rev-parse HEAD)
 
-xargs git diff --name-status --no-renames "${MERGE_BASE}" "${HEAD_SHA}" -- < "${CHANGED_PATHS}"
+bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}" | xargs git diff --name-status --no-renames "${MERGE_BASE}" "${HEAD_SHA}" --
 ```
 
 Pin `${HEAD_SHA}` once here and read every later query at it, since a concurrent validation moves the working tree when it writes and the index when it stages.
 
-A marker's module directory is the directory holding it, and its Gradle project path, written `<path>` below, is that module's line in `${CHANGED_PROJECTS}`, so `modules/apps/blogs/blogs-api/.lfrbuild-portal` gives `modules/apps/blogs/blogs-api` and `apps:blogs:blogs-api`. Both branches below need them.
+A marker's module directory is the directory holding it, and its Gradle project path, written `<path>` below, is that directory without `modules/` and with `:` for `/`, so `modules/apps/blogs/blogs-api/.lfrbuild-portal` gives `modules/apps/blogs/blogs-api` and `apps:blogs:blogs-api`. Both branches below need them.
 
 Split the markers by status before running anything, since the directions take different branches. Take `A` into the run below and `D` into the report further down. A content change (`M`) to a marker changes no registration, so report it and run nothing.
 

@@ -13,7 +13,7 @@ The scope is the whole branch diff, so a line added in one commit and escaped in
 List the changed files:
 
 ```bash
-cat "${CHANGED_PATHS}"
+bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}"
 ```
 
 Skip any file the branch deleted, which no longer exists, and any file containing `@generated`, matched case insensitively. For each file that remains, list the added lines that render a value as HTML:

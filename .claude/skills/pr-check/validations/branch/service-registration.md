@@ -13,7 +13,7 @@ Use `command grep` for any working tree scan, so it is filtered by the system gr
 Take the changed Java files:
 
 ```bash
-cat "${CHANGED_PATHS}"
+bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}"
 ```
 
 ### Selection

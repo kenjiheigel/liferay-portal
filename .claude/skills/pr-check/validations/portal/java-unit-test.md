@@ -13,7 +13,7 @@ A change with no behavior intent, such as a rename, formatting, a comment, or Ja
 Take the changed Java files:
 
 ```bash
-cat "${CHANGED_PATHS}"
+bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}"
 ```
 
 Locate the counterpart test by parallel name: `Foo.java` → `FooTest.java` in the same module's `src/test/java/**` (for OSGi modules) or `portal-impl/test/unit/**` / `portal-kernel/test/unit/**` (for portal-core).
@@ -35,7 +35,12 @@ Install the portal snapshot before running any module test, since the module com
 For OSGi modules — run only the specific test class, batching counterparts within the same module. Take the Gradle project path of each changed module:
 
 ```bash
-cat "${CHANGED_PROJECTS}"
+bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}" \
+	| bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" \
+	| cut -d " " -f1 \
+	| command grep '^modules/' \
+	| sort --unique \
+	| sed "s#^modules/##; s#/#:#g"
 ```
 
 Run each module's counterparts together:

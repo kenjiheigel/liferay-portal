@@ -11,7 +11,11 @@ Compiles the integration tests that consume a changed module, without running th
 Take the changed modules:
 
 ```bash
-cat "${CHANGED_MODULES}"
+bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}" \
+	| bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" \
+	| cut -d " " -f1 \
+	| command grep --invert-match '^-$' \
+	| sort --unique
 ```
 
 Leave out `modules/dxp/apps/saml/saml-admin-rest-test` and every module under `modules/sdk`. When the runner says Full Portal Build is in the run, compile nothing and report **NOT VERIFIED**, naming Full Portal Build as the validation this one defers to.
