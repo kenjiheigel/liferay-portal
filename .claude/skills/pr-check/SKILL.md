@@ -155,27 +155,13 @@ Process each validation in a subagent.
 
 ### Pass 1: Estimate
 
-Select the validations with one bash script run from `${REPO_ROOT}`. A validation fires when `select_paths.sh` prints a path, and it exits 0 only then:
+Run [select_validations.sh](select_validations.sh) beside this document once, from `${REPO_ROOT}`. For each validation that fires, it prints the validation file, the number of paths it selected, and its `## Time Estimate` section. A validation fires when `select_paths.sh` prints a path, and a workspace validation is tried once for each workspace the branch changed, as **Routing** describes:
 
 ```bash
-for validation_file in <skill directory>/validations/branch/*.md <skill directory>/validations/portal/*.md
-do
-	if bash <skill directory>/select_paths.sh "${MERGE_BASE}" "${validation_file}" > /dev/null
-	then
-		echo "${validation_file}"
-	fi
-done
+bash <skill directory>/select_validations.sh "$(git merge-base HEAD "${BASE_BRANCH}")"
 ```
 
-Leave out the validations the settings skip or whose scope they disable. A workspace validation fires once for each workspace the branch changed, as **Routing** describes, so run each file under `validations/workspaces` once for each changed workspace, with the workspace directory name as a third argument.
-
-Read only the `## Time Estimate` section of each validation that fired, and nothing else from it yet:
-
-```bash
-sed -n '/^## Time Estimate$/,/^## /p' <validation file>
-```
-
-Sum the time estimates of the validations that fired for the cumulative total, counting a workspace validation once for each workspace it fired for.
+Leave out the validations the settings skip or whose scope they disable. Sum the time estimates of the rest for the cumulative total, counting a workspace validation once for each workspace it fired for. Estimate from the path counts the script prints rather than resolving modules, since the total only decides whether to ask the developer.
 
 When the total exceeds 20 minutes, surface the breakdown and ask the developer whether to trim a validation or proceed.
 

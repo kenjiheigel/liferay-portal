@@ -8,7 +8,7 @@ When a change touches a `## Match` section, the routing, the list in `SKILL.md`,
 
 ## Scripts
 
-When a change touches `select_paths.sh` or `find_modules.sh`, test it locally in a throwaway git repository, with commit signing turned off, that plants the marker files each case needs, and compare every printed line with the line you expect. Neither script carries committed test cases.
+When a change touches `select_paths.sh`, `select_validations.sh`, or `find_modules.sh`, test it locally in a throwaway git repository, with commit signing turned off, that plants the marker files each case needs, and compare every printed line with the line you expect. Neither script carries committed test cases.
 
 For `find_modules.sh`, cover a path under `src/main`, `src/test`, `src/testIntegration`, and `src/jmh`, a `.groovy` resource, a path with a space, a nested module, which resolves to the outermost, a module deleted on the branch, which resolves through the merge base, `modules/.releng`, `modules/test/playwright`, which is no module, Poshi and `portal-web/test`, a file at the repository root, and in a workspace a client extension, a module, and a theme, which is no module there.
 
