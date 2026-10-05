@@ -2,6 +2,10 @@
 
 `workspaces/refresh_other_workspaces.sh` copies `liferay-sample-workspace` over every other workspace, so a change to a copied file outside the sample is silently reverted on the next refresh. Such a file may change only through a refresh, and an edit to it belongs in the sample workspace.
 
+## Match
+
+`.`
+
 ## Command
 
 Skip this validation for `liferay-sample-workspace`, the source the other workspaces are regenerated from.

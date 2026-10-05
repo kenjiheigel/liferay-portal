@@ -11,7 +11,12 @@ Deploys each module the branch changed, which checks that it compiles and bundle
 The deploy set is the Gradle project paths of the changed modules, such as `apps:blogs:blogs-api`. The expansions below match on that form, not on the directory:
 
 ```bash
-cat "${CHANGED_PROJECTS}"
+bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}" \
+	| bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" \
+	| cut -d " " -f1 \
+	| command grep '^modules/' \
+	| sort --unique \
+	| sed "s#^modules/##; s#/#:#g"
 ```
 
 Exclude modules whose **only** Java change is under `src/testIntegration`. Integration Test Compile already runs `compileTestIntegrationJava` for those, and `-test` modules do not deploy a runtime bundle — `gradlew :path:deploy` would be redundant. A diff that touches `src/testIntegration` *and* anything else in the same module still puts the module in the deploy set.
@@ -94,7 +99,7 @@ Treat `UP-TO-DATE` on a changed module's own `compileJava` with the same suspici
 A changed path that sits in no module, other than the shared tooling above, has nothing to build. Find those paths by resolving the changed paths:
 
 ```bash
-bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" < "${CHANGED_PATHS}" | command grep '^- ' | cut -d " " -f2-
+bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}" | bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" | command grep '^- ' | cut -d " " -f2-
 ```
 
 Report **NOT VERIFIED** naming every such path, and also when that tooling expanded to no module. When a changed path does sit inside a module and the set is still empty, the derivation is broken, so report that as a FAIL. PASS when every module in the deploy set reports `BUILD SUCCESSFUL`.

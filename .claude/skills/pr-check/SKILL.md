@@ -80,6 +80,8 @@ The script [find_modules.sh](find_modules.sh) beside this document takes paths r
 
 The path starts after the first space, so a regex anchors to the start of a path with a space, as in ` modules/`, where it would anchor to the start of the module with `^`.
 
+The script [select_paths.sh](select_paths.sh) beside this document applies the routing and the regex. Given the merge base, a validation file, and for a workspace validation the workspace directory name, it prints the paths the validation selects, relative to the workspace for a workspace validation, and exits 1 when it selects none.
+
 ### Build Root
 
 The build root of a changed path is its workspace directory when it belongs to a workspace, and `${REPO_ROOT}` otherwise. A validation that needs a place to search, such as a sweep for references, searches the build root of the path it is examining. Every workspace validation runs its commands from `${BUILD_ROOT}`, which is the absolute path of its workspace directory.
@@ -148,37 +150,25 @@ Process each validation in a subagent.
 
 ### Pass 1: Estimate
 
-Resolve the diff once, from `${REPO_ROOT}`, into a file of your own outside the repository:
+Select the validations with one bash script run from `${REPO_ROOT}`. A validation fires when `select_paths.sh` prints a path, and it exits 0 only then:
 
 ```bash
-git diff --name-only --no-renames "${MERGE_BASE}...HEAD" | bash <skill directory>/find_modules.sh "${MERGE_BASE}" > <resolved file>
+for validation_file in <skill directory>/validations/branch/*.md <skill directory>/validations/portal/*.md
+do
+	if bash <skill directory>/select_paths.sh "${MERGE_BASE}" "${validation_file}" > /dev/null
+	then
+		echo "${validation_file}"
+	fi
+done
 ```
 
-Read the `## Match` regexes of the branch and portal validations the settings enable, and nothing else from those files yet:
+Leave out the validations the settings skip or whose scope they disable. A workspace validation fires once for each workspace the branch changed, as **Routing** describes, so run each file under `validations/workspaces` once for each changed workspace, with the workspace directory name as a third argument.
+
+Read only the `## Time Estimate` section of each validation that fired, and nothing else from it yet:
 
 ```bash
-command grep --after-context=2 '^## Match' <validation file>...
+sed -n '/^## Time Estimate$/,/^## /p' <validation file>
 ```
-
-For each validation, write the lines its regex matches to a **work list** file of its own. Leave out the second `grep` when the regex has no ` &! `, and for a portal validation drop the lines of paths in a workspace with `command grep --invert-match ' workspaces/[^/]*-workspace/'` as well:
-
-```bash
-command grep --extended-regexp '<include side>' <resolved file> | command grep --extended-regexp --invert-match '<exclude side>' > <work list>
-```
-
-A validation fires when its work list is not empty. Read the files of the validations that fired, and only those.
-
-For each validation that fired, write the three lists its **Command** reads, so that no **Command** parses a resolved line:
-
-```bash
-cut -d " " -f2- <work list> > <changed paths>
-cut -d " " -f1 <work list> | command grep --invert-match '^-$' | sort --unique > <changed modules>
-command grep '^modules/' <changed modules> | sed "s#^modules/##; s#/#:#g" > <changed projects>
-```
-
-The changed paths are the paths the validation selected, the changed modules are their modules, and the changed projects are the Gradle project paths of the changed modules under `modules`, such as `apps:blogs:blogs-api`.
-
-A workspace validation fires once for each workspace the branch changed, as **Routing** describes. Read the files under `validations/workspaces` only when the branch changed a workspace.
 
 Sum the time estimates of the validations that fired for the cumulative total, counting a workspace validation once for each workspace it fired for.
 
@@ -204,7 +194,7 @@ A validation may hand off to another, as **Per-Module Compile** does when its de
 
 An autocommit can change the diff, so recompute the ledger after a validation whose commit may add a path Pass 1 never saw, as Baseline's `packageinfo` and `bnd.bnd` repairs do, and dispatch whatever newly fires. Skip it after a validation that can only touch paths the branch already changed, such as a formatter running in current branch mode, since its commit cannot widen the diff.
 
-Give the subagent everything the validations use and none of them define. That is `${REPO_ROOT}`, `${BASE_BRANCH}`, `${SOURCE_SHA}`, `${BUILD_ROOT}` for a workspace validation, `${MERGE_BASE}`, `${CHANGED_PATHS}`, `${CHANGED_MODULES}`, and `${CHANGED_PROJECTS}` as the paths of its three lists, and `${SKILL_DIR}` as the directory holding this document for a branch or portal validation, the ticket their **Autocommit** sections write into a commit title as `<TICKET>`, and the result its own verdict implies for committing, since the rule above lives here and the subagent never reads this document:
+Give the subagent everything the validations use and none of them define. That is `${REPO_ROOT}`, `${BASE_BRANCH}`, `${SOURCE_SHA}`, `${BUILD_ROOT}` for a workspace validation, `${MERGE_BASE}`, and for a branch or portal validation `${SKILL_DIR}` as the absolute path of the directory holding this document and `${VALIDATION_FILE}` as the absolute path of its validation file, the ticket their **Autocommit** sections write into a commit title as `<TICKET>`, and the result its own verdict implies for committing, since the rule above lives here and the subagent never reads this document:
 
 ```bash
 REPO_ROOT=$(git rev-parse --show-toplevel)

@@ -16,7 +16,7 @@ Anchor that match to a Javadoc tag or an annotation rather than searching the wh
 
 ```bash
 FINDINGS=$(
-	while IFS= read -r FILE
+	bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}" | while IFS= read -r FILE
 	do
 		[[ -f ${FILE} ]] || continue
 
@@ -41,7 +41,7 @@ FINDINGS=$(
 				--regexp='TransactionCallbackUtil' \
 				--regexp='TransactionCommitCallbackUtil' \
 				--regexp='TransactionInvokerUtil'
-	done < "${CHANGED_PATHS}"
+	done
 )
 
 printf '%s' "${FINDINGS}"
