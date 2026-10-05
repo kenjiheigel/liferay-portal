@@ -158,21 +158,21 @@ public class JSPSourceProcessor extends BaseSourceProcessor {
 		SourceFormatterArgs sourceFormatterArgs = getSourceFormatterArgs();
 
 		if (sourceFormatterArgs.getCommitCount() > 0) {
-			fileNames = GitUtil.getModifiedFileNames(
+			fileNames = SourceFormatterUtil.getModifiedFileNames(
 				sourceFormatterArgs.getBaseDirName(),
 				sourceFormatterArgs.getCommitCount(), true);
 		}
 		else if (sourceFormatterArgs.isFormatCurrentBranch()) {
-			fileNames = GitUtil.getCurrentBranchFileNames(
+			fileNames = SourceFormatterUtil.getCurrentBranchFileNames(
 				sourceFormatterArgs.getBaseDirName(),
 				sourceFormatterArgs.getGitWorkingBranchName(), true);
 		}
 		else if (sourceFormatterArgs.isFormatLatestAuthor()) {
-			fileNames = GitUtil.getLatestAuthorFileNames(
+			fileNames = SourceFormatterUtil.getLatestAuthorFileNames(
 				sourceFormatterArgs.getBaseDirName(), true);
 		}
 		else if (sourceFormatterArgs.isFormatLocalChanges()) {
-			fileNames = GitUtil.getLocalChangesFileNames(
+			fileNames = SourceFormatterUtil.getLocalChangesFileNames(
 				sourceFormatterArgs.getBaseDirName(), true);
 		}
 

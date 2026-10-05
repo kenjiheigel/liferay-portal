@@ -16,6 +16,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TextFormatter;
 import com.liferay.portal.kernel.util.URLUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.tools.GitUtil;
 import com.liferay.source.formatter.ExcludeSyntax;
 import com.liferay.source.formatter.ExcludeSyntaxPattern;
 import com.liferay.source.formatter.SourceFormatterExcludes;
@@ -51,6 +52,7 @@ import java.util.regex.Pattern;
  * @author Igor Spasic
  * @author Brian Wing Shun Chan
  * @author Hugo Huijser
+ * @author Kenji Heigel
  */
 public class SourceFormatterUtil {
 
@@ -189,6 +191,56 @@ public class SourceFormatterUtil {
 			_getPathMatchers(excludes, includes, sourceFormatterExcludes));
 	}
 
+	public static List<String> getCurrentBranchAddedFileNames(
+			String baseDirName, String gitWorkingBranchName)
+		throws Exception {
+
+		return _getRelativeFileNames(
+			baseDirName,
+			GitUtil.getCurrentBranchAddedFileNames(
+				_getGitTopLevelFolder(baseDirName), gitWorkingBranchName));
+	}
+
+	public static List<String> getCurrentBranchDeletedFileNames(
+			String baseDirName, String gitWorkingBranchName)
+		throws Exception {
+
+		return _getRelativeFileNames(
+			baseDirName,
+			GitUtil.getCurrentBranchDeletedFileNames(
+				_getGitTopLevelFolder(baseDirName), gitWorkingBranchName));
+	}
+
+	public static List<String> getCurrentBranchFileNames(
+			String baseDirName, String gitWorkingBranchName)
+		throws Exception {
+
+		return getCurrentBranchFileNames(
+			baseDirName, gitWorkingBranchName, false);
+	}
+
+	public static List<String> getCurrentBranchFileNames(
+			String baseDirName, String gitWorkingBranchName,
+			boolean includeDeletedFileNames)
+		throws Exception {
+
+		return _getRelativeFileNames(
+			baseDirName,
+			GitUtil.getCurrentBranchFileNames(
+				_getGitTopLevelFolder(baseDirName), gitWorkingBranchName,
+				includeDeletedFileNames));
+	}
+
+	public static List<String> getCurrentBranchRenamedFileNames(
+			String baseDirName, String gitWorkingBranchName)
+		throws Exception {
+
+		return _getRelativeFileNames(
+			baseDirName,
+			GitUtil.getCurrentBranchRenamedFileNames(
+				_getGitTopLevelFolder(baseDirName), gitWorkingBranchName));
+	}
+
 	public static String getDocumentationURLString(Class<?> checkClass) {
 		String documentationURLString = _getDocumentationURLString(
 			checkClass.getSimpleName());
@@ -243,6 +295,26 @@ public class SourceFormatterUtil {
 		}
 	}
 
+	public static List<String> getLatestAuthorFileNames(
+			String baseDirName, boolean includeDeletedFileNames)
+		throws Exception {
+
+		return _getRelativeFileNames(
+			baseDirName,
+			GitUtil.getLatestAuthorFileNames(
+				_getGitTopLevelFolder(baseDirName), includeDeletedFileNames));
+	}
+
+	public static List<String> getLocalChangesFileNames(
+			String baseDirName, boolean includeDeletedFileNames)
+		throws Exception {
+
+		return _getRelativeFileNames(
+			baseDirName,
+			GitUtil.getLocalChangesFileNames(
+				_getGitTopLevelFolder(baseDirName), includeDeletedFileNames));
+	}
+
 	public static String getMarkdownFileName(String camelCaseName) {
 		camelCaseName = StringUtil.replace(camelCaseName, "OSGi", "OSGI");
 
@@ -255,6 +327,25 @@ public class SourceFormatterUtil {
 			markdownFileName, TextFormatter.N);
 
 		return markdownFileName + ".md";
+	}
+
+	public static List<String> getModifiedFileNames(
+			String baseDirName, int commitCount)
+		throws Exception {
+
+		return getModifiedFileNames(baseDirName, commitCount, false);
+	}
+
+	public static List<String> getModifiedFileNames(
+			String baseDirName, int commitCount,
+			boolean includeDeletedFileNames)
+		throws Exception {
+
+		return _getRelativeFileNames(
+			baseDirName,
+			GitUtil.getModifiedFileNames(
+				_getGitTopLevelFolder(baseDirName), commitCount,
+				includeDeletedFileNames));
 	}
 
 	public static File getPortalDir(String baseDirName, int maxDirLevel) {
@@ -624,6 +715,24 @@ public class SourceFormatterUtil {
 		return null;
 	}
 
+	private static synchronized String _getGitTopLevelFolder(
+		String baseDirName) {
+
+		if (_gitTopLevelFolder != null) {
+			return _gitTopLevelFolder;
+		}
+
+		List<String> lines = new ArrayList<>();
+
+		_executeGitCommand(
+			Arrays.asList("rev-parse", "--show-toplevel"), baseDirName,
+			lines::add);
+
+		_gitTopLevelFolder = lines.get(0);
+
+		return _gitTopLevelFolder;
+	}
+
 	private static PathMatchers _getPathMatchers(
 		String[] excludes, String[] includes,
 		SourceFormatterExcludes sourceFormatterExcludes) {
@@ -656,6 +765,34 @@ public class SourceFormatterUtil {
 		}
 
 		return pathMatchers;
+	}
+
+	private static List<String> _getRelativeFileNames(
+		String baseDirName, List<String> fileNames) {
+
+		Path gitTopLevelPath = _getCanonicalPath(
+			Paths.get(_getGitTopLevelFolder(baseDirName)));
+
+		Path baseDirPath = _getCanonicalPath(Paths.get(baseDirName));
+
+		Path relativePath = gitTopLevelPath.relativize(baseDirPath);
+
+		String prefix = StringUtil.replace(
+			relativePath.toString(), CharPool.BACK_SLASH, CharPool.SLASH);
+
+		if (Validator.isNotNull(prefix)) {
+			prefix = prefix + StringPool.SLASH;
+		}
+
+		List<String> relativeFileNames = new ArrayList<>();
+
+		for (String fileName : fileNames) {
+			if (fileName.startsWith(prefix)) {
+				relativeFileNames.add(fileName.substring(prefix.length()));
+			}
+		}
+
+		return relativeFileNames;
 	}
 
 	private static synchronized List<String> _getUntrackedFileNames() {
@@ -710,15 +847,7 @@ public class SourceFormatterUtil {
 	private static List<String> _scanForFileNames(
 		List<String> args, String baseDirName, String[] includes) {
 
-		if (_gitTopLevelFolder == null) {
-			List<String> lines = new ArrayList<>();
-
-			_executeGitCommand(
-				Arrays.asList("rev-parse", "--show-toplevel"), baseDirName,
-				lines::add);
-
-			_gitTopLevelFolder = lines.get(0);
-		}
+		String gitTopLevelFolder = _getGitTopLevelFolder(baseDirName);
 
 		List<String> allArgs = new ArrayList<>(args);
 
@@ -737,8 +866,7 @@ public class SourceFormatterUtil {
 
 		_executeGitCommand(
 			allArgs, baseDirName,
-			line -> fileNames.add(
-				_gitTopLevelFolder + StringPool.SLASH + line));
+			line -> fileNames.add(gitTopLevelFolder + StringPool.SLASH + line));
 
 		return fileNames;
 	}

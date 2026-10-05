@@ -173,32 +173,35 @@ public class SourceFormatter {
 
 			if (commitCount > 0) {
 				sourceFormatterArgs.addRecentChangesFileNames(
-					GitUtil.getModifiedFileNames(baseDirName, commitCount),
+					SourceFormatterUtil.getModifiedFileNames(
+						baseDirName, commitCount),
 					baseDirName);
 			}
 			else if (sourceFormatterArgs.isFormatCurrentBranch()) {
 				sourceFormatterArgs.addRecentChangesFileNames(
-					GitUtil.getCurrentBranchFileNames(
+					SourceFormatterUtil.getCurrentBranchFileNames(
 						baseDirName,
 						sourceFormatterArgs.getGitWorkingBranchName(), false),
 					baseDirName);
 				sourceFormatterArgs.setCurrentBranchAddedFileNames(
-					GitUtil.getCurrentBranchAddedFileNames(
+					SourceFormatterUtil.getCurrentBranchAddedFileNames(
 						sourceFormatterArgs.getBaseDirName(),
 						sourceFormatterArgs.getGitWorkingBranchName()));
 				sourceFormatterArgs.setCurrentBranchRenamedFileNames(
-					GitUtil.getCurrentBranchRenamedFileNames(
+					SourceFormatterUtil.getCurrentBranchRenamedFileNames(
 						sourceFormatterArgs.getBaseDirName(),
 						sourceFormatterArgs.getGitWorkingBranchName()));
 			}
 			else if (sourceFormatterArgs.isFormatLatestAuthor()) {
 				sourceFormatterArgs.addRecentChangesFileNames(
-					GitUtil.getLatestAuthorFileNames(baseDirName, false),
+					SourceFormatterUtil.getLatestAuthorFileNames(
+						baseDirName, false),
 					baseDirName);
 			}
 			else if (sourceFormatterArgs.isFormatLocalChanges()) {
 				sourceFormatterArgs.addRecentChangesFileNames(
-					GitUtil.getLocalChangesFileNames(baseDirName, false),
+					SourceFormatterUtil.getLocalChangesFileNames(
+						baseDirName, false),
 					baseDirName);
 			}
 
@@ -651,9 +654,10 @@ public class SourceFormatter {
 
 		if (_sourceFormatterArgs.isFormatCurrentBranch()) {
 			if (!buildPropertiesAdded) {
-				List<String> fileNames = GitUtil.getCurrentBranchFileNames(
-					_sourceFormatterArgs.getBaseDirName(),
-					_sourceFormatterArgs.getGitWorkingBranchName(), true);
+				List<String> fileNames =
+					SourceFormatterUtil.getCurrentBranchFileNames(
+						_sourceFormatterArgs.getBaseDirName(),
+						_sourceFormatterArgs.getGitWorkingBranchName(), true);
 
 				for (String fileName : fileNames) {
 					if (!buildPropertiesAdded &&
@@ -668,7 +672,7 @@ public class SourceFormatter {
 			}
 
 			List<String> deletedFileNames =
-				GitUtil.getCurrentBranchDeletedFileNames(
+				SourceFormatterUtil.getCurrentBranchDeletedFileNames(
 					_sourceFormatterArgs.getBaseDirName(),
 					_sourceFormatterArgs.getGitWorkingBranchName());
 
@@ -1417,7 +1421,7 @@ public class SourceFormatter {
 			return;
 		}
 
-		List<String> fileNames = GitUtil.getCurrentBranchFileNames(
+		List<String> fileNames = SourceFormatterUtil.getCurrentBranchFileNames(
 			_sourceFormatterArgs.getBaseDirName(),
 			_sourceFormatterArgs.getGitWorkingBranchName(), true);
 
