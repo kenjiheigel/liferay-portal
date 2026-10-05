@@ -37,15 +37,15 @@ public class JenkinsMasterTest extends com.liferay.jenkins.results.parser.Test {
 
 		Environment.setInstance(Mockito.mock(Environment.class));
 
-		UrlReader urlReader = mockUrlReader();
+		MockURLReaders mockURLReaders = mockURLReaders();
 
 		_setUpMaster(
 			"test-9-1",
 			read(new File(dependenciesDirs.get(0), "computer-api.json")),
-			urlReader);
+			mockURLReaders);
 		_setUpMaster(
 			"test-9-2", _getRunningBuildsComputerAPIJSONObject().toString(),
-			urlReader);
+			mockURLReaders);
 
 		_jenkinsMaster = JenkinsMasterTestUtil.getJenkinsMaster(
 			"test-9-1", "http://test-9-1");
@@ -232,13 +232,13 @@ public class JenkinsMasterTest extends com.liferay.jenkins.results.parser.Test {
 
 	@Test
 	public void testGetQueueItem() throws Exception {
-		UrlReader urlReader = mockUrlReader();
+		MockURLReaders mockURLReaders = mockURLReaders();
 
 		String executableURL =
 			"https://" + RandomTestUtil.randomString() + "/job/" +
 				RandomTestUtil.randomString() + "/1/";
 
-		setUrlReaderOutput(
+		setURLReaderOutput(
 			new JSONObject(
 			).put(
 				"cancelled", true
@@ -251,11 +251,12 @@ public class JenkinsMasterTest extends com.liferay.jenkins.results.parser.Test {
 			).put(
 				"id", 7800
 			).toString(),
-			JenkinsResultsParserUtil.combine(
-				"http://test-9-1/queue/item/7800/api/json?tree=",
-				"actions[parameters[name,value]],cancelled,executable[url],",
-				"id,inQueueSince,task[name,url],url,why"),
-			urlReader);
+			JenkinsResultsParserUtil.fixURL(
+				JenkinsResultsParserUtil.combine(
+					"http://test-9-1/queue/item/7800/api/json?tree=",
+					"actions[parameters[name,value]],cancelled,",
+					"executable[url],id,inQueueSince,task[name,url],url,why")),
+			mockURLReaders);
 
 		JenkinsMaster.QueueItem queueItem = _jenkinsMaster.getQueueItem(7800);
 
@@ -267,13 +268,13 @@ public class JenkinsMasterTest extends com.liferay.jenkins.results.parser.Test {
 
 	@Test
 	public void testGetQueueItemNotFound() throws Exception {
-		UrlReader urlReader = mockUrlReader();
+		MockURLReaders mockURLReaders = mockURLReaders();
 
 		String queueItemAPIURL = "http://test-9-1/queue/item/7800/api/json";
 
-		setUrlReaderException(
+		setURLReaderException(
 			new FileNotFoundException(queueItemAPIURL), queueItemAPIURL,
-			urlReader);
+			mockURLReaders);
 
 		ByteArrayOutputStream byteArrayOutputStream =
 			new ByteArrayOutputStream();
@@ -453,25 +454,26 @@ public class JenkinsMasterTest extends com.liferay.jenkins.results.parser.Test {
 	}
 
 	private void _setUpMaster(
-			String masterName, String computerAPIJSON, UrlReader urlReader)
+			String masterName, String computerAPIJSON,
+			MockURLReaders mockURLReaders)
 		throws Exception {
 
 		String masterURL = "http://" + masterName;
 
-		setUrlReaderOutput(
+		setURLReaderOutput(
 			new JSONObject(
 			).put(
 				"items", new JSONArray()
 			).toString(),
-			masterURL + "/queue/api/json", urlReader);
-		setUrlReaderOutput(
+			masterURL + "/queue/api/json", mockURLReaders);
+		setURLReaderOutput(
 			new JSONObject(
 			).put(
 				"mode", "NORMAL"
 			).toString(),
-			masterURL + "/api/json?tree=mode", urlReader);
-		setUrlReaderOutput(
-			computerAPIJSON, masterURL + "/computer/api/json", urlReader);
+			masterURL + "/api/json?tree=mode", mockURLReaders);
+		setURLReaderOutput(
+			computerAPIJSON, masterURL + "/computer/api/json", mockURLReaders);
 	}
 
 	private static final String _BUILD_URL_FLYWEIGHT =

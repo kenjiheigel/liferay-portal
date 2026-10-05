@@ -56,7 +56,7 @@ public class BuildQueueRebalancerTest
 
 		JenkinsResultsParserUtil.setBuildProperties(buildProperties);
 
-		UrlReader urlReader = mockUrlReader();
+		MockURLReaders mockURLReaders = mockURLReaders();
 
 		JSONObject queueJSONObject = new JSONObject();
 
@@ -71,27 +71,27 @@ public class BuildQueueRebalancerTest
 					RandomTestUtil.randomLong(), RandomTestUtil.randomLong())
 			));
 
-		setUrlReaderOutput(
+		setURLReaderOutput(
 			String.valueOf(queueJSONObject),
 			_BLACKLISTED_JENKINS_MASTER_NAME + ".liferay.com/queue/api/json",
-			urlReader);
+			mockURLReaders);
 
-		setUrlReaderOutput(
+		setURLReaderOutput(
 			String.valueOf(
 				new JSONObject(
 				).put(
 					"mode", "NORMAL"
 				)),
 			_AVAILABLE_JENKINS_MASTER_NAME + ".liferay.com/api/json?tree=mode",
-			urlReader);
-		setUrlReaderOutput(
+			mockURLReaders);
+		setURLReaderOutput(
 			String.valueOf(
 				new JSONObject(
 				).put(
 					"items", new JSONArray()
 				)),
 			_AVAILABLE_JENKINS_MASTER_NAME + ".liferay.com/queue/api/json",
-			urlReader);
+			mockURLReaders);
 
 		_setJenkinsMasterAWSFleetClouds(_AVAILABLE_JENKINS_MASTER_NAME);
 		_setJenkinsMasterAWSFleetClouds(_BLACKLISTED_JENKINS_MASTER_NAME);
@@ -153,29 +153,29 @@ public class BuildQueueRebalancerTest
 
 		JenkinsResultsParserUtil.setBuildProperties(buildProperties);
 
-		UrlReader urlReader = mockUrlReader();
+		MockURLReaders mockURLReaders = mockURLReaders();
 
-		setUrlReaderException(
+		setURLReaderException(
 			new IOException("Connection refused"),
 			_BLACKLISTED_JENKINS_MASTER_NAME + ".liferay.com/queue/api/json",
-			urlReader);
+			mockURLReaders);
 
-		setUrlReaderOutput(
+		setURLReaderOutput(
 			String.valueOf(
 				new JSONObject(
 				).put(
 					"mode", "NORMAL"
 				)),
 			_AVAILABLE_JENKINS_MASTER_NAME + ".liferay.com/api/json?tree=mode",
-			urlReader);
-		setUrlReaderOutput(
+			mockURLReaders);
+		setURLReaderOutput(
 			String.valueOf(
 				new JSONObject(
 				).put(
 					"items", new JSONArray()
 				)),
 			_AVAILABLE_JENKINS_MASTER_NAME + ".liferay.com/queue/api/json",
-			urlReader);
+			mockURLReaders);
 
 		_setJenkinsMasterAWSFleetClouds(_AVAILABLE_JENKINS_MASTER_NAME);
 		_setJenkinsMasterAWSFleetClouds(_BLACKLISTED_JENKINS_MASTER_NAME);

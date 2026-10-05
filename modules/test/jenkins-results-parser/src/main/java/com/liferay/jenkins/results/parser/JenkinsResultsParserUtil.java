@@ -3754,7 +3754,7 @@ public class JenkinsResultsParserUtil {
 				"Content-Type", "application/x-www-form-urlencoded");
 
 			return getJenkinsBuildQueueId(
-				UrlReader.getResponseHeader(
+				StreamURLReader.getResponseHeader(
 					"Location", getJenkinsHTTPAuthorization(),
 					HttpRequestMethod.POST, sb.toString(), requestHeaders,
 					timeout,
@@ -4911,28 +4911,6 @@ public class JenkinsResultsParserUtil {
 		}
 	}
 
-	public static BufferedReader toBufferedReader(
-			String url, boolean checkCache)
-		throws IOException {
-
-		return toBufferedReader(
-			url, checkCache, _RETRIES_SIZE_MAX_DEFAULT, null, null,
-			_SECONDS_RETRY_PERIOD_DEFAULT, _MILLIS_TIMEOUT_DEFAULT, null);
-	}
-
-	public static BufferedReader toBufferedReader(
-			String url, boolean checkCache, int maxRetries,
-			HttpRequestMethod httpRequestMethod, String postContent,
-			int retryPeriod, int timeout, HTTPAuthorization httpAuthorization)
-		throws IOException {
-
-		return new BufferedReader(
-			new InputStreamReader(
-				toInputStream(
-					url, checkCache, maxRetries, httpRequestMethod, postContent,
-					retryPeriod, timeout, httpAuthorization)));
-	}
-
 	public static String toDateString(Date date) {
 		return toDateString(
 			date, "MMM dd, yyyy h:mm:ss a z", "America/Los_Angeles");
@@ -5086,7 +5064,7 @@ public class JenkinsResultsParserUtil {
 			int retryPeriod, int timeout, HTTPAuthorization httpAuthorization)
 		throws IOException {
 
-		return UrlReader.read(
+		return StreamURLReader.read(
 			checkCache, httpAuthorization, httpRequestMethod, maxRetries,
 			postContent, retryPeriod, timeout, url);
 	}
@@ -5120,17 +5098,9 @@ public class JenkinsResultsParserUtil {
 			int retryPeriod, int timeout, HTTPAuthorization httpAuthorization)
 		throws IOException {
 
-		String response = toString(
-			url, checkCache, maxRetries, null, postContent, retryPeriod,
-			timeout, httpAuthorization, true);
-
-		if ((response == null) ||
-			response.endsWith("was truncated due to its size.")) {
-
-			return null;
-		}
-
-		return new JSONArray(response);
+		return BodyURLReader.readJSONArray(
+			checkCache, httpAuthorization, maxRetries, postContent, retryPeriod,
+			timeout, url);
 	}
 
 	public static JSONArray toJSONArray(String url, String postContent)
@@ -5208,44 +5178,9 @@ public class JenkinsResultsParserUtil {
 			int retryPeriod, int timeout, HTTPAuthorization httpAuthorization)
 		throws IOException {
 
-		Retryable<JSONObject> retryable = new Retryable<JSONObject>(
-			true, maxRetries, retryPeriod, true) {
-
-			@Override
-			public JSONObject execute() {
-				try {
-					String response = JenkinsResultsParserUtil.toString(
-						url, checkCache, 0, httpRequestMethod, postContent,
-						retryPeriod, timeout, httpAuthorization, true);
-
-					if ((response == null) ||
-						response.endsWith("was truncated due to its size.")) {
-
-						return null;
-					}
-
-					return createJSONObject(response);
-				}
-				catch (IOException ioException) {
-					throw new RuntimeException(ioException);
-				}
-			}
-
-			@Override
-			protected String getRetryMessage(int retryCount) {
-				return combine(
-					"Unable to create JSONObject: ",
-					super.getRetryMessage(retryCount));
-			}
-
-		};
-
-		try {
-			return retryable.executeWithRetries();
-		}
-		catch (Exception exception) {
-			throw new RuntimeException("Unable to create JSON object");
-		}
+		return BodyURLReader.readJSONObject(
+			checkCache, httpAuthorization, httpRequestMethod, maxRetries,
+			postContent, retryPeriod, timeout, url);
 	}
 
 	public static JSONObject toJSONObject(
@@ -5445,41 +5380,10 @@ public class JenkinsResultsParserUtil {
 		long start = System.currentTimeMillis();
 
 		try {
-			for (int i = 0; i < 2; i++) {
-				try (BufferedReader bufferedReader = toBufferedReader(
-						url, checkCache, maxRetries, httpRequestMethod,
-						postContent, retryPeriod, timeout, httpAuthorization)) {
-
-					StringBuilder sb = new StringBuilder();
-
-					String line = bufferedReader.readLine();
-
-					while (line != null) {
-						sb.append(line);
-						sb.append("\n");
-
-						line = bufferedReader.readLine();
-					}
-
-					String content = sb.toString();
-
-					if (expectResponse && isNullOrEmpty(content) && (i < 1)) {
-						System.out.println(
-							"Unable to get response, retrying request");
-
-						continue;
-					}
-
-					if (checkCache && !url.startsWith("file:")) {
-						saveToCacheFile(
-							getCacheFileKey(url, postContent), content);
-					}
-
-					return content;
-				}
-			}
-
-			return "";
+			return BodyURLReader.readText(
+				checkCache, expectResponse, httpAuthorization,
+				httpRequestMethod, maxRetries, postContent, retryPeriod,
+				timeout, url);
 		}
 		finally {
 			long duration = System.currentTimeMillis() - start;
