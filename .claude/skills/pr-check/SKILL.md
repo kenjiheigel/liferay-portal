@@ -77,13 +77,15 @@ Run only the validations in the scopes the settings enable, and skip every valid
 
 ### Match
 
-The script [find_modules.sh](find_modules.sh) beside this document takes paths relative to the repository root, from any directory inside it, finds the module of every changed path, and writes one line for it, `<module> <path>`, such as `modules/apps/blogs/blogs-api modules/apps/blogs/blogs-api/src/main/java/Foo.java`. Each validation in the branch and portal scopes fires on the paths whose line matches the regex under its `## Match`. ` &! ` splits a regex into an include side and an exclude side, and a line has to match the first and not the second.
-
-- **Module** is the outermost directory above the path that the path's build root builds as a project. In a workspace, that is a directory holding `bnd.bnd` or `client-extension.yaml`, the rule the workspace Gradle plugin uses. The plugin also builds themes, wars, and JavaScript portlets, which no validation selects yet. Everywhere else, it is a directory holding `bnd.bnd`, `build.xml`, `gulpfile.js`, or `src/main/resources/application.properties`, not counting `modules` itself, the rule the Gradle settings plugin uses. It is `-` when there is none. A module under `modules` also has a Gradle project path, the directory without `modules/` and with `:` for `/`, such as `apps:blogs:blogs-api`.
-
-The path starts after the first space, so a regex anchors to the start of a path with a space, as in ` modules/`, where it would anchor to the start of the module with `^`.
+Each validation in the branch and portal scopes fires on the changed paths, relative to the repository root, that match the regex under its `## Match`. ` &! ` splits a regex into an include side and an exclude side, and a path has to match the first and not the second.
 
 The script [select_paths.sh](select_paths.sh) beside this document applies the routing and the regex. Given the merge base, a validation file, and for a workspace validation the workspace directory name, it prints the paths the validation selects, relative to the workspace for a workspace validation, and exits 1 when it selects none.
+
+### Module
+
+The script [find_modules.sh](find_modules.sh) beside this document takes paths relative to the repository root, from any directory inside it, finds the module of every path, and writes one line for it, `<module> <path>`, such as `modules/apps/blogs/blogs-api modules/apps/blogs/blogs-api/src/main/java/Foo.java`. A **Command** that works on modules pipes its paths through it.
+
+- **Module** is the outermost directory above the path that the path's build root builds as a project. In a workspace, that is a directory holding `bnd.bnd` or `client-extension.yaml`, the rule the workspace Gradle plugin uses. The plugin also builds themes, wars, and JavaScript portlets, which no validation selects yet. Everywhere else, it is a directory holding `bnd.bnd`, `build.xml`, `gulpfile.js`, or `src/main/resources/application.properties`, not counting `modules` itself, the rule the Gradle settings plugin uses. It is `-` when there is none. A module under `modules` also has a Gradle project path, the directory without `modules/` and with `:` for `/`, such as `apps:blogs:blogs-api`.
 
 ### Build Root
 

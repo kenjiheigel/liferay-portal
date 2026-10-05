@@ -4,7 +4,7 @@ Runs the unit tests that exercise a changed class.
 
 ## Match
 
-` modules/.+\.java$| portal-(impl|kernel)/.+\.java$`
+`^modules/.+\.java$|^portal-(impl|kernel)/.+\.java$`
 
 ## Command
 

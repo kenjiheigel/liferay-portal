@@ -4,7 +4,7 @@ Runs `go generate` and fails when that changes the committed CRD, which means it
 
 ## Match
 
-` cloud/operator/| cloud/helm/dxp-operator/crds/`
+`^cloud/operator/|^cloud/helm/dxp-operator/crds/`
 
 ## Command
 

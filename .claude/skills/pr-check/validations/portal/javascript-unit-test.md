@@ -4,7 +4,7 @@ Runs the Jest suites of the modules a change touches. A lockfile or a `package.j
 
 ## Match
 
-` modules/.+\.(js|jsx|mjs|cjs|ts|tsx)$| modules/.+/(package\.json|package-lock\.json|yarn\.lock)$ &!  modules/test/playwright/`
+`^modules/.+\.(js|jsx|mjs|cjs|ts|tsx)$|^modules/.+/(package\.json|package-lock\.json|yarn\.lock)$ &! ^modules/test/playwright/`
 
 ## Command
 

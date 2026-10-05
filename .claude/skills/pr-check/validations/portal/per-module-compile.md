@@ -4,7 +4,7 @@ Deploys each module the branch changed, which checks that it compiles and bundle
 
 ## Match
 
-` modules/.+\.(java|js|jsx|mjs|cjs|ts|tsx|css|scss|sass|ftl|jsp|jspf)$| modules/.+/src/main/.+\.properties$| modules/.+/(bnd\.bnd|gradle\.properties|package-lock\.json|yarn\.lock|package\.json)$ &!  modules/test/playwright/|[ /]test\.properties$`
+`^modules/.+\.(java|js|jsx|mjs|cjs|ts|tsx|css|scss|sass|ftl|jsp|jspf)$|^modules/.+/src/main/.+\.properties$|^modules/.+/(bnd\.bnd|gradle\.properties|package-lock\.json|yarn\.lock|package\.json)$ &! ^modules/test/playwright/|(^|/)test\.properties$`
 
 ## Command
 

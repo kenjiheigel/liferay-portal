@@ -4,7 +4,7 @@ Runs the structural tests that read the files the branch changed. **Selection** 
 
 ## Match
 
-`/configuration/.*Configuration\.java$| portal-impl/src/portal-osgi-configuration\.properties$| lib/| \.classpath$|\.iml$| \.idea/|/nbproject/project\.(properties|xml)$|\.gradle$|[ /](bnd|app)\.bnd$| modules/.+/\.gitignore$| modules/.+/README\.md$| modules/.+/package\.json$|portal-log4j(-ext)?\.xml$|\.lfrbuild| \.github/`
+`/configuration/.*Configuration\.java$|^portal-impl/src/portal-osgi-configuration\.properties$|^lib/|^\.classpath$|\.iml$|^\.idea/|/nbproject/project\.(properties|xml)$|\.gradle$|(^|/)(bnd|app)\.bnd$|^modules/.+/\.gitignore$|^modules/.+/README\.md$|^modules/.+/package\.json$|portal-log4j(-ext)?\.xml$|\.lfrbuild|^\.github/`
 
 ## Command
 
