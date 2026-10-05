@@ -40,11 +40,10 @@ public class JenkinsMasterTest extends com.liferay.jenkins.results.parser.Test {
 		MockURLReaders mockURLReaders = mockURLReaders();
 
 		_setUpMaster(
-			"test-9-1",
 			read(new File(dependenciesDirs.get(0), "computer-api.json")),
-			mockURLReaders);
+			"test-9-1", mockURLReaders);
 		_setUpMaster(
-			"test-9-2", _getRunningBuildsComputerAPIJSONObject().toString(),
+			_getRunningBuildsComputerAPIJSONObject().toString(), "test-9-2",
 			mockURLReaders);
 
 		_jenkinsMaster = JenkinsMasterTestUtil.getJenkinsMaster(
@@ -239,6 +238,7 @@ public class JenkinsMasterTest extends com.liferay.jenkins.results.parser.Test {
 				RandomTestUtil.randomString() + "/1/";
 
 		setURLReaderOutput(
+			mockURLReaders,
 			new JSONObject(
 			).put(
 				"cancelled", true
@@ -255,8 +255,7 @@ public class JenkinsMasterTest extends com.liferay.jenkins.results.parser.Test {
 				JenkinsResultsParserUtil.combine(
 					"http://test-9-1/queue/item/7800/api/json?tree=",
 					"actions[parameters[name,value]],cancelled,",
-					"executable[url],id,inQueueSince,task[name,url],url,why")),
-			mockURLReaders);
+					"executable[url],id,inQueueSince,task[name,url],url,why")));
 
 		JenkinsMaster.QueueItem queueItem = _jenkinsMaster.getQueueItem(7800);
 
@@ -273,8 +272,8 @@ public class JenkinsMasterTest extends com.liferay.jenkins.results.parser.Test {
 		String queueItemAPIURL = "http://test-9-1/queue/item/7800/api/json";
 
 		setURLReaderException(
-			new FileNotFoundException(queueItemAPIURL), queueItemAPIURL,
-			mockURLReaders);
+			new FileNotFoundException(queueItemAPIURL), mockURLReaders,
+			queueItemAPIURL);
 
 		ByteArrayOutputStream byteArrayOutputStream =
 			new ByteArrayOutputStream();
@@ -454,26 +453,28 @@ public class JenkinsMasterTest extends com.liferay.jenkins.results.parser.Test {
 	}
 
 	private void _setUpMaster(
-			String masterName, String computerAPIJSON,
+			String computerAPIJSON, String masterName,
 			MockURLReaders mockURLReaders)
 		throws Exception {
 
 		String masterURL = "http://" + masterName;
 
 		setURLReaderOutput(
+			mockURLReaders,
 			new JSONObject(
 			).put(
 				"items", new JSONArray()
 			).toString(),
-			masterURL + "/queue/api/json", mockURLReaders);
+			masterURL + "/queue/api/json");
 		setURLReaderOutput(
+			mockURLReaders,
 			new JSONObject(
 			).put(
 				"mode", "NORMAL"
 			).toString(),
-			masterURL + "/api/json?tree=mode", mockURLReaders);
+			masterURL + "/api/json?tree=mode");
 		setURLReaderOutput(
-			computerAPIJSON, masterURL + "/computer/api/json", mockURLReaders);
+			mockURLReaders, computerAPIJSON, masterURL + "/computer/api/json");
 	}
 
 	private static final String _BUILD_URL_FLYWEIGHT =
