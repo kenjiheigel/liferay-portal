@@ -8,9 +8,11 @@ function main {
 		_exit_with_error "Unable to resolve the merge base \"${1}\""
 	fi
 
-	local regex=$( \
+	local regex
+
+	regex=$( \
 		sed -e "/^## Match$/{n;n;p;}" -n "${2}" | \
-			sed -e "s/^\`//" -e "s/\`$//")
+			sed -e "s/^.//" -e "s/.$//")
 
 	if [ -z "${regex}" ]
 	then
@@ -24,7 +26,9 @@ function main {
 		exclude='^$'
 	fi
 
-	local folder_name=$(basename "$(dirname "${2}")")
+	local folder_name
+
+	folder_name=$(basename "$(dirname "${2}")")
 
 	if [ "$(type -t "_get_${folder_name}_paths")" != function ]
 	then
@@ -62,7 +66,9 @@ function _get_workspaces_paths {
 
 	if [ "${2}" != liferay-sample-workspace ]
 	then
-		local names=$( \
+		local names
+
+		names=$( \
 			sed \
 				-e "s/^[[:space:]]*--exclude[[:space:]]\{1,\}\([^[:space:]\\\\]*\).*/\1/p" \
 				-n \

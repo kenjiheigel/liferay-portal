@@ -14,8 +14,10 @@ function main {
 			marker_files="bnd.bnd client-extension.yaml"
 		fi
 
-		local dir=$(dirname "${path}")
+		local dir
 		local module=-
+
+		dir=$(dirname "${path}")
 
 		while [ "${dir}" != . ] &&
 		      [ "${dir}" != / ]
