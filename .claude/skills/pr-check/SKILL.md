@@ -47,6 +47,24 @@ In `liferay-portal-ee`, this skill and its validations are copied from local `ma
 
 - **Diff is nonempty.** When the three dot diff produces no files, exit with a one line message — no validation produces useful signal on a clean branch.
 
+- **No source file hidden from git.** A file the build reads but git never sees passes every validation here and fails CI's clean checkout, as a Sass import of an uncommitted partial once did. The clean tree check above cannot see it when the developer's own ignore rules hide it, in `core.excludesFile` or `.git/info/exclude`, since `git status` honors those. List the ignored files under each changed module, keep those hidden by a rule outside the repository's own `.gitignore` files, and keep the source and build file types among them:
+
+	```bash
+	MERGE_BASE=$(git merge-base HEAD "${BASE_BRANCH}")
+
+	git diff --name-only --no-renames "${MERGE_BASE}...HEAD" \
+		| bash <skill directory>/find_modules.sh "${MERGE_BASE}" \
+		| cut -d " " -f1 \
+		| command grep --invert-match '^-$' \
+		| sort --unique \
+		| xargs --no-run-if-empty git ls-files --directory --exclude-standard --ignored --others -- \
+		| git check-ignore --stdin --verbose \
+		| command grep --extended-regexp --invert-match '^([^/:][^:]*/)?\.gitignore:' \
+		| command grep --extended-regexp '\.(bnd|cjs|css|ftl|gradle|java|js|json|jsp|jspf|jsx|mjs|properties|sass|scss|ts|tsx|xml)$'
+	```
+
+	Each line names the rule and the file it hides. When any line prints, abort and ask the developer to commit or delete each file. The type filter keeps a personally ignored `.DS_Store` or editor file from stopping the run, and `--directory` keeps a whole ignored directory, such as `build`, to one line that the filter then drops.
+
 ## Input
 
 ### Diff
