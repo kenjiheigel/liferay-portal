@@ -1,10 +1,10 @@
 # Per-Module Compile
 
-Deploys each module the branch changed, which checks that it compiles and bundles its resources whatever the change was. The jar task runs `compileJSP`, so a deploy also compiles the module's JSPs, apart from a fragment's, which compile only against their host. When the deploy set grows past the point where one full build is cheaper, it hands off to **Full Portal Build**. Modules carrying `.lfrbuild-portal-deprecated` and the `testIntegration` source of `-test` modules belong to **Cross-Module Compile** instead.
+Deploys each module the branch changed, which checks that it compiles and bundles its resources whatever the change was. The jar task runs `compileJSP`, so a deploy also compiles the module's JSPs, apart from a fragment's, which compile only against their host. When the deploy set grows past the point where one full build is cheaper, it hands off to **Full Portal Build**. Modules carrying `.lfrbuild-portal-deprecated` and the `testIntegration` source of `-test` modules belong to **Cross-Module Compile** instead. A deploy compiles `src/main` alone, so a path under `src/test` or `src/testIntegration` selects nothing here, and a module whose only change sits there is left to **Java Unit Tests** and **Integration Test Compile**.
 
 ## Match
 
-`^modules/.+\.(java|js|jsx|mjs|cjs|ts|tsx|css|scss|sass|ftl|jsp|jspf)$|^modules/.+/src/main/.+\.properties$|^modules/.+/(bnd\.bnd|gradle\.properties|package-lock\.json|yarn\.lock|package\.json)$ &! ^modules/test/playwright/|(^|/)test\.properties$`
+`^modules/.+\.(java|js|jsx|mjs|cjs|ts|tsx|css|scss|sass|ftl|jsp|jspf)$|^modules/.+/src/main/.+\.properties$|^modules/.+/(bnd\.bnd|gradle\.properties|package-lock\.json|yarn\.lock|package\.json)$ &! ^modules/test/playwright/|/src/test/|/src/testIntegration/|(^|/)test\.properties$`
 
 ## Command
 
@@ -20,8 +20,6 @@ bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}" \
 ```
 
 Drop a module the branch deleted, which `find_modules.sh` still names through the merge base but which has nothing left to deploy, and report its paths below as paths that sit in no module. A module was deleted when `git cat-file -e "HEAD:<module directory>"` fails. When the runner says Full Portal Build is in the run, drop each module carrying `.lfrbuild-portal` as well, since `ant all` already deploys it.
-
-Exclude modules whose **only** Java change is under `src/testIntegration`. Integration Test Compile already runs `compileTestIntegrationJava` for those, and `-test` modules do not deploy a runtime bundle — `gradlew :path:deploy` would be redundant. A diff that touches `src/testIntegration` *and* anything else in the same module still puts the module in the deploy set.
 
 Expand by consumers only when the change can break one. An added `public` or `protected` member is source and binary compatible, so it expands nothing. A removed member, or one whose signature changed, does break consumers. Collect the removed and added member lines separately and expand only on a removal with no matching addition, since a member that was moved or reformatted appears as both and breaks nobody:
 

@@ -1,10 +1,10 @@
 # Integration Test Compile
 
-Compiles the integration tests that consume a changed module, without running them. Liferay keeps those tests in a sibling `-test` module, so the module compiled is rarely the one the branch changed.
+Compiles the integration tests that consume a changed module, without running them. Liferay keeps those tests in a sibling `-test` module, so the module compiled is rarely the one the branch changed. A path under `src/test` selects nothing, since that source set's output is not on the `testIntegration` classpath.
 
 ## Match
 
-`^modules/.+\.java$`
+`^modules/.+\.java$ &! /src/test/`
 
 ## Command
 
