@@ -64,7 +64,7 @@ A control that passes proves nothing on its own and never licenses a FAIL. Most 
 
 One shape worth knowing is an error naming a package that plainly exists in the tree, such as `package com.liferay.portal.kernel.model does not exist`. `install-portal-snapshots` installs poms whose dependency versions are unsubstituted build tokens, so `portal-impl` resolves carrying nothing and the kernel is absent from `testIntegrationCompileClasspath`. That absence does not on its own break a compile, and a tree in exactly that state has compiled a set of `-test` modules clean, so the kernel reaches them by some path the resolved configuration does not show. Treat this as one possibility the control settles rather than the explanation to reach for, since assuming it turns a real failure into an environmental one.
 
-An affected set that came out empty means the changed modules have no integration tests, so report **NOT VERIFIED** and name them as uncovered. PASS when every module in the set reports `BUILD SUCCESSFUL`.
+An affected set that came out empty means the changed modules have no integration tests, so report **NO COVERAGE** and name them as uncovered. PASS when every module in the set reports `BUILD SUCCESSFUL`.
 
 ## Checklist
 

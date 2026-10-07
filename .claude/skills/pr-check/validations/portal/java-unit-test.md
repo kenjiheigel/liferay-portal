@@ -12,7 +12,7 @@ Runs the unit tests that exercise a changed class. An integration test under `sr
 
 ## Command
 
-A change with no behavior intent, such as a rename, formatting, a comment, or Javadoc, needs no unit test, since the compile step and Structural Smoke cover it. When every changed Java file is such a change, run nothing and report **NOT VERIFIED**, naming the change as surface only.
+A change with no behavior intent, such as a rename, formatting, a comment, or Javadoc, needs no unit test, since the compile step and Structural Smoke cover it. When every changed Java file is such a change, run nothing and report **NOT APPLICABLE**, naming the change as surface only.
 
 Take the changed Java files:
 
@@ -26,9 +26,9 @@ Do not select `Log4jConfigUtilTest` or `SampleSQLBuilderTest`, even when their c
 
 Verify each counterpart file exists before scheduling it.
 
-When no counterpart exists, nothing here can exercise the change, whatever the module costs to build. Report **NOT VERIFIED** and name the changed class as having no unit test, rather than as uncovered. The same name often exists as an integration test in the sibling `-test` module, which this validation does not run but which does cover the class, so name that file when it exists or the report sends a developer to write a test that is already there. Running a suite that never touches the changed class establishes no more than declining to run it, so module size must not decide the verdict.
+When no counterpart exists, nothing here can exercise the change, whatever the module costs to build. Report **NO COVERAGE** and name the changed class as having no unit test. The same name often exists as an integration test in the sibling `-test` module, which this validation does not run but which does cover the class, so name that file when it exists or the report sends a developer to write a test that is already there. Running a suite that never touches the changed class establishes no more than declining to run it, so module size must not decide the verdict.
 
-Running the suite anyway is worth doing when it is cheap, since it can catch an unrelated break. It cannot change the verdict either way, because a green suite that never loaded the changed class does not make it a PASS and a red one does not make it a FAIL. Report what the suite did alongside the **NOT VERIFIED**.
+Running the suite anyway is worth doing when it is cheap, since it can catch an unrelated break. It cannot change the verdict either way, because a green suite that never loaded the changed class does not make it a PASS and a red one does not make it a FAIL. Report what the suite did alongside the **NO COVERAGE**.
 
 For OSGi modules, run only the specific test class, batching counterparts within the same module. Take the Gradle project path of each changed module:
 

@@ -109,7 +109,7 @@ A changed path that sits in no module, other than the shared tooling above, has 
 bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}" | bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" | command grep '^- ' | cut -d " " -f2-
 ```
 
-Report **NOT VERIFIED** naming every such path, and also when that tooling expanded to no module. When a changed path does sit inside a module and the set is still empty, the derivation is broken, so report that as a FAIL. The validation passes when every module in the deploy set reports `BUILD SUCCESSFUL`.
+Report **NO COVERAGE** naming every such path, and also when that tooling expanded to no module. When a changed path does sit inside a module and the set is still empty, the derivation is broken, so report that as a FAIL. The validation passes when every module in the deploy set reports `BUILD SUCCESSFUL`.
 
 ## Checklist
 

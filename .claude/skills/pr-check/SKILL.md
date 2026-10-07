@@ -222,11 +222,23 @@ When a precondition fails, stop the run. Dispatch no validation, publish no Resu
 
 The rules below divide in two. Dispatch, ordering, handoffs, the ledger, and the overall state belong to this runner. Reading a log, judging a result, and reporting a note belong to the subagent, which never sees this document and is told only what it needs.
 
-For each matched validation, spawn one subagent. **Give it only the `## Command` and `## Autocommit` sections of its validation.** Pass each section whole, from its heading to the next `## ` heading, and never through a line cap such as `head`, `tail`, or a fixed line range: a truncated section reads as complete, the subagent cannot know what it lost, and nothing downstream recovers it. A validation with no `## Autocommit` section makes no commit, so say so rather than leaving the subagent to infer it from an absence. That says nothing about the working tree, since a validation without one can still build and leave output behind. Record `PASS`, `FAIL`, or `NOT VERIFIED`, and capture any note the command directs it to return. Tell the subagent to run every command in the foreground and to return only once it has a verdict. A subagent that starts a build in the background and returns while it runs hands back no verdict, and nothing reports the build's result afterward. Do not halt on a failure, so the developer sees the full picture.
+For each matched validation, spawn one subagent. **Give it only the `## Command` and `## Autocommit` sections of its validation.** Pass each section whole, from its heading to the next `## ` heading, and never through a line cap such as `head`, `tail`, or a fixed line range: a truncated section reads as complete, the subagent cannot know what it lost, and nothing downstream recovers it. A validation with no `## Autocommit` section makes no commit, so say so rather than leaving the subagent to infer it from an absence. That says nothing about the working tree, since a validation without one can still build and leave output behind. Record one of the results below, and capture any note the command directs it to return. Tell the subagent to run every command in the foreground and to return only once it has a verdict. A subagent that starts a build in the background and returns while it runs hands back no verdict, and nothing reports the build's result afterward. Do not halt on a failure, so the developer sees the full picture.
 
-A validation reports **`NOT VERIFIED`** when it ran and established nothing about the branch, such as an empty work set, a compile with no source, or a change with no counterpart to exercise. It does not block, and it carries a reason naming what went unexamined, one line in the table with whatever detail the validation asks for beneath it. Reserve `FAIL` for a validation that found a real defect.
+A validation returns one of five results:
 
-A `NOT VERIFIED` run does not autocommit, since a run that established nothing has produced nothing worth recording and the tree it would stage may hold a half finished setup. A `FAIL` run still autocommits where its **Autocommit** section says to, because a formatter's repairs are worth keeping even when an unfixable violation blocks the branch, and so does a `PASS` run. Tell the subagent this when you dispatch it, since its **Autocommit** section reads as unconditional on its own.
+- **`FAIL`**: it found a real defect.
+
+- **`NO COVERAGE`**: it found something to check and nothing that could ever check it, such as a changed class with no unit test or changed modules with no integration tests. Of the results that do not block, it is the only one a developer can act on, by adding the coverage or judging the change by hand. A validation whose command cannot fail on any content of the diff reports this too, never `PASS`, since a green build that never read the change is not one that passed.
+
+- **`NOT APPLICABLE`**: its work set came out empty, so there was nothing to check, as when every selected path was deleted or the change is surface only. Its row leaves the table, the way a validation that never fired does, and the Results Summary names it on one line instead.
+
+- **`NOT VERIFIED`**: something could have checked the branch and this run did not, such as an environment failure, a red test in a module the diff never touched, or a handoff that produced no result.
+
+- **`PASS`**: it examined the change and found nothing wrong.
+
+`NO COVERAGE`, `NOT APPLICABLE`, and `NOT VERIFIED` do not block. Each carries a reason naming what went unexamined, and `NO COVERAGE` and `NOT VERIFIED` keep their row in the table with whatever detail the validation asks for beneath it.
+
+A `FAIL` run still autocommits where its **Autocommit** section says to, because a formatter's repairs are worth keeping even when an unfixable violation blocks the branch. A run that ends `NO COVERAGE`, `NOT APPLICABLE`, or `NOT VERIFIED` does not autocommit, since a run that established nothing has produced nothing worth recording and the tree it would stage may hold a half finished setup. A `PASS` run autocommits as well. Tell the subagent this when you dispatch it, since its **Autocommit** section reads as unconditional on its own.
 
 Run workspace validations one workspace at a time. Each workspace build has its own Gradle daemon and heap and shares the Gradle cache with the others. Never pass `--offline` to a workspace build, since a cache miss under it prints as a dependency error that reads exactly like a compile failure.
 
@@ -291,7 +303,9 @@ After the two passes complete, emit a Results Summary block. It is the canonical
 
 Capture the tested commit with `git rev-parse HEAD` **after** Pass 2 completes, so the SHA reflects the tree that was actually exercised — including any autocommits the validations made, such as the `<TICKET> SF` source-format commit. This is the commit the `pr` skill pushes as the PR head and the commit the webhook binds the `pr-check` status to, so a reviewer can tell whether the current head is the one that was tested.
 
-The block is the overall state and tested SHA, followed by a table with one row per **matched** validation — the validations that actually ran, in the execution order above. A workspace validation has one row for each workspace it ran for, named with the workspace in parentheses, such as `Workspace Compile (liferay-aihub-workspace)`. Validations that did not fire are omitted rather than listed as skipped, so the table reflects only what the diff exercised. When no validation fired, omit the table as well and say so in one line, since a header with no rows reads as a table that failed to render.
+The block is the overall state and tested SHA, followed by a table with one row per **matched** validation — the validations that actually ran, in the execution order above, apart from those that returned `NOT APPLICABLE`. A workspace validation has one row for each workspace it ran for, named with the workspace in parentheses, such as `Workspace Compile (liferay-aihub-workspace)`. Validations that did not fire are omitted rather than listed as skipped, so the table reflects only what the diff exercised. When no validation fired, omit the table as well and say so in one line, since a header with no rows reads as a table that failed to render.
+
+Name every validation that returned `NOT APPLICABLE` on one line beneath the table, such as `Not applicable: HTML Escaping, Structural Smoke.`, and leave the line out when none did. A selection can come back wrongly empty, so without the line a broken selection reads exactly like a diff with nothing in it.
 
 ```markdown
 **pr-check: PASS** — tested on `<head-SHA>`
@@ -299,14 +313,14 @@ The block is the overall state and tested SHA, followed by a table with one row 
 | Validation | Result |
 | --- | --- |
 | Source Format | PASS |
-| Module Registration | NOT VERIFIED |
+| Module Registration | NO COVERAGE |
 | Java Unit Tests | PASS |
 
-Module Registration verified nothing. The diff removes `.lfrbuild-ci` from `apps:blogs:blogs-api`, which drops the module from CI's deploy pass and breaks no build, so whether CI still needs it is the developer's judgment.
+Module Registration had nothing to run. The diff removes `.lfrbuild-ci` from `apps:blogs:blogs-api`, which drops the module from CI's deploy pass and breaks no build, so whether CI still needs it is the developer's judgment.
 ```
 
-The overall state is `FAIL` when any row is `FAIL`, and `PASS` otherwise. A `NOT VERIFIED` row leaves the overall state alone, and the marker the `pr-check-publish` skill writes still records `success`, since the webhook accepts only `failure`, `skipped`, and `success` and silently discards anything else.
+The overall state is `FAIL` when any row is `FAIL`, and `PASS` otherwise. A `NO COVERAGE` or `NOT VERIFIED` row leaves the overall state alone, and the marker the `pr-check-publish` skill writes still records `success`, since the webhook accepts only `failure`, `skipped`, and `success` and silently discards anything else.
 
 A validation may qualify its verdict, as **Baseline** does when it names the universe it compared, and the qualifier follows the verdict in the same cell rather than in a note. The overall state reads the verdict alone, so a qualified `PASS` is still a `PASS`.
 
-Every row whose validation returned a note appends it below the table, separated by a blank line. A `FAIL` and a `NOT VERIFIED` always carry one, and a `PASS` can too, as **Module Registration** does when a diff pairs an addition it verified with a removal it can only report. The notes travel verbatim into the PR description through the `pr` skill and into any comment the `pr-check-publish` skill posts.
+Every row whose validation returned a note appends it below the table, separated by a blank line. A `FAIL`, a `NO COVERAGE`, and a `NOT VERIFIED` always carry one, and a `PASS` can too, as **Module Registration** does when a diff pairs an addition it verified with a removal it can only report. The notes travel verbatim into the PR description through the `pr` skill and into any comment the `pr-check-publish` skill posts.
