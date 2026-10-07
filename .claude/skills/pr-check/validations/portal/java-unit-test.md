@@ -22,11 +22,26 @@ bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}"
 
 Locate the counterpart test by parallel name: `Foo.java` → `FooTest.java` in the same module's `src/test/java/**` (for OSGi modules) or `portal-impl/test/unit/**` / `portal-kernel/test/unit/**` (for portal-core).
 
+A changed file already under one of those test trees is a test itself, so look for no counterpart. When it declares a `@Test` method, schedule it. When it declares none, it is a base class, rule, or utility that other tests run through, and a change to it alters every one of them, so schedule each test class in the same tree that references it and declares a `@Test` method. Find the references the way **Cross-Module Compile** does, by the fully qualified name outside the package and by the simple name inside it, since a simple name such as `Test` also matches every `import org.junit.Test`:
+
+```bash
+(cd "${REPO_ROOT}" && git grep --cached --files-with-matches --fixed-strings --word-regexp '<FullyQualifiedName>' -- '<test tree>/*.java')
+(cd "${REPO_ROOT}" && git grep --all-match --cached --files-with-matches --fixed-strings --word-regexp -e 'package <package>;' -e '<TypeName>' -- '<test tree>/*.java')
+```
+
+Keep the files either search lists that declare a `@Test` method:
+
+```bash
+printf '%s\n' <referencing file>... \
+	| sort --unique \
+	| (cd "${REPO_ROOT}" && xargs grep --files-with-matches --fixed-strings --word-regexp '@Test')
+```
+
 Do not select `Log4jConfigUtilTest` or `SampleSQLBuilderTest`, even when their counterpart source changes. Both are in `test.batch.class.names.excludes.permanent` and neither runs in the normal CI flow, so pr-check does not run them either.
 
 Verify each counterpart file exists before scheduling it.
 
-When no counterpart exists, nothing here can exercise the change, whatever the module costs to build. Report **NO COVERAGE** and name the changed class as having no unit test. The same name often exists as an integration test in the sibling `-test` module, which this validation does not run but which does cover the class, so name that file when it exists or the report sends a developer to write a test that is already there. Running a suite that never touches the changed class establishes no more than declining to run it, so module size must not decide the verdict.
+When a changed class has no counterpart, nothing here can exercise it, whatever the module costs to build. Name it as having no unit test. The same name often exists as an integration test in the sibling `-test` module, which this validation does not run but which does cover the class, so name that file when it exists or the report sends a developer to write a test that is already there. When nothing was scheduled at all, neither a counterpart nor a changed test, report **NO COVERAGE**. Otherwise the scheduled runs decide the verdict, and a PASS names the uncovered classes in its note. Running a suite that never touches the changed class establishes no more than declining to run it, so module size must not decide the verdict.
 
 Running the suite anyway is worth doing when it is cheap, since it can catch an unrelated break. It cannot change the verdict either way, because a green suite that never loaded the changed class does not make it a PASS and a red one does not make it a FAIL. Report what the suite did alongside the **NO COVERAGE**.
 
