@@ -28,18 +28,27 @@ git diff "${MERGE_BASE}...HEAD" -- '<changed file>' | command grep --extended-re
 git diff "${MERGE_BASE}...HEAD" -- '<changed file>' | command grep --extended-regexp '^\+\s*(public|protected)\b'
 ```
 
-Take the consumers that name the changed **type**, not every module that declares a dependency on its project. A project edge means a module could see the type; only a source reference means it does. Search the index, since a recursive `command grep` over `modules` descends into `build` and `node_modules` and does not finish:
+Take the consumers that name the changed **type**, not every module that declares a dependency on its project. A project edge means a module could see the type; only a source reference means it does. Search for the fully qualified name, the package from the file's `package` line followed by the file name without `.java`, since a file outside the package has to import the type or spell that name out and the repository has no `com.liferay` wildcard imports. A file in the same package needs no import, so search those for the simple name. Search the index, since a recursive `command grep` over `modules` descends into `build` and `node_modules` and does not finish:
 
 ```bash
-(cd "${REPO_ROOT}" && git grep --cached --files-with-matches --word-regexp '<TypeName>' -- '*.java') \
+(cd "${REPO_ROOT}" && git grep --cached --files-with-matches --fixed-strings --word-regexp '<FullyQualifiedName>' -- '*.java')
+(cd "${REPO_ROOT}" && git grep --all-match --cached --files-with-matches --fixed-strings --word-regexp -e 'package <package>;' -e '<TypeName>' -- '*.java')
+```
+
+Take the project of each file either search lists:
+
+```bash
+printf '%s\n' <consumer file>... \
 	| bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" \
-	| command grep '^modules/' \
 	| cut -d " " -f1 \
+	| command grep '^modules/' \
 	| sort --unique \
 	| sed "s#^modules/##; s#/#:#g"
 ```
 
-The difference is not marginal. Removing a member from a mid sized API class put 188 modules on the project edge and 6 on the type reference, and only 2 of those were production consumers that could break. Match the type name rather than the member name, which collides across unrelated classes.
+A simple name collides with every unrelated type of the same name. `Test` alone matches each `import org.junit.Test`, 6,661 files outside the module that declares it, while its fully qualified name matches none.
+
+The difference is not marginal. Removing a member from a mid sized API class put 188 modules on the project edge and 6 on the type reference, and only 2 of those were production consumers that could break. Match the type rather than the member name, which collides across unrelated classes.
 
 Drop any module that is a `-test` or `-test-util` module or carries `.lfrbuild-portal-deprecated`.
 

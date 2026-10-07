@@ -14,24 +14,38 @@ Take the changed files:
 bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}"
 ```
 
-For each changed `.java` file, take its simple type name and search the two surfaces no other validation compiles, modules carrying `.lfrbuild-portal-deprecated` and `testIntegration` sources in `-test` modules:
+For each changed `.java` file, take its fully qualified type name, the package from its `package` line followed by the file name without `.java`, and list the files that reference it. A file outside that package has to import the type or spell out its fully qualified name, since the repository has no `com.liferay` wildcard imports, so search for that name rather than the simple one. A simple name collides with every unrelated type of the same name: `Test` matches each `import org.junit.Test`, which once put 473 modules in a consumer set whose true size was zero. A file in the same package needs no import, so search those for the simple name:
 
 ```bash
-(cd "${REPO_ROOT}" && find modules -name .lfrbuild-portal-deprecated | while read -r marker
-do
-	command grep --files-with-matches --include='*.java' --recursive --word-regexp "<TypeName>" "$(dirname "${marker}")/src/main"
-done) \
-	| bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" \
-	| cut -d " " -f1 \
-	| sed "s#^modules/##; s#/#:#g" \
-	| sort --unique
+(cd "${REPO_ROOT}" && git grep --cached --files-with-matches --fixed-strings --word-regexp '<FullyQualifiedName>' -- 'modules/*.java')
+(cd "${REPO_ROOT}" && git grep --all-match --cached --files-with-matches --fixed-strings --word-regexp -e 'package <package>;' -e '<TypeName>' -- 'modules/*.java')
 ```
 
-Pipe `find` into `while read -r` rather than looping over `$(find ...)`, which zsh does not word split, so that loop runs once over one joined string, greps a path that does not exist, and returns the same empty exit 1 as a clean scan.
+Search the index rather than the working tree, since a recursive `command grep` over `modules` descends into `build` and `node_modules`. Every file either search lists, other than the changed file itself, is a consumer file.
+
+Take the modules carrying `.lfrbuild-portal-deprecated` whose `src/main` holds a consumer file:
 
 ```bash
-(cd "${REPO_ROOT}" && command grep --files-with-matches --include='*.java' --recursive --word-regexp "<TypeName>" modules) \
-	| command grep "/src/testIntegration/" \
+printf '%s\n' <consumer file>... \
+	| command grep '/src/main/' \
+	| bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" \
+	| cut -d " " -f1 \
+	| sort --unique \
+	| while IFS= read -r module
+do
+	if [[ -e ${REPO_ROOT}/${module}/.lfrbuild-portal-deprecated ]]
+	then
+		echo "${module}"
+	fi
+done \
+	| sed "s#^modules/##; s#/#:#g"
+```
+
+Take the `-test` modules whose `src/testIntegration` holds a consumer file:
+
+```bash
+printf '%s\n' <consumer file>... \
+	| command grep '/src/testIntegration/' \
 	| bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" \
 	| cut -d " " -f1 \
 	| command grep --regexp='-test$' \
@@ -86,7 +100,7 @@ An empty consumer set is a PASS only when the scans were able to look. Assert th
 [ -d "${REPO_ROOT}/modules" ] || exit 1
 ```
 
-`command grep --include` suppresses the missing directory diagnostic, so a scan of a path that does not exist returns empty stdout, empty stderr, and exit 1, which is byte for byte what a genuinely clean scan returns. With `${REPO_ROOT}` unset the scans read `/modules` and the validation passes having examined nothing.
+`git grep` exits 1 with no output both for a clean scan and for a pathspec that matches nothing, so a search from the wrong directory is byte for byte what a genuinely clean scan returns.
 
 ## Checklist
 
