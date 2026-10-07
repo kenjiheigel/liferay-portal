@@ -1,10 +1,10 @@
 # Java Unit Tests
 
-Runs the unit tests that exercise a changed class.
+Runs the unit tests that exercise a changed class. An integration test under `src/testIntegration` selects nothing, since **Integration Test Compile** compiles it and no unit test runs it.
 
 ## Match
 
-`^modules/.+\.java$|^portal-(impl|kernel)/.+\.java$`
+`^modules/.+\.java$|^portal-(impl|kernel)/.+\.java$ &! /src/testIntegration/`
 
 ## Command
 
