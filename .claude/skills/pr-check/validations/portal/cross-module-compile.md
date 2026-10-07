@@ -4,7 +4,7 @@ Compiles the two kinds of consumer of a changed API that no other validation com
 
 ## Match
 
-`^portal-impl/.+\.java$|^portal-kernel/.+\.java$|^modules/.+-api/.+\.java$|^modules/.+/[^/]*(Constants|Service|Util)\.java$`
+`^portal-impl/src/.+\.java$|^portal-kernel/src/.+\.java$|^modules/.+-api/src/main/.+\.java$|^modules/.+/src/main/.+/[^/]*(Constants|Service|Util)\.java$`
 
 ## Command
 
