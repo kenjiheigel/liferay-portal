@@ -173,7 +173,7 @@ Process each validation in a subagent.
 
 ### Pass 1: Estimate
 
-Run [select_validations.sh](select_validations.sh) beside this document once, from `${REPO_ROOT}`. For each validation that fires, it prints the validation file, the number of paths it selected, and its `## Preconditions` and `## Time Estimate` sections. A validation fires when `select_paths.sh` prints a path, and a workspace validation is tried once for each workspace the branch changed, as **Routing** describes:
+Run [select_validations.sh](select_validations.sh) beside this document once, from `${REPO_ROOT}`. It prints a line for every validation, `== <file> (<count> paths)` for one that fires, followed by its `## Preconditions` and `## Time Estimate` sections, and `-- <file> (not fired)` for one that does not. A workspace validation names its workspace after the file. A validation fires when `select_paths.sh` prints a path, and a workspace validation is tried once for each workspace the branch changed, as **Routing** describes:
 
 ```bash
 bash <skill directory>/select_validations.sh "$(git merge-base HEAD "${BASE_BRANCH}")"
@@ -182,6 +182,8 @@ bash <skill directory>/select_validations.sh "$(git merge-base HEAD "${BASE_BRAN
 Leave out the validations the settings skip or whose scope they disable. Sum the time estimates of the rest for the cumulative total, counting a workspace validation once for each workspace it fired for, and add about 3 minutes once when any of them names **Portal Snapshots**. Estimate from the path counts the script prints rather than resolving modules, since the total only decides whether to ask the developer.
 
 When the total exceeds 20 minutes, surface the breakdown and ask the developer whether to trim a validation or proceed.
+
+The output, less the validations the settings skip or whose scope they disable, is the **ledger**, the record of what this run owes. Pass 2 builds the table from it, so a validation that fired is accounted for whether or not it ever ran.
 
 ### Shared Preconditions
 
@@ -222,7 +224,7 @@ When a precondition fails, stop the run. Dispatch no validation, publish no Resu
 
 The rules below divide in two. Dispatch, ordering, handoffs, the ledger, and the overall state belong to this runner. Reading a log, judging a result, and reporting a note belong to the subagent, which never sees this document and is told only what it needs.
 
-For each matched validation, spawn one subagent. **Give it only the `## Command` and `## Autocommit` sections of its validation.** Pass each section whole, from its heading to the next `## ` heading, and never through a line cap such as `head`, `tail`, or a fixed line range: a truncated section reads as complete, the subagent cannot know what it lost, and nothing downstream recovers it. A validation with no `## Autocommit` section makes no commit, so say so rather than leaving the subagent to infer it from an absence. That says nothing about the working tree, since a validation without one can still build and leave output behind. Record one of the results below, and capture any note the command directs it to return. Tell the subagent to run every command in the foreground and to return only once it has a verdict. A subagent that starts a build in the background and returns while it runs hands back no verdict, and nothing reports the build's result afterward. Do not halt on a failure, so the developer sees the full picture.
+Start every fired validation in the ledger at `NOT RUN`, then spawn one subagent for each. **Give it only the `## Command` and `## Autocommit` sections of its validation.** Pass each section whole, from its heading to the next `## ` heading, and never through a line cap such as `head`, `tail`, or a fixed line range: a truncated section reads as complete, the subagent cannot know what it lost, and nothing downstream recovers it. A validation with no `## Autocommit` section makes no commit, so say so rather than leaving the subagent to infer it from an absence. That says nothing about the working tree, since a validation without one can still build and leave output behind. Record one of the results below, and capture any note the command directs it to return. Tell the subagent to run every command in the foreground and to return only once it has a verdict. A subagent that starts a build in the background and returns while it runs hands back no verdict, and nothing reports the build's result afterward. Do not halt on a failure, so the developer sees the full picture.
 
 A validation returns one of five results:
 
@@ -319,7 +321,9 @@ Name every validation that returned `NOT APPLICABLE` on one line beneath the tab
 Module Registration had nothing to run. The diff removes `.lfrbuild-ci` from `apps:blogs:blogs-api`, which drops the module from CI's deploy pass and breaks no build, so whether CI still needs it is the developer's judgment.
 ```
 
-The overall state is `FAIL` when any row is `FAIL`, and `PASS` otherwise. A `NO COVERAGE` or `NOT VERIFIED` row leaves the overall state alone, and the marker the `pr-check-publish` skill writes still records `success`, since the webhook accepts only `failure`, `skipped`, and `success` and silently discards anything else.
+A row still `NOT RUN` when Pass 2 ends is a validation that matched the diff and never ran, which is how LPD-100427 shipped, so it stays in the table as `NOT RUN` and fails the run.
+
+The overall state is `FAIL` when any row is `FAIL` or `NOT RUN`, and `PASS` otherwise. A `NO COVERAGE` or `NOT VERIFIED` row leaves the overall state alone, and the marker the `pr-check-publish` skill writes still records `success`, since the webhook accepts only `failure`, `skipped`, and `success` and silently discards anything else.
 
 A validation may qualify its verdict, as **Baseline** does when it names the universe it compared, and the qualifier follows the verdict in the same cell rather than in a note. The overall state reads the verdict alone, so a qualified `PASS` is still a `PASS`.
 
