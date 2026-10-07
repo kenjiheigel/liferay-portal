@@ -6,6 +6,10 @@ Compiles the integration tests that consume a changed module, without running th
 
 `^modules/.+\.java$ &! /src/test/`
 
+## Preconditions
+
+- Portal Snapshots
+
 ## Command
 
 Take the changed modules:

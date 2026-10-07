@@ -6,6 +6,10 @@ Checks an added or removed `.lfrbuild-portal` or `.lfrbuild-ci` marker, which ch
 
 `(^|/)\.lfrbuild-(ci|portal(-private|-public)?)$`
 
+## Preconditions
+
+- Portal Snapshots
+
 ## Command
 
 Take the changed markers rather than running a `find`, which turns up marker copies under `node_modules` that are not modules, and read their statuses from the diff:
@@ -24,11 +28,7 @@ Split the markers by status before running anything, since the directions take d
 
 This validation has tasks for four families. `.lfrbuild-portal`, `.lfrbuild-portal-private`, and `.lfrbuild-portal-public` are the portal family the profile reads, and `.lfrbuild-ci` is consumed without it. The filter above takes every family, so report a marker outside the four as unhandled rather than running anything for it.
 
-For each **added** marker, deploy the module. The build the marker registers it for is going to build it, and a module that fails to build is exactly what the marker just broke. Deploying needs the portal snapshot installed first, or it fails resolving `com.liferay.portal.kernel` before it reaches the module, which is an environment failure rather than a registration one. Run the snapshot build only when the runner has not already reported it satisfied.
-
-```bash
-(cd "${REPO_ROOT}" && ant compile install-portal-snapshots)
-```
+For each **added** marker, deploy the module. The build the marker registers it for is going to build it, and a module that fails to build is exactly what the marker just broke.
 
 Deploy a portal family addition under the profile, since the newly admitted module's own `project(":...")` references must resolve inside the profile set, and a run without the profile includes everything by directory and cannot see one that does not:
 
@@ -95,4 +95,4 @@ A diff carrying no addition and no removal with a marked consumer runs nothing, 
 
 ## Time Estimate
 
-~3 min for the snapshot when a marker was added, then ~1 min per added marker. A removal reads and at most configures one consumer, so it takes seconds.
+~1 min per added marker. A removal reads and at most configures one consumer, so it takes seconds.

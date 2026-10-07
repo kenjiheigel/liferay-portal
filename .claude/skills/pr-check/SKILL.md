@@ -173,19 +173,54 @@ Process each validation in a subagent.
 
 ### Pass 1: Estimate
 
-Run [select_validations.sh](select_validations.sh) beside this document once, from `${REPO_ROOT}`. For each validation that fires, it prints the validation file, the number of paths it selected, and its `## Time Estimate` section. A validation fires when `select_paths.sh` prints a path, and a workspace validation is tried once for each workspace the branch changed, as **Routing** describes:
+Run [select_validations.sh](select_validations.sh) beside this document once, from `${REPO_ROOT}`. For each validation that fires, it prints the validation file, the number of paths it selected, and its `## Preconditions` and `## Time Estimate` sections. A validation fires when `select_paths.sh` prints a path, and a workspace validation is tried once for each workspace the branch changed, as **Routing** describes:
 
 ```bash
 bash <skill directory>/select_validations.sh "$(git merge-base HEAD "${BASE_BRANCH}")"
 ```
 
-Leave out the validations the settings skip or whose scope they disable. Sum the time estimates of the rest for the cumulative total, counting a workspace validation once for each workspace it fired for. Estimate from the path counts the script prints rather than resolving modules, since the total only decides whether to ask the developer.
+Leave out the validations the settings skip or whose scope they disable. Sum the time estimates of the rest for the cumulative total, counting a workspace validation once for each workspace it fired for, and add about 3 minutes once when any of them names **Portal Snapshots**. Estimate from the path counts the script prints rather than resolving modules, since the total only decides whether to ask the developer.
 
 When the total exceeds 20 minutes, surface the breakdown and ask the developer whether to trim a validation or proceed.
 
+### Shared Preconditions
+
+A validation names the setup it needs under `## Preconditions`, and its **Command** never performs that setup itself. Take the union of the names across the validations that fired and run each once, after Pass 1 and before Pass 2 dispatches anything. Dedupe on the name rather than the command, and take nothing from a validation that did not fire, so a diff of Markdown alone installs no snapshot.
+
+- **Portal Snapshots.** Build the top level Ant projects and install each as a snapshot under `${REPO_ROOT}/.m2`, so that a module compiles against the branch's own kernel rather than whatever an earlier build left there:
+
+	```bash
+	(cd "${REPO_ROOT}" && ant compile install-portal-snapshots)
+	```
+
+	A build that exits zero has not yet proved the tree usable. Confirm that each of the seven projects **Baseline** compares left its jar and installed its snapshot at the version its `bnd.bnd` declares. The loop prints each project that did not, and empty output is the pass:
+
+	```bash
+	for project in portal-impl portal-kernel portal-test util-bridges util-java util-slf4j util-taglib
+	do
+		artifact=com.liferay.$(echo "${project}" | tr - .)
+		version=$(sed -e "s/^Bundle-Version: //p" -n "${REPO_ROOT}/${project}/bnd.bnd")
+
+		if [[ ! -f ${REPO_ROOT}/${project}/${project}.jar || ! -f ${REPO_ROOT}/.m2/com/liferay/portal/${artifact}/${version}-SNAPSHOT/${artifact}-${version}-SNAPSHOT.jar ]]
+		then
+			echo "${project}"
+		fi
+	done
+	```
+
+	A snapshot that an earlier build installed at an older version looks present to anything but this check, and the first compile that needs the branch's version fails on `Could not find com.liferay.portal.test:<version>-SNAPSHOT`.
+
+- **SDK.** Set up the SDK the source formatter runs from:
+
+	```bash
+	(cd "${REPO_ROOT}" && ant setup-sdk)
+	```
+
+When a precondition fails, stop the run. Dispatch no validation, publish no Results Summary, and report the precondition, the decisive lines of its log, and the validations that named it. A validation cannot report this on its own behalf, since it sees only its own **Command** and cannot know its setup never ran, and a `NOT VERIFIED` row in its place would still publish a `success` marker for a run that never set up.
+
 ### Pass 2: Execute
 
-The rules below divide in two. Dispatch, ordering, the shared setup, handoffs, the ledger, and the overall state belong to this runner. Reading a log, judging a result, and reporting a note belong to the subagent, which never sees this document and is told only what it needs.
+The rules below divide in two. Dispatch, ordering, handoffs, the ledger, and the overall state belong to this runner. Reading a log, judging a result, and reporting a note belong to the subagent, which never sees this document and is told only what it needs.
 
 For each matched validation, spawn one subagent. **Give it only the `## Command` and `## Autocommit` sections of its validation.** Pass each section whole, from its heading to the next `## ` heading, and never through a line cap such as `head`, `tail`, or a fixed line range: a truncated section reads as complete, the subagent cannot know what it lost, and nothing downstream recovers it. A validation with no `## Autocommit` section makes no commit, so say so rather than leaving the subagent to infer it from an absence. That says nothing about the working tree, since a validation without one can still build and leave output behind. Record `PASS`, `FAIL`, or `NOT VERIFIED`, and capture any note the command directs it to return. Tell the subagent to run every command in the foreground and to return only once it has a verdict. A subagent that starts a build in the background and returns while it runs hands back no verdict, and nothing reports the build's result afterward. Do not halt on a failure, so the developer sees the full picture.
 
@@ -196,8 +231,6 @@ A `NOT VERIFIED` run does not autocommit, since a run that established nothing h
 Run workspace validations one workspace at a time. Each workspace build has its own Gradle daemon and heap and shares the Gradle cache with the others. Never pass `--offline` to a workspace build, since a cache miss under it prints as a dependency error that reads exactly like a compile failure.
 
 Run a validation that autocommits with **nothing else that writes to the working tree** in flight, since `git add --all` cannot tell its own repair from one another validation made seconds earlier and commits the wrong work under its title. A validation that only reads is safe alongside anything, provided it reads a commit it pinned at the start rather than the working tree or the index. A concurrent validation moves the tree when it writes and the index when it stages, so only a pinned commit holds still for the whole run. Whether a validation reads or writes can depend on the diff, since **Module Registration** only reports when its markers are all removals and builds when one is added, so treat it as a writer unless its own text rules the writing branch out for the diff at hand. Keep tree writers off each other too, since several share build output such as `modules/build/node`.
-
-Run `ant compile install-portal-snapshots` once before the first validation that declares it, rather than letting each launch the same build into the same `${REPO_ROOT}/.m2`. Tell every later subagent that it is satisfied, since a subagent sees only its own **Command** and would otherwise run it again.
 
 A validation may hand off to another, as **Per-Module Compile** does when its deploy set grows past the point where one full build is cheaper. Run the validation it names, give the table that validation's row and result, and mark the one that handed off `NOT VERIFIED`. Pass 1 selects on the changed paths alone and cannot see a set Pass 2 derives, so a handoff is the only way those branches run.
 
@@ -210,6 +243,7 @@ Give the subagent everything that the validations use but none of them defines:
 - `${REPO_ROOT}`, `${BASE_BRANCH}`, `${SOURCE_SHA}`, and `${MERGE_BASE}`.
 - `${BUILD_ROOT}` for a workspace validation.
 - `${SKILL_DIR}` and `${VALIDATION_FILE}` for a branch or portal validation, as the absolute paths of the directory holding this document and of its validation file.
+- The shared preconditions that ran, and that they are satisfied.
 - The ticket that its **Autocommit** section writes into a commit title as `<TICKET>`.
 - The result that its own verdict implies for committing, since the rule above lives here and the subagent never reads this document.
 

@@ -42,7 +42,7 @@ function _print_estimate {
 	then
 		echo "== ${2} ${3} ($(echo "${paths}" | wc -l | tr -d " ") paths)"
 
-		sed -e "/^## Time Estimate$/,/^## /p" -n "${2}"
+		awk '/^## / {print_section = ($0 == "## Preconditions" || $0 == "## Time Estimate")} print_section' "${2}"
 
 		echo
 	fi

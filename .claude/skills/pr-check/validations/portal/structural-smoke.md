@@ -6,15 +6,11 @@ Runs the structural tests that read the files the branch changed. **Selection** 
 
 `/configuration/.*Configuration\.java$|^portal-impl/src/portal-osgi-configuration\.properties$|^lib/|^\.classpath$|\.iml$|^\.idea/|/nbproject/project\.(properties|xml)$|\.gradle$|(^|/)(bnd|app)\.bnd$|^modules/.+/\.gitignore$|^modules/.+/README\.md$|^modules/.+/package\.json$|portal-log4j(-ext)?\.xml$|\.lfrbuild|^\.github/`
 
+## Preconditions
+
+- Portal Snapshots
+
 ## Command
-
-### Install Portal Snapshots
-
-Run before the scanners:
-
-```bash
-(cd "${REPO_ROOT}" && ant compile install-portal-snapshots)
-```
 
 ### Selection
 
@@ -82,4 +78,4 @@ Only these three scanners belong here. Do not add `Log4jConfigUtilTest` or `Samp
 
 ## Time Estimate
 
-~1-2 min for the scanners, plus the `install-portal-snapshots` build (fast when already built, a few minutes on a fresh checkout).
+~1-2 min for the scanners.

@@ -8,15 +8,15 @@ The comparison covers the whole repository because the release it compares again
 
 `. &! ^\.claude/|^modules/test/jenkins-results-parser/|^modules/test/playwright/|^modules/test/poshi/|^portal-web/test/`
 
+## Preconditions
+
+- Portal Snapshots
+
 ## Command
 
-Install the portal snapshot, then baseline:
+Every module baselines against the portal snapshot, which installs under `${REPO_ROOT}/.m2` rather than the home Maven repository, and with no `repository` segment in the path. Check for it at `${REPO_ROOT}/.m2/com/liferay/portal/com.liferay.portal.impl`, since probing the conventional `.m2/repository/com/liferay/...` reports a healthy tree as missing. A genuinely missing or stale one fails the module run with `Could not find com.liferay.portal.impl`, an environment failure rather than a versioning one.
 
-```bash
-(cd "${REPO_ROOT}" && ant compile install-portal-snapshots)
-```
-
-Every module baselines against that snapshot, which installs under `${REPO_ROOT}/.m2` rather than the home Maven repository, and with no `repository` segment in the path. Check for it at `${REPO_ROOT}/.m2/com/liferay/portal/com.liferay.portal.impl`, since probing the conventional `.m2/repository/com/liferay/...` reports a healthy tree as missing. A genuinely missing or stale one fails the module run with `Could not find com.liferay.portal.impl`, an environment failure rather than a versioning one.
+Run the baseline:
 
 ```bash
 (cd "${REPO_ROOT}" && ant baseline-all)
@@ -148,7 +148,6 @@ When several appear in one run, fail on the strictest the branch owns and leave 
 ## Checklist
 
 ```
-- [ ] Setup: ant compile install-portal-snapshots
 - [ ] Baseline
 ```
 

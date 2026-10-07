@@ -6,6 +6,10 @@ Compiles the two kinds of consumer of a changed API that no other validation com
 
 `^portal-impl/src/.+\.java$|^portal-kernel/src/.+\.java$|^modules/.+-api/src/main/.+\.java$|^modules/.+/src/main/.+/[^/]*(Constants|Service|Util)\.java$`
 
+## Preconditions
+
+- Portal Snapshots
+
 ## Command
 
 Take the changed files:

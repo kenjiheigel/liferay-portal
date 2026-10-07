@@ -6,6 +6,10 @@ Deploys each module the branch changed, which checks that it compiles and bundle
 
 `^modules/.+\.(java|js|jsx|mjs|cjs|ts|tsx|css|scss|sass|ftl|jsp|jspf)$|^modules/.+/src/main/.+\.properties$|^modules/.+/(bnd\.bnd|gradle\.properties|package-lock\.json|yarn\.lock|package\.json)$ &! ^modules/test/playwright/|/src/test/|/src/testIntegration/|(^|/)test\.properties$`
 
+## Preconditions
+
+- Portal Snapshots
+
 ## Command
 
 The deploy set is the Gradle project paths of the changed modules, such as `apps:blogs:blogs-api`. The expansions below match on that form, not on the directory:
@@ -72,13 +76,7 @@ Report the count and the cost math, run Full Portal Build in this validation's p
 
 Run the lockfile check regardless, since it needs no build and a handoff does not make a mismatched dependency any less broken.
 
-Set up once, then deploy each module:
-
-```bash
-(cd "${REPO_ROOT}" && ant compile install-portal-snapshots)
-```
-
-The setup step is a precondition: it rebuilds the `portal-kernel`/`portal-impl` snapshot from the branch tree before any module compiles, so a module referencing a portal-core symbol is checked against the branch's kernel rather than a stale snapshot. A kernel change from a separate, not-yet-merged PR is only caught once local `master` includes it, since pr-check never fetches a remote.
+Deploy each module. The **Portal Snapshots** precondition rebuilds the `portal-kernel`/`portal-impl` snapshot from the branch tree before any module compiles, so a module referencing a portal core symbol is checked against the branch's kernel rather than a stale snapshot. A kernel change from a separate PR that is not yet merged is only caught once local `master` includes it, since pr-check never fetches a remote.
 
 ```bash
 ("${REPO_ROOT}/gradlew" \
@@ -116,10 +114,9 @@ Report **NOT VERIFIED** naming every such path, and also when that tooling expan
 ## Checklist
 
 ```
-- [ ] Setup: ant compile install-portal-snapshots
 - [ ] (One subitem per deploy-set module:) Deploy <module path>
 ```
 
 ## Time Estimate
 
-3 min setup, then about 10 sec per module on a warm daemon and a minute or more on a cold one. Each module is its own `gradlew` invocation paying its own configuration, and `--parallel` works within an invocation rather than across them, so the cost is linear in N and the cap above is what keeps it bounded.
+About 10 sec per module on a warm daemon and a minute or more on a cold one. Each module is its own `gradlew` invocation paying its own configuration, and `--parallel` works within an invocation rather than across them, so the cost is linear in N and the cap above is what keeps it bounded.
