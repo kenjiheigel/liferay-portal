@@ -27,7 +27,7 @@ Leave `baseline.all.ant.projects` at its default of `true`. Passing `false` drop
 Prerequisites:
 
 - Each baseline resolves the last released artifact from Nexus, so the run needs network access. Use the local check below when there is none.
-- A project that has not been cleanly built on this branch cannot be baselined at all. Rerun after `ant all`, which rebuilds all seven and baselines each one through the `jar` target.
+- A project that has not been built on this branch cannot be baselined at all. The **Portal Snapshots** precondition builds the jar of each of the seven and stops the run when one is missing, so an unbuilt checkout never reaches this validation and is never the branch's failure.
 - Silence is not a pass, but a `baseline-all` that reports something is worth reading. [build.xml](../../../../../build.xml) passes `--quiet` to both of its Gradle calls, which suppresses lifecycle output and so deletes every `> Task` line. Warning rows are logged at `WARN` and survive, so a run that finds something prints its table and names the failing task. Take the findings from there when they are present.
 
 	A `BUILD SUCCESSFUL` from `baseline-all` is what proves nothing. The modules half runs `--continue --parallel` with no `--rerun`, so a cached `UP-TO-DATE` verdict is indistinguishable from a comparison, the seven Ant projects run under `failonerror="false"`, and `<parallel threadCount="2">` interleaves the two halves so nothing in the output can be attributed to a project. Use the standalone runs below to prove a project compared something, not to find what it found.
@@ -40,7 +40,7 @@ Confirm each Ant project actually baselined by running it alone, where nothing i
 ("${REPO_ROOT}/gradlew" --console=plain --project-dir "${REPO_ROOT}/<project>" baseline --rerun)
 ```
 
-Keep `--rerun`. Without it the task reports `UP-TO-DATE` and exits 0 in half a second, a cached verdict rather than a comparison. A genuine run prints `1 executed`. Fail when one of the seven is missing its jar, reports `Could not resolve`, or never prints `1 executed` — a baseline that did not run is not one that passed. A nonzero exit is not itself the verdict, since a project that ran and found something exits nonzero too.
+Keep `--rerun`. Without it the task reports `UP-TO-DATE` and exits 0 in half a second, a cached verdict rather than a comparison. A genuine run prints `1 executed`. Fail when one of the seven reports `Could not resolve` or never prints `1 executed` — a baseline that did not run is not one that passed. A nonzero exit is not itself the verdict, since a project that ran and found something exits nonzero too.
 
 Confirm the branch's own modules the same way, keeping `--rerun` and passing each as the project directory. Take the changed modules under `modules`, and keep those whose `bnd.bnd` carries `Export-Package` on the branch or on the merge base, since a module that exports nothing has no API to compare:
 
