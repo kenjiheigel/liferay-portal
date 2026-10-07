@@ -8,6 +8,7 @@ Compiles the two kinds of consumer of a changed API that no other validation com
 
 ## Preconditions
 
+- Portal Classpath
 - Portal Snapshots
 
 ## Command

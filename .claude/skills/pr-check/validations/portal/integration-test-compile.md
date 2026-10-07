@@ -8,6 +8,7 @@ Compiles the integration tests that consume a changed module, without running th
 
 ## Preconditions
 
+- Portal Classpath
 - Portal Snapshots
 
 ## Command

@@ -8,6 +8,7 @@ Runs the unit tests that exercise a changed class. An integration test under `sr
 
 ## Preconditions
 
+- Portal Classpath
 - Portal Snapshots
 
 ## Command
@@ -88,9 +89,9 @@ A run that executed no test is a FAIL, since a suite that ran nothing is not a s
 
 A run can die before any test method executes, as when a test rule's static initializer throws `NoClassDefFoundError`. JUnit still writes a results file, recording a synthesized `classMethod` entry carrying `failures="1"`, so the counts alone read as an ordinary failing test.
 
-Read the module's own build file for the missing class's module, which separates the two cases mechanically. When the module declares it, the branch broke a dependency that used to resolve, so FAIL and name it. When the module never declared it, the run fails on every branch alike and says nothing about this one, so report **NOT VERIFIED** with that finding as the reason. Charging it to the branch sends a developer hunting a regression that is not there, and the sibling module usually shows the declaration that is missing.
+Read the module's own build file for the missing class's module, which separates the two cases mechanically. When the module declares it, the branch broke a dependency that used to resolve, so FAIL and name it. When the module never declared it and the portal jars the runner deploys before this validation do not carry it either, the run fails on every branch alike and says nothing about this one, so report **NOT VERIFIED** with that finding as the reason. Charging it to the branch sends a developer hunting a regression that is not there, and the sibling module usually shows the declaration that is missing.
 
-Selecting by parallel name reaches tests no CI batch runs, since `modules-unit` takes a curated class name list per suite rather than every `*Test.java`. A module's test classpath is built from that module's own declared dependencies, so a test whose rule needs classes the module never declares cannot run whatever the branch does. Tests extending `LiferayUnitTestRule` are the common instance, needing a chain that reaches `com.liferay.petra.process` and beyond.
+Selecting by parallel name reaches tests no CI batch runs, since `modules-unit` takes a curated class name list per suite rather than every `*Test.java`. A module's test runtime classpath is its own declared dependencies plus those portal jars, which is how a test extending `LiferayUnitTestRule` reaches `com.liferay.petra.process` and `log4j` without declaring either.
 
 ## Checklist
 

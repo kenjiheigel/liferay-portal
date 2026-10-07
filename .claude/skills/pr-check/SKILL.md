@@ -179,7 +179,7 @@ Run [select_validations.sh](select_validations.sh) beside this document once, fr
 bash <skill directory>/select_validations.sh "$(git merge-base HEAD "${BASE_BRANCH}")"
 ```
 
-Leave out the validations the settings skip or whose scope they disable. Sum the time estimates of the rest for the cumulative total, counting a workspace validation once for each workspace it fired for, and add about 3 minutes once when any of them names **Portal Snapshots**. Estimate from the path counts the script prints rather than resolving modules, since the total only decides whether to ask the developer.
+Leave out the validations the settings skip or whose scope they disable. Sum the time estimates of the rest for the cumulative total, counting a workspace validation once for each workspace it fired for, and add about 3 minutes once when any of them names **Portal Snapshots**, and up to 2 minutes once when any names **Portal Classpath**. Estimate from the path counts the script prints rather than resolving modules, since the total only decides whether to ask the developer.
 
 When the total exceeds 20 minutes, surface the breakdown and ask the developer whether to trim a validation or proceed.
 
@@ -187,7 +187,7 @@ The output, less the validations the settings skip or whose scope they disable, 
 
 ### Shared Preconditions
 
-A validation names the setup it needs under `## Preconditions`, and its **Command** never performs that setup itself. Take the union of the names across the validations that fired and run each once, after Pass 1 and before Pass 2 dispatches anything. Dedupe on the name rather than the command, and take nothing from a validation that did not fire, so a diff of Markdown alone installs no snapshot.
+A validation names the setup it needs under `## Preconditions`, and its **Command** never performs that setup itself. Take the union of the names across the validations that fired and run each once, after Pass 1 and before Pass 2 dispatches anything. Dedupe on the name rather than the command, and take nothing from a validation that did not fire, so a diff of Markdown alone installs no snapshot. Run them in the order below, since **Portal Classpath** deploys the jars **Portal Snapshots** builds.
 
 - **Portal Snapshots.** Build the top level Ant projects and install each as a snapshot under `${REPO_ROOT}/.m2`, so that a module compiles against the branch's own kernel rather than whatever an earlier build left there:
 
@@ -211,6 +211,22 @@ A validation names the setup it needs under `## Preconditions`, and its **Comman
 	```
 
 	A snapshot that an earlier build installed at an older version looks present to anything but this check, and the first compile that needs the branch's version fails on `Could not find com.liferay.portal.test:<version>-SNAPSHOT`.
+
+- **Portal Classpath.** Deploy the jars a module's test classpath reads from the app server, which `modules/build.gradle` takes from the bundle's `WEB-INF/lib` and `WEB-INF/shielded-container-lib`. A `testIntegration` compile gets `portal-kernel`, `portal-impl`, and `petra` only from there, and a unit test gets `log4j` only from there, so without them both fail on every branch alike. This is the unit test bundle CI's `prepare-test-bundles` builds, plus `util-taglib` and `modules/core`, which a `testIntegration` compile also reads. Each `ant deploy` copies the jar **Portal Snapshots** already built, so the deploys run in any order. Leave out the `unzip-tomcat` step CI runs first, since it starts by deleting `${app.server.tomcat.dir}`, the bundle the developer runs and every checkout shares, and the deploys create the directories they write to:
+
+	```bash
+	(cd "${REPO_ROOT}" && ant deploy-additional-jars)
+
+	for project in portal-impl portal-kernel portal-test util-java util-taglib
+	do
+		(cd "${REPO_ROOT}/${project}" && ant deploy)
+	done
+
+	("${REPO_ROOT}/gradlew" \
+		--parallel \
+		--project-dir "${REPO_ROOT}/modules/core" \
+		deploy)
+	```
 
 - **SDK.** Set up the SDK the source formatter runs from:
 
