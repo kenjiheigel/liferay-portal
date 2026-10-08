@@ -203,11 +203,17 @@ Resolve `<TICKET>` from the branch name the way [commit.md](../../rules/commit.m
 
 Tell it how to commit as well, since no validation says. The title is the whole message, with no body and no attribution footer of any kind, which is the repository's convention for a generated commit.
 
-When the validation's **Command** is a build (gradle, ant, npm, jest), keep the whole log and bound only what is displayed:
+When the validation's **Command** is a build (gradle, ant, npm, jest), keep the whole log and bound only what is displayed. Keep the logs in `${REPO_ROOT}/build/pr-check/<validation>`, which `.gitignore` covers, so the developer can read them afterward and no `git add` sweeps them up. A workspace validation runs once per workspace, so add the workspace as a further directory, `<validation>/<workspace>`, or each run deletes the last one's logs. Clear that directory first, since a log left by an earlier run reads exactly like this one's:
 
 ```bash
-LOG_CHECK=$(mktemp)
-LOG_SETUP=$(mktemp)
+LOG_DIR="${REPO_ROOT}/build/pr-check/<validation>"
+
+rm -fr "${LOG_DIR}"
+
+mkdir -p "${LOG_DIR}"
+
+LOG_CHECK="${LOG_DIR}/check.log"
+LOG_SETUP="${LOG_DIR}/setup.log"
 
 <setup command> > "${LOG_SETUP}" 2>&1
 <check command> > "${LOG_CHECK}" 2>&1
@@ -216,6 +222,8 @@ tail --lines=100 "${LOG_CHECK}"
 ```
 
 Give each build its own log. A single binding reused across two builds means the second overwrites the first, and the evidence that setup succeeded is gone by the time you need it. A **Command** with one build needs only one.
+
+Write nothing outside that directory. A file left in `${REPO_ROOT}` or its parent is litter at best, and an autocommit can sweep it into the branch. Leave the working tree as you found it apart from the validation's own autocommit, and restore any tracked file a build rewrote as a side effect, such as the release info tokens in `portal-kernel/src/com/liferay/portal/kernel/util/ReleaseInfo.java`.
 
 Judge from each full log rather than from the tail. A source formatter prints its violations in the middle of a run and its stack trace at the end, so the last hundred lines carry the failure and not the reason for it. Search every log the run produced for the build tool's markers (`BUILD SUCCESSFUL`, `BUILD FAILED`, `Tests:`, `Test Suites:`) and for whatever the validation says its finding looks like. Apply this to build commands only, and leave inert commands like `git status --porcelain` untouched.
 
