@@ -35,45 +35,43 @@ function main {
 
 	while [ ${#} -gt 0 ]
 	do
-		case ${1} in
-			--dry-run)
-				dry_run=true
-				;;
-			--exclude)
-				excludes+=(":(exclude)${2}")
+		if [ ${1} == --dry-run ]
+		then
+			dry_run=true
+		elif [ ${1} == --exclude ]
+		then
+			excludes+=(":(exclude)${2}")
 
-				shift
-				;;
-			--group)
-				group_filter=${2}
+			shift
+		elif [ ${1} == --group ]
+		then
+			group_filter=${2}
 
-				shift
-				;;
-			--help)
-				_print_help
+			shift
+		elif [ ${1} == --help ]
+		then
+			_print_help
 
-				exit 0
-				;;
-			--json)
-				json=true
-				;;
-			--single)
-				single=true
-				;;
-			--staged)
-				staged=true
-				;;
-			--*)
-				echo "Unknown option ${1}." >&2
+			exit 0
+		elif [ ${1} == --json ]
+		then
+			json=true
+		elif [ ${1} == --single ]
+		then
+			single=true
+		elif [ ${1} == --staged ]
+		then
+			staged=true
+		elif [[ ${1} == --* ]]
+		then
+			echo "Unknown option ${1}." >&2
 
-				_print_help >&2
+			_print_help >&2
 
-				exit 2
-				;;
-			*)
-				diff_range=${1}
-				;;
-		esac
+			exit 2
+		else
+			diff_range=${1}
+		fi
 
 		shift
 	done
@@ -414,11 +412,11 @@ function _review_group {
 
 	local prompt
 
-	prompt="Review the diff below against the rules below, on behalf of the reviewer whose style guide follows. Work through the rules one at a time and check the whole diff against each before moving to the next, so no rule is skipped. Flag violations of these rules only: a rule outside this set is covered by another reviewer, so leave its violations out even when you notice them.
+	prompt="Review the diff below against the rules below, on behalf of the reviewer whose style guide follows. Work through the rules one at a time and check the whole diff against each before moving to the next, so no rule is skipped. Flag violations of these rules only: a rule outside this set is covered by another reviewer, so leave its violations out even when you notice them. Never report a convention listed under \"Enforced by the source formatter\" in the style guide, even where the diff breaks it and a rule seems to cover it: the source formatter already reports it.
 
 For a naming, ordering, or convention question the diff cannot settle, run \`git grep --cached <pattern>\` against the checkout at ${repo_root} before deciding, and read a changed file only when the diff lacks the context to decide. Always pass --cached. Use at most eight tool calls in total, and decide from the diff when they run out.
 
-Report each violation with the path of the file as it appears in the diff, the line number in the new file taken from the hunk headers, the number of the rule it violates (the three digit number in the heading of the rule whose text you are applying, never a related rule), a one sentence message that names what is wrong, and a fix that says exactly what to change. When your confidence is partial, still include the violation and start the fix with 'Verify:' so a human can confirm it. Do not flag anything inside a file whose contents include an @generated marker.
+Report each violation with the path of the file as it appears in the diff, the line number in the new file taken from the hunk headers, the number of the rule it violates (the three digit number in the heading of the rule whose text you are applying, never a related rule), a one sentence message that names what is wrong, and a fix that says exactly what to change. When your confidence is partial, still include the violation and start the fix with 'Verify:' so a human can confirm it. Do not flag anything inside a file whose contents include an @generated marker, and never report the \\ No newline at end of file marker: SourceFormatter strips the trailing newline from every file, so that marker is the expected state.
 
 When a violation is a mechanical formatting or layout matter that SourceFormatter also governs (collapsing or expanding a boolean return or a ternary, line wrapping, whitespace, blank lines, import order, or the ordering of members, parameters, or declarations), end the fix with 'SourceFormatter is authoritative: if applying this fails SourceFormatter, ignore it.'
 
@@ -573,7 +571,7 @@ _GROUPS=(
 	"naming-1|10|all"
 	"naming-2|11|all"
 	"ordering-1|201 202 203 204|all"
-	"ordering-2|205 206 207 208 209|all"
+	"ordering-2|205 208|all"
 	"utility-methods|3|java"
 	"control-flow|4|java sh"
 	"redundancy-and-visibility|5 8|java"

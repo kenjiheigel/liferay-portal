@@ -14,4 +14,6 @@ Only a lone `This is a sentence.` needs fixing: drop the period to make it a phr
 
 Per rule 001, if a class's existing messages already follow a different form, match the class rather than this rule.
 
-A violation is exactly one thing: a single complete sentence that ends with a period. A message without a trailing period is never a violation, even if it reads as a full sentence.
+The source formatter already reports a lone sentence ending with a period in the message of a thrown exception or a `_log` call in Java, when the message is a literal string or a concatenation of literals and other expressions (`ExceptionMessageCheck` and `LogMessageCheck`), and in the message passed to `_die`, `_error`, `_log`, or `_warn` in a shell script (`SHMessageCheck`). Leave those to it. This rule covers every other log, error, and exception message: shell output such as `echo`, messages in YAML, Groovy, and other files, and a Java message passed to another logger or built with no string literal at all.
+
+A violation is exactly one thing: a single complete sentence that ends with a period, in a message the source formatter does not check. A message without a trailing period is never a violation, even if it reads as a full sentence.

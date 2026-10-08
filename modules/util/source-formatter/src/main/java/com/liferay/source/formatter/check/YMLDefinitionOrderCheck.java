@@ -370,6 +370,8 @@ public class YMLDefinitionOrderCheck extends BaseFileCheck {
 		return definitions;
 	}
 
+	private static final Pattern _descriptionPattern = Pattern.compile(
+		"(?:^-\\s+|\n\\s+)it: (.+)");
 	private static final Map<String, Integer> _parametersWeightMap =
 		HashMapBuilder.put(
 			"cookie", 4
@@ -400,6 +402,13 @@ public class YMLDefinitionOrderCheck extends BaseFileCheck {
 
 			String trimmedContent1 = StringUtil.trimLeading(content1);
 			String trimmedContent2 = StringUtil.trimLeading(content2);
+
+			String description1 = _getDescription(trimmedContent1);
+			String description2 = _getDescription(trimmedContent2);
+
+			if ((description1 != null) && (description2 != null)) {
+				return description1.compareTo(description2);
+			}
 
 			if (trimmedContent1.startsWith("{{") ||
 				trimmedContent2.startsWith("{{") ||
@@ -459,6 +468,29 @@ public class YMLDefinitionOrderCheck extends BaseFileCheck {
 			}
 
 			return name1.compareTo(name2);
+		}
+
+		private String _getDescription(String trimmedContent) {
+			if (!trimmedContent.startsWith("-")) {
+				return null;
+			}
+
+			Matcher matcher = _descriptionPattern.matcher(trimmedContent);
+
+			if (!matcher.find()) {
+				return null;
+			}
+
+			String description = StringUtil.trim(matcher.group(1));
+
+			if ((description.length() > 1) &&
+				(description.startsWith("\"") || description.startsWith("'"))) {
+
+				description = description.substring(
+					1, description.length() - 1);
+			}
+
+			return description;
 		}
 
 		private String _getInValue(String parameter) {

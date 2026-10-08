@@ -32,38 +32,33 @@ Five principles run through everything:
 - Across a parallel set, mirror each type name one to one: a method throwing `PrincipalException` is `principalException`, not `principalDenied`, so no stray word lands on some names but not the type. [106]
 - Name a value or test to match the method it comes from: the result of `getStatus()` is `status` (not `statusCode`), and a test of it is `testStatusNotFound`. When the value flows into a destination that uses a different conceptual name (a JSON key, a parameter), match the destination instead — `String startDateString = jobStatus.getStartTime(); patchJSONObject.put("startDate", startDateString);` follows the JSON key with the `String` suffix per rule 104. [107]
 - Lead sibling uppercase `static final` constants (the `_SCREAMING_SNAKE_CASE` form, not lowercase fields like `_xyz`) with the shared category and order each name general to specific, so the set sorts together and reads as a family: distinct members are `_ANIMAL_HORSE` and `_ANIMAL_ZEBRA`, not `_HORSE_ANIMAL` beside `_ANIMAL_ZEBRA`; number interchangeable members off the stem (`_HORSE_1`, `_HORSE_2`). [108]
-- Name a lone `int` index `index` [109], a map entry loop variable `entry` with its parts `key` and `value` [110], and a lambda parameter after the value it stands for rather than a single letter [113].
-- A method that returns a collection takes the plural, `getFoos` [111]; paired methods differ only by the operation noun and share every qualifier, `getFoosByGroupIds` beside `getFoosCountByGroupIds` [112]; and the noun before `Count` is plural, `itemsCount` [114].
+- Name a map entry loop variable `entry` with its parts `key` and `value` [110], and a lambda parameter after the value it stands for rather than a single letter [113].
+- A method that returns a collection takes the plural, `getFoos` [111], and the noun before `Count` is plural, `itemsCount` [114].
 - Taste: use the precise domain verb (`delete`, not `remove`, for a database deletion). Drop a qualifier the context already implies, but add one when it is needed to tell two instances apart. Encode the real type in the suffix where it adds clarity (`...Page`, `...JSON`); a collection takes the plural, and an `...Array` or `...List` suffix is only for telling an array and a list of the same content apart within a class. The aim is a name that tells the reader exactly what the value is, with nothing redundant and nothing missing.
 
 ## Ordering and declaration
 
 - Sort a grouped block of independent variable assignments alphabetically; place a derived assignment after the variables it depends on, near its use. [201]
-- Sort every other sortable sequence the same way — method calls on one object, a method's parameters, sibling declarations, and literal lists. Variable, field, and method names sort case insensitively in natural order (per the source formatter's `JavaTermComparator`, so `_criterions` precedes `_criterionType`); literal strings sort case sensitively in ASCII order, with `null` last. Setter calls on a generated model mirror the defining schema instead — `service.xml` columns for a ServiceBuilder entity, `rest-openapi.yaml` fields for a REST DTO. Constructor body assignments follow the parameter order with derived assignments after (see `JavaConstructorParametersCheck`), and a vararg parameter is forced to the end of a parameter list. [202]
+- Sort every other sortable sequence the same way — method calls on one object, sibling declarations, and literal lists. Variable, field, and method names sort case insensitively in natural order (per the source formatter's `JavaTermComparator`, so `_criterions` precedes `_criterionType`); literal strings sort case sensitively in ASCII order, with `null` last. Setter calls on a generated model mirror the defining schema instead — `service.xml` columns for a ServiceBuilder entity, `rest-openapi.yaml` fields for a REST DTO. Constructor body assignments follow the parameter order with derived assignments after (see `JavaConstructorParametersCheck`). [202]
 - Declare each local immediately before its first use ("as used"). A wrapping object is the exception — the value the method returns, or a local whose sole purpose is to absorb another local through a setter — declared first and closed with the return statement or the setter, so it wraps the variables that build it ("burrito"). [203]
-- Sort scenario blocks introduced by an inline comment alphabetically by the comment's text [205], keep a conditional assignment in its alphabetical slot among the plain ones it sits between [206], sort a run of calls to the same test helper by their flattened statement text [207], and sort sibling assertions by the subject they check rather than by the assertion verb [208].
-- Sort `helm unittest` cases by their `it` description [209].
+- Sort scenario blocks introduced by an inline comment alphabetically by the comment's text [205], and sort sibling assertions by the subject they check rather than by the assertion verb [208].
 
 ## Prefer Liferay utilities
 
-- `GetterUtil` for coercion [301]; `ListUtil`, `SetUtil`, `MapUtil`, and `ArrayUtil.isEmpty` for empty checks [302]; `ArrayUtil.contains` for array membership [303]; `TransformUtil.transform` for a mapped list [304]; `JSONUtil` for building JSON [305]; `StringBundler` over `StringBuilder`, and over a `+` join of more than three pieces [306].
+- `GetterUtil` for coercion [301]; `ArrayUtil.contains` for array membership [303]; and `JSONUtil` for building JSON [305].
 - The principle behind the list: if Liferay already has a utility for the operation, use it. When you catch yourself writing a null and empty check, a map into a new list, or string concatenation, stop and reach for the util.
 
 ## Control flow and form
 
-- No `switch` or `case`; use an `if` / `else if` / `else` chain. [401]
 - Chain method calls only on a builder or a fluent type (`*Builder`, `Stream`, `Optional`, `Instant`, `JSONArray`, `JSONObject`, and the rest of `ChainingCheck`'s allow list); otherwise assign the result to a local and call on it. [402]
-- Use an enhanced `for` loop, not an explicit `Iterator` with `while (hasNext())`. [403]
 - Hoist a call out of a loop only when it does real work (database, network, non trivial computation), not for cheap invariant calls like `map.get(key)`, a list index access, or a plain getter — those read more directly inline at the use site. [404]
-- In bash under `set -o errexit`, preincrement a counter with `((++var))` rather than `((var++))` or `var=$((var + 1))`; postincrementing from `0` makes the arithmetic expression evaluate to `0`, which exits `1` and trips `errexit`. [405]
 - Write a shell test as `[` when its operands need no quotes and as `[[` when `[` would need quotes; never combine `[` with quoted operands. [406]
 - Prefer `while` to `do` / `while` [407], and leave early with a guard clause rather than nesting the real work inside a positive `if` [408].
 - Do not catch a checked exception only to wrap it in a broader one; declare it or let it propagate [409].
-- A shell script under `cloud/` opens with `set -o errexit`, `set -o nounset`, and `set -o pipefail` [410].
 
 ## Removing the unnecessary ("Simplify")
 
-This is the most taste driven area and the hardest to reduce to a rule, so it deserves the most explanation. The codified pieces are small: remove an assertion a later line already proves [501], inline a private constant used once [502], pass an expression directly instead of naming it for one call [503], name a delegating helper after its delegate or inline it [504], drop a narrative message from `assertTrue` and `assertFalse` [505], drop a redundant `L` suffix [506], and divide whole unit values with integer arithmetic rather than a defensive `Math.ceil` [507]. The broader instinct, which a reviewer should apply by judgment:
+This is the most taste driven area and the hardest to reduce to a rule, so it deserves the most explanation. The codified pieces are small: remove an assertion a later line already proves [501], inline a private constant used once [502], pass an expression directly instead of naming it for one call [503], name a delegating helper after its delegate or inline it [504], and divide whole unit values with integer arithmetic rather than a defensive `Math.ceil` [507]. The broader instinct, which a reviewer should apply by judgment:
 
 - Prefer the form a careful reader grasps fastest: fewer lines, fewer variables, fewer levels of nesting, fewer moving parts.
 - If removing something would not be noticed — a variable, a comment, a guard, an assertion, a wrapper, a `finally` — remove it.
@@ -93,14 +88,13 @@ Simplicity never outranks safety: when the two trade off, choose the safer form.
 - A short label is APA title case, per `capitalizemytitle.com/style/APA`; text that is really a description is a complete sentence ending in a period, or in a colon when it introduces a list or other text that follows. [702]
 - A log or exception message is a phrase, a title, or two or more sentences — never a lone sentence with a period. [703]
 - Spell out contractions [704], include the articles a sentence needs [705], write "ID" in uppercase in prose [706], and use complete sentences in comments and documentation [707].
-- In Markdown, put each paragraph on a single line and let the editor wrap it. [708]
-- Wrap a literal token in a message in escaped double quotes [709], keep the linking verb in a status or error message (`Foo is not allowed`, not `Foo not allowed`) [710], put one space after a period [711], and write `cleanup` as the noun and `clean up` as the verb [712].
+- Wrap a literal token in a message in escaped double quotes [709], keep the linking verb in a status or error message (`Foo is not allowed`, not `Foo not allowed`) [710], and write `cleanup` as the noun and `clean up` as the verb [712].
 - A `Language.properties` value names a product, feature, or field by its full official name, identically everywhere it appears [713].
 - Taste: expand code identifiers into plain English in prose (`DDM` becomes "dynamic data mapping", `classNameId` becomes "class name ID").
 
 ## Visibility and structure
 
-- A method used in one place is `private` and underscore prefixed; a `protected` method is justified only when it overrides a base class or base test case method. [801] Every override carries `@Override`. [802]
+- A method used in one place is `private` and underscore prefixed; a `protected` method is justified only when it overrides a base class or base test case method. [801]
 - Consolidate sibling `@Ignore`d test methods on one subject into one `@Test` with private `_test*` helpers [606], set up state in `@Before` and `@After` rather than their class level counterparts [607], and compare a boxed actual value against a boxed expected value instead of unboxing it [608].
 - Put a class in the package that matches its sole user or its naming sibling.
 
@@ -108,8 +102,37 @@ Simplicity never outranks safety: when the two trade off, choose the safer form.
 
 - In runtime logic, prefer an exact check over a loose one — `equals`, not a substring `contains`; a partial check in a test is fine. [901]
 - Do not end a URL or path with a trailing slash. [902]
-- Do not end a file with a trailing newline; the source formatter strips it, so the `\ No newline at end of file` marker in a diff is the expected state. [908]
 - In shell commands, use long form flags in alphabetical order [903], and put each argument of a multiline command on its own line [904].
-- In a shell script, define public functions like `main` before private underscore prefixed ones, sorted alphabetically within each group. [907]
-- Begin an inline comment with a capital letter and surround it with a blank line before and after. [905]
-- Separate logical groups with a blank line and keep the statements of one step adjacent [909]; in a `try` with resources, put a blank line between independent resources and one built from them [910].
+- Separate logical groups with a blank line and keep the statements of one step adjacent [909].
+
+## Enforced by the source formatter
+
+These conventions carry no rule here because the source formatter reports them:
+
+- No `switch` statement or shell `case` construct, written as an `if` / `else if` / `else` chain instead (`JavaSwitchCheck`, `SHCaseStatementCheck`).
+- No message on `Assert.assertTrue` or `Assert.assertFalse` (`AssertMessageCheck`).
+- Method and constructor parameters in alphabetical order (`ParameterOrderCheck`).
+- A block of different setters on one variable sorted by method name, and a run of calls to the same private test helper sorted by flattened text (`ConsecutiveMethodCallsOrderCheck`).
+- No `List` suffix on a name that is already plural (`ListNameCheck`).
+- A `Language.properties` value written as a title or a complete sentence (`PropertiesLanguageTitleOrSentenceCheck`).
+- A null and empty check on a list, map, set, or array written with the `isEmpty` and `isNotEmpty` methods of `ArrayUtil`, `ListUtil`, `MapUtil`, or `SetUtil` (`ArrayUtilCheck`, `IsEmptyUtilCheck`, `ListUtilCheck`).
+- A literal Java log or exception message that is not a lone sentence ending with a period (`ExceptionMessageCheck`, `LogMessageCheck`).
+- A blank line between a variable or `try` resource and the statement or resource that uses it (`MissingEmptyLineCheck`).
+- A lone index from `indexOf` named `index`, and reassigned rather than duplicated for a successive lookup (`IndexVariableNameCheck`).
+- A count method that carries the qualifier of the fetch it pairs with, `getFoosCountByGroupIds` beside `getFoosByGroupIds` (`PairedMethodNameCheck`).
+- A conditional field assignment kept in its alphabetical slot among the assignments from the same builder or source object (`ConditionalAssignmentOrderCheck`).
+- `helm unittest` cases sorted by their `it` description (`YMLDefinitionOrderCheck`).
+- `TransformUtil.transform` for a list built by mapping a loop (`TransformUtilCheck`).
+- `StringBundler` over `StringBuilder` (`StringBuilderCheck`), and over a `+` join of more than three pieces (`JavaMultiPlusConcatCheck`).
+- An enhanced `for` loop rather than an explicit `Iterator` (`IteratorLoopCheck`).
+- `((++var))` rather than `((var++))` or `var=$((var + 1))` in a bash script under `set -o errexit` (`SHIncrementCheck`).
+- `set -o errexit`, `set -o nounset`, and `set -o pipefail` at the top of every shell script under `cloud/` (`SHFailFastCheck`).
+- No redundant `L` suffix on an `int` sized literal in a primitive `long` slot (`LongLiteralSuffixCheck`).
+- A log or error message in a shell script that is not a lone sentence ending with a period (`SHMessageCheck`).
+- Each Markdown paragraph and list item on a single line (`MarkdownParagraphCheck`).
+- One space after a period in comments, messages, language values, and Markdown (`SentenceSpacingCheck`).
+- `@Override` on every override of a type the formatter can resolve (`OverrideAnnotationCheck`).
+- An inline comment that starts with a capital letter, set off by blank lines (`InlineCommentCheck`, `JavaEmptyLinesCheck`).
+- A space after each `:` and `,` of inline JSON, and none inside its braces (`InlineJSONSpacingCheck`).
+- Public shell functions before private ones, each group sorted (`SHFunctionOrderCheck`).
+- No trailing newline at the end of a file (`TrailingNewlineCheck`, `WhitespaceCheck`), so a `\ No newline at end of file` marker in a diff is the expected state.

@@ -34,8 +34,8 @@ public class LogMessageCheck extends BaseMessageCheck {
 
 			for (DetailAST exprDetailAST : exprDetailASTs) {
 				checkMessage(
-					getLiteralStringValue(exprDetailAST),
-					exprDetailAST.getLineNo());
+					exprDetailAST.getLineNo(),
+					getLiteralStringValue(exprDetailAST));
 			}
 		}
 	}

@@ -45,7 +45,7 @@ Pick the category by the leading digit of the existing files (`0xx` convention, 
 
 1. A paragraph starting `**Example:**` that cites the commit or pull request in prose. Follow it with a `diff` fence when a before and after reads faster than prose, using abstract identifiers (`foo`, `Bar`, `methodA`) rather than the commit's literal code, so the example illustrates the pattern instead of overfitting it to one case.
 
-Write the file the way the rules themselves demand: no hyphens in prose (rule 701), each paragraph on one line (rule 708), complete sentences, and no trailing newline at the end of the file (rule 908).
+Write the file the way the rules themselves demand: no hyphens in prose (rule 701), each paragraph on one line, complete sentences, and no trailing newline at the end of the file. The source formatter enforces the last two as `MarkdownParagraphCheck` and `WhitespaceCheck`.
 
 When the rule belongs to a section of `pr-reviewer/STYLE.md`, add a bracketed reference to it there.
 

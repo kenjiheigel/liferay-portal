@@ -7,6 +7,7 @@ package com.liferay.source.formatter.checkstyle.check;
 
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
@@ -19,7 +20,7 @@ import java.util.List;
  */
 public abstract class BaseMessageCheck extends BaseCheck {
 
-	protected void checkMessage(String literalStringValue, int lineNo) {
+	protected void checkMessage(int lineNo, String literalStringValue) {
 		if (Validator.isNull(literalStringValue) ||
 			literalStringValue.endsWith(StringPool.TRIPLE_PERIOD)) {
 
@@ -47,23 +48,11 @@ public abstract class BaseMessageCheck extends BaseCheck {
 		StringBundler sb = new StringBundler();
 
 		if (firstChildDetailAST.getType() == TokenTypes.PLUS) {
-			DetailAST childDetailAST = firstChildDetailAST.getFirstChild();
-
-			while (true) {
-				if (childDetailAST.getType() != TokenTypes.STRING_LITERAL) {
-					return null;
-				}
-
-				String s = childDetailAST.getText();
-
-				sb.append(s.substring(1, s.length() - 1));
-
-				childDetailAST = childDetailAST.getNextSibling();
-
-				if (childDetailAST == null) {
-					return sb.toString();
-				}
+			if (!_appendOperand(firstChildDetailAST, sb)) {
+				return null;
 			}
+
+			return _getLiteralStringValue(sb);
 		}
 
 		if (firstChildDetailAST.getType() != TokenTypes.METHOD_CALL) {
@@ -83,20 +72,66 @@ public abstract class BaseMessageCheck extends BaseCheck {
 			elistDetailAST, false, TokenTypes.EXPR);
 
 		for (DetailAST curExprDetailAST : exprDetailASTs) {
-			firstChildDetailAST = curExprDetailAST.getFirstChild();
-
-			if (firstChildDetailAST.getType() != TokenTypes.STRING_LITERAL) {
+			if (!_appendOperand(curExprDetailAST.getFirstChild(), sb)) {
 				return null;
 			}
-
-			String s = firstChildDetailAST.getText();
-
-			sb.append(s.substring(1, s.length() - 1));
 		}
 
-		return sb.toString();
+		return _getLiteralStringValue(sb);
 	}
 
+	private boolean _appendOperand(DetailAST detailAST, StringBundler sb) {
+		if ((detailAST.getType() == TokenTypes.LPAREN) ||
+			(detailAST.getType() == TokenTypes.RPAREN)) {
+
+			return true;
+		}
+
+		if (detailAST.getType() == TokenTypes.STRING_LITERAL) {
+			String s = detailAST.getText();
+
+			sb.append(s.substring(1, s.length() - 1));
+
+			return true;
+		}
+
+		if (detailAST.getType() == TokenTypes.PLUS) {
+			for (DetailAST childDetailAST = detailAST.getFirstChild();
+				 childDetailAST != null;
+				 childDetailAST = childDetailAST.getNextSibling()) {
+
+				if (!_appendOperand(childDetailAST, sb)) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		if (!isAttributeValue(_CHECK_CONCATENATED_MESSAGES_KEY)) {
+			return false;
+		}
+
+		sb.append(_PLACEHOLDER);
+
+		return true;
+	}
+
+	private String _getLiteralStringValue(StringBundler sb) {
+		String s = sb.toString();
+
+		if (Validator.isNull(StringUtil.removeSubstring(s, _PLACEHOLDER))) {
+			return null;
+		}
+
+		return s;
+	}
+
+	private static final String _CHECK_CONCATENATED_MESSAGES_KEY =
+		"checkConcatenatedMessages";
+
 	private static final String _MSG_INCORRECT_MESSAGE = "message.incorrect";
+
+	private static final String _PLACEHOLDER = "X";
 
 }

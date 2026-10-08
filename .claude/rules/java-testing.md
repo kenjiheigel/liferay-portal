@@ -30,4 +30,4 @@ A private helper called from one place whose body is a single delegated call is 
 
 ## No Explanatory Comments
 
-Do not explain the test in comments; put the rationale in the commit message instead. The comments that do belong are short labels for scenario blocks, sorted per rule 205, and rule 905 governs their form.
+Do not explain the test in comments; put the rationale in the commit message instead. The comments that do belong are short labels for scenario blocks, sorted per rule 205, and the source formatter's `InlineCommentCheck` and `JavaEmptyLinesCheck` govern their form.
