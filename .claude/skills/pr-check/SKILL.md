@@ -65,6 +65,29 @@ In `liferay-portal-ee`, this skill and its validations are copied from local `ma
 
 	Each line names the rule and the file it hides. When any line prints, abort and ask the developer to commit or delete each file. The type filter keeps a personally ignored `.DS_Store` or editor file from stopping the run, and `--directory` keeps a whole ignored directory, such as `build`, to one line that the filter then drops.
 
+- **Shared Gradle build cache.** `gradlew` gives every checkout its own Gradle user home in `.gradle`, so a new worktree starts with an empty build cache, and its first full build compiles every module from scratch. Point this checkout's build cache at one directory every checkout on the machine shares. Use `${SHARED_GRADLE_CACHE}` when it is set, and `~/.liferay/gradle-build-cache` otherwise, beside the mirrors cache the build already keeps in `~/.liferay`:
+
+	```bash
+	REPO_ROOT=$(git rev-parse --show-toplevel)
+
+	SHARED_GRADLE_CACHE=${SHARED_GRADLE_CACHE:-${HOME}/.liferay/gradle-build-cache}
+
+	mkdir -p "${REPO_ROOT}/.gradle/caches" "${SHARED_GRADLE_CACHE}"
+
+	BUILD_CACHE_DIR=${REPO_ROOT}/.gradle/caches/build-cache-1
+
+	if [[ -d ${BUILD_CACHE_DIR} && ! -L ${BUILD_CACHE_DIR} ]]
+	then
+		rsync --archive --exclude="*.lock" --ignore-existing "${BUILD_CACHE_DIR}/" "${SHARED_GRADLE_CACHE}/"
+
+		rm -fr "${BUILD_CACHE_DIR}"
+	fi
+
+	ln -fns "${SHARED_GRADLE_CACHE}" "${BUILD_CACHE_DIR}"
+	```
+
+	Link only the build cache, never the whole user home. Ant writes the properties Gradle needs, such as `liferay.home` and `baseline.jar.report.level`, into this checkout's own `.gradle/gradle.properties`, and a shared user home would read none of them. An existing cache folder is merged into the shared directory before the link replaces it, so nothing cached is lost: each entry is named by its cache key, and an entry already there holds the same content. Tell the developer which directory is in use the first time the link is created or repointed, in one line, such as `Using ~/.liferay/gradle-build-cache as the shared Gradle build cache.` When the link already points there, say nothing.
+
 ## Input
 
 ### Diff
