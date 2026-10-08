@@ -19,9 +19,9 @@ bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}" \
 	| sed "s#^modules/##; s#/#:#g"
 ```
 
-Drop a module the branch deleted, which `find_modules.sh` still names through the merge base but which has nothing left to deploy, and report its paths below as paths that sit in no module. A module was deleted when `git cat-file -e "HEAD:<module directory>"` fails. When the runner says Full Portal Build is in the run, drop each module carrying `.lfrbuild-portal` as well, since `ant all` already deploys it.
+Drop a module the branch deleted, which `find_modules.sh` still names through the merge base but which has nothing left to deploy, and report its paths below as paths that sit in no module. A module was deleted when `git cat-file -e "HEAD:<module directory>"` fails. When the runner says Full Portal Build ran and succeeded, drop each module carrying `.lfrbuild-portal` as well, since `ant all` already deployed it. When the runner says it failed, drop nothing, since a failed `ant all` stops at its first error and vouches for no module.
 
-Exclude modules whose **only** Java change is under `src/testIntegration`. Integration Test Compile already runs `compileTestIntegrationJava` for those, and `-test` modules do not deploy a runtime bundle — `gradlew :path:deploy` would be redundant. A diff that touches `src/testIntegration` *and* anything else in the same module still puts the module in the deploy set.
+Exclude modules whose **only** Java change is under `src/testIntegration`. Cross-Module Compile already runs `compileTestIntegrationJava` for those, and `-test` modules do not deploy a runtime bundle — `gradlew :path:deploy` would be redundant. A diff that touches `src/testIntegration` *and* anything else in the same module still puts the module in the deploy set.
 
 Expand by consumers only when the change can break one. An added `public` or `protected` member is source and binary compatible, so it expands nothing. A removed member, or one whose signature changed, does break consumers. Collect the removed and added member lines separately and expand only on a removal with no matching addition, since a member that was moved or reformatted appears as both and breaks nobody:
 

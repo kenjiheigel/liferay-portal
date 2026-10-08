@@ -183,7 +183,7 @@ A validation may hand off to another, as **Per-Module Compile** does when its de
 
 An autocommit can change the diff, so recompute the ledger after a validation whose commit may add a path Pass 1 never saw, as Baseline's `packageinfo` and `bnd.bnd` repairs do, and dispatch whatever newly fires. Skip it after a validation that can only touch paths the branch already changed, such as a formatter running in current branch mode, since its commit cannot widen the diff.
 
-Tell Integration Test Compile and Per-Module Compile whether Full Portal Build is in the run, since each narrows its work when it is.
+Tell Per-Module Compile whether Full Portal Build is in the run and, when it is, whether it succeeded, since a successful build lets it narrow its work and a failed one does not.
 
 Give the subagent everything that the validations use but none of them defines:
 
