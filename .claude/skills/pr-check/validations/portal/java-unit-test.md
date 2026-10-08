@@ -22,7 +22,11 @@ Do not select `Log4jConfigUtilTest` or `SampleSQLBuilderTest`, even when their c
 
 Verify each counterpart file exists before scheduling it.
 
-When no counterpart exists, nothing here can exercise the change, whatever the module costs to build. Report **NOT VERIFIED** and name the changed class as having no unit test, rather than as uncovered. The same name often exists as an integration test in the sibling `-test` module, which this validation does not run but which does cover the class, so name that file when it exists or the report sends a developer to write a test that is already there. Running a suite that never touches the changed class establishes no more than declining to run it, so module size must not decide the verdict.
+A changed file that is itself a unit test, ending in `Test.java` under one of those test trees, is scheduled directly, since the test is the change. Its run decides the verdict like a counterpart's, so a green run of a changed test is a PASS.
+
+When a changed production class has no counterpart, nothing here can exercise it, whatever the module costs to build. Name it as having no unit test, rather than as uncovered. The same name often exists as an integration test in the sibling `-test` module, which this validation does not run but which does cover the class, so name that file when it exists or the report sends a developer to write a test that is already there.
+
+When no test was scheduled at all, neither a counterpart nor a changed test, report **NOT VERIFIED**. Running a suite that never touches the changed class establishes no more than declining to run it, so module size must not decide the verdict.
 
 Running the suite anyway is worth doing when it is cheap, since it can catch an unrelated break. It cannot change the verdict either way, because a green suite that never loaded the changed class does not make it a PASS and a red one does not make it a FAIL. Report what the suite did alongside the **NOT VERIFIED**.
 
