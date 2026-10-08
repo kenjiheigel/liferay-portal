@@ -102,7 +102,7 @@ Judge only the `compile` task, since the graph drags in the repository's node an
 An empty consumer set is a PASS only when the scans were able to look. Assert the search root before believing an empty result:
 
 ```bash
-[ -d "${REPO_ROOT}/modules" ] || exit 1
+[[ -d ${REPO_ROOT}/modules ]] || exit 1
 ```
 
 `git grep` exits 1 with no output both for a clean scan and for a pathspec that matches nothing, so a search from the wrong directory is byte for byte what a genuinely clean scan returns.

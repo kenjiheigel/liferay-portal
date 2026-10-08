@@ -54,8 +54,8 @@ bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}" \
 	| sort --unique \
 	| while IFS= read -r module
 do
-	if command grep --quiet '^Export-Package' "${REPO_ROOT}/${module}/bnd.bnd" 2>/dev/null ||
-	   git show "${MERGE_BASE}:${module}/bnd.bnd" 2>/dev/null | command grep '^Export-Package' > /dev/null
+	if command grep '^Export-Package' "${REPO_ROOT}/${module}/bnd.bnd" > /dev/null 2>&1 ||
+	   git show "${MERGE_BASE}:${module}/bnd.bnd" 2> /dev/null | command grep '^Export-Package' > /dev/null
 	then
 		echo "${module}"
 	fi

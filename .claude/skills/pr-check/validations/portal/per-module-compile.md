@@ -106,7 +106,10 @@ Treat `UP-TO-DATE` on a changed module's own `compileJava` with the same suspici
 A changed path that sits in no module, other than the shared tooling above, has nothing to build. Find those paths by resolving the changed paths:
 
 ```bash
-bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}" | bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" | command grep '^- ' | cut -d " " -f2-
+bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}" \
+	| bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" \
+	| command grep '^- ' \
+	| cut -d " " -f2-
 ```
 
 Report **NO COVERAGE** naming every such path, and also when that tooling expanded to no module. When a changed path does sit inside a module and the set is still empty, the derivation is broken, so report that as a FAIL. The validation passes when every module in the deploy set reports `BUILD SUCCESSFUL`.

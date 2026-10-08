@@ -17,7 +17,8 @@ Take the changed markers rather than running a `find`, which turns up marker cop
 ```bash
 HEAD_SHA=$(git rev-parse HEAD)
 
-bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}" | xargs git diff --name-status --no-renames "${MERGE_BASE}" "${HEAD_SHA}" --
+bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}" \
+	| xargs git diff --name-status --no-renames "${MERGE_BASE}" "${HEAD_SHA}" --
 ```
 
 Pin `${HEAD_SHA}` once here and read every later query at it, since a concurrent validation moves the working tree when it writes and the index when it stages.
