@@ -1,6 +1,6 @@
 # Java Unit Tests
 
-Runs the unit tests that exercise a changed class. An integration test under `src/testIntegration` selects nothing, since **Integration Test Compile** compiles it and no unit test runs it.
+Runs the unit tests that exercise a changed class. An integration test under `src/testIntegration` selects nothing, since **Cross-Module Compile** compiles it and no unit test runs it.
 
 ## Match
 
