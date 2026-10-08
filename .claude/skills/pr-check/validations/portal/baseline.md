@@ -4,6 +4,8 @@ Compares each exported API against its last release and fails on a missing, exce
 
 The comparison covers the whole repository because the release it compares against comes from Nexus and can change between runs. Only a module the branch changed can fail it, so one stale version on master does not fail every pull request. It runs on every diff apart from one confined to `.claude`, `portal-web/test`, or the `jenkins-results-parser`, `playwright`, and `poshi` trees under `modules/test`, none of which can require a version bump.
 
+Shuyang Zhou must approve every change to this validation, including its Match, since narrowing either the Match or the whole repository run reopens the release drift that 3c27d38 fixed.
+
 ## Match
 
 `. &! ^\.claude/|^modules/test/jenkins-results-parser/|^modules/test/playwright/|^modules/test/poshi/|^portal-web/test/`
