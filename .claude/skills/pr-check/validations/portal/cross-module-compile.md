@@ -1,99 +1,120 @@
 # Cross-Module Compile
 
-Compiles the two kinds of consumer of a changed API that no other validation compiles. The first is a module carrying `.lfrbuild-portal-deprecated`, which the default profile leaves out. The second is the `testIntegration` source of a `-test` module the branch did not change. Both depend on the kernel as a binary rather than through `project(...)`, so they are found by searching for the changed type.
+Compiles two kinds of consumer of a changed module, neither of which any other validation compiles. The first is the `testIntegration` source of a `-test` module. The second is a module carrying `.lfrbuild-portal-deprecated`, which the default profile leaves out. `ant all` compiles neither, so this runs whatever **Full Portal Build** returns.
 
 ## Match
 
-`^portal-impl/.+\.java$|^portal-kernel/.+\.java$|^modules/.+-api/.+\.java$|^modules/.+/[^/]*(Constants|Service|Util)\.java$`
+`^(modules|portal-impl|portal-kernel)/.+\.java$`
 
 ## Command
 
-Take the changed files:
+Run every command below from `${REPO_ROOT}`. `git grep` searches from the current directory down, so from anywhere else the sweeps silently narrow to a subtree.
+
+### Consumers
+
+Find consumers by two routes and take their union. A module both routes find is compiled once.
+
+**By module.** Take the changed modules:
 
 ```bash
-bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}"
+bash "${SKILL_DIR}/select_paths.sh" "${MERGE_BASE}" "${VALIDATION_FILE}" \
+	| bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" \
+	| cut -d " " -f1 \
+	| command grep '^modules/' \
+	| sort --unique
 ```
 
-For each changed `.java` file, take its simple type name and search the two surfaces no other validation compiles, modules carrying `.lfrbuild-portal-deprecated` and `testIntegration` sources in `-test` modules:
+For each changed module, take every module under the same parent directory whose name ends in `-test` and which has a `src/testIntegration` tree, so `apps:blogs:blogs-api` brings in `apps:blogs:blogs-test`. Add every `-test` module whose `build.gradle` declares the changed module, where `<path>` is the changed module's Gradle project path:
 
 ```bash
-(cd "${REPO_ROOT}" && find modules -name .lfrbuild-portal-deprecated | while read -r marker
+git grep --cached --files-with-matches --fixed-strings 'project(":<path>")' -- '*.gradle' \
+	| bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" \
+	| cut -d " " -f1
+```
+
+**By type.** For each changed `.java` file that sits under `portal-impl`, `portal-kernel`, or a module whose name ends in `-api`, and for each changed file named `*Constants.java`, `*Service.java`, or `*Util.java`, take its simple type name and find the files that name it:
+
+```bash
+git grep --cached --files-with-matches --word-regexp '<TypeName>' -- ':(glob)modules/**/src/testIntegration/**/*.java'
+```
+
+```bash
+git ls-files 'modules/**/.lfrbuild-portal-deprecated' \
+	| while IFS= read -r marker
+	do
+		git grep --cached --files-with-matches --word-regexp '<TypeName>' -- ":(glob)$(dirname "${marker}")/src/main/**/*.java"
+	done
+```
+
+Map each file to its module with `find_modules.sh`. From the first search, keep only modules whose name ends in `-test`.
+
+Leave out `modules/dxp/apps/saml/saml-admin-rest-test` and every module under `modules/sdk`. Convert each module to its Gradle project path with `sed "s#^modules/##; s#/#:#g"`, and keep two sorted lists: the `testIntegration` consumers and the deprecated consumers.
+
+When both lists are empty, compile nothing and report **NOT VERIFIED**, naming the changed modules as having no integration test consumer.
+
+### Compile
+
+Compile all the `testIntegration` consumers in one Gradle run, never one run per module. Gradle schedules the tasks in parallel itself, and every separate run pays the configuration cost again. Write the consumers' project paths, one per line, to `${CONSUMERS_FILE}`, such as `${LOG_DIR}/consumers.txt`:
+
+```bash
+TASKS=()
+
+while IFS= read -r project_path
 do
-	command grep --files-with-matches --include='*.java' --recursive --word-regexp "<TypeName>" "$(dirname "${marker}")/src/main"
-done) \
-	| bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" \
-	| cut -d " " -f1 \
-	| sed "s#^modules/##; s#/#:#g" \
-	| sort --unique
+	TASKS+=(":${project_path}:compileTestIntegrationJava" --rerun)
+done < "${CONSUMERS_FILE}"
+
+("${REPO_ROOT}/gradlew" \
+	--continue \
+	--parallel \
+	--project-dir "${REPO_ROOT}/modules" \
+	"${TASKS[@]}")
 ```
 
-Pipe `find` into `while read -r` rather than looping over `$(find ...)`, which zsh does not word split, so that loop runs once over one joined string, greps a path that does not exist, and returns the same empty exit 1 as a clean scan.
-
-```bash
-(cd "${REPO_ROOT}" && command grep --files-with-matches --include='*.java' --recursive --word-regexp "<TypeName>" modules) \
-	| command grep "/src/testIntegration/" \
-	| bash "${SKILL_DIR}/find_modules.sh" "${MERGE_BASE}" \
-	| cut -d " " -f1 \
-	| command grep --regexp='-test$' \
-	| sed "s#^modules/##; s#/#:#g" \
-	| sort --unique
-```
-
-Both scans print Gradle project paths, written `<path>` below.
-
-Cap the combined set at 8. When it exceeds the cap, skip the expansion for **every** symbol rather than part of it, and recommend Full Portal Build plus Integration Test Compile instead, since a partial expansion reports on an arbitrary subset while reading as a whole result.
-
-Deprecated consumer (the only profile that includes it):
+Compile the deprecated consumers in a second run, since they exist only under their own profile and that profile leaves out the `-test` modules. Build `${TASKS}` the same way with `:compileJava` in place of `:compileTestIntegrationJava`, then:
 
 ```bash
 ("${REPO_ROOT}/gradlew" \
+	--continue \
+	--parallel \
 	--project-dir "${REPO_ROOT}/modules" \
 	-Dbuild.profile=portal-deprecated \
-	:<path>:compileJava \
-	--rerun)
+	"${TASKS[@]}")
 ```
 
-testIntegration consumer:
+Put `--rerun` after every task path, since it is an option on the task before it and forces only that one. Without it a warm tree prints `UP-TO-DATE` and the build cache restores `FROM-CACHE`, either way a green log in which the compile under test never ran. Do not pass `--no-build-cache`, which reruns the node and yarn bootstrap and leaves the tree broken for the next validation.
+
+Count the executed compile lines and check the count against the list:
 
 ```bash
-("${REPO_ROOT}/gradlew" \
-	--project-dir "${REPO_ROOT}/modules" \
-	:<path>:compileTestIntegrationJava \
-	--rerun)
+command grep --count --extended-regexp '^> Task :.*:compileTestIntegrationJava$' "${LOG}"
 ```
 
-Keep `--rerun`, which is an option on the compile task and follows the task path. Without it a warm tree reports `UP-TO-DATE` and the build cache restores `FROM-CACHE`, either way a green log in which the compile under test never ran. It forces the one task alone, which is why it is safe where `--no-build-cache` below is not.
+A consumer whose task line is missing, or ends in `UP-TO-DATE` or `FROM-CACHE`, was not compiled, so name it and report **NOT VERIFIED** for it.
 
-A consumer that declares the producer with `project(":...")` resolves it from the working tree, so it compiles against the branch's own change. One that resolves a published artifact instead sees only what is released, and pr-check never fetches a remote, so a producing change that is still in review is invisible to it.
+### Verdict
 
-FAIL when a consumer compile reports `BUILD FAILED` naming one of the type names searched for, and report the consumer and that symbol. A failure naming none of them is already broken on the merge base, since this validation compiles consumers the branch did not touch, so report it and do not fail the branch.
+FAIL when a compile reports an error naming something the diff changed, either a changed type or a file in a changed module, and name the consumer and the error.
 
-A compile that aborts before reaching the consumer of the changed symbol never checked it, so discounting the failure is not the same as clearing the symbol. Two things stop a compile short, and the error count detects neither, since a truncated run and a fatal abort both report a small number:
+An error that names nothing the diff changed is in code the branch did not touch, so it either predates the branch or comes from the environment. Report **NOT VERIFIED** for that consumer and name the error. A common shape is `package com.liferay.portal.kernel.model does not exist` for a package that plainly exists in the tree, which is a broken snapshot rather than the branch.
+
+A compile can stop short of checking every consumer in two ways. `javac` stops at 100 errors and prints the line below, while a fatal abort, such as `error: cannot access` or an annotation processor crash, prints nothing comparable:
 
 ```bash
 command grep --fixed-strings 'only showing the first' "${LOG}"
 ```
 
-That line is `javac` truncating at its 100 error cap. A fatal abort prints no marker at all, so also treat any `error: cannot access`, annotation processor crash, or run whose output ends without a diagnostic for the file holding the searched symbol as having stopped short.
+When either happened in a consumer, report **NOT VERIFIED** naming it.
 
-When either applies, report **NOT VERIFIED** naming the consumer. Otherwise confirm the symbol was actually compiled by recompiling on its own the one file that names it, against the same classpath. A PASS here has to mean the symbol was compiled and was fine, never that the compiler never got to it. Do not look for the consumer's class files as evidence: `javac` skips generation once any error exists, so a failing run emits none whether or not it reached your symbol.
-
-Judge only the `compile` task, since the graph drags in the repository's node and yarn bootstrap and a failure there stops the compile from ever running. Do not pass `--no-build-cache`, which reruns that bootstrap and leaves the tree broken for the next validation.
-
-An empty consumer set is a PASS only when the scans were able to look. Assert the search root before believing an empty result:
-
-```bash
-[ -d "${REPO_ROOT}/modules" ] || exit 1
-```
-
-`command grep --include` suppresses the missing directory diagnostic, so a scan of a path that does not exist returns empty stdout, empty stderr, and exit 1, which is byte for byte what a genuinely clean scan returns. With `${REPO_ROOT}` unset the scans read `/modules` and the validation passes having examined nothing.
+PASS when every consumer on both lists printed an executed compile line and the build reported `BUILD SUCCESSFUL`.
 
 ## Checklist
 
 ```
-- [ ] (One subitem per consumer, capped at 8:) Compile <module path> (deprecated | testIntegration)
+- [ ] Compile testIntegration: <count> consumers in one run
+- [ ] Compile deprecated: <count> consumers in one run
 ```
 
 ## Time Estimate
 
-~1 min per consumer compile.
+Under 1 min for a few dozen consumers on a warm tree, and about 4 min for every `testIntegration` module in the repository, or 11 min cold. Add about 1 min when there are deprecated consumers.

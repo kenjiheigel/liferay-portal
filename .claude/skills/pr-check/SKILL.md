@@ -127,8 +127,6 @@ The procedure runs in two passes over the validations, in the order below. The o
 
 1. [Per-Module Compile](validations/portal/per-module-compile.md)
 
-1. [Integration Test Compile](validations/portal/integration-test-compile.md)
-
 1. [Cross-Module Compile](validations/portal/cross-module-compile.md)
 
 1. [Baseline](validations/portal/baseline.md)
