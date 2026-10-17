@@ -45,6 +45,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
+ * Test change for relevant upstream SHA selection. Do not merge.
+ *
  * @author Alessio Antonio Rendina
  * @author Igor Beslic
  */
