@@ -5,9 +5,9 @@
 
 package com.liferay.source.formatter.check;
 
-import com.liferay.portal.tools.GitUtil;
 import com.liferay.source.formatter.SourceFormatterArgs;
 import com.liferay.source.formatter.processor.SourceProcessor;
+import com.liferay.source.formatter.util.SourceFormatterUtil;
 
 import java.util.List;
 
@@ -50,7 +50,7 @@ public class CIMergeAndGitRepoFileCheck extends BaseFileCheck {
 			return _currentBranchFileNames;
 		}
 
-		_currentBranchFileNames = GitUtil.getCurrentBranchFileNames(
+		_currentBranchFileNames = SourceFormatterUtil.getCurrentBranchFileNames(
 			sourceFormatterArgs.getBaseDirName(),
 			sourceFormatterArgs.getGitWorkingBranchName());
 
