@@ -11,6 +11,8 @@ name: pr-check
 
 Run premerge checks against the current branch. The skill iterates through the validations listed below, runs each one whose scope covers a changed path, and reports PASS or FAIL. Integration tests, Playwright tests, and Poshi tests are out of scope. Use the `test-plan` skill when their coverage is needed.
 
+Read [contributing.md](references/contributing.md) before you change this skill or its validations.
+
 ## Repository Settings
 
 Use the column for the repository that a remote of this checkout points at (check `git remote --verbose`).
