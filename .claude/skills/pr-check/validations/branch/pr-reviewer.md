@@ -42,13 +42,14 @@ When a fix changed a file under `workspaces/liferay-sample-workspace`, regenerat
 
 The reviewer leaves out the copies the refresh writes, so it never flags them, and without the refresh each copy keeps the text the fix replaced and fails [Generated Workspace File](../workspaces/generated-file.md). Skip the refresh when the script does not exist, as in `liferay-portal-ee`.
 
-When at least one fix was applied, commit as the **Autocommit** section says, then review once more:
+When at least one fix was applied, commit as the **Autocommit** section says, then review once more. Review only the rule groups that reported a violation in the first review, over only the files the fix commit changed, since a full second review costs as much as the first and the rest of the diff has not changed since:
 
 ```bash
+GROUPS_RERUN=$(jq --raw-output '[.groups | to_entries[] | select(.value.violations > 0) | .key] | join(",")' "${LOG}")
 LOG_RERUN=$(mktemp)
 LOG_RERUN_ERROR=$(mktemp)
 
-(cd "${REPO_ROOT}" && "${REVIEWER_HOME}/review.sh" --json "${MERGE_BASE}..HEAD" > "${LOG_RERUN}" 2> "${LOG_RERUN_ERROR}")
+(cd "${REPO_ROOT}" && git diff --name-only -z HEAD~1 HEAD | xargs --null "${REVIEWER_HOME}/review.sh" --groups "${GROUPS_RERUN}" --json "${MERGE_BASE}..HEAD" -- > "${LOG_RERUN}" 2> "${LOG_RERUN_ERROR}")
 ```
 
 Report **PASS** when the rerun exits `0`. Report **NOT VERIFIED** when it exits `2`, quote `${LOG_RERUN_ERROR}`, and say in the note that the fixes in the `<TICKET> Apply pr-reviewer rules` commit were not reviewed again. Keep that commit, since each fix in it was checked against its rule before it was applied. When the rerun exits `1`, judge each violation it flags the way the first round does, by reading the rule file and the code around the line, but apply no fix. A violation you already dismissed in the same file under the same rule stays dismissed. Report **FAIL** when at least one violation still applies, and return those violations as the note below. Report **PASS** when you dismissed every one. Do not start a second round of fixes, since a violation the first round did not resolve needs the developer's judgment, and a loop of automated rounds can chase a false positive indefinitely.
