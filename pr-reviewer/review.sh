@@ -395,7 +395,7 @@ $(cat ${work_dir}/review.diff)"
 
 	local raw
 
-	raw=$(echo "${prompt}" | claude \
+	raw=$(echo "${prompt}" | CLAUDE_CODE_DISABLE_CLAUDE_MDS=1 claude \
 		--add-dir ${repo_root} \
 		--allowed-tools "Bash(git grep:*)" Grep Read \
 		--json-schema "${_JSON_SCHEMA}" \
