@@ -215,6 +215,25 @@ The rules below divide in two. Dispatch, ordering, handoffs, the ledger, and the
 
 Start every fired validation in the ledger at `NOT RUN`, then spawn one subagent for each, of type `pr-check-validation`, defined in [pr-check-validation.md](../../agents/pr-check-validation.md), which runs on Sonnet. A subagent spawned without that type inherits your model instead. **Give it only the path of its section file** and tell it to read the file before anything else. Never paste the sections into the prompt, and never read the file yourself, since every line in this conversation is sent again with each later request. A validation with no **Autocommit** section makes no commit, which says nothing about the working tree, since such a validation can still build and leave output behind. Record one of the results below, and capture any note the command directs it to return. Tell the subagent to run every command in the foreground and to return only once it has a verdict. A subagent that starts a build in the background and returns while it runs hands back no verdict, and nothing reports the build's result afterward. Do not halt on a failure, so the developer sees the full picture.
 
+The static validations below need no build, no shared precondition, and no commit. Dispatch every one of them that fired to a single `pr-check-validation` subagent once Source Format has finished, rather than one subagent each. Give the subagent each validation's name, `${VALIDATION_FILE}`, and section file, and say that none of them commits. Tell it to read every section file in its first response as parallel Read calls, to start every command in its next response as parallel Bash calls, and to return one verdict block per validation, headed by its name. Record each block in that validation's row. A subagent of its own costs each validation the whole starting context of a subagent, and wakes this runner once more for its result.
+
+- [BeanParamUtil Getter](validations/branch/bean-param-util-getter.md)
+- [BND Content](validations/branch/bnd-content.md)
+- [BND DS Annotations Options](validations/branch/bnd-dsannotations-options.md)
+- [CacheField Usage](validations/branch/cache-field-usage.md)
+- [ConcurrentMapperHashMap Usage](validations/branch/concurrent-mapper-hash-map-usage.md)
+- [HTML Escaping](validations/branch/html-escaping.md)
+- [Portlet Title](validations/portal/portlet-title.md)
+- [Redundant Assert Message](validations/branch/redundant-assert-message.md)
+- [Redundant Contains on Race Receivers](validations/branch/redundant-contains-race-receivers.md)
+- [Required Configuration Policy](validations/branch/required-configuration-policy.md)
+- [Service Holder Usage](validations/branch/service-holder-usage.md)
+- [Service Registration](validations/branch/service-registration.md)
+- [Startup Sync Usage](validations/branch/startup-sync-usage.md)
+- [Transaction Usage](validations/branch/transaction-usage.md)
+- [TransactionTestUtil Usage](validations/branch/transaction-test-util-usage.md)
+- [Unused Project Dependencies](validations/branch/unused-project-dependencies.md)
+
 A validation returns one of five results:
 
 - **`FAIL`**: it found a real defect.
