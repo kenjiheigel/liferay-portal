@@ -7,14 +7,29 @@ set -o pipefail
 function main {
 	local diff_range=""
 	local dry_run=false
+	local groups=""
 	local json=false
+	local pathspecs=(.)
 	local staged=false
 
 	while [ ${#} -gt 0 ]
 	do
-		if [[ ${1} == --dry-run ]]
+		if [[ ${1} == -- ]]
+		then
+			if [ ${#} -gt 1 ]
+			then
+				pathspecs=("${@:2}")
+			fi
+
+			break
+		elif [[ ${1} == --dry-run ]]
 		then
 			dry_run=true
+		elif [[ ${1} == --groups ]]
+		then
+			groups=${2:-}
+
+			shift
 		elif [[ ${1} == --help ]]
 		then
 			_print_help
@@ -105,7 +120,7 @@ function main {
 
 	local diff_file=${work_dir}/review.diff
 
-	_write_diff_file ${diff_args} > ${diff_file}
+	_write_diff_file ${diff_args} "${pathspecs[@]}" > ${diff_file}
 
 	if [ ! -s ${diff_file} ]
 	then
@@ -127,7 +142,7 @@ function main {
 	then
 		echo "Range:  ${diff_label}"
 		echo "Rules:  ${reviewer_dir}/rules"
-		echo "Groups: $(_get_group_labels "${reviewed_files}" | tr "\n" " ")"
+		echo "Groups: $(_get_group_labels "${reviewed_files}" "${groups}" | tr "\n" " ")"
 		echo "Files:"
 		echo "${reviewed_files}" | sed "s/^/  /"
 		echo ""
@@ -149,7 +164,7 @@ function main {
 	local pids=()
 	local reviewed_rule_files=""
 
-	for group_label in $(_get_group_labels "${reviewed_files}")
+	for group_label in $(_get_group_labels "${reviewed_files}" "${groups}")
 	do
 		group_rule_files=$(_get_group_rule_files ${group_label} ${reviewer_dir}/rules)
 		reviewed_rule_files+=" ${group_rule_files}"
@@ -213,12 +228,18 @@ function main {
 
 function _get_group_labels {
 	local reviewed_files=${1}
+	local groups=${2}
 
 	local group
 	local kinds
 
 	for group in "${_GROUPS[@]}"
 	do
+		if [[ ! -z ${groups} ]] && [[ ,${groups}, != *,${group%%|*},* ]]
+		then
+			continue
+		fi
+
 		kinds=${group##*|}
 
 		if [[ ${kinds} == all ]] || _has_file_kind "${reviewed_files}" ${kinds}
@@ -315,12 +336,14 @@ function _is_regenerated_workspace_file {
 }
 
 function _print_help {
-	echo "Usage: review.sh [--dry-run] [--json] [--staged | <range>]"
+	echo "Usage: review.sh [--dry-run] [--groups <group,...>] [--json] [--staged | <range>] [-- <path>...]"
 	echo ""
 	echo "  --dry-run  Print the filtered diff and the rule groups without calling the model."
+	echo "  --groups   Review only the named rule groups, such as naming-1,ordering-1."
 	echo "  --json     Print the merged verdict as JSON."
 	echo "  --staged   Review the staged changes instead of the branch."
 	echo "  <range>    Review a Git range, such as HEAD~3..HEAD. The default is the merge base with the base branch to HEAD."
+	echo "  <path>     Review only these paths of the range. The default is every changed path."
 }
 
 function _print_report {
@@ -395,7 +418,7 @@ $(cat ${work_dir}/review.diff)"
 
 	local raw
 
-	raw=$(echo "${prompt}" | claude \
+	raw=$(echo "${prompt}" | CLAUDE_CODE_DISABLE_CLAUDE_MDS=1 claude \
 		--add-dir ${repo_root} \
 		--allowed-tools "Bash(git grep:*)" Grep Read \
 		--json-schema "${_JSON_SCHEMA}" \
@@ -422,6 +445,7 @@ $(cat ${work_dir}/review.diff)"
 
 function _write_diff_file {
 	local diff_args=${1}
+	local pathspecs=("${@:2}")
 
 	local grep_ref=${diff_args##*..}
 
@@ -436,7 +460,7 @@ function _write_diff_file {
 
 	owned_workspace_paths_regex=$(_get_owned_workspace_paths_regex)
 
-	for reviewed_file in $(git diff --name-only ${diff_args} -- .)
+	for reviewed_file in $(git diff --name-only ${diff_args} -- "${pathspecs[@]}")
 	do
 		if _is_regenerated_workspace_file "${owned_workspace_paths_regex}" ${reviewed_file} ||
 		   git grep --ignore-case --quiet "@generated" ${grep_ref} -- ":(top)${reviewed_file}" 2> /dev/null
@@ -445,7 +469,7 @@ function _write_diff_file {
 		fi
 	done
 
-	git diff --unified=1 ${diff_args} -- . | awk \
+	git diff --unified=1 ${diff_args} -- "${pathspecs[@]}" | awk \
 		-v generated_files="${generated_files}|" \
 		-v ignored_filenames="${_IGNORED_FILENAMES}" \
 		-v ignored_patterns="${_IGNORED_PATTERNS}" \

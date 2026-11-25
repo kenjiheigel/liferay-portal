@@ -33,84 +33,17 @@ The **Forward Target** is the repository `ci:forward` merges a pull request into
 
 ## Preconditions
 
-- **On a feature branch.** When `HEAD` is `${BASE_BRANCH}` or detached, exit with a one line message.
+Run [set_up_branch.sh](set_up_branch.sh) beside this document once, from anywhere in the checkout. It takes the column of the settings from the remotes and checks, in order, that `HEAD` is a feature branch with a clean working tree, that the branch is rebased on the latest `${BASE_BRANCH}`, that `ci:forward` can merge it into the forward target, that `liferay-portal-ee` copied its skills from the latest `master`, that the diff is nonempty, and that no changed module holds a source file a personal ignore rule hides from Git, which passes every validation here and fails CI's clean checkout. To rebase, it fast forwards local `${BASE_BRANCH}` from `upstream`, or from the remote that points at the repository, and rebases onto it, or onto the forward target for a branch that already holds commits of the target that `${BASE_BRANCH}` lacks. It also links the checkout's Gradle build cache to the one every checkout on the machine shares, so a new worktree does not compile every module from scratch.
 
-- **Working tree clean.** `git status --porcelain` must return empty. When dirty, abort and ask the developer to commit first.
+Act on its exit status:
 
-- **Rebased on the latest `${BASE_BRANCH}`.** Resolve the remote. Prefer `upstream`, otherwise the remote whose URL points at the repository named by the column in use (check `git remote --verbose`). When none resolves, compare `git merge-base HEAD ${BASE_BRANCH}` to `git rev-parse ${BASE_BRANCH}`. Abort and tell the developer to rebase when the two differ, and warn that the branch was not checked against a remote. Otherwise run these steps.
+- **`0`**: the branch is ready. The last lines set `${BASE_BRANCH}`, `${BASE_REF}`, `${FORWARD_TIP}`, `${MERGE_BASE}`, and `${REPO_ROOT}`. `${BASE_REF}` is the diff baseline, which is `${FORWARD_TIP}` for a branch that sits on the forward target and local `${BASE_BRANCH}` otherwise. Relay each line it prints above them to the developer in one line.
 
-	1. `git fetch <remote> ${BASE_BRANCH}`.
+- **`1`**: stop the run and give the developer the message it printed.
 
-	1. Fast forward local `${BASE_BRANCH}` to the fetched tip. When `${BASE_BRANCH}` is checked out in another worktree, fast forward it there with `git -C <worktree> merge --ff-only <remote>/${BASE_BRANCH}`. Otherwise update it in place with `git fetch <remote> ${BASE_BRANCH}:${BASE_BRANCH}`, which also creates `${BASE_BRANCH}` when it does not exist. Both are fast forward only. When the command fails for any reason, such as a diverged `${BASE_BRANCH}`, a worktree that is not clean, or a denied permission, warn the developer and stop the run. Never continue against a stale base, since every validation would then compare the branch with a base that lacks the latest commits.
+- **`3`**: the rebase conflicts in the files it lists and is still in progress. Ask the developer who should resolve the conflicts. When the developer asks you to resolve them, fix the conflicts, `git add` the files, run `git rebase --continue`, and run the script again. In every other case, run `git rebase --abort` and stop the run.
 
-	1. When the settings name a forward target, fetch its `${BASE_BRANCH}` from its GitHub URL rather than a remote, since remote names vary, and record the tip. When the fetch fails, warn the developer that the branch was not checked against the forward target and continue without `${FORWARD_TIP}`.
-
-	```bash
-	git fetch --no-tags https://github.com/<forward target>.git ${BASE_BRANCH} && FORWARD_TIP=$(git rev-parse FETCH_HEAD)
-	```
-
-	With `${FORWARD_TIP}` set, the branch sits on the forward target when it holds commits of the target that `<remote>/${BASE_BRANCH}` lacks, which this command reports by exiting `1`:
-
-	```bash
-	git merge-base --is-ancestor "$(git merge-base HEAD "${FORWARD_TIP}")" "<remote>/${BASE_BRANCH}"
-	```
-
-	1. `git rebase <remote>/${BASE_BRANCH}`, or `git rebase "${FORWARD_TIP}"` for a branch that sits on the forward target. On a clean rebase, continue against the rebased branch. On conflict, list the unmerged files (`git diff --diff-filter=U --name-only`) and ask the developer who should resolve the conflicts. When the developer asks you to resolve them, fix the conflicts, `git add` the files, and run `git rebase --continue`. In every other case (the developer resolves them, the conflicts cannot be resolved, or the rebase fails otherwise) run `git rebase --abort` and stop the run.
-
-	1. When `${FORWARD_TIP}` is set, test whether `ci:forward` can merge the branch into it.
-
-	```bash
-	git merge-tree --name-only --write-tree "${FORWARD_TIP}" HEAD
-	```
-
-	Exit `0` means the branch merges cleanly, so continue. Exit `1` means `ci:forward` will refuse the pull request. The lines after the first, up to the first blank line, name the conflicted files, and `git log --format='%h %s' "HEAD..${FORWARD_TIP}" -- <files>` names the commits of the forward target that touched them. Stop the run, give the developer both lists, and say what fixes it: rebase onto `${FORWARD_TIP}`, resolve the conflicts, run pr-check again, and send the pull request to the forward target directly. Offer to run the rebase, handle its conflicts the way the rebase step above does, and start pr-check over once it completes. Any other exit means the merge was not checked, so warn the developer and continue.
-
-- **Skills current in `liferay-portal-ee`.** In `liferay-portal-ee` only, and only when this skill's directory lies inside `${REPO_ROOT}`, run `git fetch <remote> master`. A skill read from outside the checkout, such as a personal skill linked to a `liferay-portal` checkout, was not copied, so it cannot be stale and the check is skipped. When `git rev-parse master` differs from `git rev-parse FETCH_HEAD`, the copied skills are stale, so stop the run and tell the developer to copy them again from the latest `master`.
-
-- **Diff baseline is `${BASE_REF}`.** That is `${FORWARD_TIP}` for a branch that sits on the forward target, and local `${BASE_BRANCH}` otherwise. After the rebase, the three dot diff against `${BASE_REF}` is the baseline.
-
-- **Diff is nonempty.** When the three dot diff produces no files, exit with a one line message — no validation produces useful signal on a clean branch.
-
-- **No source file hidden from git.** A file the build reads but git never sees passes every validation here and fails CI's clean checkout, as a Sass import of an uncommitted partial once did. The clean tree check above cannot see it when the developer's own ignore rules hide it, in `core.excludesFile` or `.git/info/exclude`, since `git status` honors those. List the ignored files under each changed module, keep those hidden by a rule outside the repository's own `.gitignore` files, and keep the source and build file types among them:
-
-	```bash
-	MERGE_BASE=$(git merge-base HEAD "${BASE_REF}")
-
-	git diff --name-only --no-renames "${MERGE_BASE}...HEAD" \
-		| bash <skill directory>/find_modules.sh "${MERGE_BASE}" \
-		| cut -d " " -f1 \
-		| command grep --invert-match '^-$' \
-		| sort --unique \
-		| xargs --no-run-if-empty git ls-files --directory --exclude-standard --ignored --others -- \
-		| git check-ignore --stdin --verbose \
-		| command grep --extended-regexp --invert-match '^([^/:][^:]*/)?\.gitignore:' \
-		| command grep --extended-regexp '\.(bnd|cjs|css|ftl|gradle|java|js|json|jsp|jspf|jsx|mjs|properties|sass|scss|ts|tsx|xml)$'
-	```
-
-	Each line names the rule and the file it hides. When any line prints, abort and ask the developer to commit or delete each file. The type filter keeps a personally ignored `.DS_Store` or editor file from stopping the run, and `--directory` keeps a whole ignored directory, such as `build`, to one line that the filter then drops.
-
-- **Shared Gradle build cache.** `gradlew` gives every checkout its own Gradle user home in `.gradle`, so a new worktree starts with an empty build cache, and its first full build compiles every module from scratch. Point this checkout's build cache at one directory every checkout on the machine shares. Use `${SHARED_GRADLE_CACHE}` when it is set, and `~/.liferay/gradle-build-cache` otherwise, beside the mirrors cache the build already keeps in `~/.liferay`:
-
-	```bash
-	REPO_ROOT=$(git rev-parse --show-toplevel)
-
-	SHARED_GRADLE_CACHE=${SHARED_GRADLE_CACHE:-${HOME}/.liferay/gradle-build-cache}
-
-	mkdir -p "${REPO_ROOT}/.gradle/caches" "${SHARED_GRADLE_CACHE}"
-
-	BUILD_CACHE_DIR=${REPO_ROOT}/.gradle/caches/build-cache-1
-
-	if [[ -d ${BUILD_CACHE_DIR} && ! -L ${BUILD_CACHE_DIR} ]]
-	then
-		rsync --archive --exclude="*.lock" --ignore-existing "${BUILD_CACHE_DIR}/" "${SHARED_GRADLE_CACHE}/"
-
-		rm -fr "${BUILD_CACHE_DIR}"
-	fi
-
-	ln -fns "${SHARED_GRADLE_CACHE}" "${BUILD_CACHE_DIR}"
-	```
-
-	Link only the build cache, never the whole user home. Ant writes the properties Gradle needs, such as `liferay.home` and `baseline.jar.report.level`, into this checkout's own `.gradle/gradle.properties`, and a shared user home would read none of them. An existing cache folder is merged into the shared directory before the link replaces it, so nothing cached is lost: each entry is named by its cache key, and an entry already there holds the same content. Tell the developer which directory is in use the first time the link is created or repointed, in one line, such as `Using ~/.liferay/gradle-build-cache as the shared Gradle build cache.` When the link already points there, say nothing.
+- **`4`**: `ci:forward` will refuse the pull request. Stop the run, give the developer the conflicted files and the commits of the forward target it lists, and say what fixes it: rebase onto the forward target, resolve the conflicts, run pr-check again, and send the pull request to the forward target directly. Offer to run the rebase, handle its conflicts the way exit `3` describes, and start pr-check over once it completes.
 
 ## Input
 
@@ -142,7 +75,7 @@ Paths directly under `workspaces` that sit in no workspace, such as the refresh 
 
 In every workspace other than `liferay-sample-workspace`, a changed path that `workspaces/refresh_other_workspaces.sh` regenerates is seen only by [Generated Workspace File](validations/workspaces/generated-file.md). Such a path may change only through a refresh, and building it would only repeat what the sample workspace already checks. A path is regenerated when it does not match the regex that validation builds from the script's `--exclude` patterns. A workspace whose changed paths are all regenerated therefore runs no other workspace validation. Generated Workspace File in turn sees only regenerated paths, so it runs only for a workspace where the branch changed a regenerated path. A checkout without `workspaces/refresh_other_workspaces.sh`, such as `liferay-portal-ee`, regenerates nothing, so every changed path of a workspace goes to the other workspace validations and Generated Workspace File never runs.
 
-Run only the validations in the scopes the settings enable, and skip every validation the settings name. When the portal scope is disabled, list every changed path that belongs to no workspace in the Results Summary as unchecked, so that a change nothing examined never reads as a pass.
+`select_validations.sh` selects only the validations in the scopes the settings enable, and none the settings skip. When the portal scope is disabled, list every changed path that belongs to no workspace in the Results Summary as unchecked, so that a change nothing examined never reads as a pass.
 
 ### Match
 
@@ -250,74 +183,56 @@ Process each validation in a subagent.
 
 ### Pass 1: Estimate
 
-Run [select_validations.sh](select_validations.sh) beside this document once, from `${REPO_ROOT}`. It prints a line for every validation: `== <file> (<count> paths)` for one that fires, followed by its `## Preconditions` and `## Time Estimate` sections, and `-- <file> (not fired)` for one that does not. A workspace validation names its workspace after the file. A validation fires when `select_paths.sh` prints a path, and a workspace validation is tried once for each workspace the branch changed, as **Routing** describes:
+Run [set_up_validations.sh](set_up_validations.sh) beside this document once, as one foreground Bash call with a timeout of 600000 milliseconds:
 
 ```bash
-bash <skill directory>/select_validations.sh "$(git merge-base HEAD "${BASE_REF}")"
+bash <skill directory>/set_up_validations.sh "${MERGE_BASE}"
 ```
 
-Leave out the validations the settings skip or whose scope they disable. Sum the time estimates of the rest for the cumulative total, counting a workspace validation once for each workspace it fired for. Add about 3 minutes once when any of them names **Portal Snapshots**, and up to 2 minutes once when any names **Portal Classpath**. Estimate from the path counts the script prints rather than resolving modules, since the total only decides whether to ask the developer.
+It starts by running [select_validations.sh](select_validations.sh), which prints a line for every validation: `== <file> (<count> paths)` for one that fires, followed by its `## Preconditions` and `## Time Estimate` sections, and `-- <file> (not fired)` for one that does not. A workspace validation names its workspace after the file. A validation fires when `select_paths.sh` prints a path, and a workspace validation is tried once for each workspace the branch changed, as **Routing** describes.
 
-When the total exceeds 20 minutes, surface the breakdown and ask the developer whether to trim a validation or proceed.
+The validations that fired are the **ledger**, the record of what this run owes. Pass 2 builds the table from it, so a validation that fired is accounted for whether or not it ever ran.
 
-The output, less the validations the settings skip or whose scope they disable, is the **ledger**, the record of what this run owes. Pass 2 builds the table from it, so a validation that fired is accounted for whether or not it ever ran.
+Sum the time estimates of the ledger for the cumulative total, counting a workspace validation once for each workspace it fired for. Estimate from the path counts the script prints rather than resolving modules, since the total only decides whether to ask the developer. When the total exceeds 20 minutes, surface the breakdown and ask the developer whether to trim a validation or proceed, before Pass 2 dispatches anything.
 
 ### Shared Preconditions
 
-A validation names the setup it needs under `## Preconditions`, and its **Command** never performs that setup itself. Take the union of the names across the validations that fired and run each once, after Pass 1 and before Pass 2 dispatches anything. Deduplicate by name rather than by command, and take nothing from a validation that did not fire, so a diff of Markdown alone installs no snapshot. Run them in the order below, since **Portal Classpath** deploys the jars **Portal Snapshots** builds.
+A validation names the setup it needs under `## Preconditions`, and its **Command** never performs that setup itself. After the selection, `set_up_validations.sh` writes every validation's `## Command` and `## Autocommit` sections whole to `${REPO_ROOT}/build/pr-check/sections/<folder>/<validation file name>`, adding an **Autocommit** section that says no commit is made when the validation has none. It then takes the union of the names under `## Preconditions` across the ledger, so a diff of Markdown alone installs no snapshot, and runs each once in the order below, with one log per build under `${REPO_ROOT}/build/pr-check/shared-preconditions`:
 
-- **Portal Snapshots.** Build the top level Ant projects and install each as a snapshot under `${REPO_ROOT}/.m2`, so that a module compiles against the branch's own kernel rather than whatever an earlier build left there:
+- **Portal Snapshots** builds the top level Ant projects and installs each as a snapshot under `${REPO_ROOT}/.m2`, so that a module compiles against the branch's own kernel. A build that exits zero can still leave an older snapshot that fails the first compile, so it then confirms that each project **Baseline** compares installed its snapshot at the version its `bnd.bnd` declares.
 
-	```bash
-	(cd "${REPO_ROOT}" && ant compile install-portal-snapshots)
-	```
+- **Portal Classpath** deploys the jars a module's test classpath reads from the app server. It leaves out CI's `unzip-tomcat` step, which deletes the bundle every checkout shares.
 
-	A build that exits zero has not yet proved the tree usable. Confirm that each of the seven projects **Baseline** compares left its jar and installed its snapshot at the version its `bnd.bnd` declares. The loop prints each project that did not, so empty output is a pass:
+- **SDK** sets up the SDK the source formatter runs from.
 
-	```bash
-	for project in portal-impl portal-kernel portal-test util-bridges util-java util-slf4j util-taglib
-	do
-		artifact=com.liferay.$(echo "${project}" | tr - .)
-		version=$(sed -e "s/^Bundle-Version: //p" -n "${REPO_ROOT}/${project}/bnd.bnd")
+After each build it restores any tracked file the build rewrote as a side effect, such as a `bnd.bnd` or `packageinfo` version bump, and prints a line naming them. Relay each one in one line.
 
-		if [[ ! -f ${REPO_ROOT}/${project}/${project}.jar || ! -f ${REPO_ROOT}/.m2/com/liferay/portal/${artifact}/${version}-SNAPSHOT/${artifact}-${version}-SNAPSHOT.jar ]]
-		then
-			echo "${project}"
-		fi
-	done
-	```
-
-	A snapshot that an earlier build installed at an older version looks present to anything but this check, and the first compile that needs the branch's version fails on `Could not find com.liferay.portal.test:<version>-SNAPSHOT`.
-
-- **Portal Classpath.** Deploy the jars a module's test classpath reads from the app server, which `modules/build.gradle` takes from the bundle's `WEB-INF/lib` and `WEB-INF/shielded-container-lib`. A `testIntegration` compile gets `portal-kernel`, `portal-impl`, and `petra` only from there, and a unit test gets `log4j` only from there, so without them both fail on every branch alike. This is the unit test bundle CI's `prepare-test-bundles` builds, plus `util-taglib` and `modules/core`, which a `testIntegration` compile also reads. Each `ant deploy` copies the jar **Portal Snapshots** already built, so the deploys run in any order. Leave out the `unzip-tomcat` step CI runs first. It starts by deleting `${app.server.tomcat.dir}`, the bundle the developer runs and every checkout shares, and the deploys create the directories they write to without it:
-
-	```bash
-	(cd "${REPO_ROOT}" && ant deploy-additional-jars)
-
-	for project in portal-impl portal-kernel portal-test util-java util-taglib
-	do
-		(cd "${REPO_ROOT}/${project}" && ant deploy)
-	done
-
-	("${REPO_ROOT}/gradlew" \
-		--parallel \
-		--project-dir "${REPO_ROOT}/modules/core" \
-		deploy)
-	```
-
-- **SDK.** Set up the SDK the source formatter runs from:
-
-	```bash
-	(cd "${REPO_ROOT}" && ant setup-sdk)
-	```
-
-When a precondition fails, stop the run. Dispatch no validation, publish no Results Summary, and report the precondition, the decisive lines of its log, and the validations that named it. A validation cannot report this on its own behalf, since it sees only its own **Command** and cannot know that its setup never ran, and a `NOT VERIFIED` row in its place would still publish a `success` marker for a run that was never set up.
+The builds take about 6 minutes in a new worktree and about 1 minute in a built one. When the call still times out, run it again with `run_in_background`, which finishes what the first call left, and wait for its completion notice without reading its output. It exits 0 when every precondition is satisfied. On any other exit, stop the run. Dispatch no validation, publish no Results Summary, and report the message it printed, the log lines beneath it, and the validations that named the precondition. A validation cannot report this on its own behalf, since it sees only its own **Command** and cannot know that its setup never ran, and a `NOT VERIFIED` row in its place would still publish a `success` marker for a run that was never set up.
 
 ### Pass 2: Execute
 
 The rules below divide in two. Dispatch, ordering, handoffs, the ledger, and the overall state belong to this runner. Reading a log, judging a result, and reporting a note belong to the subagent, which never sees this document and is told only what it needs.
 
-Start every fired validation in the ledger at `NOT RUN`, then spawn one subagent for each, of type `pr-check-validation`, defined in [pr-check-validation.md](../../agents/pr-check-validation.md), which runs on Sonnet. A subagent spawned without that type inherits your model instead. **Give it only the `## Command` and `## Autocommit` sections of its validation.** Pass each section whole, from its heading to the next `## ` heading, and never through a line cap such as `head`, `tail`, or a fixed line range: a truncated section reads as complete, the subagent cannot know what it lost, and nothing downstream recovers it. A validation with no `## Autocommit` section makes no commit, so say so rather than leaving the subagent to infer it from an absence. That says nothing about the working tree, since a validation without one can still build and leave output behind. Record one of the results below, and capture any note the command directs it to return. Tell the subagent to run every command in the foreground and to return only once it has a verdict. A subagent that starts a build in the background and returns while it runs hands back no verdict, and nothing reports the build's result afterward. Do not halt on a failure, so the developer sees the full picture.
+Start every fired validation in the ledger at `NOT RUN`, then spawn one subagent for each, of type `pr-check-validation`, defined in [pr-check-validation.md](../../agents/pr-check-validation.md), which runs on Sonnet. A subagent spawned without that type inherits your model instead. **Give it only the path of its section file** and tell it to read the file before anything else. Never paste the sections into the prompt, and never read the file yourself, since every line in this conversation is sent again with each later request. A validation with no **Autocommit** section makes no commit, which says nothing about the working tree, since such a validation can still build and leave output behind. Record one of the results below, and capture any note the command directs it to return. Tell the subagent to run every command in the foreground and to return only once it has a verdict. A subagent that starts a build in the background and returns while it runs hands back no verdict, and nothing reports the build's result afterward. Do not halt on a failure, so the developer sees the full picture.
+
+The static validations below need no build, no shared precondition, and no commit. Dispatch every one of them that fired to a single `pr-check-validation` subagent once Source Format has finished, rather than one subagent each. Give the subagent each validation's name, `${VALIDATION_FILE}`, and section file, and say that none of them commits. Tell it to read every section file in its first response as parallel Read calls, to start every command in its next response as parallel Bash calls, and to return one verdict block per validation, headed by its name. Record each block in that validation's row. A subagent of its own costs each validation the whole starting context of a subagent, and wakes this runner once more for its result.
+
+- [BeanParamUtil Getter](validations/branch/bean-param-util-getter.md)
+- [BND Content](validations/branch/bnd-content.md)
+- [BND DS Annotations Options](validations/branch/bnd-dsannotations-options.md)
+- [CacheField Usage](validations/branch/cache-field-usage.md)
+- [ConcurrentMapperHashMap Usage](validations/branch/concurrent-mapper-hash-map-usage.md)
+- [HTML Escaping](validations/branch/html-escaping.md)
+- [Portlet Title](validations/portal/portlet-title.md)
+- [Redundant Assert Message](validations/branch/redundant-assert-message.md)
+- [Redundant Contains on Race Receivers](validations/branch/redundant-contains-race-receivers.md)
+- [Required Configuration Policy](validations/branch/required-configuration-policy.md)
+- [Service Holder Usage](validations/branch/service-holder-usage.md)
+- [Service Registration](validations/branch/service-registration.md)
+- [Startup Sync Usage](validations/branch/startup-sync-usage.md)
+- [Transaction Usage](validations/branch/transaction-usage.md)
+- [TransactionTestUtil Usage](validations/branch/transaction-test-util-usage.md)
+- [Unused Project Dependencies](validations/branch/unused-project-dependencies.md)
 
 A validation returns one of five results:
 
@@ -341,7 +256,7 @@ Run a validation that autocommits with **nothing else that writes to the working
 
 A validation may hand off to another, as **Per-Module Compile** does when its deploy set grows past the point where one full build is cheaper. Run the validation it names, give the table that validation's row and result, and mark the one that handed off `NOT VERIFIED`. Pass 1 selects on the changed paths alone and cannot see a set Pass 2 derives, so a handoff is the only way those branches run.
 
-An autocommit can change the diff, so recompute the ledger after a validation whose commit may add a path Pass 1 never saw, as Baseline's `packageinfo` and `bnd.bnd` repairs do, and dispatch whatever newly fires. Skip it after a validation that can only touch paths the branch already changed, such as a formatter running in current branch mode, since its commit cannot widen the diff.
+An autocommit can change the diff, so recompute the ledger after a validation whose commit may add a path Pass 1 never saw, as Baseline's `packageinfo` and `bnd.bnd` repairs do, by running `set_up_validations.sh` again, and dispatch whatever newly fires. Skip it after a validation that can only touch paths the branch already changed, such as a formatter running in current branch mode, since its commit cannot widen the diff.
 
 Tell Per-Module Compile whether Full Portal Build is in the run and, when it is, whether it succeeded, since a successful build lets it narrow its work and a failed one does not.
 
