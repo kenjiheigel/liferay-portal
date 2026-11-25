@@ -8,6 +8,13 @@ function main {
 		exit 1
 	fi
 
+	local skipped_validations_regex="/workspaces/source-format\.md$"
+
+	if git remote --verbose | grep --extended-regexp "[:/]liferay/liferay-portal-ee(\.git)? " > /dev/null
+	then
+		skipped_validations_regex="/(branch/source-format\.md|portal/[^/]*)$"
+	fi
+
 	local skill_dir
 
 	skill_dir=$(dirname "${0}")
@@ -16,7 +23,10 @@ function main {
 
 	for validation_file in "${skill_dir}/validations/branch"/*.md "${skill_dir}/validations/portal"/*.md
 	do
-		_print_validation "${1}" "${validation_file}"
+		if [[ ! ${validation_file} =~ ${skipped_validations_regex} ]]
+		then
+			_print_validation "${1}" "${validation_file}"
+		fi
 	done
 
 	local workspace
@@ -28,7 +38,10 @@ function main {
 		do
 			for validation_file in "${skill_dir}/validations/workspaces"/*.md
 			do
-				_print_validation "${1}" "${validation_file}" "${workspace}"
+				if [[ ! ${validation_file} =~ ${skipped_validations_regex} ]]
+				then
+					_print_validation "${1}" "${validation_file}" "${workspace}"
+				fi
 			done
 		done
 }
