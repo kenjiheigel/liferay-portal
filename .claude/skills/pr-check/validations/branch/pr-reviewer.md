@@ -51,7 +51,7 @@ LOG_RERUN_ERROR=$(mktemp)
 (cd "${REPO_ROOT}" && "${REVIEWER_HOME}/review.sh" --json "${MERGE_BASE}..HEAD" > "${LOG_RERUN}" 2> "${LOG_RERUN_ERROR}")
 ```
 
-Report **PASS** when the rerun exits `0`. Report **NOT VERIFIED** when it exits `2`, quote `${LOG_RERUN_ERROR}`, and say in the note that the fixes in the `<TICKET> Apply pr-reviewer rules` commit were not reviewed again. Keep that commit, since each fix in it was checked against its rule before it was applied. When the rerun exits `1`, judge each violation it flags the way the first round does, by reading the rule file and the code around the line, but apply no fix. A violation you already dismissed in the same file under the same rule stays dismissed. Report **FAIL** when at least one violation still applies, and return those violations as the note below. Report **PASS** when you dismissed every one. Do not start a second round of fixes, since a violation the first round did not resolve needs the developer's judgment, and a loop of automated rounds can chase a false positive indefinitely.
+Report **PASS** when the rerun exits `0`. Report **NOT VERIFIED** when it exits `2`, quote `${LOG_RERUN_ERROR}`, and say in the note that the fixes in the pr-reviewer fix commits were not reviewed again. Keep those commits, since each fix in them was checked against its rule before it was applied. When the rerun exits `1`, judge each violation it flags the way the first round does, by reading the rule file and the code around the line, but apply no fix. A violation you already dismissed in the same file under the same rule stays dismissed. Report **FAIL** when at least one violation still applies, and return those violations as the note below. Report **PASS** when you dismissed every one. Do not start a second round of fixes, since a violation the first round did not resolve needs the developer's judgment, and a loop of automated rounds can chase a false positive indefinitely.
 
 ```markdown
 **The pr-reviewer rules still flag this branch.** Apply each fix below, or leave the code as it is when a violation is a false positive and say so in the PR description.
@@ -63,10 +63,10 @@ Report **PASS** when the rerun exits `0`. Report **NOT VERIFIED** when it exits 
 
 When no fix was applied, skip the rerun. Report **FAIL** with the same note when at least one violation applies and could not be fixed, and report **PASS** when you dismissed every violation as a false positive.
 
-Whenever you applied a fix, return the applied fixes as the note below, with any verdict, so that the developer can review the `<TICKET> Apply pr-reviewer rules` commit before sending the PR. Give the line in the file before the fix, as the first review reported it:
+Whenever you applied a fix, return the applied fixes as the note below, with any verdict, so that the developer can review the pr-reviewer fix commits before sending the PR. Give the line in the file before the fix, as the first review reported it:
 
 ```markdown
-**The pr-check applied these pr-reviewer fixes in the `<TICKET> Apply pr-reviewer rules` commit.** Review each one, and revert any that you disagree with.
+**The pr-check applied these pr-reviewer fixes, one commit for each file.** Review each one, and revert any that you disagree with.
 
 | File | Line | Rule | Violation | Change |
 | --- | --- | --- | --- | --- |
@@ -85,7 +85,7 @@ Whenever you dismissed a violation, return the dismissed violations as the note 
 
 ## Autocommit
 
-When `git status --porcelain` is nonempty after the fixes and the refresh, stage the tracked modifications with `git add --update` and create a commit titled `<TICKET> Apply pr-reviewer rules`. `--update` stages each regenerated copy with the fix it carries, and leaves out the ignored build output the refresh also copies.
+When `git status --porcelain` is nonempty after the fixes and the refresh, stage the tracked modifications with `git add --update` and create one commit for each file that a fix changed, with `git add --update -- <file>` and then `git commit`. Title each commit `<TICKET> <action>`, where the action says what the commit changes in the code, for example `LPD-108822 Declare the library subtitle once before the loop`. Never use a title that names a tool or a review, such as "Apply pr-reviewer rules", "Address review feedback", or "Fix the review findings". When one file carries several unrelated fixes, make one commit for each fix. `--update` stages each regenerated copy with the fix it carries, and leaves out the ignored build output the refresh also copies.
 
 ## Notes
 
